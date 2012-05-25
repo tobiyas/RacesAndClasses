@@ -1,0 +1,45 @@
+Breaf Summary:
+
+Traits:
+ - "DamageIncreaseTrait"
+    Increases the damage of the race. Value: 1 = normal damage. 1.5 = normal damage * 1.5, 0.5 = normal damage * 0.5
+
+ - "DamageReduceTrait"
+    Decreases the damage taken. Value: 1 = normal damage(100%) . 0.75 = 75% of normal damage, 1.25 = 125% of normal dmg.
+    
+    
+Permissions:
+-  "races.change"
+	permission to change the actual race
+	
+-	"races.select"
+	permission to select a race
+	
+-	"races.chat.write"
+	permission to write in the race-chat
+	
+-	"races.chat.read"
+	permission to read the race-chat
+	
+-	"races.chat.basic"
+	permissions: "races.chat.read" and "races.chat.write" in one.
+	
+-	"races.raceinfo.display"
+	permission to use the /raceinfo command
+	
+	
+Commands:
+-	"/race <select,change> <racename>"
+	use to select, change race
+	
+-	"/racechat <message>" (alias: /rc, /rchat)
+	post something in the rase-chat
+
+-	"/raceinfo"
+	shows infos to the actual selected race
+	
+-	"/racelist"
+	lists all races registered
+	
+-	"/racehelp"
+	help for the plugin

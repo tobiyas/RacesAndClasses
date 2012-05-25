@@ -1,0 +1,40 @@
+name: Races
+main: de.tobiyas.races.Races
+version: 0.1
+website: http://
+author: tobiyas
+
+softdepends: [Vault]
+description: >
+             Races for Players
+commands:
+  race:
+    description: Sets the Race of the player
+    aliases: []
+    usage: |
+           /race <racename>
+  racechat:
+    description: chat for the race
+    aliases: [rc,rchat]
+    usage: |
+           /racechate <message>
+  raceinfo:
+    description: info for races
+    aliases: [rinfo]
+    usage: |
+           /raceinfo
+  racehelp:
+    description: help for races
+    aliases: [rhelp]
+    usage: |
+           /racehelp <helpstring>
+  racelist:
+    description: lists all races
+    aliases: [rlist]
+    usage: |
+           /racelist
+  whisper:
+    description: whispers a Player
+    aliases: [w]
+    usage: |
+           /whisper <player> <message>
