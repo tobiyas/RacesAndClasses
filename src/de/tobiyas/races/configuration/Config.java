@@ -18,6 +18,8 @@ import de.tobiyas.races.Races;
 
 	private boolean config_racechat_enable;
 	private String config_racechat_default_color;
+	
+	private int config_defaultHealth;
 
 
 	public Config(Races plugin){
@@ -32,6 +34,8 @@ import de.tobiyas.races.Races;
 
 		config.addDefault("racechat.enable", true);
 		config.addDefault("racechat.default.color", "2");
+		
+		config.addDefault("health.defaultHealth", 20);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -45,6 +49,8 @@ import de.tobiyas.races.Races;
 
 		config_racechat_enable = config.getBoolean("racechat.enable", true);
 		config_racechat_default_color = config.getString("racechat.default.color", "2");
+		
+		config_defaultHealth = config.getInt("health.defaultHealth", 20);
 
 	}
 	
@@ -55,6 +61,10 @@ import de.tobiyas.races.Races;
 
 	public String getconfig_racechat_default_color(){
 		return config_racechat_default_color;
+	}
+	
+	public int getconfig_defaultHealth(){
+		return config_defaultHealth;
 	}
 
 }

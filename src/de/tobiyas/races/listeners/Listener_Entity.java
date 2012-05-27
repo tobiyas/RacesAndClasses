@@ -8,8 +8,6 @@
 package de.tobiyas.races.listeners;
 
 
-import java.util.ArrayList;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,7 +17,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.traitcontainer.ReturnFilter;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 
 
@@ -33,13 +30,7 @@ public class Listener_Entity implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
-		ArrayList<ReturnFilter> filters = TraitEventManager.getTraitEventManager().modifyEvent(event);
-		for(ReturnFilter filter : filters){
-			switch(filter.getOperation()){
-				case 0: event.setDamage((Integer) filter.getNewValue()); break;
-				default: continue;
-			}
-		}
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 	@EventHandler
@@ -49,18 +40,12 @@ public class Listener_Entity implements Listener {
 
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event){
-		
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-		ArrayList<ReturnFilter> filters = TraitEventManager.getTraitEventManager().modifyEvent(event);
-		for(ReturnFilter filter : filters){
-			switch(filter.getOperation()){
-				case 0: event.setDamage((Integer) filter.getNewValue()); break;
-				default: continue;
-			}
-		}
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 	@EventHandler

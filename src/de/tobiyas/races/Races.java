@@ -18,6 +18,7 @@ import de.tobiyas.races.commands.CommandExecutor_RaceHelp;
 import de.tobiyas.races.commands.CommandExecutor_RaceList;
 import de.tobiyas.races.commands.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.CommandExecutor_Raceinfo;
+import de.tobiyas.races.commands.CommandExecutor_Whisper;
 import de.tobiyas.races.configuration.Config;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
@@ -65,6 +66,7 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_Raceinfo();
 		new CommandExecutor_RaceList();
 		new CommandExecutor_RaceHelp();
+		new CommandExecutor_Whisper();
 	}
 	
 	@Override

@@ -38,3 +38,8 @@ commands:
     aliases: [w]
     usage: |
            /whisper <player> <message>
+  traitlist:
+    description: lists all traits
+    aliases: [tlist]
+    usage: |
+           /traitlist

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.util.statics.TraitsList;
 
 public class TraitStore {
 

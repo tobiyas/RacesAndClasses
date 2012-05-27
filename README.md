@@ -1,4 +1,0 @@
-Races
-=====
-
-Races for Minecraft

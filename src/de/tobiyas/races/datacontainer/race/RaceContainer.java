@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 
@@ -14,6 +15,7 @@ public class RaceContainer {
 	private String raceName;
 	
 	private String raceTag;
+	private int raceMaxHealth;
 	
 	private HashSet<Trait> traits;
 	
@@ -29,8 +31,7 @@ public class RaceContainer {
 	
 	private void readConfigSection(){
 		raceTag = config.getString("races." + raceName + ".config.racetag");
-
-		//TODO: Add config options
+		raceMaxHealth = config.getInt("races." + raceName + "config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
 	}
 	
 	private void readTraitSection(){
@@ -79,6 +80,10 @@ public class RaceContainer {
 	
 	public Set<Trait> getTraits(){
 		return traits;
+	}
+	
+	public int getRaceMaxHealth(){
+		return raceMaxHealth;
 	}
 	
 }

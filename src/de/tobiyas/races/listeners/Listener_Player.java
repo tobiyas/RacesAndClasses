@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 
 
 public class Listener_Player implements Listener {
@@ -54,6 +56,11 @@ public class Listener_Player implements Listener {
 		
 		if(container == null) return;
 		event.setMessage(container.getTag() + player.getName() + orgMsg);
+	}
+	
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event){
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 

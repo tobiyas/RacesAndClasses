@@ -33,20 +33,21 @@ public class CommandExecutor_Whisper implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;
-		if(plugin.getPermissionManager().checkPermissions(sender, PermissionNode.whisper)) return true;
+		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.whisper)) return true;
 		
 		if(args.length == 0){
 			player.sendMessage(ChatColor.RED + "You have to specify a player and a message.");
 			return true;
 		}
 		
-		if(args.length == 1){
-			return true;
-		}
-		
+
 		Player target = Bukkit.getPlayer(args[0]);
 		if(target == null){
 			player.sendMessage(ChatColor.RED + "Target does not exist or is not online.");
+			return true;
+		}
+		
+		if(args.length == 1){
 			return true;
 		}
 		
