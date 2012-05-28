@@ -1,4 +1,4 @@
-package de.tobiyas.races.datacontainer.traitcontainer.traits.health;
+package de.tobiyas.races.datacontainer.health;
 
 import java.io.File;
 
@@ -16,10 +16,14 @@ public class HealthContainer {
 	private double currentHealth;
 	private int maxHealth;
 	
+	private long lastDamage;
+	
 	public HealthContainer(String player, double currentHealth, int maxHealth){
 		this.player = player;
 		this.currentHealth = currentHealth;
 		this.maxHealth = maxHealth;
+		
+		lastDamage = System.currentTimeMillis();
 		
 		Player onlinePlayer = Bukkit.getPlayer(player);
 		if(onlinePlayer != null)
@@ -27,6 +31,9 @@ public class HealthContainer {
 	}
 	
 	public void reduceLife(double amount){
+		if((System.currentTimeMillis() - lastDamage) < Races.getPlugin().interactConfig().getconfig_imunBetweenDamage())
+			return;
+		
 		currentHealth -= amount;
 		Player player = Bukkit.getPlayer(this.player);
 				
@@ -34,6 +41,8 @@ public class HealthContainer {
 			player.setHealth(0);
 		else
 			setPlayerPercentage();
+		
+		lastDamage = System.currentTimeMillis();
 	}
 	
 	public void setPlayerPercentage(){

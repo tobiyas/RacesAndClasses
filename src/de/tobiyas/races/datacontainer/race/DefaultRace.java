@@ -6,12 +6,13 @@ import java.io.IOException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.util.consts.Consts;
 
 public class DefaultRace {
 	
 	public static void createSTDRaces(){
 		Races plugin = Races.getPlugin();
-		File raceFile = new File(plugin.getDataFolder() + File.separator + "races.yml");
+		File raceFile = new File(Consts.racesYML);
 		if(raceFile.exists()) return;
 		
 		try {
@@ -45,7 +46,7 @@ public class DefaultRace {
 	
 	public static void createSTDMembers(){
 		Races plugin = Races.getPlugin();
-		File membersFile = new File(plugin.getDataFolder() + File.separator + "members.yml");
+		File membersFile = new File(Consts.membersYML);
 		if(membersFile.exists()) return;
 		
 		try {
@@ -58,7 +59,7 @@ public class DefaultRace {
 		plugin.log("No Member file found. Creating new.");
 		
 		YamlConfiguration membersConfig = new YamlConfiguration();
-		membersConfig.createSection("members");
+		membersConfig.createSection("playerdata");
 		
 		try {
 			membersConfig.save(membersFile);

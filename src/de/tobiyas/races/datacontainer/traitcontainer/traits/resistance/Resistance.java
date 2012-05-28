@@ -9,9 +9,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthModifyContainer;
 
 public abstract class Resistance extends Observable implements ResistanceInterface {
 

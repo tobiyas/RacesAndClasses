@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.util.consts.Consts;
 import de.tobiyas.util.economy.defaults.YAMLConfigExtended;
 
 public class RaceManager {
@@ -35,7 +36,7 @@ public class RaceManager {
 		races = new HashSet<RaceContainer>();
 		
 		DefaultRace.createSTDRaces();
-		raceConfig = new YAMLConfigExtended(plugin.getDataFolder() + File.separator + "races.yml");
+		raceConfig = new YAMLConfigExtended(Consts.racesYML);
 		
 		try {
 			raceConfig.load(plugin.getDataFolder() + File.separator + "races.yml");
@@ -58,12 +59,12 @@ public class RaceManager {
 		memberList = new HashMap<String, RaceContainer>();
 		
 		DefaultRace.createSTDMembers();
-		memberConfig = new YAMLConfigExtended(plugin.getDataFolder() + File.separator + "members.yml");
+		memberConfig = new YAMLConfigExtended(Consts.membersYML);
 		
 		memberConfig.load();
 		
-		for(String member : memberConfig.getConfigurationSection("members").getKeys(false)){
-			String raceName = memberConfig.getString("members." + member);
+		for(String member : memberConfig.getConfigurationSection("playerdata").getKeys(false)){
+			String raceName = memberConfig.getString("playerdata." + member + ".race");
 			memberList.put(member, getRaceByName(raceName));
 		}
 				
@@ -96,7 +97,7 @@ public class RaceManager {
 		RaceContainer container = getRaceByName(potentialRace);
 		if(container == null) return false;
 		memberList.put(player, container);
-		memberConfig.set("members." + player, container.getName());
+		memberConfig.set("playerdata." + player + ".race", container.getName());
 		memberConfig.save();
 		
 		return true;
@@ -105,7 +106,7 @@ public class RaceManager {
 	public boolean changePlayerRace(String player, String potentialRace){
 		if(getRaceByName(potentialRace) == null) return false;
 		memberList.remove(player);
-		memberConfig.set("members." + player, null);
+		memberConfig.set("playerdata." + player + ".race", null);
 		memberConfig.save();
 		return addPlayerToRace(player, potentialRace);
 	}

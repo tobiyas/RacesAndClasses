@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
 
 public class FallResistanceTrait extends Resistance {
 	

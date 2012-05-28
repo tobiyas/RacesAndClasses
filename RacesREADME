@@ -1,15 +1,38 @@
 Breaf Summary:
 
-Traits:
- - "DamageIncreaseTrait"
-    Increases the damage of the race. Value: 1 = normal damage. 1.5 = normal damage * 1.5, 0.5 = normal damage * 0.5
+Traits(Passive):
+-	"DamageIncreaseTrait"
+	Increases the damage of the race. Value: 1 = normal damage. 1.5 = normal damage * 1.5, 0.5 = normal damage * 0.5
 
- - "DamageReduceTrait"
-    Decreases the damage taken. Value: 1 = normal damage(100%) . 0.75 = 75% of normal damage, 1.25 = 125% of normal dmg.
+-	"DamageReduceTrait"
+	Decreases the damage taken. Value: 1 = normal damage(100%) . 0.75 = 75% of normal damage, 1.25 = 125% of normal dmg.
     
+-	"RegenerationTrait"
+	Regenerates more/less health each tick
+	
+-	"HungerReplenishTrait"
+	Replenishes more/less hunger
+	
+-	"ArmorTrait"
+	decides which sort of armor you can wear
+	
+
+Traits(Resistance):
+-	"DrainResistanceTrait"
+	Damage reduce for "drain" damage
+	
+-	"FallResistanceTrait"
+	Damage reduce for Fall-Damage
+	
+-	"FireResistanceTrait"
+	Damage reduce for fire damage
+
+
+Traits(Activate):
+-	"Coming soon"    
     
 Permissions:
--  "races.change"
+-	"races.change"
 	permission to change the actual race
 	
 -	"races.select"
@@ -43,3 +66,9 @@ Commands:
 	
 -	"/racehelp"
 	help for the plugin
+	
+-	"/traitlist"
+	lists all traits
+	
+-	"/whisper <target> <message>"
+	whispers a target a message

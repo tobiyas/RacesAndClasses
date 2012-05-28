@@ -8,6 +8,7 @@
 package de.tobiyas.races.commands;
 
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,6 +35,11 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("Only players can use this command.");
+			return true;
+		}
+		
+		if(!plugin.interactConfig().getconfig_racechat_enable()){
+			sender.sendMessage(ChatColor.RED + "RaceChat is not active.");
 			return true;
 		}
 		

@@ -29,7 +29,7 @@ public class RaceChat {
 		for(String member : members){
 			Player memberPlayer = Bukkit.getPlayer(member);
 			if(memberPlayer != null && plugin.getPermissionManager().hasAnyPermissionSilent(player, permCheck))
-				memberPlayer.sendMessage(ChatColor.AQUA + "[RaceChat] " + ChatColor.RED + player.getName() + ChatColor.WHITE + ": " + message);
+				memberPlayer.sendMessage(ChatColor.AQUA + "[RaceChat] " + ChatColor.RED + player.getName() + "§" + plugin.interactConfig().getconfig_racechat_default_color() + ": " + message);
 			
 		}
 	}

@@ -1,4 +1,4 @@
-package de.tobiyas.races.datacontainer.traitcontainer.traits.health;
+package de.tobiyas.races.datacontainer.health;
 
 import java.io.File;
 import java.io.IOException;

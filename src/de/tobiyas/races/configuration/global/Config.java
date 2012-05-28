@@ -5,7 +5,7 @@
  * powered by Kickstarter
  */
  
- package de.tobiyas.races.configuration;
+ package de.tobiyas.races.configuration.global;
 
  
  import org.bukkit.configuration.file.FileConfiguration;
@@ -19,6 +19,9 @@ import de.tobiyas.races.Races;
 	private boolean config_racechat_enable;
 	private String config_racechat_default_color;
 	
+	private boolean config_whisper_enable;
+	
+	private int config_imunBetweenDamage;
 	private int config_defaultHealth;
 
 
@@ -35,7 +38,10 @@ import de.tobiyas.races.Races;
 		config.addDefault("racechat.enable", true);
 		config.addDefault("racechat.default.color", "2");
 		
+		config.addDefault("whisper.enable", true);
+		
 		config.addDefault("health.defaultHealth", 20);
+		config.addDefault("health.imunBetweenDamage", 1000);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -50,7 +56,10 @@ import de.tobiyas.races.Races;
 		config_racechat_enable = config.getBoolean("racechat.enable", true);
 		config_racechat_default_color = config.getString("racechat.default.color", "2");
 		
+		config_whisper_enable = config.getBoolean("whisper.enable", true);
+		
 		config_defaultHealth = config.getInt("health.defaultHealth", 20);
+		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
 
 	}
 	
@@ -65,6 +74,14 @@ import de.tobiyas.races.Races;
 	
 	public int getconfig_defaultHealth(){
 		return config_defaultHealth;
+	}
+	
+	public boolean getconfig_whisperEnable(){
+		return config_whisper_enable;
+	}
+
+	public long getconfig_imunBetweenDamage() {
+		return config_imunBetweenDamage;
 	}
 
 }

@@ -10,8 +10,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
-import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthModifyContainer;
+import de.tobiyas.races.datacontainer.health.HealthManager;
+import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 
 
 public class TraitEventManager extends Observable{

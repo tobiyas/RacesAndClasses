@@ -20,10 +20,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
 
 
 public class Listener_Player implements Listener {
@@ -59,7 +59,7 @@ public class Listener_Player implements Listener {
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 		
 		if(container == null) return;
-		event.setMessage(container.getTag() + player.getName() + orgMsg);
+		event.setFormat(container.getTag() + " %1$s" + ": %2$s");
 	}
 	
 	@EventHandler
