@@ -24,7 +24,9 @@ public class RaceManager {
 	public RaceManager(){
 		manager = this;
 		plugin = Races.getPlugin();
-		
+	}
+	
+	public void init(){
 		readRaceList();
 		readMemberList();
 	}

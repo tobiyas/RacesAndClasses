@@ -18,10 +18,12 @@ import de.tobiyas.races.commands.CommandExecutor_RaceHelp;
 import de.tobiyas.races.commands.CommandExecutor_RaceList;
 import de.tobiyas.races.commands.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.CommandExecutor_Raceinfo;
+import de.tobiyas.races.commands.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.CommandExecutor_Whisper;
 import de.tobiyas.races.configuration.Config;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
 import de.tobiyas.races.listeners.Listener_Entity;
 import de.tobiyas.races.listeners.Listener_Player;
 import de.tobiyas.util.permissions.PermissionManager;
@@ -33,6 +35,8 @@ public class Races extends JavaPlugin{
 
 	private String prefix;
 	private Config config;
+	
+	private HealthManager hManager;
 	
 	private static Races plugin;
 	
@@ -48,8 +52,8 @@ public class Races extends JavaPlugin{
 
 		setupConfiguration();
 		
-		new TraitEventManager();
-		new RaceManager();
+		
+		initManagers();		
 		
 		registerEvents();
 
@@ -60,6 +64,16 @@ public class Races extends JavaPlugin{
 		log(description.getFullName() + " fully loaded with Permissions: " + permManager.getPermissionsName());
 	}
 	
+	private void initManagers(){
+		TraitEventManager tManager = new TraitEventManager();
+		RaceManager rManager = new RaceManager();
+		hManager = new HealthManager();
+		
+		tManager.init();
+		rManager.init();
+		hManager.init();
+	}
+	
 	private void registerCommands(){
 		new CommandExecutor_Race();
 		new CommandExecutor_Racechat();
@@ -67,10 +81,12 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_RaceList();
 		new CommandExecutor_RaceHelp();
 		new CommandExecutor_Whisper();
+		new CommandExecutor_TraitList();
 	}
 	
 	@Override
 	public void onDisable(){
+		hManager.saveHealthContainer();
 		log("disabled "+description.getFullName());
 
 	}

@@ -31,7 +31,7 @@ public class RaceContainer {
 	
 	private void readConfigSection(){
 		raceTag = config.getString("races." + raceName + ".config.racetag");
-		raceMaxHealth = config.getInt("races." + raceName + "config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
+		raceMaxHealth = config.getInt("races." + raceName + ".config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
 	}
 	
 	private void readTraitSection(){

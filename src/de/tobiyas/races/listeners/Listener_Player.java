@@ -17,11 +17,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
 
 
 public class Listener_Player implements Listener {
@@ -39,6 +41,8 @@ public class Listener_Player implements Listener {
 		if(container == null){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
 		}
+		
+		HealthManager.getHealthManager().checkPlayer(player.getName());
 	}
 
 	@EventHandler
@@ -61,6 +65,11 @@ public class Listener_Player implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event){
 		TraitEventManager.getTraitEventManager().modifyEvent(event);
+	}
+	
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent event){
+		HealthManager.getHealthManager().resetHealth(event.getPlayer().getName());
 	}
 
 

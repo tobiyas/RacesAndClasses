@@ -8,7 +8,9 @@ import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageIncrea
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageReduce;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.HungerReplenish;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArmorTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.RegenerationTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.DrainResistanceTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.FallResistanceTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.FireResistanceTrait;
 
 public class TraitsList{
@@ -18,13 +20,19 @@ public class TraitsList{
 	public static void initTraits(){
 		traits = new HashMap<String, Class<?>>();
 		
+		//Passives
 		addTraitToList("DamageReduceTrait", DamageReduce.class);
 		addTraitToList("DamageIncreaseTrait", DamageIncrease.class);
 		addTraitToList("HungerReplenishTrait", HungerReplenish.class);
 		addTraitToList("ArmorTrait", ArmorTrait.class);
+		addTraitToList("RegenerationTrait", RegenerationTrait.class);
 		
+		//Resistance
 		addTraitToList("FireResistanceTrait", FireResistanceTrait.class);
 		addTraitToList("DrainResistanceTrait", DrainResistanceTrait.class);
+		addTraitToList("FallResistanceTrait", FallResistanceTrait.class);
+		
+		//Activate
 		
 	}
 	

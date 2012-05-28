@@ -47,6 +47,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) == raceContainer){
 			if(getResistanceTypes().contains(Eevent.getCause())){
 				notifyObservers(new HealthModifyContainer(player.getName(), Eevent.getDamage() * value, "damage"));
+				setChanged();
 				Eevent.setDamage(0);
 				return true;
 			}

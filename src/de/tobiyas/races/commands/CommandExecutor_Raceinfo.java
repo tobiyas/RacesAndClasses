@@ -18,6 +18,7 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.Trait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.health.HealthManager;
 import de.tobiyas.races.util.consts.PermissionNode;
 
 
@@ -49,6 +50,11 @@ public class CommandExecutor_Raceinfo implements CommandExecutor {
 			if(container == null){
 				player.sendMessage(ChatColor.YELLOW + "You have no race selected.");
 				return true;
+			}
+			
+			double currentHealth = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
+			if(currentHealth != -1){
+				player.sendMessage(ChatColor.YELLOW + "Health: " + ChatColor.RED + currentHealth + "/" + container.getRaceMaxHealth());
 			}
 			
 			player.sendMessage(ChatColor.YELLOW + "Your race: " + ChatColor.LIGHT_PURPLE + container.getName());

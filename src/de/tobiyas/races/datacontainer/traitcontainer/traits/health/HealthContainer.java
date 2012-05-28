@@ -20,6 +20,10 @@ public class HealthContainer {
 		this.player = player;
 		this.currentHealth = currentHealth;
 		this.maxHealth = maxHealth;
+		
+		Player onlinePlayer = Bukkit.getPlayer(player);
+		if(onlinePlayer != null)
+			setPlayerPercentage();
 	}
 	
 	public void reduceLife(double amount){
@@ -29,16 +33,26 @@ public class HealthContainer {
 		if(currentHealth < 0) 
 			player.setHealth(0);
 		else
-			player.setHealth((int) (currentHealth/maxHealth) * 20);
+			setPlayerPercentage();
+	}
+	
+	public void setPlayerPercentage(){
+		Player player = Bukkit.getPlayer(this.player);
+		player.setHealth((int) ((currentHealth/maxHealth) * 20));
 	}
 	
 	public void increaseLife(double amount){
 		currentHealth += amount;
 		if(currentHealth > maxHealth) currentHealth = maxHealth;
+		setPlayerPercentage();
+	}
+	
+	public double getCurrentHealth(){
+		return currentHealth;
 	}
 	
 	public boolean save(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerData.yml");
+		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
 		config.load();
 		config.createSection("playerdata." + player);
 		config.set("playerdata." + player + ".currentHealth", currentHealth);
@@ -47,10 +61,10 @@ public class HealthContainer {
 	}
 	
 	public static HealthContainer constructContainerFromYML(String player){
-		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerData.yml");
+		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
 		config.load();
 		
-		double currentHealth = config.getDouble("playerdata." + player + "currentHealth");
+		double currentHealth = config.getDouble("playerdata." + player + ".currentHealth");
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
 		
 		int maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
@@ -58,6 +72,10 @@ public class HealthContainer {
 			maxHealth = container.getRaceMaxHealth();
 		
 		return new HealthContainer(player, currentHealth, maxHealth);
+	}
+
+	public void fullHeal() {
+		currentHealth = maxHealth;
 	}
 
 }
