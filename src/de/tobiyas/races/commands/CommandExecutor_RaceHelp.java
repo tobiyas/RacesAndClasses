@@ -25,8 +25,7 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("traits")){
-			
+		if(args.length == 2 && args[0].equalsIgnoreCase("traits")){			
 			Class<?> clazz = TraitsList.getClassOfTrait(args[1]);
 			if(clazz == null){
 				sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.RED + " not found.");

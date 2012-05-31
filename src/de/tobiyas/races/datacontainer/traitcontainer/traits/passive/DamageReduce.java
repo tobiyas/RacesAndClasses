@@ -14,6 +14,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 public class DamageReduce implements Trait{
 	
 	private double value;
+	private String Operation;
 	private RaceContainer raceContainer;
 
 	public DamageReduce(RaceContainer raceContainer){
@@ -38,12 +39,35 @@ public class DamageReduce implements Trait{
 	
 	@Override
 	public String getValueString(){
-		return String.valueOf(value);
+		return Operation + " " + String.valueOf(value);
 	}
 
 	@Override
-	public void setValue(Object value) {
-		this.value = (Double) value;
+	public void setValue(Object obj) {
+		String opAndVal = String.valueOf(obj);
+		value = evaluateValue(opAndVal);
+	}
+	
+	private double evaluateValue(String val){
+		char firstChar = val.charAt(0);
+		
+		Operation = "";
+		
+		if(firstChar == '+')
+			Operation = "+";
+		
+		if(firstChar == '*')
+			Operation = "*";
+		
+		if(firstChar == '-')
+			Operation = "-";
+		
+		if(Operation == "")
+			Operation = "*";
+		else
+			val = val.substring(1, val.length());
+		
+		return Double.valueOf(val);
 	}
 
 	@Override
@@ -55,11 +79,25 @@ public class DamageReduce implements Trait{
 		Player target = (Player) Eevent.getEntity();
 		
 		if(raceContainer.containsPlayer(target.getName())){
-			int newValue = (int) Math.ceil(Eevent.getDamage() * value);
+			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
 		}
 		return false;
+	}
+	
+	private double getNewValue(int oldDmg){
+		double newDmg = 0;
+		switch(Operation){
+			case "": newDmg = oldDmg * value; break;
+			case "+": newDmg = oldDmg + value; break;
+			case "-" : newDmg = oldDmg - value; break;
+			case "*": newDmg = oldDmg * value; break;
+			default:  newDmg = oldDmg * value; break;
+		}
+		
+		if(newDmg < 0) newDmg = 0;
+		return newDmg;
 	}
 	
 	public static void paistHelpForTrait(CommandSender sender) {

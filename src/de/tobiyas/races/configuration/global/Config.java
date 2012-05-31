@@ -23,6 +23,8 @@ import de.tobiyas.races.Races;
 	
 	private int config_imunBetweenDamage;
 	private int config_defaultHealth;
+	
+	private boolean config_enableDebugOutputs;
 
 
 	public Config(Races plugin){
@@ -42,6 +44,8 @@ import de.tobiyas.races.Races;
 		
 		config.addDefault("health.defaultHealth", 20);
 		config.addDefault("health.imunBetweenDamage", 1000);
+		
+		config.addDefault("debug.outputs.enable", false);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -60,6 +64,8 @@ import de.tobiyas.races.Races;
 		
 		config_defaultHealth = config.getInt("health.defaultHealth", 20);
 		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
+		
+		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", false);
 
 	}
 	
@@ -82,6 +88,10 @@ import de.tobiyas.races.Races;
 
 	public long getconfig_imunBetweenDamage() {
 		return config_imunBetweenDamage;
+	}
+	
+	public boolean getconfig_enableDebugOutputs(){
+		return config_enableDebugOutputs;
 	}
 
 }

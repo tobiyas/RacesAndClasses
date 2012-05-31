@@ -43,3 +43,18 @@ commands:
     aliases: [tlist]
     usage: |
            /traitlist
+  raceheal:
+    description: heals a player
+    aliases: [rheal,rh]
+    usage: |
+           /raceheal [PlayerName]
+  raceconfig:
+    description: changes the config of a player
+    aliases: [rconfig]
+    usage: |
+           /raconfig <attribute> <value>
+  racedebug:
+    description: debug stuff
+    aliases: [rdebug]
+    usage: |
+           /racedebug [option] [value]

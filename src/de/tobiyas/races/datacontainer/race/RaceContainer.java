@@ -43,7 +43,7 @@ public class RaceContainer {
 		for(String traitName : traitNames){
 			Trait trait = TraitStore.buildTraitByName(traitName, this);
 			if(trait != null){
-				Object value = config.get("races." + raceName + ".traits." + traitName);
+				Object value = config.getString("races." + raceName + ".traits." + traitName);
 				trait.setValue(value);
 				traits.add(trait);
 			}

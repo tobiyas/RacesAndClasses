@@ -10,9 +10,10 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
+import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.util.economy.defaults.YAMLConfigExtended;
+import de.tobiyas.races.util.consts.Consts;
 
 public class HealthManager implements Observer{
 	
@@ -41,8 +42,7 @@ public class HealthManager implements Observer{
 	
 	public void loadHealthContainer(){
 		checkFileExist();
-		YAMLConfigExtended config = new YAMLConfigExtended(plugin.getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
-		config.load();
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.membersYML).load();
 		
 		Set<String> players = config.getYAMLChildren("playerdata");
 		for(String player : players){
@@ -97,7 +97,7 @@ public class HealthManager implements Observer{
 			
 			playerHealth.put(player, new HealthContainer(player, maxHealth, (int) maxHealth));
 		}else
-			hContainer.setPlayerPercentage();
+			hContainer.checkStats();
 	}
 	
 	public static HealthManager getHealthManager(){

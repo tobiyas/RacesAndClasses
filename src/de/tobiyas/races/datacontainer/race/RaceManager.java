@@ -7,8 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.util.consts.Consts;
-import de.tobiyas.util.economy.defaults.YAMLConfigExtended;
 
 public class RaceManager {
 	
@@ -59,9 +60,8 @@ public class RaceManager {
 		memberList = new HashMap<String, RaceContainer>();
 		
 		DefaultRace.createSTDMembers();
-		memberConfig = new YAMLConfigExtended(Consts.membersYML);
 		
-		memberConfig.load();
+		memberConfig = new YAMLConfigExtended(Consts.membersYML).load();
 		
 		for(String member : memberConfig.getConfigurationSection("playerdata").getKeys(false)){
 			String raceName = memberConfig.getString("playerdata." + member + ".race");
@@ -96,8 +96,11 @@ public class RaceManager {
 	public boolean addPlayerToRace(String player, String potentialRace){
 		RaceContainer container = getRaceByName(potentialRace);
 		if(container == null) return false;
+		memberConfig.load();
+		
 		memberList.put(player, container);
 		memberConfig.set("playerdata." + player + ".race", container.getName());
+		HealthManager.getHealthManager().checkPlayer(player);
 		memberConfig.save();
 		
 		return true;
@@ -106,6 +109,7 @@ public class RaceManager {
 	public boolean changePlayerRace(String player, String potentialRace){
 		if(getRaceByName(potentialRace) == null) return false;
 		memberList.remove(player);
+		memberConfig.load();
 		memberConfig.set("playerdata." + player + ".race", null);
 		memberConfig.save();
 		return addPlayerToRace(player, potentialRace);

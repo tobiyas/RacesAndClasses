@@ -48,7 +48,7 @@ public class ArmorTrait implements Trait {
 
 	@Override
 	public void setValue(Object obj) {
-		int tempArms = (Integer)obj;
+		int tempArms = Integer.valueOf((String) obj);
 		armorPermsString = String.valueOf(tempArms);
 		
 		char[] binString = Integer.toBinaryString(tempArms).toCharArray();

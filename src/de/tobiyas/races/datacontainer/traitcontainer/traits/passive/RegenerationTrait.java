@@ -20,6 +20,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 public class RegenerationTrait extends Observable implements Trait {
 
 	private RaceContainer raceContainer;
+	private String Operation;
 	private double value;
 	
 	public RegenerationTrait(RaceContainer raceContainer){
@@ -45,12 +46,35 @@ public class RegenerationTrait extends Observable implements Trait {
 
 	@Override
 	public String getValueString() {
-		return String.valueOf(value);
+		return Operation + " " + String.valueOf(value);
 	}
 
 	@Override
 	public void setValue(Object obj) {
-		value = (Double) obj;
+		String opAndVal = String.valueOf(obj);
+		value = evaluateValue(opAndVal);
+	}
+	
+	private double evaluateValue(String val){
+		char firstChar = val.charAt(0);
+		
+		Operation = "";
+		
+		if(firstChar == '+')
+			Operation = "+";
+		
+		if(firstChar == '*')
+			Operation = "*";
+		
+		if(firstChar == '-')
+			Operation = "-";
+		
+		if(Operation == "")
+			Operation = "*";
+		else
+			val = val.substring(1, val.length());
+		
+		return Double.valueOf(val);
 	}
 
 	@Override
@@ -63,13 +87,27 @@ public class RegenerationTrait extends Observable implements Trait {
 		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) != raceContainer) return false;
 		
 		if(Eevent.getRegainReason() == RegainReason.SATIATED){
-			double amount = Eevent.getAmount() * value;
+			double amount = getNewValue(Eevent.getAmount());
 			Eevent.setAmount(0);
 			notifyObservers(new HealthModifyContainer(player.getName(), amount, "heal"));
 			setChanged();
 			return true;
 		}
 		return false;
+	}
+	
+	private double getNewValue(int oldValue){
+		double newValue = 0;
+		switch(Operation){
+			case "": newValue = oldValue * value; break;
+			case "+": newValue = oldValue + value; break;
+			case "-" : newValue = oldValue - value; break;
+			case "*": newValue = oldValue * value; break;
+			default:  newValue = oldValue * value; break;
+		}
+		
+		if(newValue < 0) newValue = 0;
+		return newValue;
 	}
 	
 	public static void paistHelpForTrait(CommandSender sender) {

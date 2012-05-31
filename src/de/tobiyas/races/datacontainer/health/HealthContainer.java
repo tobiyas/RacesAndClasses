@@ -5,12 +5,16 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
+import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.races.configuration.member.MemberConfig;
+import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.util.economy.defaults.YAMLConfigExtended;
 
 public class HealthContainer {
 	
+	@SuppressWarnings("unused")
+	private HealthDisplay display;
 	private String player;
 	
 	private double currentHealth;
@@ -23,11 +27,17 @@ public class HealthContainer {
 		this.currentHealth = currentHealth;
 		this.maxHealth = maxHealth;
 		
+		if(currentHealth > maxHealth) currentHealth = maxHealth;
 		lastDamage = System.currentTimeMillis();
 		
 		Player onlinePlayer = Bukkit.getPlayer(player);
 		if(onlinePlayer != null)
 			setPlayerPercentage();
+		
+		MemberConfig memberConfig = MemberConfigManager.getInstance().getConfigOfPlayer(player);
+		if(memberConfig != null){
+			display = new HealthDisplay(memberConfig, this);
+		}
 	}
 	
 	public void reduceLife(double amount){
@@ -47,6 +57,8 @@ public class HealthContainer {
 	
 	public void setPlayerPercentage(){
 		Player player = Bukkit.getPlayer(this.player);
+		if(player == null) return;
+		if(currentHealth > maxHealth) currentHealth = maxHealth;
 		player.setHealth((int) ((currentHealth/maxHealth) * 20));
 	}
 	
@@ -60,10 +72,20 @@ public class HealthContainer {
 		return currentHealth;
 	}
 	
+	public int getMaxHealth(){
+		return maxHealth;
+	}
+	
+	public void setMaxHealth(int maxHealth){
+		this.maxHealth = maxHealth;
+		setPlayerPercentage();
+	}
+	
 	public boolean save(){
 		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
 		config.load();
-		config.createSection("playerdata." + player);
+		if(!config.isConfigurationSection("playerdata." + player))
+			config.createSection("playerdata." + player);
 		config.set("playerdata." + player + ".currentHealth", currentHealth);
 		
 		return config.save();
@@ -85,6 +107,20 @@ public class HealthContainer {
 
 	public void fullHeal() {
 		currentHealth = maxHealth;
+		setPlayerPercentage();
+	}
+
+	public void checkStats() {
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
+		if(container == null) 
+			maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+		else{
+			int tempMaxHealth = container.getRaceMaxHealth();
+			if(tempMaxHealth <= 0) return;
+			maxHealth = tempMaxHealth;
+		}
+		
+		setPlayerPercentage();
 	}
 
 }

@@ -31,16 +31,6 @@ public class FireResistanceTrait extends Resistance {
 	public Object getValue() {
 		return value;
 	}
-
-	@Override
-	public String getValueString() {
-		return String.valueOf(value);
-	}
-
-	@Override
-	public void setValue(Object obj) {
-		value = (Double) obj;
-	}
 	
 	public static void paistHelpForTrait(CommandSender sender) {
 		sender.sendMessage(ChatColor.RED + "Nothing here yet.");

@@ -30,14 +30,4 @@ public class FallResistanceTrait extends Resistance {
 		return value;
 	}
 
-	@Override
-	public String getValueString() {
-		return String.valueOf(value);
-	}
-
-	@Override
-	public void setValue(Object obj) {
-		value = (Double) obj;
-	}
-
 }

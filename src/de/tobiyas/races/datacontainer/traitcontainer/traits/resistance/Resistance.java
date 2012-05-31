@@ -18,6 +18,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	protected List<DamageCause> resistances;
 	protected RaceContainer raceContainer;
 	protected double value;
+	protected String Operation = "";
 	
 	@Override
 	public abstract String getName();
@@ -31,10 +32,37 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	public abstract Object getValue();
 
 	@Override
-	public abstract String getValueString();
+	public String getValueString(){
+		return Operation + " " + value;
+	}
 
 	@Override
-	public abstract void setValue(Object obj);
+	public void setValue(Object obj) {
+		String opAndVal = String.valueOf(obj);
+		value = evaluateValue(opAndVal);
+	}
+	
+	private double evaluateValue(String val){
+		char firstChar = val.charAt(0);
+		
+		Operation = "";
+		
+		if(firstChar == '+')
+			Operation = "+";
+		
+		if(firstChar == '*')
+			Operation = "*";
+		
+		if(firstChar == '-')
+			Operation = "-";
+		
+		if(Operation == "")
+			Operation = "*";
+		else
+			val = val.substring(1, val.length());
+		
+		return Double.valueOf(val);
+	}
 
 	@Override
 	public boolean modify(Event event) {
@@ -46,7 +74,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		Player player = (Player) entity;
 		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) == raceContainer){
 			if(getResistanceTypes().contains(Eevent.getCause())){
-				notifyObservers(new HealthModifyContainer(player.getName(), Eevent.getDamage() * value, "damage"));
+				notifyObservers(new HealthModifyContainer(player.getName(), getNewValue(Eevent.getDamage()), "damage"));
 				setChanged();
 				Eevent.setDamage(0);
 				return true;
@@ -54,6 +82,20 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		}
 		
 		return false;
+	}
+	
+	private double getNewValue(int oldDmg){
+		double newDmg = 0;
+		switch(Operation){
+			case "": newDmg = oldDmg * value; break;
+			case "+": newDmg = oldDmg + value; break;
+			case "-" : newDmg = oldDmg - value; break;
+			case "*": newDmg = oldDmg * value; break;
+			default:  newDmg = oldDmg * value; break;
+		}
+		
+		if(newDmg < 0) newDmg = 0;
+		return newDmg;
 	}
 	
 	@Override
