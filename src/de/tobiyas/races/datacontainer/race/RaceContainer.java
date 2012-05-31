@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.NormalArrow;
 
 public class RaceContainer {
 
@@ -49,6 +50,11 @@ public class RaceContainer {
 			}
 		}
 		
+		addSTDTraits();
+	}
+	
+	private void addSTDTraits(){
+		traits.add(new NormalArrow(this));
 	}
 	
 	/**
@@ -80,6 +86,15 @@ public class RaceContainer {
 	
 	public Set<Trait> getTraits(){
 		return traits;
+	}
+	
+	public Set<Trait> getVisibleTraits(){
+		Set<Trait> traitSet = new HashSet<Trait>();
+		for(Trait trait : traits)
+			if(trait.isVisible())
+				traitSet.add(trait);
+		
+		return traitSet;
 	}
 	
 	public int getRaceMaxHealth(){

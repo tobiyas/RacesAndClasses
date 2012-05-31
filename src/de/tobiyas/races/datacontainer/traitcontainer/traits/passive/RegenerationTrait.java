@@ -113,5 +113,10 @@ public class RegenerationTrait extends Observable implements Trait {
 	public static void paistHelpForTrait(CommandSender sender) {
 		sender.sendMessage(ChatColor.RED + "Nothing here yet :(");
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 
 }

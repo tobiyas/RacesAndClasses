@@ -104,4 +104,9 @@ public class DamageReduce implements Trait{
 		sender.sendMessage(ChatColor.RED + "Nothing to see yet.");
 		return;
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 }

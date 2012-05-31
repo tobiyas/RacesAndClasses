@@ -8,6 +8,7 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.configuration.member.MemberConfig;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
+import de.tobiyas.races.datacontainer.arrow.ArrowManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 
@@ -15,6 +16,7 @@ public class HealthContainer {
 	
 	@SuppressWarnings("unused")
 	private HealthDisplay display;
+	private ArrowManager arrowManager;
 	private String player;
 	
 	private double currentHealth;
@@ -38,6 +40,8 @@ public class HealthContainer {
 		if(memberConfig != null){
 			display = new HealthDisplay(memberConfig, this);
 		}
+		
+		arrowManager = new ArrowManager(player);
 	}
 	
 	public void reduceLife(double amount){
@@ -121,6 +125,10 @@ public class HealthContainer {
 		}
 		
 		setPlayerPercentage();
+	}
+	
+	public ArrowManager getArrowManager(){
+		return arrowManager;
 	}
 
 }

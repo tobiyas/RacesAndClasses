@@ -26,6 +26,7 @@ import de.tobiyas.races.Races;
 	
 	private boolean config_enableDebugOutputs;
 
+	private int config_globalUplinkTickPresition;
 
 	public Config(Races plugin){
 		this.plugin = plugin;
@@ -46,6 +47,8 @@ import de.tobiyas.races.Races;
 		config.addDefault("health.imunBetweenDamage", 1000);
 		
 		config.addDefault("debug.outputs.enable", false);
+		
+		config.addDefault("uplink.globalTickPresition", 10);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -66,6 +69,8 @@ import de.tobiyas.races.Races;
 		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
 		
 		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", false);
+		
+		config_globalUplinkTickPresition = config.getInt("uplink.globalTickPresition", 10);
 
 	}
 	
@@ -92,6 +97,10 @@ import de.tobiyas.races.Races;
 	
 	public boolean getconfig_enableDebugOutputs(){
 		return config_enableDebugOutputs;
+	}
+	
+	public int getconfig_globalUplinkTickPresition(){
+		return config_globalUplinkTickPresition;
 	}
 
 }

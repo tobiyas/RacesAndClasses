@@ -29,5 +29,10 @@ public class FallResistanceTrait extends Resistance {
 	public Object getValue() {
 		return value;
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 
 }

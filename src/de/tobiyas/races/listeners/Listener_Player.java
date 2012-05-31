@@ -16,10 +16,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
@@ -43,11 +46,17 @@ public class Listener_Player implements Listener {
 		}
 		
 		HealthManager.getHealthManager().checkPlayer(player.getName());
+		MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());
 	}
 
 	@EventHandler
 	public void onPlayerExpChange(PlayerExpChangeEvent event){
 		// TODO handle that event
+	}
+	
+	@EventHandler
+	public void onPlayerSpritToggle(PlayerToggleSprintEvent event){
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 	
 	@EventHandler
@@ -70,6 +79,11 @@ public class Listener_Player implements Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event){
 		HealthManager.getHealthManager().resetHealth(event.getPlayer().getName());
+	}
+	
+	@EventHandler
+	public void onPlayerInterace(PlayerInteractEvent event){
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 

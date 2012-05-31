@@ -8,6 +8,8 @@ import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import de.tobiyas.races.Races;
+
 
 public class YAMLConfigExtended extends YamlConfiguration {
 
@@ -57,7 +59,7 @@ public class YAMLConfigExtended extends YamlConfiguration {
 		
 		File saveFile = fileCheck(savePath);
 		if(saveFile == null) {
-			System.out.println("saveFile == null: " + savePath);
+			Races.getPlugin().log("saveFile == null: " + savePath);
 			validLoad = false;
 			return this;
 		}
@@ -66,7 +68,7 @@ public class YAMLConfigExtended extends YamlConfiguration {
 			load(saveFile);
 		} catch (Exception e) {
 			validLoad = false;
-			System.out.println("Error on loading YamlConfig: " + savePath);
+			Races.getPlugin().log("Error on loading YamlConfig: " + savePath);
 			return this;
 		}
 		

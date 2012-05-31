@@ -36,5 +36,10 @@ public class DrainResistanceTrait extends Resistance{
 		sender.sendMessage(ChatColor.RED + "Nothing here yet.");
 		//TODO
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 
 }

@@ -100,5 +100,10 @@ public class ArmorTrait implements Trait {
 		sender.sendMessage(ChatColor.YELLOW + "Combine the numbers and you have your Permissions.");
 		return;
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 
 }

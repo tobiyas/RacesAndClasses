@@ -25,9 +25,11 @@ import de.tobiyas.races.commands.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.CommandExecutor_Whisper;
 import de.tobiyas.races.configuration.global.Config;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
+import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
 import de.tobiyas.races.listeners.Listener_Entity;
 import de.tobiyas.races.listeners.Listener_Player;
 import de.tobiyas.util.debug.logger.DebugLogger;
@@ -57,26 +59,27 @@ public class Races extends JavaPlugin{
 		
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
-		initManagers();
 		
+		initManagers();
 		registerEvents();
-
 		registerCommands();
 
-		permManager = new PermissionManager(this);
-
-		log(description.getFullName() + " fully loaded with Permissions: " + permManager.getPermissionsName());
+		loadingDoneMessage();
 	}
 	
 	private void initManagers(){
 		setupConfiguration();
 		
-		new MemberConfigManager();
+		MemberConfigManager mcManager = new MemberConfigManager();
+		TraitConfigManager tcManager = new TraitConfigManager();
 		
 		TraitEventManager tManager = new TraitEventManager();
 		RaceManager rManager = new RaceManager();
 		hManager = new HealthManager();
+		permManager = new PermissionManager(this);
 		
+		mcManager.init();
+		tcManager.init();
 		tManager.init();
 		rManager.init();
 		hManager.init();
@@ -114,6 +117,14 @@ public class Races extends JavaPlugin{
 	private void registerEvents(){
 		new Listener_Player();
 		new Listener_Entity();
+	}
+	
+	private void loadingDoneMessage(){
+		int traits = TraitsList.getAllTraits().size();
+		int races = RaceManager.getManager().listAllRaces().size();
+		
+		log("loaded: " + traits + " traits and:" + races + " races");
+		log(description.getFullName() + " fully loaded with Permissions: " + permManager.getPermissionsName());
 	}
 
 

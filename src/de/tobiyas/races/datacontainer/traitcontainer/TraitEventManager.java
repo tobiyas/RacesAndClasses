@@ -3,7 +3,6 @@ package de.tobiyas.races.datacontainer.traitcontainer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Observable;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -12,6 +11,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.TraitsWithUplink;
 
 
 public class TraitEventManager extends Observable{
@@ -20,6 +20,8 @@ public class TraitEventManager extends Observable{
 	private LinkedList<Trait> traitList;
 	private HashMap<Integer, Long> eventIDs;
 	
+	private UplinkReducer uplinkReducer;
+	
 
 	public TraitEventManager(){
 		TraitsList.initTraits();
@@ -27,6 +29,7 @@ public class TraitEventManager extends Observable{
 		traitList = new LinkedList<Trait>();
 		eventIDs = new HashMap<Integer, Long>();
 		new DoubleEventRemover(this);
+		uplinkReducer = new UplinkReducer();
 	}
 	
 	public void init(){
@@ -89,6 +92,8 @@ public class TraitEventManager extends Observable{
 	
 	public void registerTrait(Trait trait){
 		traitList.add(trait);
+		if(trait instanceof TraitsWithUplink)
+			uplinkReducer.registerTrait((TraitsWithUplink) trait);
 	}
 	
 	public void unregisterTrait(Trait trait){

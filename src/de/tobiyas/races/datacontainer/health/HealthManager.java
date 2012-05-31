@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.races.datacontainer.arrow.ArrowManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.util.consts.Consts;
@@ -145,6 +146,10 @@ public class HealthManager implements Observer{
 		HealthContainer container = playerHealth.get(player);
 		if(container == null) return;
 		container.fullHeal();
+	}
+
+	public ArrowManager getArrowManagerOfPlayer(String playerName) {
+		return playerHealth.get(playerName).getArrowManager();
 	}
 
 }

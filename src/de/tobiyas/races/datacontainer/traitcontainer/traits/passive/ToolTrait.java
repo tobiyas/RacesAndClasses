@@ -63,5 +63,10 @@ public class ToolTrait implements Trait{
 	public static void paistHelpForTrait(CommandSender sender){
 		sender.sendMessage(ChatColor.RED + "Nothing to see here yet.");
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
 
 }

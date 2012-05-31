@@ -51,9 +51,6 @@ public class RaceManager {
 			if(container != null)
 				races.add(container);
 		}
-		
-		plugin.log(races.size() + " races loaded.");
-		
 	}
 	
 	private void readMemberList(){

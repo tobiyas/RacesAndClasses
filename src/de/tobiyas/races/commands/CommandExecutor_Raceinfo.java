@@ -62,7 +62,7 @@ public class CommandExecutor_Raceinfo implements CommandExecutor {
 			
 			player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
 			
-			for(Trait trait : container.getTraits()){
+			for(Trait trait : container.getVisibleTraits()){
 				player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getValueString());
 			}
 			

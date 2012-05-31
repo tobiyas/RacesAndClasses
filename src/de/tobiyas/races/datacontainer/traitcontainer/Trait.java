@@ -17,4 +17,6 @@ public interface Trait{
 	public void setValue(Object obj);
 	
 	public boolean modify(Event event);
+	
+	public boolean isVisible();
 }
