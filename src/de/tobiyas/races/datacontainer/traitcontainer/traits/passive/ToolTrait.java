@@ -5,8 +5,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
 import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class ToolTrait implements Trait{
 
@@ -56,7 +56,7 @@ public class ToolTrait implements Trait{
 
 	@Override
 	public boolean modify(Event event) {
-		// TODO Auto-generated method stub
+		// TODO ImplementMe
 		return false;
 	}
 	

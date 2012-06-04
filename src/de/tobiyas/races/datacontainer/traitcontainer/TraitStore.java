@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class TraitStore {
 
@@ -42,7 +43,7 @@ public class TraitStore {
 		
 		for(File file : possibleTraits){
 			System.out.println("possible Trait: " + file.toString());
-			//TODO: Load Trait
+			//TODO: Load Trait From File
 		}
 		
 		return traits;

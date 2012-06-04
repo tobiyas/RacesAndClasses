@@ -1,10 +1,14 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 
@@ -46,7 +50,7 @@ public class FireArrowTrait extends AbstractArrow {
 	}
 	
 	@Override
-	protected boolean onHit(EntityDamageByEntityEvent event){
+	protected boolean onHitEntity(EntityDamageByEntityEvent event){
 		Entity hitTarget = event.getEntity();
 		hitTarget.setFireTicks(duration * 20);
 		return true;
@@ -62,4 +66,14 @@ public class FireArrowTrait extends AbstractArrow {
 		return "Fire Arrow";
 	}
 
+	@Override
+	protected boolean onHitLocation(ProjectileHitEvent event) {
+		//Not needed
+		return false;
+	}
+
+	public static void pasteHelpForTrait(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "If you hit an enemy with an arrow and choosen the Fire Arrow as current arrow,");
+		sender.sendMessage(ChatColor.YELLOW + "He will start burning.");
+	}
 }

@@ -1,4 +1,4 @@
-package de.tobiyas.races.datacontainer.traitcontainer;
+package de.tobiyas.races.datacontainer.traitcontainer.traits;
 
 import org.bukkit.event.Event;
 

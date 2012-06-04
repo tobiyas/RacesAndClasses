@@ -38,7 +38,7 @@ public class Listener_Entity extends Observable implements Listener {
 
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event){
-		// TODO handle that event
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 
 	@EventHandler
@@ -53,7 +53,7 @@ public class Listener_Entity extends Observable implements Listener {
 
 	@EventHandler
 	public void onEntityShootBow(EntityShootBowEvent event){
-		// TODO handle that event
+		TraitEventManager.getTraitEventManager().modifyEvent(event);
 	}
 	
 	@EventHandler

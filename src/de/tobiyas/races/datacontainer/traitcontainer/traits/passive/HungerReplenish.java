@@ -8,8 +8,8 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class HungerReplenish implements Trait {
 	
@@ -105,8 +105,8 @@ public class HungerReplenish implements Trait {
 		return newDmg;
 	}
 	
-	public static void paistHelpForTrait(CommandSender sender) {
-		sender.sendMessage(ChatColor.RED + "Nothing to see yet.");
+	public static void pasteHelpForTrait(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "Your hunger gained will be modified by a value.");
 		return;
 	}
 	

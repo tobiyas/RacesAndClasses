@@ -40,14 +40,15 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 		}
 		
 		if(args.length == 1){
+			String otherName = args[0];
 			if(plugin.getPermissionManager().checkPermissions(sender, PermissionNode.healOther)){
-				Player other = Bukkit.getPlayer(args[0]);
+				Player other = Bukkit.getPlayer(otherName);
 				if(other != null){
 					Player player = (Player) sender;
 					HealthManager.getHealthManager().resetHealth(other.getName());
 					other.sendMessage(ChatColor.GREEN + "You have been healed from: " + ChatColor.LIGHT_PURPLE + player.getName());
 					player.sendMessage(ChatColor.GREEN + "You have healed: " + ChatColor.LIGHT_PURPLE +  other.getName());
-				}else sender.sendMessage(ChatColor.RED + "You have to be a Player to use this command.");
+				}else sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.LIGHT_PURPLE + otherName + ChatColor.RED + " could not be found.");
 			}else return true;
 		}
 		

@@ -26,24 +26,28 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 			String label, String[] args) {
 		
 		if(args.length == 2 && args[0].equalsIgnoreCase("traits")){			
-			Class<?> clazz = TraitsList.getClassOfTrait(args[1]);
-			if(clazz == null){
-				sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.RED + " not found.");
-				return true;
-			}
-			
-			try{
-				sender.sendMessage(ChatColor.YELLOW + "===Trait: " + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + "===");
-				clazz.getMethod("paistHelpForTrait", CommandSender.class).invoke(clazz, sender);
-			}catch(Exception e){
-				sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.RED + " has no Help");
-				return true;
-			}
-			
-			return true;
+			return outTraitHelp(sender, args[1]);
 		}
 		
 		sender.sendMessage(ChatColor.RED + "Not implemented yet.");
+		
+		return true;
+	}
+	
+	private boolean outTraitHelp(CommandSender sender, String trait){		
+		Class<?> clazz = TraitsList.getClassOfTrait(trait);
+		if(clazz == null){
+			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " not found.");
+			return true;
+		}
+		
+		try{
+			sender.sendMessage(ChatColor.YELLOW + "===Trait: " + ChatColor.YELLOW + trait + ChatColor.YELLOW + "===");
+			clazz.getMethod("pasteHelpForTrait", CommandSender.class).invoke(clazz, sender);
+		}catch(Exception e){
+			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " has no Help");
+			return true;
+		}
 		
 		return true;
 	}

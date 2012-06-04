@@ -7,6 +7,7 @@ import java.util.List;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.SprintTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.TrollbloodTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.FireArrowTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.TeleportArrowTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageReduce;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.HungerReplenish;
@@ -42,6 +43,7 @@ public class TraitsList{
 		
 		//Arrows
 		addTraitToList("FireArrowTrait", FireArrowTrait.class);
+		addTraitToList("TeleportArrowTrait", TeleportArrowTrait.class);
 	}
 	
 	public static void addTraitToList(String trait, Class<?> traitClass){

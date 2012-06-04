@@ -29,7 +29,15 @@ Traits(Resistance):
 
 
 Traits(Activate):
--	"Coming soon"    
+-	"SprintTrait"
+	Enables Sprint for a short amount of time. Activated by holding item in hand (see config, default: apple) and toggleing sprinting.
+
+-	"TrollbloodTrait"
+	Removes all poisons (hitting somewhere with item in hand (default: apple))
+	
+Traits(Arrows):
+-	"FireArrowTrait"
+	Hitted target goes up in flames and gets damage
     
 Permissions:
 -	"races.change"
@@ -49,6 +57,15 @@ Permissions:
 	
 -	"races.raceinfo.display"
 	permission to use the /raceinfo command
+	
+-	"race.heal.self"
+	permission to heal self (/raceheal)
+	
+-	"race.healt.other"
+	permission to heal someone else (/raceheal <playername>)
+	
+-	"races.debug"
+	permission to use /racedebug commands
 	
 	
 Commands:
@@ -72,3 +89,12 @@ Commands:
 	
 -	"/whisper <target> <message>"
 	whispers a target a message
+	
+-	"/raceconfig <attribute> <value>"
+	changes attributes in personal config
+	
+-	"/racedebug <debugcommand>"
+	runs a debug command
+	
+-	"/raceheal [player]"
+	heals player

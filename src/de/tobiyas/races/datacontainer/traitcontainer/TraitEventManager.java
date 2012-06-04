@@ -9,12 +9,16 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
+import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.TraitsWithUplink;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 
 public class TraitEventManager extends Observable{
+	
+	private Races plugin;
 	
 	private static TraitEventManager manager;
 	private LinkedList<Trait> traitList;
@@ -24,6 +28,7 @@ public class TraitEventManager extends Observable{
 	
 
 	public TraitEventManager(){
+		plugin = Races.getPlugin();
 		TraitsList.initTraits();
 		manager = this;
 		traitList = new LinkedList<Trait>();
@@ -46,8 +51,15 @@ public class TraitEventManager extends Observable{
 			eventIDs.put(event.hashCode(), System.currentTimeMillis());
 		
 		for(Trait trait: traitList){
-			if(trait.modify(event))
-				changedSomething = true;
+			try{
+				if(trait.modify(event))
+					changedSomething = true;
+			}catch(Exception e){
+				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of race: " + 
+						trait.getRace().getName() + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());
+				
+				e.printStackTrace();
+			}
 		}
 		
 		if(event instanceof EntityDamageEvent){

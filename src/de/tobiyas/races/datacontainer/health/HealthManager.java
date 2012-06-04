@@ -110,7 +110,6 @@ public class HealthManager implements Observer{
 		if(dmgContainer == null) return;
 		
 		HealthModifyContainer hmContainer = (HealthModifyContainer) dmgContainer;
-		System.out.println("HealthManager update!" + hmContainer.getPlayer() + hmContainer.getAmount() + getHealthOfPlayer(hmContainer.getPlayer()));
 		switch(hmContainer.getOperation()){
 			case "heal" : heal(hmContainer); break;
 			case "damage" : damage(hmContainer); break;

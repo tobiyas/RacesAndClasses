@@ -14,8 +14,8 @@ import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class RegenerationTrait extends Observable implements Trait {
 

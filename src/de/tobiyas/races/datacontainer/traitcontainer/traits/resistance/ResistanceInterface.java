@@ -3,7 +3,7 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.resistance;
 import java.util.List;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public interface ResistanceInterface extends Trait{
 	

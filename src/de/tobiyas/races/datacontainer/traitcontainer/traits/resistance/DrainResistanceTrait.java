@@ -32,9 +32,8 @@ public class DrainResistanceTrait extends Resistance{
 		return value;
 	}
 	
-	public static void paistHelpForTrait(CommandSender sender) {
-		sender.sendMessage(ChatColor.RED + "Nothing here yet.");
-		//TODO
+	public static void pasteHelpForTrait(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "You get less damage from draining."); 
 	}
 	
 	@Override

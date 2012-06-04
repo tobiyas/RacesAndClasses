@@ -2,6 +2,8 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
 
@@ -32,7 +34,7 @@ public class NormalArrow extends AbstractArrow {
 	}
 
 	@Override
-	protected boolean onHit(EntityDamageByEntityEvent event) {
+	protected boolean onHitEntity(EntityDamageByEntityEvent event) {
 		return false;
 	}
 
@@ -46,4 +48,9 @@ public class NormalArrow extends AbstractArrow {
 		return false;
 	}
 
+	@Override
+	protected boolean onHitLocation(ProjectileHitEvent event) {
+		//Not needed
+		return false;
+	}
 }

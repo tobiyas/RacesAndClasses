@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.util.items.ItemUtils;
 import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
 
@@ -90,7 +90,7 @@ public class ArmorTrait implements Trait {
 	
 	
 
-	public static void paistHelpForTrait(CommandSender sender) {
+	public static void pasteHelpForTrait(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "The Value is defined as a binary.");
 		sender.sendMessage(ChatColor.YELLOW + "binary 1 = Leather-Armor");
 		sender.sendMessage(ChatColor.YELLOW + "binary 2 = Iron-Armor");

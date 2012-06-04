@@ -47,12 +47,16 @@ public class HealthContainer {
 	public void reduceLife(double amount){
 		if((System.currentTimeMillis() - lastDamage) < Races.getPlugin().interactConfig().getconfig_imunBetweenDamage())
 			return;
+
+		Player player = Bukkit.getPlayer(this.player);
+		if(player == null) return;
 		
 		currentHealth -= amount;
-		Player player = Bukkit.getPlayer(this.player);
-				
-		if(currentHealth < 0) 
+		
+		if(currentHealth < 0){
+			if(player.isDead()) return;
 			player.setHealth(0);
+		}
 		else
 			setPlayerPercentage();
 		
@@ -63,6 +67,7 @@ public class HealthContainer {
 		Player player = Bukkit.getPlayer(this.player);
 		if(player == null) return;
 		if(currentHealth > maxHealth) currentHealth = maxHealth;
+		if(currentHealth < 0) currentHealth = 0;
 		player.setHealth((int) ((currentHealth/maxHealth) * 20));
 	}
 	
@@ -123,7 +128,7 @@ public class HealthContainer {
 			if(tempMaxHealth <= 0) return;
 			maxHealth = tempMaxHealth;
 		}
-		
+		arrowManager.rescanClass();
 		setPlayerPercentage();
 	}
 	

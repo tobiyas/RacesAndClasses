@@ -5,7 +5,7 @@ import java.util.Set;
 
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.AbstractArrow;
 
 public class ArrowManager {
@@ -25,7 +25,7 @@ public class ArrowManager {
 		rescanClass();
 	}
 	
-	private void rescanClass(){
+	public void rescanClass(){
 		arrows = new ArrayList<AbstractArrow>();
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
 		Set<Trait> traits = container.getTraits();

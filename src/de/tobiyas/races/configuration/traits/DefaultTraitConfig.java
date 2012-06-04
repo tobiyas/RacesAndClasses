@@ -15,6 +15,8 @@ public class DefaultTraitConfig {
 		
 		createTraitConfig("SprintTrait", "trait.uplink", 40, false);
 		createTraitConfig("SprintTrait", "trait.iteminhand", 260, true);
+		
+		createTraitConfig("TeleportArrowTrait", "trait.uplink", 60, false);
 	}
 	
 	private static void createTraitConfig(String traitName, String config, Object value, boolean force){

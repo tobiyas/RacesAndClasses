@@ -6,8 +6,8 @@ import java.util.Set;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.traitcontainer.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.NormalArrow;
 
 public class RaceContainer {

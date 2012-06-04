@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
@@ -16,6 +17,7 @@ import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class SprintTrait implements TraitsWithUplink {
 
@@ -130,6 +132,11 @@ public class SprintTrait implements TraitsWithUplink {
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+	
+	public static void pasteHelpForTrait(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "The trait lets you sprint (move faster) for a short time.");
+		sender.sendMessage(ChatColor.YELLOW + "It can be used by toggleing sprint with a " + ChatColor.LIGHT_PURPLE + Material.getMaterial(itemIDInHand).name() + ChatColor.YELLOW + " in hands.");
 	}
 
 }

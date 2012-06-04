@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -47,11 +46,6 @@ public class Listener_Player implements Listener {
 		
 		HealthManager.getHealthManager().checkPlayer(player.getName());
 		MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());
-	}
-
-	@EventHandler
-	public void onPlayerExpChange(PlayerExpChangeEvent event){
-		// TODO handle that event
 	}
 	
 	@EventHandler
