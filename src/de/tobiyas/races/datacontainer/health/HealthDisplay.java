@@ -35,28 +35,31 @@ public class HealthDisplay implements Runnable {
 			Player player = Bukkit.getPlayer(playerName);
 			if(player != null && healthContainer != null && 
 				oldValue != healthContainer.getCurrentHealth()){
-				
-				double newValue = healthContainer.getCurrentHealth();
-				int maxHealth = healthContainer.getMaxHealth();
-				
-				int healthAbs = (int) ((newValue / maxHealth) * (Consts.healthBarLength));
-				if(healthAbs < 0) healthAbs = 0;
-				if(healthAbs > maxHealth) healthAbs = maxHealth;
-				
-				String healthLeft = ChatColor.GREEN + "";
-				for(int i = 0; i < healthAbs; i++)
-					healthLeft += "|";
-				
-				String healthRest = ChatColor.RED + "";
-				for(int i = healthAbs; i < Consts.healthBarLength; i++)
-					healthRest += "|";
-				
-				player.sendMessage(ChatColor.YELLOW + "Health: " + healthLeft + healthRest + 
-						ChatColor.YELLOW + " " + getColorOfPercent(newValue, maxHealth) + 
-						newValue + ChatColor.YELLOW + "/" + ChatColor.GREEN + maxHealth);
-				oldValue = newValue;
+				display(player);
 			}
 		}
+	}
+	
+	private void display(Player player){
+		double newValue = healthContainer.getCurrentHealth();
+		int maxHealth = healthContainer.getMaxHealth();
+		
+		int healthAbs = (int) ((newValue / maxHealth) * (Consts.healthBarLength));
+		if(healthAbs < 0) healthAbs = 0;
+		if(healthAbs > maxHealth) healthAbs = maxHealth;
+		
+		String healthLeft = ChatColor.GREEN + "";
+		for(int i = 0; i < healthAbs; i++)
+			healthLeft += "|";
+		
+		String healthRest = ChatColor.RED + "";
+		for(int i = healthAbs; i < Consts.healthBarLength; i++)
+			healthRest += "|";
+		
+		player.sendMessage(ChatColor.YELLOW + "Health: " + healthLeft + healthRest + 
+				ChatColor.YELLOW + " " + getColorOfPercent(newValue, maxHealth) + 
+				newValue + ChatColor.YELLOW + "/" + ChatColor.GREEN + maxHealth);
+		oldValue = newValue;
 	}
 	
 	private void checkInterval(){
@@ -84,6 +87,10 @@ public class HealthDisplay implements Runnable {
 			return ChatColor.RED;
 		
 		return ChatColor.LIGHT_PURPLE;
+	}
+
+	public void forceHPOut(Player player) {
+		display(player);
 	}
 
 }

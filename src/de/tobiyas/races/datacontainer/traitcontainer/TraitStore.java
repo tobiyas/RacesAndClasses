@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class TraitStore {
@@ -16,10 +17,27 @@ public class TraitStore {
 		
 		try{
 			Trait trait = (Trait) clazz.getConstructor(RaceContainer.class).newInstance(container);
+			if(trait != null)
+				trait.generalInit();
 			return trait;
 		}
 		catch(Exception e){
 			Races.getPlugin().log("Could not Construct trait: " + traitName);
+			return null;
+		}
+	}
+	
+	public static Trait buildTraitByName(String traitName, ClassContainer container){
+		Class<?> clazz = TraitsList.getClassOfTrait(traitName);
+		
+		try{
+			Trait trait = (Trait) clazz.getConstructor(ClassContainer.class).newInstance(container);
+			if(trait != null)
+				trait.generalInit();
+			return trait;
+		}
+		catch(Exception e){
+			Races.getPlugin().log("Could not Construct trait: '" + traitName + "' Error: " + e.getLocalizedMessage());
 			return null;
 		}
 	}

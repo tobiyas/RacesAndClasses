@@ -9,6 +9,7 @@ public class Consts {
 	//Paths
 	public static final String membersYML = Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml";
 	public static final String racesYML = Races.getPlugin().getDataFolder() + File.separator + "races.yml";
+	public static final String classesYML = Races.getPlugin().getDataFolder() + File.separator + "classes.yml";
 	
 	public static final String traitConfigDir = Races.getPlugin().getDataFolder() + File.separator + "TraitConfig" + File.separator;
 	

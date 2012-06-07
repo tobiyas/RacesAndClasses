@@ -5,7 +5,7 @@
  * powered by Kickstarter
  */
 
-package de.tobiyas.races.commands;
+package de.tobiyas.races.commands.races;
 
 
 import org.bukkit.ChatColor;
@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.util.consts.PermissionNode;
 

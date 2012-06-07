@@ -2,30 +2,27 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
 import java.util.HashSet;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.potion.PotionEffectTypeWrapper;
 
 import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
-public class FireArrowTrait extends AbstractArrow {
-	
-	public FireArrowTrait(RaceContainer raceContainer){
+public class PoisonArrowTrait extends AbstractArrow {
+
+	public PoisonArrowTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
 	}
 	
-	public FireArrowTrait(ClassContainer classContainer){
+	public PoisonArrowTrait(ClassContainer classContainer){
 		this.classContainer = classContainer;
 	}
 	
@@ -33,19 +30,24 @@ public class FireArrowTrait extends AbstractArrow {
 	public void generalInit(){
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
 		listenedEvents.add(EntityDamageByEntityEvent.class);
-		listenedEvents.add(PlayerInteractEvent.class);
-		listenedEvents.add(EntityShootBowEvent.class);
+		listenedEvents.add(ProjectileHitEvent.class);
+		listenedEvents.add(PlayerInteractEvent.class);;
 		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override
+	public boolean isVisible() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
-		return "FireArrowTrait";
+		return "PoisonArrowTrait";
 	}
 
 	@Override
 	public String getValueString() {
-		return this.totalDamage + " Fire-Damage over " + this.duration + " seconds.";
+		return "duration: " + duration + " damage: " + totalDamage;
 	}
 
 	@Override
@@ -60,33 +62,21 @@ public class FireArrowTrait extends AbstractArrow {
 		this.totalDamage = Double.valueOf(split[0]);
 	}
 
-	
 	@Override
-	protected boolean onShoot(EntityShootBowEvent event){
-		Location loc = event.getEntity().getLocation();
-		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0);
+	protected boolean onShoot(EntityShootBowEvent event) {
+		//Not needed
 		return false;
 	}
-	
+
 	@Override
-	protected boolean onHitEntity(EntityDamageByEntityEvent event){
+	protected boolean onHitEntity(EntityDamageByEntityEvent event) {
 		Entity hitTarget = event.getEntity();
 		if(!(hitTarget instanceof LivingEntity)) return false;
 		
 		int damagePerTick = (int) Math.ceil(totalDamage / duration);
-		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.FIRE_TICK);
-		ticker.playEffectOnDmg(Effect.MOBSPAWNER_FLAMES, 4);
+		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.POISON);
+		ticker.linkPotionEffect(PotionEffectTypeWrapper.POISON.createEffect(duration, 0));
 		return true;
-	}
-
-	@Override
-	public boolean isVisible(){
-		return true;
-	}
-
-	@Override
-	protected String getArrowName(){
-		return "Fire Arrow";
 	}
 
 	@Override
@@ -95,8 +85,9 @@ public class FireArrowTrait extends AbstractArrow {
 		return false;
 	}
 
-	public static void pasteHelpForTrait(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW + "If you hit an enemy with an arrow and choosen the Fire Arrow as current arrow,");
-		sender.sendMessage(ChatColor.YELLOW + "He will start burning.");
+	@Override
+	protected String getArrowName() {
+		return "Poison Arrow";
 	}
+
 }

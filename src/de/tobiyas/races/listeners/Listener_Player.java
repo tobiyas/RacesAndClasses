@@ -21,11 +21,12 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.chat.ChatLocations;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
 
 public class Listener_Player implements Listener {
@@ -50,7 +51,7 @@ public class Listener_Player implements Listener {
 	
 	@EventHandler
 	public void onPlayerSpritToggle(PlayerToggleSprintEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 	
 	@EventHandler
@@ -62,12 +63,14 @@ public class Listener_Player implements Listener {
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 		
 		if(container == null) return;
-		event.setFormat(container.getTag() + " %1$s" + ": %2$s");
+		event.setCancelled(true);
+		
+		ChatLocations.chatGlobal(container.getTag() + " " + event.getPlayer().getName() + ": ", event.getMessage(), container);
 	}
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 	
 	@EventHandler
@@ -77,7 +80,7 @@ public class Listener_Player implements Listener {
 	
 	@EventHandler
 	public void onPlayerInterace(PlayerInteractEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 

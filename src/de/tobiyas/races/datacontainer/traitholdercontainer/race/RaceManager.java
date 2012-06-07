@@ -1,6 +1,5 @@
-package de.tobiyas.races.datacontainer.race;
+package de.tobiyas.races.datacontainer.traitholdercontainer.race;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +8,7 @@ import java.util.LinkedList;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.health.HealthManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.races.util.consts.Consts;
 
 public class RaceManager {
@@ -26,6 +26,10 @@ public class RaceManager {
 	public RaceManager(){
 		manager = this;
 		plugin = Races.getPlugin();
+		races = new HashSet<RaceContainer>();
+		raceConfig = new YAMLConfigExtended(Consts.racesYML);
+		
+		DefaultContainer.createSTDRaces();
 	}
 	
 	public void init(){
@@ -34,19 +38,15 @@ public class RaceManager {
 	}
 	
 	private void readRaceList(){
-		races = new HashSet<RaceContainer>();
+		races.clear();
+		raceConfig.load();
 		
-		DefaultRace.createSTDRaces();
-		raceConfig = new YAMLConfigExtended(Consts.racesYML);
-		
-		try {
-			raceConfig.load(plugin.getDataFolder() + File.separator + "races.yml");
-		} catch (Exception e) {
-			plugin.log("Error on loading races.yml.");
+		if(!raceConfig.getValidLoad()){
+			plugin.log("races.yml could not be loaded correctly.");
 			return;
 		}
 		
-		for(String race : raceConfig.getConfigurationSection("races").getKeys(false)){
+		for(String race : raceConfig.getYAMLChildren("races")){
 			RaceContainer container = RaceContainer.loadRace(raceConfig, race);
 			if(container != null)
 				races.add(container);
@@ -56,11 +56,11 @@ public class RaceManager {
 	private void readMemberList(){
 		memberList = new HashMap<String, RaceContainer>();
 		
-		DefaultRace.createSTDMembers();
+		DefaultContainer.createSTDMembers();
 		
 		memberConfig = new YAMLConfigExtended(Consts.membersYML).load();
 		
-		for(String member : memberConfig.getConfigurationSection("playerdata").getKeys(false)){
+		for(String member : memberConfig.getYAMLChildren("playerdata")){
 			String raceName = memberConfig.getString("playerdata." + member + ".race");
 			memberList.put(member, getRaceByName(raceName));
 		}

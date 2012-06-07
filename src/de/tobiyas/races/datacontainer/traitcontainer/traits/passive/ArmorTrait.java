@@ -1,5 +1,7 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
+import java.util.HashSet;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,9 +10,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.util.items.ItemUtils;
 import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
@@ -19,11 +23,23 @@ public class ArmorTrait implements Trait {
 	
 	private boolean[] armorPerms;
 	private String armorPermsString;
-	private RaceContainer raceContainer;
+	
+	private RaceContainer raceContainer = null;
+	private ClassContainer classContainer = null;
 
 	public ArmorTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+	}
+	
+	public ArmorTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+	}
+	
+	@Override
+	public void generalInit(){
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(InventoryClickEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override
@@ -69,7 +85,7 @@ public class ArmorTrait implements Trait {
 		Player player = (Player) Eevent.getWhoClicked();
 		
 		if(Eevent.getSlotType() != SlotType.ARMOR) return false;
-		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) != raceContainer) return true;
+		if(!checkContainer(player.getName())) return true;
 		
 		ItemStack stack = Eevent.getCursor();
 		if(stack == null) return false;
@@ -80,6 +96,21 @@ public class ArmorTrait implements Trait {
 		}
 				
 		return true;
+	}
+	
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
+		}
+		
+		return false;
 	}
 	
 	private boolean hasPermission(ItemQuality quality){

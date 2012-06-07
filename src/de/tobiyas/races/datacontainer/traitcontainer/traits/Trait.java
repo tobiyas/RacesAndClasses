@@ -2,9 +2,11 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits;
 
 import org.bukkit.event.Event;
 
-import de.tobiyas.races.datacontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public interface Trait{
+	
+	public void generalInit();
 	
 	public String getName();
 	

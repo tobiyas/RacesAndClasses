@@ -3,10 +3,12 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 import java.util.HashSet;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
@@ -15,19 +17,19 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
-public class DamageIncrease implements Trait {
+public class SwordDamageIncrease implements Trait {
 	
 	private double value;
-	private String Operation;
+	private String operation;
 	
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
-
-	public DamageIncrease(RaceContainer raceContainer){
+	
+	public SwordDamageIncrease(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
 	}
 	
-	public DamageIncrease(ClassContainer classContainer){
+	public SwordDamageIncrease(ClassContainer classContainer){
 		this.classContainer = classContainer;
 	}
 	
@@ -40,7 +42,7 @@ public class DamageIncrease implements Trait {
 
 	@Override
 	public String getName() {
-		return "DamageIncreaseTrait";
+		return "SwordDamageIncreaseTrait";
 	}
 	
 	@Override
@@ -55,7 +57,7 @@ public class DamageIncrease implements Trait {
 	
 	@Override
 	public String getValueString(){
-		return Operation + " " +  String.valueOf(value);
+		return operation + " " +  String.valueOf(value);
 	}
 
 	@Override
@@ -67,19 +69,19 @@ public class DamageIncrease implements Trait {
 	private double evaluateValue(String val){
 		char firstChar = val.charAt(0);
 		
-		Operation = "";
+		operation = "";
 		
 		if(firstChar == '+')
-			Operation = "+";
+			operation = "+";
 		
 		if(firstChar == '*')
-			Operation = "*";
+			operation = "*";
 		
 		if(firstChar == '-')
-			Operation = "-";
+			operation = "-";
 		
-		if(Operation == "")
-			Operation = "*";
+		if(operation == "")
+			operation = "*";
 		else
 			val = val.substring(1, val.length());
 		
@@ -95,6 +97,7 @@ public class DamageIncrease implements Trait {
 		Player causer = (Player) Eevent.getDamager();
  		
 		if(checkContainer(causer.getName())){
+			if(!checkItemIsSword(causer.getItemInHand())) return false;
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
@@ -117,9 +120,29 @@ public class DamageIncrease implements Trait {
 		return false;
 	}
 	
+	private boolean checkItemIsSword(ItemStack stack){
+		Material item = stack.getType();
+		if(item == Material.WOOD_SWORD)
+			return true;
+		
+		if(item == Material.STONE_SWORD)
+			return true;
+		
+		if(item == Material.GOLD_SWORD)
+			return true;
+		
+		if(item == Material.IRON_SWORD)
+			return true;
+		
+		if(item == Material.DIAMOND_SWORD)
+			return true;
+			
+		return false;
+	}
+	
 	private double getNewValue(int oldDmg){
 		double newDmg = 0;
-		switch(Operation){
+		switch(operation){
 			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;

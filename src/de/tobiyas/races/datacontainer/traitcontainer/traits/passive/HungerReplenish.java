@@ -1,25 +1,41 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
+import java.util.HashSet;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class HungerReplenish implements Trait {
 	
 	private double value;
 	private String Operation;
-	private RaceContainer raceContainer;
+	
+	private RaceContainer raceContainer = null;
+	private ClassContainer classContainer = null;
 	
 	public HungerReplenish(RaceContainer raceContainer){
-		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+		this.raceContainer = raceContainer;	
+	}
+	
+	public HungerReplenish(ClassContainer classContainer){
+		this.classContainer = classContainer;
+	}
+	
+	@Override
+	public void generalInit(){
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(FoodLevelChangeEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 
 	@Override
@@ -77,7 +93,7 @@ public class HungerReplenish implements Trait {
 		if(!(Eevent.getEntity() instanceof Player)) return false;
 		
 		Player player = (Player) Eevent.getEntity();
-		if(RaceManager.getManager().getRaceOfPlayer(player.getName()).equals(raceContainer)){
+		if(checkContainer(player.getName())){
 			int orgValue = player.getFoodLevel();
 			int newValue = Eevent.getFoodLevel();
 			
@@ -86,6 +102,21 @@ public class HungerReplenish implements Trait {
 				Eevent.setFoodLevel(newCalcValue);
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
 		}
 		
 		return false;

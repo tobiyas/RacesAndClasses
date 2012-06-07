@@ -18,6 +18,7 @@ import de.tobiyas.races.Races;
 
 	private boolean config_racechat_enable;
 	private String config_racechat_default_color;
+	private boolean config_racechat_encrypt;
 	
 	private boolean config_whisper_enable;
 	
@@ -40,6 +41,7 @@ import de.tobiyas.races.Races;
 
 		config.addDefault("racechat.enable", true);
 		config.addDefault("racechat.default.color", "2");
+		config.addDefault("racechat.encryptForOthers", false);
 		
 		config.addDefault("whisper.enable", true);
 		
@@ -62,6 +64,7 @@ import de.tobiyas.races.Races;
 
 		config_racechat_enable = config.getBoolean("racechat.enable", true);
 		config_racechat_default_color = config.getString("racechat.default.color", "2");
+		config_racechat_encrypt = config.getBoolean("racechat.encryptForOthers", false);
 		
 		config_whisper_enable = config.getBoolean("whisper.enable", true);
 		
@@ -101,6 +104,10 @@ import de.tobiyas.races.Races;
 	
 	public int getconfig_globalUplinkTickPresition(){
 		return config_globalUplinkTickPresition;
+	}
+
+	public boolean getconfig_chatEncrypt() {
+		return config_racechat_encrypt;
 	}
 
 }

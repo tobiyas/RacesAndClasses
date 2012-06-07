@@ -6,13 +6,17 @@ import java.util.List;
 
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.SprintTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.TrollbloodTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.ExplosiveArrowTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.FireArrowTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.PoisonArrowTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.TeleportArrowTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.AxeDamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageReduce;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.HungerReplenish;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArmorTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.RegenerationTrait;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.SwordDamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.DrainResistanceTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.FallResistanceTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.FireResistanceTrait;
@@ -31,6 +35,10 @@ public class TraitsList{
 		addTraitToList("ArmorTrait", ArmorTrait.class);
 		addTraitToList("RegenerationTrait", RegenerationTrait.class);
 		
+		//Weapons
+		addTraitToList("AxeDamageIncreaseTrait", AxeDamageIncrease.class);
+		addTraitToList("SwordDamageIncreaseTrait", SwordDamageIncrease.class);
+		
 		//Resistance
 		addTraitToList("FireResistanceTrait", FireResistanceTrait.class);
 		addTraitToList("DrainResistanceTrait", DrainResistanceTrait.class);
@@ -40,10 +48,11 @@ public class TraitsList{
 		addTraitToList("SprintTrait", SprintTrait.class);
 		addTraitToList("TrollbloodTrait", TrollbloodTrait.class);
 		
-		
 		//Arrows
 		addTraitToList("FireArrowTrait", FireArrowTrait.class);
 		addTraitToList("TeleportArrowTrait", TeleportArrowTrait.class);
+		addTraitToList("ExplosiveArrowTrait", ExplosiveArrowTrait.class);
+		addTraitToList("PoisonArrowTrait", PoisonArrowTrait.class);
 	}
 	
 	public static void addTraitToList(String trait, Class<?> traitClass){

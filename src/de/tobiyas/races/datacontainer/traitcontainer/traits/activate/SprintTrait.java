@@ -1,6 +1,7 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.activate;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,9 +15,11 @@ import org.bukkit.potion.PotionEffectTypeWrapper;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class SprintTrait implements TraitsWithUplink {
@@ -24,6 +27,7 @@ public class SprintTrait implements TraitsWithUplink {
 	private int value;
 	private int duration;
 	private RaceContainer raceContainer;
+	private ClassContainer classContainer;
 	
 	private static HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
 	
@@ -32,12 +36,23 @@ public class SprintTrait implements TraitsWithUplink {
 
 	public SprintTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+	}
+	
+	public SprintTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+	}
+	
+	@Override
+	public void generalInit() {
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(PlayerToggleSprintEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
+		
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
 			itemIDInHand = (int) config.getValue("trait.iteminhand", Material.APPLE.getId());
-		}
+		}	
 	}
 	
 	@Override
@@ -87,8 +102,8 @@ public class SprintTrait implements TraitsWithUplink {
 		
 		Player player = Eevent.getPlayer();
 		if(player.getItemInHand().getType().getId() != itemIDInHand) return false;
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		if(raceContainer == container){
+		
+		if(checkContainer(player.getName())){
 			if(checkUplink(player)) return false;			
 			
 			uplinkMap.put(player.getName(), uplinkTime + duration);
@@ -96,6 +111,21 @@ public class SprintTrait implements TraitsWithUplink {
 			player.addPotionEffect(PotionEffectTypeWrapper.SPEED.createEffect(duration, value - 1), true);
 			return true;
 		}
+		return false;
+	}
+
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
+		}
+		
 		return false;
 	}
 	

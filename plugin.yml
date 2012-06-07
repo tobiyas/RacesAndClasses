@@ -58,3 +58,23 @@ commands:
     aliases: [rdebug]
     usage: |
            /racedebug [option] [value]
+  classlist:
+    description: lists all classes
+    aliases: []
+    usage: |
+           /classlist
+  class:
+    description: changes/selectes a class
+    aliases: []
+    usage: |
+           /class <select,change> <classname>
+  classinfo:
+    description: displays infos to your class.
+    aliases: []
+    usage: |
+           /classinfo
+  playerhealth:
+    description: displays your HP
+    aliases: [hp]
+    usage: |
+           /hp

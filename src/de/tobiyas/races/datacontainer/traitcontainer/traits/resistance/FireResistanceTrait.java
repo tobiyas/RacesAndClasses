@@ -5,21 +5,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public class FireResistanceTrait extends Resistance {
 	
-	public FireResistanceTrait(RaceContainer container){
-		this.raceContainer = container;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
-		
+	public FireResistanceTrait(RaceContainer raceContainer){
+		this.raceContainer = raceContainer;
+		privateInit();
+	}
+	
+	public FireResistanceTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+		privateInit();
+	}
+	
+	private void privateInit(){
 		resistances = new LinkedList<DamageCause>();
 		resistances.add(DamageCause.FIRE);
 		resistances.add(DamageCause.FIRE_TICK);
-		
-		addObserver(HealthManager.getHealthManager());
 	}
 	
 	@Override

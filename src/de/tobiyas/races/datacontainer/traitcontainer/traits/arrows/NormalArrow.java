@@ -1,17 +1,26 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
+import java.util.HashSet;
+
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
 public class NormalArrow extends AbstractArrow {
 	
 	public NormalArrow(RaceContainer container){
 		this.raceContainer = container;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+	}
+	
+	@Override
+	public void generalInit(){
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(PlayerInteractEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override

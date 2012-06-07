@@ -1,4 +1,4 @@
-package de.tobiyas.races.commands;
+package de.tobiyas.races.commands.races;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class CommandExecutor_RaceList implements CommandExecutor {
 	

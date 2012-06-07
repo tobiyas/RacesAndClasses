@@ -3,8 +3,7 @@ package de.tobiyas.races.datacontainer.arrow;
 import java.util.ArrayList;
 import java.util.Set;
 
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.AbstractArrow;
 
@@ -27,16 +26,19 @@ public class ArrowManager {
 	
 	public void rescanClass(){
 		arrows = new ArrayList<AbstractArrow>();
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
-		Set<Trait> traits = container.getTraits();
-		for(Trait arrow : traits)
+		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(player);
+		
+		for(Trait arrow : traits){
 			if(arrow instanceof AbstractArrow)
 				arrows.add((AbstractArrow) arrow);
+		}
+		
+		if(arrows.size() < currentPointer)
+			currentPointer = 0;
 	}
 	
 	public AbstractArrow nextArrow(){
 		if(System.currentTimeMillis() - eventTime < 100) return null;
-		
 		currentPointer ++;
 		if(currentPointer >= arrows.size())
 			currentPointer = 0;

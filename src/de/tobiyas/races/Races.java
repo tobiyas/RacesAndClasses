@@ -13,23 +13,28 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.tobiyas.races.commands.CommandExecutor_Race;
-import de.tobiyas.races.commands.CommandExecutor_RaceConfig;
-import de.tobiyas.races.commands.CommandExecutor_RaceDebug;
-import de.tobiyas.races.commands.CommandExecutor_RaceHeal;
-import de.tobiyas.races.commands.CommandExecutor_RaceHelp;
-import de.tobiyas.races.commands.CommandExecutor_RaceList;
-import de.tobiyas.races.commands.CommandExecutor_Racechat;
-import de.tobiyas.races.commands.CommandExecutor_Raceinfo;
-import de.tobiyas.races.commands.CommandExecutor_TraitList;
-import de.tobiyas.races.commands.CommandExecutor_Whisper;
+import de.tobiyas.races.commands.chat.CommandExecutor_Racechat;
+import de.tobiyas.races.commands.chat.CommandExecutor_Whisper;
+import de.tobiyas.races.commands.classes.CommandExecutor_Class;
+import de.tobiyas.races.commands.classes.CommandExecutor_ClassInfo;
+import de.tobiyas.races.commands.classes.CommandExecutor_ClassList;
+import de.tobiyas.races.commands.debug.CommandExecutor_RaceDebug;
+import de.tobiyas.races.commands.general.CommandExecutor_HP;
+import de.tobiyas.races.commands.general.CommandExecutor_TraitList;
+import de.tobiyas.races.commands.races.CommandExecutor_Race;
+import de.tobiyas.races.commands.races.CommandExecutor_RaceConfig;
+import de.tobiyas.races.commands.races.CommandExecutor_RaceHeal;
+import de.tobiyas.races.commands.races.CommandExecutor_RaceHelp;
+import de.tobiyas.races.commands.races.CommandExecutor_RaceList;
+import de.tobiyas.races.commands.races.CommandExecutor_Raceinfo;
 import de.tobiyas.races.configuration.global.Config;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.listeners.Listener_Entity;
 import de.tobiyas.races.listeners.Listener_Player;
 import de.tobiyas.util.debug.logger.DebugLogger;
@@ -75,6 +80,7 @@ public class Races extends JavaPlugin{
 		
 		TraitEventManager tManager = new TraitEventManager();
 		RaceManager rManager = new RaceManager();
+		ClassManager cManager = new ClassManager();
 		hManager = new HealthManager();
 		permManager = new PermissionManager(this);
 		
@@ -82,6 +88,7 @@ public class Races extends JavaPlugin{
 		tcManager.init();
 		tManager.init();
 		rManager.init();
+		cManager.init();
 		hManager.init();
 	}
 	
@@ -96,6 +103,10 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_RaceHeal();
 		new CommandExecutor_RaceConfig();
 		new CommandExecutor_RaceDebug();
+		new CommandExecutor_Class();
+		new CommandExecutor_ClassList();
+		new CommandExecutor_ClassInfo();
+		new CommandExecutor_HP();
 	}
 	
 	@Override

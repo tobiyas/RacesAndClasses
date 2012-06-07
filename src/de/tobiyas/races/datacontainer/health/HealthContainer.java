@@ -3,18 +3,20 @@ package de.tobiyas.races.datacontainer.health;
 import java.io.File;
 
 import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.configuration.member.MemberConfig;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.datacontainer.arrow.ArrowManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class HealthContainer {
 	
-	@SuppressWarnings("unused")
 	private HealthDisplay display;
 	private ArrowManager arrowManager;
 	private String player;
@@ -42,6 +44,7 @@ public class HealthContainer {
 		}
 		
 		arrowManager = new ArrowManager(player);
+		checkStats();
 	}
 	
 	public void reduceLife(double amount){
@@ -57,8 +60,10 @@ public class HealthContainer {
 			if(player.isDead()) return;
 			player.setHealth(0);
 		}
-		else
+		else{
 			setPlayerPercentage();
+			player.playEffect(EntityEffect.HURT);
+		}
 		
 		lastDamage = System.currentTimeMillis();
 	}
@@ -68,7 +73,11 @@ public class HealthContainer {
 		if(player == null) return;
 		if(currentHealth > maxHealth) currentHealth = maxHealth;
 		if(currentHealth < 0) currentHealth = 0;
-		player.setHealth((int) ((currentHealth/maxHealth) * 20));
+		
+		int transferredValue = (int) Math.ceil((currentHealth/maxHealth) * 20);
+		if(transferredValue == 20 && (currentHealth != maxHealth))
+			transferredValue = 19;
+		player.setHealth(transferredValue);
 	}
 	
 	public void increaseLife(double amount){
@@ -105,11 +114,15 @@ public class HealthContainer {
 		config.load();
 		
 		double currentHealth = config.getDouble("playerdata." + player + ".currentHealth");
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
+		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
+		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
 		
 		int maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
-		if(container != null)
-			maxHealth = container.getRaceMaxHealth();
+		if(raceContainer != null)
+			maxHealth = raceContainer.getRaceMaxHealth();
+		
+		if(classContainer != null)
+			maxHealth = classContainer.modifyToClass(maxHealth);
 		
 		return new HealthContainer(player, currentHealth, maxHealth);
 	}
@@ -120,20 +133,32 @@ public class HealthContainer {
 	}
 
 	public void checkStats() {
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
-		if(container == null) 
+		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
+		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
+		
+		if(raceContainer == null) 
 			maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
 		else{
-			int tempMaxHealth = container.getRaceMaxHealth();
+			int tempMaxHealth = raceContainer.getRaceMaxHealth();
 			if(tempMaxHealth <= 0) return;
 			maxHealth = tempMaxHealth;
 		}
+		
+		if(classContainer != null)
+			maxHealth = classContainer.modifyToClass(maxHealth);
+		
 		arrowManager.rescanClass();
 		setPlayerPercentage();
 	}
 	
 	public ArrowManager getArrowManager(){
 		return arrowManager;
+	}
+	
+	public void forceHPOut(){
+		Player playerObject = Bukkit.getPlayer(player);
+		if(playerObject == null) return;
+		display.forceHPOut(playerObject);
 	}
 
 }

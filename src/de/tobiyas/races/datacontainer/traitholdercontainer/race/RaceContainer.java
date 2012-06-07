@@ -1,4 +1,4 @@
-package de.tobiyas.races.datacontainer.race;
+package de.tobiyas.races.datacontainer.traitholdercontainer.race;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +31,12 @@ public class RaceContainer {
 	}
 	
 	private void readConfigSection(){
-		raceTag = config.getString("races." + raceName + ".config.racetag");
+		raceTag = decodeColors(config.getString("races." + raceName + ".config.racetag"));
 		raceMaxHealth = config.getInt("races." + raceName + ".config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
+	}
+	
+	private String decodeColors(String message){
+		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
 	
 	private void readTraitSection(){
@@ -54,7 +58,9 @@ public class RaceContainer {
 	}
 	
 	private void addSTDTraits(){
-		traits.add(new NormalArrow(this));
+		Trait normalArrow = new NormalArrow(this);
+		normalArrow.generalInit();
+		traits.add(normalArrow);
 	}
 	
 	/**

@@ -5,7 +5,7 @@
  * powered by Kickstarter
  */
 
-package de.tobiyas.races.commands;
+package de.tobiyas.races.commands.chat;
 
 
 import org.bukkit.ChatColor;

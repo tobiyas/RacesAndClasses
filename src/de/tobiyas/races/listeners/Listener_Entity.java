@@ -20,7 +20,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
 
 public class Listener_Entity extends Observable implements Listener {
@@ -33,32 +33,32 @@ public class Listener_Entity extends Observable implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 	@EventHandler
 	public void onEntityShootBow(EntityShootBowEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 	
 	@EventHandler
 	public void onEntityRegainHealthEvent(EntityRegainHealthEvent event){
-		TraitEventManager.getTraitEventManager().modifyEvent(event);
+		TraitEventManager.fireEvent(event);
 	}
 
 

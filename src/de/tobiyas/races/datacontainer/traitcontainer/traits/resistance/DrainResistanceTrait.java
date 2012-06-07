@@ -6,20 +6,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public class DrainResistanceTrait extends Resistance{
 	
 	public DrainResistanceTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
-		
+		privateInit();
+	}
+	
+	public DrainResistanceTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+		privateInit();
+	}
+	
+	private void privateInit(){
 		resistances = new LinkedList<DamageCause>();
 		resistances.add(DamageCause.DROWNING);
-		
-		addObserver(HealthManager.getHealthManager());
 	}
 
 	@Override

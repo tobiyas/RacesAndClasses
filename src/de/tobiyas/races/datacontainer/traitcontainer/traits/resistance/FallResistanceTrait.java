@@ -4,20 +4,24 @@ import java.util.LinkedList;
 
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public class FallResistanceTrait extends Resistance {
 	
 	public FallResistanceTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
-		
+		privateInit();
+	}
+	
+	public FallResistanceTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+		privateInit();
+	}
+	
+	private void privateInit(){
 		resistances = new LinkedList<DamageCause>();
 		resistances.add(DamageCause.FALL);
-		
-		addObserver(HealthManager.getHealthManager());
 	}
 
 	@Override

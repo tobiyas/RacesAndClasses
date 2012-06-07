@@ -1,5 +1,6 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
+import java.util.HashSet;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
@@ -9,23 +10,37 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class RegenerationTrait extends Observable implements Trait {
 
-	private RaceContainer raceContainer;
+	private RaceContainer raceContainer = null;
+	private ClassContainer classContainer = null;
+	
 	private String Operation;
 	private double value;
 	
 	public RegenerationTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+	}
+	
+	public RegenerationTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+	}
+	
+	@Override
+	public void generalInit(){
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(EntityRegainHealthEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
+		
 		addObserver(HealthManager.getHealthManager());
 	}
 	
@@ -84,7 +99,7 @@ public class RegenerationTrait extends Observable implements Trait {
 		
 		if(Eevent.getEntityType() != EntityType.PLAYER) return false;
 		Player player = (Player) Eevent.getEntity();
-		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) != raceContainer) return false;
+		if(!checkContainer(player.getName())) return false;
 		
 		if(Eevent.getRegainReason() == RegainReason.SATIATED){
 			double amount = getNewValue(Eevent.getAmount());
@@ -93,6 +108,21 @@ public class RegenerationTrait extends Observable implements Trait {
 			setChanged();
 			return true;
 		}
+		return false;
+	}
+	
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
+		}
+		
 		return false;
 	}
 	

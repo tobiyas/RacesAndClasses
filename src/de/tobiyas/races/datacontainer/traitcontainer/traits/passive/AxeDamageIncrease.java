@@ -2,11 +2,11 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
 import java.util.HashSet;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
@@ -15,19 +15,19 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
-public class DamageIncrease implements Trait {
+public class AxeDamageIncrease implements Trait {
 	
 	private double value;
-	private String Operation;
+	private String operation;
 	
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
-
-	public DamageIncrease(RaceContainer raceContainer){
+	
+	public AxeDamageIncrease(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
 	}
 	
-	public DamageIncrease(ClassContainer classContainer){
+	public AxeDamageIncrease(ClassContainer classContainer){
 		this.classContainer = classContainer;
 	}
 	
@@ -40,11 +40,11 @@ public class DamageIncrease implements Trait {
 
 	@Override
 	public String getName() {
-		return "DamageIncreaseTrait";
+		return "AxeDamageIncreaseTrait";
 	}
-	
+
 	@Override
-	public RaceContainer getRace(){
+	public RaceContainer getRace() {
 		return raceContainer;
 	}
 
@@ -52,10 +52,10 @@ public class DamageIncrease implements Trait {
 	public Object getValue() {
 		return value;
 	}
-	
+
 	@Override
-	public String getValueString(){
-		return Operation + " " +  String.valueOf(value);
+	public String getValueString() {
+		return operation + " " +  String.valueOf(value);
 	}
 
 	@Override
@@ -67,25 +67,25 @@ public class DamageIncrease implements Trait {
 	private double evaluateValue(String val){
 		char firstChar = val.charAt(0);
 		
-		Operation = "";
+		operation = "";
 		
 		if(firstChar == '+')
-			Operation = "+";
+			operation = "+";
 		
 		if(firstChar == '*')
-			Operation = "*";
+			operation = "*";
 		
 		if(firstChar == '-')
-			Operation = "-";
+			operation = "-";
 		
-		if(Operation == "")
-			Operation = "*";
+		if(operation == "")
+			operation = "*";
 		else
 			val = val.substring(1, val.length());
 		
 		return Double.valueOf(val);
 	}
-	
+
 	@Override
 	public boolean modify(Event event) {
 		if(!(event instanceof EntityDamageByEntityEvent)) return false;
@@ -95,6 +95,7 @@ public class DamageIncrease implements Trait {
 		Player causer = (Player) Eevent.getDamager();
  		
 		if(checkContainer(causer.getName())){
+			if(!checkItemIsSword(causer.getItemInHand())) return false;
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
@@ -117,9 +118,29 @@ public class DamageIncrease implements Trait {
 		return false;
 	}
 	
+	private boolean checkItemIsSword(ItemStack stack){
+		Material item = stack.getType();
+		if(item == Material.WOOD_AXE)
+			return true;
+		
+		if(item == Material.STONE_AXE)
+			return true;
+		
+		if(item == Material.GOLD_AXE)
+			return true;
+		
+		if(item == Material.IRON_AXE)
+			return true;
+		
+		if(item == Material.DIAMOND_AXE)
+			return true;
+			
+		return false;
+	}
+	
 	private double getNewValue(int oldDmg){
 		double newDmg = 0;
-		switch(Operation){
+		switch(operation){
 			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;
@@ -130,12 +151,7 @@ public class DamageIncrease implements Trait {
 		if(newDmg < 0) newDmg = 0;
 		return newDmg;
 	}
-	
-	public static void pasteHelpForTrait(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW + "Your Damage will be increased by a value or times an value.");
-		return;
-	}
-	
+
 	@Override
 	public boolean isVisible() {
 		return true;

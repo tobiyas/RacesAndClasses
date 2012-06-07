@@ -1,4 +1,4 @@
-package de.tobiyas.races.commands;
+package de.tobiyas.races.commands.general;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

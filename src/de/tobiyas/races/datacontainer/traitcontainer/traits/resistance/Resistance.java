@@ -1,5 +1,6 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.resistance;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 
@@ -9,16 +10,32 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
 public abstract class Resistance extends Observable implements ResistanceInterface {
 
 	protected List<DamageCause> resistances;
-	protected RaceContainer raceContainer;
+	protected RaceContainer raceContainer = null;
+	protected ClassContainer classContainer = null;
+	
 	protected double value;
 	protected String Operation = "";
+	
+	
+	@Override
+	public void generalInit(){
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(EntityDamageEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
+		
+		addObserver(HealthManager.getHealthManager());
+	}
 	
 	@Override
 	public abstract String getName();
@@ -72,13 +89,28 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		Entity entity = Eevent.getEntity();
 		if(!(entity instanceof Player)) return false;
 		Player player = (Player) entity;
-		if(RaceManager.getManager().getRaceOfPlayer(player.getName()) == raceContainer){
+		if(checkContainer(player.getName())){
 			if(getResistanceTypes().contains(Eevent.getCause())){
 				notifyObservers(new HealthModifyContainer(player.getName(), getNewValue(Eevent.getDamage()), "damage"));
 				setChanged();
 				Eevent.setDamage(0);
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
 		}
 		
 		return false;

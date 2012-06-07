@@ -2,6 +2,8 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.activate;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -9,20 +11,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
-import de.tobiyas.races.datacontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.race.RaceManager;
-import de.tobiyas.races.datacontainer.traitcontainer.TraitEventManager;
+import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class TrollbloodTrait implements TraitsWithUplink {
 
-	private RaceContainer raceContainer;
+	private RaceContainer raceContainer = null;
+	private ClassContainer classContainer = null;
 	private int duration;
 	
 	private static HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
@@ -31,7 +38,17 @@ public class TrollbloodTrait implements TraitsWithUplink {
 	
 	public TrollbloodTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
-		TraitEventManager.getTraitEventManager().registerTrait(this);
+	}
+	
+	public TrollbloodTrait(ClassContainer classContainer){
+		this.classContainer = classContainer;
+	}
+	
+	@Override
+	public void generalInit() {
+		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
+		listenedEvents.add(PlayerInteractEvent.class);
+		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
@@ -71,10 +88,9 @@ public class TrollbloodTrait implements TraitsWithUplink {
 		PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 		if(!(Eevent.getAction().equals(Action.LEFT_CLICK_BLOCK) || Eevent.getAction().equals(Action.LEFT_CLICK_AIR))) return false;
 		Player player = Eevent.getPlayer();
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 
 		if(player.getItemInHand().getType().getId() != itemIDInHand) return false;
-		if(container == raceContainer){
+		if(checkContainer(player.getName())){
 			if(checkUplink(player))
 				return false;
 
@@ -85,9 +101,27 @@ public class TrollbloodTrait implements TraitsWithUplink {
 					i++;
 
 			player.removePotionEffect(PotionEffectType.POISON);
+			i += DamageTicker.cancleEffects(player, DamageCause.POISON);
+			
 			uplinkMap.put(player.getName(), uplinkTime + duration);
-			player.sendMessage(ChatColor.GREEN + "SprintTrait toggled. " + ChatColor.LIGHT_PURPLE + i + ChatColor.GREEN + " poison effects removed.");
+			player.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN + " toggled. " + 
+								ChatColor.LIGHT_PURPLE + i + ChatColor.GREEN + " poison effects removed.");
 		}
+		return false;
+	}
+	
+	private boolean checkContainer(String playerName){
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return true;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return true;
+			return classContainer == container;
+		}
+		
 		return false;
 	}
 	

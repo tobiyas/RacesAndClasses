@@ -1,4 +1,4 @@
-package de.tobiyas.races.datacontainer.traitcontainer;
+package de.tobiyas.races.datacontainer.traitcontainer.eventmanagement;
 
 import de.tobiyas.races.Races;
 
