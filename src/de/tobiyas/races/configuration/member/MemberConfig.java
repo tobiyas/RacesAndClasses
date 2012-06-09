@@ -11,15 +11,19 @@ public class MemberConfig {
 	private String player;
 	private boolean enableLifeDisplay;
 	private int lifeDisplayInterval;
+	private String currentChannel;
 	
 	private static YAMLConfigExtended config = new YAMLConfigExtended(Consts.membersYML);
 	
 	private MemberConfig(String player){
 		config.load();
 		this.player = player;
-		enableLifeDisplay = config.getBoolean("playerdata." + player + ".config.lifeDisplay.enable", true);
-		lifeDisplayInterval = config.getInt("playerdata." + player + ".config.lifeDisplay.interval", 60);
+		String configPre = "playerdata." + player + ".config.";
 		
+		enableLifeDisplay = config.getBoolean(configPre + "lifeDisplay.enable", true);
+		lifeDisplayInterval = config.getInt(configPre + "lifeDisplay.interval", 60);
+		
+		currentChannel = config.getString(configPre + "channels.current", "Global");
 		//Add other vars
 		save();
 	}
@@ -43,6 +47,13 @@ public class MemberConfig {
 		this.lifeDisplayInterval = interval;
 	}
 	
+	public void setCurrentChannel(String newChannel){
+		config.load();
+		config.set("playerdata." + player + ".config.channels.current", newChannel);
+		config.save();
+		this.currentChannel = newChannel;
+	}
+	
 	public boolean getEnableLifeDisplay(){
 		return enableLifeDisplay;
 	}
@@ -55,11 +66,12 @@ public class MemberConfig {
 		return player;
 	}
 
-
-	public void save() {
+	public void save(){
 		config.load();
-		config.set("playerdata." + player + ".config.lifeDisplay.interval", lifeDisplayInterval);
-		config.set("playerdata." + player + ".config.lifeDisplay.enable", enableLifeDisplay);
+		String configPre = "playerdata." + player + ".config.";
+		config.set(configPre + "lifeDisplay.interval", lifeDisplayInterval);
+		config.set(configPre + "lifeDisplay.enable", enableLifeDisplay);
+		config.set(configPre + "channels.current", currentChannel);
 		config.save();
 	}
 
@@ -121,11 +133,16 @@ public class MemberConfig {
 	}
 
 
-	public HashMap<String, Object> getSupportetAttributesAndValues() {
+	public HashMap<String, Object> getCurrentConfig() {
 		HashMap<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("DisplayInterval: ", lifeDisplayInterval);
 		attributes.put("DisplayEnable: ", enableLifeDisplay);
-		
+		attributes.put("CurrentChatChannel: ", currentChannel);
 		return attributes;
+	}
+
+
+	public String getCurrentChannel() {
+		return currentChannel;
 	}
 }

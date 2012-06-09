@@ -16,18 +16,23 @@ import de.tobiyas.races.Races;
  public class Config{
 	private Races plugin;
 
-	private boolean config_racechat_enable;
 	private String config_racechat_default_color;
+	private String config_racechat_default_format;
 	private boolean config_racechat_encrypt;
-	
-	private boolean config_whisper_enable;
 	
 	private int config_imunBetweenDamage;
 	private int config_defaultHealth;
-	
-	private boolean config_enableDebugOutputs;
 
 	private int config_globalUplinkTickPresition;
+	
+	//Enables:
+	private boolean config_racechat_enable;
+	private boolean config_whisper_enable;
+	
+	private boolean config_enableDebugOutputs;
+	private boolean config_classes_enable;
+
+	private boolean config_channels_enable;
 
 	public Config(Races plugin){
 		this.plugin = plugin;
@@ -39,9 +44,10 @@ import de.tobiyas.races.Races;
 		FileConfiguration config = plugin.getConfig();
 		config.options().header("");
 
-		config.addDefault("racechat.enable", true);
-		config.addDefault("racechat.default.color", "2");
-		config.addDefault("racechat.encryptForOthers", false);
+		config.addDefault("chat.race.enable", true);
+		config.addDefault("chat.default.color", "&2");
+		config.addDefault("chat.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config.addDefault("chat.race.encryptForOthers", false);
 		
 		config.addDefault("whisper.enable", true);
 		
@@ -51,6 +57,8 @@ import de.tobiyas.races.Races;
 		config.addDefault("debug.outputs.enable", false);
 		
 		config.addDefault("uplink.globalTickPresition", 10);
+		
+		config.addDefault("classes.enable", true);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -62,9 +70,11 @@ import de.tobiyas.races.Races;
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 
-		config_racechat_enable = config.getBoolean("racechat.enable", true);
-		config_racechat_default_color = config.getString("racechat.default.color", "2");
-		config_racechat_encrypt = config.getBoolean("racechat.encryptForOthers", false);
+		config_racechat_enable = config.getBoolean("chat.race.enable", true);
+		config_channels_enable = config.getBoolean("chat.channel.enable", true);
+		config_racechat_default_color = config.getString("chat.default.color", "&2");
+		config_racechat_default_format = config.getString("chat.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_racechat_encrypt = config.getBoolean("chat.race.encryptForOthers", false);
 		
 		config_whisper_enable = config.getBoolean("whisper.enable", true);
 		
@@ -74,6 +84,8 @@ import de.tobiyas.races.Races;
 		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", false);
 		
 		config_globalUplinkTickPresition = config.getInt("uplink.globalTickPresition", 10);
+		
+		config_classes_enable = config.getBoolean("classes.enable", true);
 
 	}
 	
@@ -108,6 +120,18 @@ import de.tobiyas.races.Races;
 
 	public boolean getconfig_chatEncrypt() {
 		return config_racechat_encrypt;
+	}
+	
+	public boolean getconfig_classes_enable(){
+		return config_classes_enable;
+	}
+	
+	public String getconfig_racechat_default_format(){
+		return config_racechat_default_format;
+	}
+
+	public boolean getconfig_channels_enable(){
+		return config_channels_enable;
 	}
 
 }

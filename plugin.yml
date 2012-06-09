@@ -1,6 +1,6 @@
 name: Races
 main: de.tobiyas.races.Races
-version: 0.1
+version: 0.03
 website: http://
 author: tobiyas
 
@@ -58,23 +58,23 @@ commands:
     aliases: [rdebug]
     usage: |
            /racedebug [option] [value]
-  classlist:
-    description: lists all classes
-    aliases: []
-    usage: |
-           /classlist
   class:
     description: changes/selectes a class
     aliases: []
     usage: |
            /class <select,change> <classname>
-  classinfo:
-    description: displays infos to your class.
-    aliases: []
-    usage: |
-           /classinfo
   playerhealth:
     description: displays your HP
     aliases: [hp]
     usage: |
            /hp
+  racesreload:
+    description: reloads everything
+    aliases: []
+    usage: |
+           /racereload
+  channel:
+    description: manages channels
+    aliases: []
+    usage: |
+           /channel

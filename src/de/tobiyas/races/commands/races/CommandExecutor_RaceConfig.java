@@ -43,7 +43,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 				return true;
 			}
 			
-			HashMap<String, Object> configLines = config.getSupportetAttributesAndValues();
+			HashMap<String, Object> configLines = config.getCurrentConfig();
 			
 			for(String attribute : configLines.keySet()){
 				String value = String.valueOf(configLines.get(attribute));

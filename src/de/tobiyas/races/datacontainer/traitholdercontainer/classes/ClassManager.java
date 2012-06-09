@@ -3,7 +3,6 @@ package de.tobiyas.races.datacontainer.traitholdercontainer.classes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.health.HealthManager;

@@ -10,16 +10,18 @@ package de.tobiyas.races;
 
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.tobiyas.races.chat.channels.ChannelManager;
 import de.tobiyas.races.commands.chat.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.chat.CommandExecutor_Whisper;
+import de.tobiyas.races.commands.chat.channels.CommandExecutor_Channel;
 import de.tobiyas.races.commands.classes.CommandExecutor_Class;
-import de.tobiyas.races.commands.classes.CommandExecutor_ClassInfo;
-import de.tobiyas.races.commands.classes.CommandExecutor_ClassList;
 import de.tobiyas.races.commands.debug.CommandExecutor_RaceDebug;
 import de.tobiyas.races.commands.general.CommandExecutor_HP;
+import de.tobiyas.races.commands.general.CommandExecutor_RacesReload;
 import de.tobiyas.races.commands.general.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.races.CommandExecutor_Race;
 import de.tobiyas.races.commands.races.CommandExecutor_RaceConfig;
@@ -65,10 +67,10 @@ public class Races extends JavaPlugin{
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 		
-		initManagers();
+		fullReload(false, false);
+		
 		registerEvents();
 		registerCommands();
-
 		loadingDoneMessage();
 	}
 	
@@ -82,14 +84,18 @@ public class Races extends JavaPlugin{
 		RaceManager rManager = new RaceManager();
 		ClassManager cManager = new ClassManager();
 		hManager = new HealthManager();
+		ChannelManager chanManager = new ChannelManager();
 		permManager = new PermissionManager(this);
 		
 		mcManager.init();
 		tcManager.init();
 		tManager.init();
 		rManager.init();
-		cManager.init();
+		if(plugin.interactConfig().getconfig_classes_enable())
+			cManager.init();
 		hManager.init();
+		if(plugin.interactConfig().getconfig_channels_enable())
+			chanManager.init();
 	}
 	
 	private void registerCommands(){
@@ -104,9 +110,10 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_RaceConfig();
 		new CommandExecutor_RaceDebug();
 		new CommandExecutor_Class();
-		new CommandExecutor_ClassList();
-		new CommandExecutor_ClassInfo();
 		new CommandExecutor_HP();
+		new CommandExecutor_Channel();
+		
+		new CommandExecutor_RacesReload();
 	}
 	
 	@Override
@@ -131,10 +138,18 @@ public class Races extends JavaPlugin{
 	}
 	
 	private void loadingDoneMessage(){
-		int traits = TraitsList.getAllTraits().size();
-		int races = RaceManager.getManager().listAllRaces().size();
+		String traits = TraitsList.getAllTraits().size() + " traits";
+		String races = ", " + RaceManager.getManager().listAllRaces().size() + " races";
 		
-		log("loaded: " + traits + " traits and:" + races + " races");
+		String classes = "";
+		if(plugin.interactConfig().getconfig_classes_enable())
+			classes = ", " +ClassManager.getInstance().getClassNames().size() + " classes";
+		
+		String channels = "";
+		if(plugin.interactConfig().getconfig_channels_enable())
+			channels = ", " + ChannelManager.GetInstance().listAllChannels().size() + " channels";
+		
+		log("loaded: " + traits + races + classes + channels);
 		log(description.getFullName() + " fully loaded with Permissions: " + permManager.getPermissionsName());
 	}
 
@@ -163,6 +178,22 @@ public class Races extends JavaPlugin{
 	
 	public static Races getPlugin(){
 		return plugin;
+	}
+
+	public long fullReload(boolean shutDownBefore, boolean useGC){
+		long time = System.currentTimeMillis();
+		if(shutDownBefore){
+			hManager.saveHealthContainer();
+			debugLogger.shutDown();
+			plugin.reloadConfig();
+			ChannelManager.GetInstance().saveChannels();
+			Bukkit.getScheduler().cancelTasks(this);
+			if(useGC)
+				System.gc();
+		}
+		initManagers();
+		
+		return System.currentTimeMillis() - time;
 	}
 
 }

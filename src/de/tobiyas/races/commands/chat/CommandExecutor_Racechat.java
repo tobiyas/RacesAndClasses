@@ -15,7 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.chat.RaceChat;
+import de.tobiyas.races.chat.channels.ChannelManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.util.consts.PermissionNode;
 
 
@@ -48,13 +50,18 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		String[] permChecks = {PermissionNode.raceChatBasic, PermissionNode.raceChatWrite};
 		if(!plugin.getPermissionManager().hasAnyPermissions(sender, permChecks)) return true;
 		
-		String message = "";
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
+		if(container == null){
+			player.sendMessage(ChatColor.RED + "You have no race selected.");
+			return true;
+		}
 		
+		String message = "";
 		for(String snippet : args){
 			message += snippet + " ";
 		}
 
-		RaceChat.sendRaceMessage(player, message);
+		ChannelManager.GetInstance().broadcastMessageToChannel(container.getName(), player, message);
 		return true;
 	}
 }

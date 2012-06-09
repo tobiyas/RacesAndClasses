@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.chat.channels.ChannelManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.util.consts.PermissionNode;
@@ -52,9 +53,10 @@ public class CommandExecutor_Race implements CommandExecutor {
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectRace)) return true;
 			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 			if(container == null)
-				if(RaceManager.getManager().addPlayerToRace(player.getName(), potentialRace))
+				if(RaceManager.getManager().addPlayerToRace(player.getName(), potentialRace)){
 					player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialRace);
-				else
+					ChannelManager.GetInstance().playerChangeRace("", player);
+				}else
 					player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + potentialRace + ChatColor.RED + " was not found.");
 			else
 				player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + container.getName());
@@ -68,14 +70,16 @@ public class CommandExecutor_Race implements CommandExecutor {
 			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 				
 			if(container != null){
+				String oldRace = container.getName();
 				if(potentialRace.equalsIgnoreCase(container.getName())){
 					player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + container.getName());
 					return true;
 				}
 					
-				if(RaceManager.getManager().changePlayerRace(player.getName(), potentialRace))
+				if(RaceManager.getManager().changePlayerRace(player.getName(), potentialRace)){
 					player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialRace);
-				else
+					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
+				}else
 					player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + potentialRace + ChatColor.RED + " was not found.");
 			}else
 				player.sendMessage(ChatColor.RED + "You have no Race you could change");

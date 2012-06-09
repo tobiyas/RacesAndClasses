@@ -2,7 +2,7 @@ Breaf Summary:
 
 Traits(Passive):
 -	"DamageIncreaseTrait"
-	Increases the damage of the race. Value: 1 = normal damage. 1.5 = normal damage * 1.5, 0.5 = normal damage * 0.5
+	Increases the damage of the race. Value: 1 = normal damage. 1.5 = normal damage * 1.5, +1 = normal damage + 1.
 
 -	"DamageReduceTrait"
 	Decreases the damage taken. Value: 1 = normal damage(100%) . 0.75 = 75% of normal damage, 1.25 = 125% of normal dmg.
@@ -15,6 +15,13 @@ Traits(Passive):
 	
 -	"ArmorTrait"
 	decides which sort of armor you can wear
+	
+Traits(Weapons):
+-	"AxeDamageIncreaseTrait"
+	Increases damage, when hitting with an axe
+	
+-	"SwordDamageIncreaseTrait"
+	Increases damage, when hitting with a sword
 	
 
 Traits(Resistance):
@@ -38,13 +45,29 @@ Traits(Activate):
 Traits(Arrows):
 -	"FireArrowTrait"
 	Hitted target goes up in flames and gets damage
+	
+-	"PoisonArrowTrait"
+	Hitted target gets poisoned and gets poison damage every second
+	
+-	"TeleportArrowTrait"
+	If an arrow is fired with this arrowtype selected, the shooter will be portet there (has uplink, default = 60sec)
+	
+-	"ExplosiveArrowTrait"
+	Sound cool, is cool! :D (I love it) Does, what it should do! lets everything explode in a radius and deals damage. (blockdamage off by default)
+	
     
 Permissions:
--	"races.change"
+-	"races.race.change"
 	permission to change the actual race
 	
--	"races.select"
+-	"races.race.select"
 	permission to select a race
+	
+-	"races.class.change"
+	permission to change the actual class
+	
+-	"races.class.select"
+	permission to select a class
 	
 -	"races.chat.write"
 	permission to write in the race-chat
@@ -67,6 +90,15 @@ Permissions:
 -	"races.debug"
 	permission to use /racedebug commands
 	
+-	"races.channel.create.private"
+	permission to create a private channel
+	
+-	"races.channel.create.public"
+	permission to create a public channel
+	
+-	"races.channel.create.password"
+	permission to create a password channel
+	
 	
 Commands:
 -	"/race <select,change> <racename>"
@@ -88,7 +120,7 @@ Commands:
 	lists all traits
 	
 -	"/whisper <target> <message>"
-	whispers a target a message
+	whispers a target a message (alias: /w)
 	
 -	"/raceconfig <attribute> <value>"
 	changes attributes in personal config
@@ -98,3 +130,16 @@ Commands:
 	
 -	"/raceheal [player]"
 	heals player
+	
+-	"/class [select,change] [classname]"
+	selects/changes your current class
+
+-	"/classlist"
+	lists all classes available
+	
+-	"/classinfo"
+	displays info to your class
+	
+-	"/hp"
+	displays your current HP
+	

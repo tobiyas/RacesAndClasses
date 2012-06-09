@@ -14,6 +14,10 @@ public class PermissionNode {
 	public static final String raceChatRead = prePlugin + "chat.basic.read";
 	public static final String raceChatBasic = prePlugin + "chat.basic";
 	
+	public static final String channelCreatePrivate = prePlugin + "channel.create.private";
+	public static final String channelCreatePublic = prePlugin + "channel.create.public";
+	public static final String channelCreatePassword = prePlugin + "channel.create.password";
+	
 	public static final String whisper = prePlugin + "whisper";
 	public static final String healSelf = prePlugin + "heal.self";
 	public static final String healOther = prePlugin + "heal.other";
@@ -21,4 +25,6 @@ public class PermissionNode {
 	public static final String raceInfo = prePlugin + "raceinfo.display";
 	
 	public static final String debug = prePlugin + "debug";
+	
+	public static final String reload = prePlugin + "reload";
 }
