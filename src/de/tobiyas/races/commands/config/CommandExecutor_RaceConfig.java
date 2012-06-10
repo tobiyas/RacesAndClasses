@@ -1,4 +1,4 @@
-package de.tobiyas.races.commands.races;
+package de.tobiyas.races.commands.config;
 
 import java.util.HashMap;
 

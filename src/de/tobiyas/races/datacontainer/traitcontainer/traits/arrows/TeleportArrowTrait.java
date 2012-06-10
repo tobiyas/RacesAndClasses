@@ -26,9 +26,9 @@ import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventM
 public class TeleportArrowTrait extends AbstractArrow {
 	
 	private static int uplinkTime = 60 * 20;
-	private static HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
+	private HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
 	
-	private static HashMap<Arrow, Player> shootedArrows = new HashMap<Arrow, Player>();
+	private HashMap<Arrow, Player> shootedArrows = new HashMap<Arrow, Player>();
 
 	public TeleportArrowTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
@@ -140,7 +140,7 @@ public class TeleportArrowTrait extends AbstractArrow {
 	}
 	
 	@Override
-	public void tickReduceUplink() {
+	public void tickReduceUplink() {		
 		for(String player : uplinkMap.keySet()){
 			int remainingTime = uplinkMap.get(player);
 			remainingTime -= Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();

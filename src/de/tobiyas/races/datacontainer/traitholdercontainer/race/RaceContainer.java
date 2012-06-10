@@ -9,6 +9,7 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.NormalArrow;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.AxeDamageIncrease;
 
 public class RaceContainer {
 
@@ -61,6 +62,10 @@ public class RaceContainer {
 		Trait normalArrow = new NormalArrow(this);
 		normalArrow.generalInit();
 		traits.add(normalArrow);
+		
+		Trait axeDmg = new AxeDamageIncrease(this);
+		axeDmg.generalInit();
+		traits.add(axeDmg);
 	}
 	
 	/**

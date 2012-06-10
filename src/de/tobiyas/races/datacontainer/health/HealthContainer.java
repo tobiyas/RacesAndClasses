@@ -3,7 +3,9 @@ package de.tobiyas.races.datacontainer.health;
 import java.io.File;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
@@ -23,10 +25,12 @@ public class HealthContainer {
 	
 	private double currentHealth;
 	private int maxHealth;
+	private boolean hasGod;
 	
 	private long lastDamage;
 	
 	public HealthContainer(String player, double currentHealth, int maxHealth){
+		this.hasGod = false;
 		this.player = player;
 		this.currentHealth = currentHealth;
 		this.maxHealth = maxHealth;
@@ -53,6 +57,12 @@ public class HealthContainer {
 
 		Player player = Bukkit.getPlayer(this.player);
 		if(player == null) return;
+		
+		if(player.getGameMode() == GameMode.CREATIVE)
+			return;
+		
+		if(hasGod)
+			return;
 		
 		currentHealth -= amount;
 		
@@ -105,6 +115,7 @@ public class HealthContainer {
 		if(!config.isConfigurationSection("playerdata." + player))
 			config.createSection("playerdata." + player);
 		config.set("playerdata." + player + ".currentHealth", currentHealth);
+		config.set("playerdata." + player + ".hasGod", hasGod);
 		
 		return config.save();
 	}
@@ -124,7 +135,9 @@ public class HealthContainer {
 		if(classContainer != null)
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		
-		return new HealthContainer(player, currentHealth, maxHealth);
+		HealthContainer container = new HealthContainer(player, currentHealth, maxHealth);
+		container.switchGod();
+		return container;
 	}
 
 	public void fullHeal() {
@@ -149,6 +162,16 @@ public class HealthContainer {
 		
 		arrowManager.rescanClass();
 		setPlayerPercentage();
+	}
+	
+	public void switchGod(){
+		hasGod = !hasGod;
+		Player player = Bukkit.getPlayer(this.player);
+		if(player != null)
+			if(hasGod)
+				player.sendMessage(ChatColor.GREEN + "God mode toggled.");
+			else
+				player.sendMessage(ChatColor.RED + "God mode removed.");
 	}
 	
 	public ArrowManager getArrowManager(){

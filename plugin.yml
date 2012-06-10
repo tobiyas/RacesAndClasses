@@ -1,6 +1,6 @@
 name: Races
 main: de.tobiyas.races.Races
-version: 0.03
+version: 0.04
 website: http://
 author: tobiyas
 
@@ -18,21 +18,11 @@ commands:
     aliases: [rc,rchat]
     usage: |
            /racechate <message>
-  raceinfo:
-    description: info for races
-    aliases: [rinfo]
-    usage: |
-           /raceinfo
   racehelp:
     description: help for races
     aliases: [rhelp]
     usage: |
            /racehelp <helpstring>
-  racelist:
-    description: lists all races
-    aliases: [rlist]
-    usage: |
-           /racelist
   whisper:
     description: whispers a Player
     aliases: [w]
@@ -78,3 +68,8 @@ commands:
     aliases: []
     usage: |
            /channel
+  racegod:
+    description: switches god mode to player
+    aliases: [rgod]
+    usage: |
+           /racegod [playername]

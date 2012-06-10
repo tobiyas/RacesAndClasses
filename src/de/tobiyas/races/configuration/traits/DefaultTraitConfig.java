@@ -17,6 +17,13 @@ public class DefaultTraitConfig {
 		createTraitConfig("SprintTrait", "trait.iteminhand", 260, true);
 		
 		createTraitConfig("TeleportArrowTrait", "trait.uplink", 60, false);
+		
+		createTraitConfig("STDAxeDamageTrait", "trait.damage.wood", 4, true);
+		createTraitConfig("STDAxeDamageTrait", "trait.damage.stone", 5, true);
+		createTraitConfig("STDAxeDamageTrait", "trait.damage.gold", 4, true);
+		createTraitConfig("STDAxeDamageTrait", "trait.damage.iron", 6, true);
+		createTraitConfig("STDAxeDamageTrait", "trait.damage.diamond", 7, true);
+		
 	}
 	
 	private static void createTraitConfig(String traitName, String config, Object value, boolean force){

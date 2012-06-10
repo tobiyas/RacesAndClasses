@@ -8,6 +8,8 @@
 package de.tobiyas.races.commands.races;
 
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.chat.channels.ChannelManager;
+import de.tobiyas.races.datacontainer.health.HealthManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.util.consts.PermissionNode;
@@ -40,55 +44,132 @@ public class CommandExecutor_Race implements CommandExecutor {
 			return true;
 		}
 			
-		if(args.length != 2){
+		if(args.length == 0){
 			sender.sendMessage(ChatColor.RED + "Wrong Usage. Use /racehelp if you need help.");
 			return true;
 		}
 			
 		Player player = (Player) sender;
-		String potentialRace = args[1];
+		String raceCommand = args[0];
 			
 		//Select race(only if has no race)
-		if(args[0].equalsIgnoreCase("select")){
+		if(raceCommand.equalsIgnoreCase("select")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectRace)) return true;
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-			if(container == null)
-				if(RaceManager.getManager().addPlayerToRace(player.getName(), potentialRace)){
-					player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialRace);
-					ChannelManager.GetInstance().playerChangeRace("", player);
-				}else
-					player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + potentialRace + ChatColor.RED + " was not found.");
-			else
-				player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + container.getName());
+			if(args.length != 2){
+				player.sendMessage(ChatColor.RED + "This command needs 1 argument: /race select <racename>");
+				return true;
+			}
 			
+			String potentialRace = args[1];
+			selectRace(player, potentialRace);
 			return true;
 		}
 			
 		//Change races (only if has already a race)
-		if(args[0].equalsIgnoreCase("change")){
+		if(raceCommand.equalsIgnoreCase("change")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeRace)) return true;
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-				
-			if(container != null){
-				String oldRace = container.getName();
-				if(potentialRace.equalsIgnoreCase(container.getName())){
-					player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + container.getName());
-					return true;
-				}
-					
-				if(RaceManager.getManager().changePlayerRace(player.getName(), potentialRace)){
-					player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialRace);
-					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
-				}else
-					player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + potentialRace + ChatColor.RED + " was not found.");
-			}else
-				player.sendMessage(ChatColor.RED + "You have no Race you could change");
-				
-				
+			if(args.length != 2){
+				player.sendMessage(ChatColor.RED + "This command needs 1 argument: /race change <racename>");
+				return true;
+			}
+			
+			String potentialRace = args[1];
+			changeRace(player, potentialRace);
+			return true;
+		}
+		
+		if(raceCommand.equalsIgnoreCase("info")){
+			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
+			raceInfo(player);
+			return true;
+		}
+		
+		if(raceCommand.equalsIgnoreCase("list")){
+			raceList(player);
 			return true;
 		}
 			
-		player.sendMessage(ChatColor.RED + "Wrong arguments. Use /racehelp if you need help");
+		postHelp(player);
 		return true;
+	}
+	
+	private void postHelp(Player player){
+		player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "info");
+		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "list");
+		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeRace))
+			player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "select " + ChatColor.YELLOW + "<racename>");
+		
+		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.selectRace))
+			player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<racename>");
+	}
+	
+	private void selectRace(Player player, String newRace){
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
+		if(container == null)
+			if(RaceManager.getManager().addPlayerToRace(player.getName(), newRace)){
+				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
+				if(plugin.interactConfig().getconfig_channels_enable())
+					ChannelManager.GetInstance().playerChangeRace("", player);
+			}else
+				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
+		else
+			player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + container.getName());
+	}
+	
+	private void changeRace(Player player, String newRace){
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
+		if(container != null){
+			String oldRace = container.getName();
+			if(newRace.equalsIgnoreCase(container.getName())){
+				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + container.getName());
+				return;
+			}
+				
+			if(RaceManager.getManager().changePlayerRace(player.getName(), newRace)){
+				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
+				if(plugin.interactConfig().getconfig_channels_enable())
+					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
+			}else
+				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
+		}else
+			player.sendMessage(ChatColor.RED + "You have no Race you could change");
+	}
+	
+	private void raceInfo(Player player){
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
+		
+		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
+		if(container == null){
+			player.sendMessage(ChatColor.YELLOW + "You have no race selected.");
+			return;
+		}
+		
+		double currentHealth = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
+		if(currentHealth != -1){
+			player.sendMessage(ChatColor.YELLOW + "Health: " + ChatColor.RED + currentHealth + "/" + container.getRaceMaxHealth());
+		}
+		
+		player.sendMessage(ChatColor.YELLOW + "Your race: " + ChatColor.LIGHT_PURPLE + container.getName());
+		player.sendMessage(ChatColor.YELLOW + "Your race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
+		
+		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
+		
+		for(Trait trait : container.getVisibleTraits()){
+			player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getValueString());
+		}
+	}
+	
+	private void raceList(Player player){
+		ArrayList<String> races = RaceManager.getManager().listAllRaces();
+		RaceContainer playerRace = RaceManager.getManager().getRaceOfPlayer(player.getName());
+		
+		player.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
+		
+		for(String race : races)
+			if(playerRace != null && race.equals(playerRace.getName()))
+				player.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- Your race");
+			else	
+				player.sendMessage(ChatColor.BLUE + race);
 	}
 }

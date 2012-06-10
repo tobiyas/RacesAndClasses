@@ -44,9 +44,12 @@ import de.tobiyas.races.Races;
 		FileConfiguration config = plugin.getConfig();
 		config.options().header("");
 
-		config.addDefault("chat.race.enable", true);
+		config.addDefault("chat.channel.enable", true);		
+		
 		config.addDefault("chat.default.color", "&2");
 		config.addDefault("chat.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		
+		config.addDefault("chat.race.enable", true);
 		config.addDefault("chat.race.encryptForOthers", false);
 		
 		config.addDefault("whisper.enable", true);

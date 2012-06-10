@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.HealOthersTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.SprintTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.activate.TrollbloodTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.ExplosiveArrowTrait;
@@ -47,6 +48,7 @@ public class TraitsList{
 		//Activate
 		addTraitToList("SprintTrait", SprintTrait.class);
 		addTraitToList("TrollbloodTrait", TrollbloodTrait.class);
+		addTraitToList("HealOthersTrait", HealOthersTrait.class);
 		
 		//Arrows
 		addTraitToList("FireArrowTrait", FireArrowTrait.class);

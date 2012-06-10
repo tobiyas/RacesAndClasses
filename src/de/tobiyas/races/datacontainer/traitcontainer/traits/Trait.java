@@ -2,6 +2,7 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits;
 
 import org.bukkit.event.Event;
 
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public interface Trait{
@@ -11,6 +12,8 @@ public interface Trait{
 	public String getName();
 	
 	public RaceContainer getRace();
+	
+	public ClassContainer getClazz();
 	
 	public Object getValue();
 	

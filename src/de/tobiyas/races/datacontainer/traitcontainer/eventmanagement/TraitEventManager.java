@@ -138,9 +138,10 @@ public class TraitEventManager extends Observable{
 			}
 			
 			traits.add(trait);
-			if(trait instanceof TraitsWithUplink)
-				uplinkReducer.registerTrait((TraitsWithUplink) trait);
 		}
+		
+		if(trait instanceof TraitsWithUplink)
+			uplinkReducer.registerTrait((TraitsWithUplink) trait);
 	}
 	
 	public void unregisterTrait(Trait trait){

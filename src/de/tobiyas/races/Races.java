@@ -19,16 +19,15 @@ import de.tobiyas.races.commands.chat.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.races.commands.chat.channels.CommandExecutor_Channel;
 import de.tobiyas.races.commands.classes.CommandExecutor_Class;
+import de.tobiyas.races.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.races.commands.debug.CommandExecutor_RaceDebug;
-import de.tobiyas.races.commands.general.CommandExecutor_HP;
 import de.tobiyas.races.commands.general.CommandExecutor_RacesReload;
-import de.tobiyas.races.commands.general.CommandExecutor_TraitList;
+import de.tobiyas.races.commands.health.CommandExecutor_HP;
+import de.tobiyas.races.commands.health.CommandExecutor_RaceGod;
+import de.tobiyas.races.commands.health.CommandExecutor_RaceHeal;
+import de.tobiyas.races.commands.help.CommandExecutor_RaceHelp;
+import de.tobiyas.races.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.races.CommandExecutor_Race;
-import de.tobiyas.races.commands.races.CommandExecutor_RaceConfig;
-import de.tobiyas.races.commands.races.CommandExecutor_RaceHeal;
-import de.tobiyas.races.commands.races.CommandExecutor_RaceHelp;
-import de.tobiyas.races.commands.races.CommandExecutor_RaceList;
-import de.tobiyas.races.commands.races.CommandExecutor_Raceinfo;
 import de.tobiyas.races.configuration.global.Config;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
@@ -101,8 +100,6 @@ public class Races extends JavaPlugin{
 	private void registerCommands(){
 		new CommandExecutor_Race();
 		new CommandExecutor_Racechat();
-		new CommandExecutor_Raceinfo();
-		new CommandExecutor_RaceList();
 		new CommandExecutor_RaceHelp();
 		new CommandExecutor_Whisper();
 		new CommandExecutor_TraitList();
@@ -112,6 +109,7 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_Class();
 		new CommandExecutor_HP();
 		new CommandExecutor_Channel();
+		new CommandExecutor_RaceGod();
 		
 		new CommandExecutor_RacesReload();
 	}

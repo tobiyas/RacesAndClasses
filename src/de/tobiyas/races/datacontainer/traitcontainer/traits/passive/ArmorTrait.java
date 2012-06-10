@@ -48,6 +48,11 @@ public class ArmorTrait implements Trait {
 	}
 	
 	@Override
+	public ClassContainer getClazz() {
+		return classContainer;
+	}
+	
+	@Override
 	public String getName() {
 		return "ArmorTrait";
 	}

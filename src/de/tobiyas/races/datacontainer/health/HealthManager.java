@@ -158,4 +158,13 @@ public class HealthManager implements Observer{
 		return true;
 	}
 
+	public boolean switchGod(String name) {
+		HealthContainer container = playerHealth.get(name);
+		if(container != null){
+			container.switchGod();
+			return true;
+		}
+		return false;
+	}
+
 }

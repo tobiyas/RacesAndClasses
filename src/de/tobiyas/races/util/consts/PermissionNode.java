@@ -21,6 +21,7 @@ public class PermissionNode {
 	public static final String whisper = prePlugin + "whisper";
 	public static final String healSelf = prePlugin + "heal.self";
 	public static final String healOther = prePlugin + "heal.other";
+	public static final String god = prePlugin + "god";
 	
 	public static final String raceInfo = prePlugin + "raceinfo.display";
 	

@@ -47,6 +47,11 @@ public class DamageIncrease implements Trait {
 	public RaceContainer getRace(){
 		return raceContainer;
 	}
+	
+	@Override
+	public ClassContainer getClazz() {
+		return classContainer;
+	}
 
 	@Override
 	public Object getValue() {

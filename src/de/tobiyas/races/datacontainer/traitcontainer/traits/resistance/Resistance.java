@@ -44,6 +44,11 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	public RaceContainer getRace() {
 		return raceContainer;
 	}
+	
+	@Override
+	public ClassContainer getClazz() {
+		return classContainer;
+	}
 
 	@Override
 	public abstract Object getValue();
