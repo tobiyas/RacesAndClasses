@@ -9,6 +9,23 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class TraitHolderCombinder {
+	
+	public static boolean checkContainer(String playerName, Trait trait){
+		RaceContainer raceContainer = trait.getRace();
+		ClassContainer classContainer = trait.getClazz();
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return false;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return false;
+			return classContainer == container;
+		}
+		
+		return false;
+	}
 
 	public static HashSet<Trait> getAllTraitsOfPlayer(String player){
 		HashSet<Trait> traits = new HashSet<Trait>();

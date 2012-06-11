@@ -13,7 +13,7 @@ public class MemberConfig {
 	private int lifeDisplayInterval;
 	private String currentChannel;
 	
-	private static YAMLConfigExtended config = new YAMLConfigExtended(Consts.membersYML);
+	private static YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
 	
 	private MemberConfig(String player){
 		config.load();

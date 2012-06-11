@@ -58,7 +58,7 @@ public class RaceManager {
 		
 		DefaultContainer.createSTDMembers();
 		
-		memberConfig = new YAMLConfigExtended(Consts.membersYML).load();
+		memberConfig = new YAMLConfigExtended(Consts.playerDataYML).load();
 		
 		for(String member : memberConfig.getYAMLChildren("playerdata")){
 			String raceName = memberConfig.getString("playerdata." + member + ".race");

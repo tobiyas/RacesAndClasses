@@ -8,10 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
@@ -95,10 +94,11 @@ public class HungerReplenish implements Trait {
 	public boolean modify(Event event) {
 		if(!(event instanceof FoodLevelChangeEvent)) return false;
 		FoodLevelChangeEvent Eevent = (FoodLevelChangeEvent) event;
-		if(!(Eevent.getEntity() instanceof Player)) return false;
 		
+		if(!(Eevent.getEntity() instanceof Player)) return false;
 		Player player = (Player) Eevent.getEntity();
-		if(checkContainer(player.getName())){
+		
+		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			int orgValue = player.getFoodLevel();
 			int newValue = Eevent.getFoodLevel();
 			
@@ -112,25 +112,9 @@ public class HungerReplenish implements Trait {
 		return false;
 	}
 	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
-		return false;
-	}
-	
 	private double getNewValue(int oldDmg){
 		double newDmg = 0;
 		switch(Operation){
-			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;
 			case "*": newDmg = oldDmg * value; break;

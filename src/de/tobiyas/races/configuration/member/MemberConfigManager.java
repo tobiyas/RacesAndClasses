@@ -32,7 +32,7 @@ public class MemberConfigManager {
 		if(!file.exists())
 			file.mkdirs();
 		
-		File memberFile = new File(Consts.membersYML);
+		File memberFile = new File(Consts.playerDataYML);
 		if(!memberFile.exists())
 			try {
 				memberFile.createNewFile();
@@ -49,7 +49,7 @@ public class MemberConfigManager {
 	}
 	
 	private void loadConfigs(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.membersYML);
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
 		config.load();
 		
 		for(String player : config.getYAMLChildren("playerdata"))

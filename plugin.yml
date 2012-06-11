@@ -1,6 +1,6 @@
 name: Races
 main: de.tobiyas.races.Races
-version: 0.04
+version: 0.05
 website: http://
 author: tobiyas
 
@@ -73,3 +73,8 @@ commands:
     aliases: [rgod]
     usage: |
            /racegod [playername]
+  globalbroadcast:
+    description: broadcasts a message to all Players in Global channel.
+    aliases: [gbr]
+    usage: |
+           /globalbroadcast <message>

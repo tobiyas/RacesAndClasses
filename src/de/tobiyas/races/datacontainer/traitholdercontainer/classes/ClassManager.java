@@ -28,7 +28,7 @@ public class ClassManager {
 		classList = new HashSet<ClassContainer>();
 		
 		classConfig = new YAMLConfigExtended(Consts.classesYML);
-		memberConfig = new YAMLConfigExtended(Consts.membersYML);
+		memberConfig = new YAMLConfigExtended(Consts.playerDataYML);
 		
 		DefaultContainer.createSTDClasses();
 	}

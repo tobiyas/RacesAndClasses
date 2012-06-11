@@ -8,10 +8,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
@@ -71,7 +70,6 @@ public class AxeDamageIncrease implements Trait {
 	
 	private double evaluateValue(String val){
 		char firstChar = val.charAt(0);
-		
 		operation = "";
 		
 		if(firstChar == '+')
@@ -88,7 +86,8 @@ public class AxeDamageIncrease implements Trait {
 		else
 			val = val.substring(1, val.length());
 		
-		return Double.valueOf(val);
+		double newVal = Double.valueOf(val);
+		return newVal;
 	}
 
 	@Override
@@ -99,8 +98,8 @@ public class AxeDamageIncrease implements Trait {
 		if(!(Eevent.getDamager() instanceof Player)) return false;
 		Player causer = (Player) Eevent.getDamager();
  		
-		if(checkContainer(causer.getName())){
-			if(!checkItemIsSword(causer.getItemInHand())) return false;
+		if(TraitHolderCombinder.checkContainer(causer.getName(), this)){
+			if(!checkItemIsAxe(causer.getItemInHand())) return false;
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
@@ -108,22 +107,7 @@ public class AxeDamageIncrease implements Trait {
 		return false;
 	}
 	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
-		return false;
-	}
-	
-	private boolean checkItemIsSword(ItemStack stack){
+	private boolean checkItemIsAxe(ItemStack stack){
 		Material item = stack.getType();
 		if(item == Material.WOOD_AXE)
 			return true;
@@ -144,9 +128,11 @@ public class AxeDamageIncrease implements Trait {
 	}
 	
 	private double getNewValue(int oldDmg){
+		System.out.println(this.toString());
 		double newDmg = 0;
+		System.out.println(newDmg + "#" + oldDmg);
+		System.out.println(value + "#" + operation);
 		switch(operation){
-			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;
 			case "*": newDmg = oldDmg * value; break;

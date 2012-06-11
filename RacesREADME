@@ -1,4 +1,4 @@
-Breaf Summary:
+Breaf Summary: (V0.5)
 
 Traits(Passive):
 -	"DamageIncreaseTrait"
@@ -15,6 +15,7 @@ Traits(Passive):
 	
 -	"ArmorTrait"
 	decides which sort of armor you can wear
+	
 	
 Traits(Weapons):
 -	"AxeDamageIncreaseTrait"
@@ -41,6 +42,9 @@ Traits(Activate):
 
 -	"TrollbloodTrait"
 	Removes all poisons (hitting somewhere with item in hand (default: apple))
+	
+-	"HealOthersTrait"
+	heals other when rightclicking with a string (untested)
 	
 Traits(Arrows):
 -	"FireArrowTrait"
@@ -70,13 +74,22 @@ Permissions:
 	permission to select a class
 	
 -	"races.chat.write"
-	permission to write in the race-chat
+	permission to write in the chat channels (consider removing)
 	
 -	"races.chat.read"
-	permission to read the race-chat
+	permission to read the chat channels (consider removing)
 	
 -	"races.chat.basic"
-	permissions: "races.chat.read" and "races.chat.write" in one.
+	permissions: "races.chat.read" and "races.chat.write" in one. (consider removing)
+	
+-	"races.channel.create.private"
+	permission to create a private channel
+	
+-	"races.channel.create.public"
+	permission to create a public channel
+	
+-	"races.channel.create.password"
+	permission to create a password channel	
 	
 -	"races.raceinfo.display"
 	permission to use the /raceinfo command
@@ -90,28 +103,31 @@ Permissions:
 -	"races.debug"
 	permission to use /racedebug commands
 	
--	"races.channel.create.private"
-	permission to create a private channel
+-	"races.reload"
+	permission to use /racesreload [gc]
 	
--	"races.channel.create.public"
-	permission to create a public channel
+-	"races.channel.broadcast"
+	permission to use the /globalbroadcast <message>   (alias: /gbr <message>) command to broadcast a Message in the global channel	
 	
--	"races.channel.create.password"
-	permission to create a password channel
+-	"races.god"
+	permission to trigger godmode (/racegod [playername]). Attention! Only for admins and testing purpose.
 	
 	
 Commands:
--	"/race <select,change> <racename>"
-	use to select, change race
+-	"/race select <racename>"
+	use to select race
+	
+-	"/race change <racename>"
+	use to change your race
+	
+-	"/race list"
+	lists all races
+	
+-	"/race info"
+	displays info to your race
 	
 -	"/racechat <message>" (alias: /rc, /rchat)
-	post something in the rase-chat
-
--	"/raceinfo"
-	shows infos to the actual selected race
-	
--	"/racelist"
-	lists all races registered
+	post something in the race-chat
 	
 -	"/racehelp"
 	help for the plugin
@@ -122,24 +138,59 @@ Commands:
 -	"/whisper <target> <message>"
 	whispers a target a message (alias: /w)
 	
+-	"/raceconfig"
+	displays your current member config (personal config for Player)
+	
 -	"/raceconfig <attribute> <value>"
 	changes attributes in personal config
 	
 -	"/racedebug <debugcommand>"
-	runs a debug command
+	runs a debug command. (currently only 'scan')
 	
 -	"/raceheal [player]"
 	heals player
 	
--	"/class [select,change] [classname]"
-	selects/changes your current class
-
--	"/classlist"
-	lists all classes available
+-	"/racegod [playername]"
+	gives a player godmode.
 	
--	"/classinfo"
-	displays info to your class
+-	"/class select <classname>"
+	selects your current class
+	
+-	"/class change <classname>"
+	changes your current class
+	
+-	"/class info"
+	gives infos to your current class
+	
+-	"/class list"
+	lists all classes available
 	
 -	"/hp"
 	displays your current HP
 	
+-	"/racesreload [gc]"
+	reloads the plugin. If '/racesreload gc' is called, a java garbage collection is done afterwards to clean memory
+	
+-	"/channel"
+	displays help for channels
+	
+-	"/channel list"
+	lists all public channels
+	
+-	"/channel join <channelname> [password]"
+	joins a channel. If it has a password, it checks the password provided. (not possible for Global, Race or World channels)
+	
+-	"/channel leave <channelname>"
+	leaves a channel. (not possible for Global, Race or World channels)
+	
+-	"/channel post <channelname>"
+	changes your curren channel, where you post normal messages to the one provided. 
+	(if you use '/channel post Global', your further posts will be sent to the global channel)
+	
+-	"/channel create <channelname> [channeltype] [password]"
+	creates a channel. (channeltypes are: 'PublicChannel', 'PrivateChannel', 'PasswordChannel', 'GlobalChannel', 'RaceChannel', 'WorldChannel'.
+	players can only create the following channels: 'PrivateChannel', 'PublicChannel', 'PasswordChannel'
+	only if the channeltype is 'PasswordChannel' the password will be checked.
+	
+-	"/channel edit <channelname> [property] [value]"
+	changes a property of a channel (NOT YET IMPLEMENTED)

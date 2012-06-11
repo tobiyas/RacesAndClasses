@@ -15,10 +15,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.races.datacontainer.arrow.ArrowManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public abstract class AbstractArrow implements TraitsWithUplink {
@@ -67,7 +66,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			if(!(Eevent.getAction() == Action.LEFT_CLICK_AIR || Eevent.getAction() == Action.LEFT_CLICK_BLOCK)) return false;
 
 			Player player = Eevent.getPlayer();
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			if(player.getItemInHand().getType() != Material.BOW) return false;
 	
 			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
@@ -85,7 +84,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
 			Player player = (Player) Eevent.getEntity();
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
 			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
@@ -104,7 +103,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			if(arrow.getShooter().getType() != EntityType.PLAYER) return false;
 			
 			Player player = (Player) arrow.getShooter();
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
 			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow currentArrow = arrowManager.getCurrentArrow();
@@ -125,7 +124,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			if(shooter.getType() != EntityType.PLAYER) return false;
 			
 			Player player = (Player) shooter;
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
 			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
@@ -134,22 +133,6 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			boolean change = onHitEntity(Eevent);
 			Eevent.getDamager().remove();
 			return change;
-		}
-		
-		return false;
-	}
-	
-
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
 		}
 		
 		return false;

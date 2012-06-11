@@ -137,7 +137,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "post " + ChatColor.YELLOW + "<channgelName>");
+		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "post " + ChatColor.YELLOW + "<channelname>");
 		
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "join " + ChatColor.YELLOW + "<channelname> " + 
 							ChatColor.AQUA + "[password]");
@@ -147,7 +147,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "create " + ChatColor.YELLOW + "<channelname> " +
 						   ChatColor.AQUA + "[channeltype] [password]");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelName> " +
+		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelname> " +
 							ChatColor.AQUA + "<property> <newValue>");
 	}
 	

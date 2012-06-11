@@ -12,10 +12,9 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
@@ -104,7 +103,7 @@ public class RegenerationTrait extends Observable implements Trait {
 		
 		if(Eevent.getEntityType() != EntityType.PLAYER) return false;
 		Player player = (Player) Eevent.getEntity();
-		if(!checkContainer(player.getName())) return false;
+		if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 		
 		if(Eevent.getRegainReason() == RegainReason.SATIATED){
 			double amount = getNewValue(Eevent.getAmount());
@@ -116,25 +115,9 @@ public class RegenerationTrait extends Observable implements Trait {
 		return false;
 	}
 	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
-		return false;
-	}
-	
 	private double getNewValue(int oldValue){
 		double newValue = 0;
 		switch(Operation){
-			case "": newValue = oldValue * value; break;
 			case "+": newValue = oldValue + value; break;
 			case "-" : newValue = oldValue - value; break;
 			case "*": newValue = oldValue * value; break;

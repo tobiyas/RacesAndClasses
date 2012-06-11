@@ -16,6 +16,7 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContaine
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.util.consts.Consts;
 
 public class HealthContainer {
 	
@@ -110,7 +111,7 @@ public class HealthContainer {
 	}
 	
 	public boolean save(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
 		config.load();
 		if(!config.isConfigurationSection("playerdata." + player))
 			config.createSection("playerdata." + player);
@@ -125,6 +126,7 @@ public class HealthContainer {
 		config.load();
 		
 		double currentHealth = config.getDouble("playerdata." + player + ".currentHealth");
+		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
 		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
 		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
 		
@@ -136,7 +138,8 @@ public class HealthContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		
 		HealthContainer container = new HealthContainer(player, currentHealth, maxHealth);
-		container.switchGod();
+		if(hasGod)
+			container.switchGod();
 		return container;
 	}
 

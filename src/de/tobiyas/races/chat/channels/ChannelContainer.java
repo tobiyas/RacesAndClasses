@@ -34,14 +34,13 @@ public class ChannelContainer {
 		plugin = Races.getPlugin();
 		this.channelName = channelName;
 		this.channelLevel = level;
-		this.channelColor = plugin.interactConfig().getconfig_racechat_default_color();
 		
-		this.prefix = "§f[" + channelColor;
-		this.suffix =  "§f]" + channelColor;
-		this.channelFormat = plugin.interactConfig().getconfig_racechat_default_format();
+		this.prefix = "§f[";
+		this.suffix =  "§f]";
 		
 		this.channelPassword = "";
 		participants = new ArrayList<String>();
+		adaptFormatingToLevel();
 	}
 	
 	private ChannelContainer(String channelName, ChannelLevel level, YAMLConfigExtended config){
@@ -55,13 +54,36 @@ public class ChannelContainer {
 		String channelPre = "channel." + level.name() + "." + channelName;
 		prefix = config.getString(channelPre + ".prefix" , "§f[");
 		suffix = config.getString(channelPre + ".suffix" , "§f]");
-		channelColor = config.getString(channelPre + ".channelColor", plugin.interactConfig().getconfig_racechat_default_color());
-		channelFormat = config.getString(channelPre + ".channelFormat", plugin.interactConfig().getconfig_racechat_default_format());
+		channelColor = config.getString(channelPre + ".channelColor", plugin.interactConfig().getConfig_channel_default_color());
+		channelFormat = config.getString(channelPre + ".channelFormat", plugin.interactConfig().getConfig_channel_default_format());
 		channelPassword = config.getString(channelPre + ".channelPassword", "");
 		channelAdmin = config.getString(channelPre + ".channelAdmin", "");
 		
 		List<String> tempList = config.getStringList(channelPre + ".members");
 		participants.addAll(tempList);
+	}
+	
+	private void adaptFormatingToLevel(){
+		switch(channelLevel){
+			case GlobalChannel:
+				channelColor = plugin.interactConfig().getConfig_globalchat_default_color();
+				channelFormat = plugin.interactConfig().getConfig_globalchat_default_format();
+				break;
+			
+			case WorldChannel:
+				channelColor = plugin.interactConfig().getConfig_worldchat_default_color();
+				channelFormat = plugin.interactConfig().getConfig_worldchat_default_format();
+				break;
+			
+			case RaceChannel:
+				channelColor = plugin.interactConfig().getConfig_racechat_default_color();
+				channelFormat = plugin.interactConfig().getConfig_racechat_default_format();
+				break;
+				
+			default:
+				channelColor = plugin.interactConfig().getConfig_channel_default_color();
+				channelFormat = plugin.interactConfig().getConfig_channel_default_format();
+		}
 	}
 	
 	public void setPassword(String password){
@@ -104,12 +126,14 @@ public class ChannelContainer {
 			return;
 		}
 		
-		if(!password.equals(channelPassword)){
-			if(player != null)
-				player.sendMessage(ChatColor.RED + "Wrong password.");
-			return;
+		if(!channelPassword.equals("")){
+			if(!password.equals(channelPassword)){
+				if(player != null)
+					player.sendMessage(ChatColor.RED + "Wrong password.");
+				return;
+			}
 		}
-		
+			
 		participants.add(playerName);
 		if(player != null){
 			if(notify)

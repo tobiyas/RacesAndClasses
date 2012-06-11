@@ -25,20 +25,40 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("traits")){			
-			return outTraitHelp(sender, args[1]);
+		if(args.length == 0){
+			PostPage.postPage(sender, 1);
+			return true;
 		}
 		
-		sender.sendMessage(ChatColor.RED + "Not implemented yet.");
+		String commandString = args[0];
 		
+		if(commandString.equalsIgnoreCase("page")){
+			int page = 1;
+			if(args.length > 1)
+				try{
+					page = Integer.valueOf(args[1]);
+				}catch(NumberFormatException e){
+					sender.sendMessage(ChatColor.RED + "The Page-Number must be an Integer value.");
+					return true;
+				}
+			PostPage.postPage(sender, page);
+			return true;
+		}
+		
+		if(args.length == 2 && args[0].equalsIgnoreCase("trait")){
+			outTraitHelp(sender, args[1]);
+			return true;
+		}
+		
+		PostPage.postPage(sender, commandString);	
 		return true;
 	}
 	
-	private boolean outTraitHelp(CommandSender sender, String trait){		
+	private void outTraitHelp(CommandSender sender, String trait){		
 		Class<?> clazz = TraitsList.getClassOfTrait(trait);
 		if(clazz == null){
 			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " not found.");
-			return true;
+			return;
 		}
 		
 		try{
@@ -46,10 +66,10 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 			clazz.getMethod("pasteHelpForTrait", CommandSender.class).invoke(clazz, sender);
 		}catch(Exception e){
 			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " has no Help");
-			return true;
+			return;
 		}
 		
-		return true;
+		return;
 	}
 
 }

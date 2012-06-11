@@ -17,10 +17,9 @@ import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class HealOthersTrait extends Observable implements TraitsWithUplink{
 	
@@ -101,7 +100,7 @@ public class HealOthersTrait extends Observable implements TraitsWithUplink{
 		if(target != null && target instanceof Player){
 			Player player = Eevent.getPlayer();
 			if(player.getItemInHand().getTypeId() != itemIDInHand) return false;
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			if(!checkUplink(player)) return false;
 			
 			Player targetPlayer = (Player) target;
@@ -109,21 +108,6 @@ public class HealOthersTrait extends Observable implements TraitsWithUplink{
 			setChanged();
 			uplinkMap.put(player.getName(), uplinkTime);
 		}
-		return false;
-	}
-	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
 		return false;
 	}
 	

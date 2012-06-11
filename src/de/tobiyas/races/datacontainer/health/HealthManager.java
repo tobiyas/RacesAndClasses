@@ -43,7 +43,7 @@ public class HealthManager implements Observer{
 	
 	public void loadHealthContainer(){
 		checkFileExist();
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.membersYML).load();
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML).load();
 		
 		Set<String> players = config.getYAMLChildren("playerdata");
 		for(String player : players){

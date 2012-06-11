@@ -10,10 +10,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
@@ -101,27 +100,12 @@ public class SwordDamageIncrease implements Trait {
 		if(!(Eevent.getDamager() instanceof Player)) return false;
 		Player causer = (Player) Eevent.getDamager();
  		
-		if(checkContainer(causer.getName())){
+		if(TraitHolderCombinder.checkContainer(causer.getName(), this)){
 			if(!checkItemIsSword(causer.getItemInHand())) return false;
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
 		}
-		return false;
-	}
-	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
 		return false;
 	}
 	
@@ -148,7 +132,6 @@ public class SwordDamageIncrease implements Trait {
 	private double getNewValue(int oldDmg){
 		double newDmg = 0;
 		switch(operation){
-			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;
 			case "*": newDmg = oldDmg * value; break;

@@ -41,8 +41,14 @@ private Races plugin;
 			return true;
 		}
 		
-		sender.sendMessage(ChatColor.RED + "Not Yet implemented.");
+		postHelp(sender);
 		return true;
+	}
+	
+	private void postHelp(CommandSender sender){
+		sender.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		sender.sendMessage(ChatColor.RED + "/racedebug " + ChatColor.LIGHT_PURPLE + "scan");
+		sender.sendMessage(ChatColor.RED + "Others coming soon.");
 	}
 	
 	private long runDebugScan(){

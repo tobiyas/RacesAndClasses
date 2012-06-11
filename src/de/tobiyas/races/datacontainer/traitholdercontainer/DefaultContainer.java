@@ -46,7 +46,7 @@ public class DefaultContainer {
 	
 	public static void createSTDMembers(){
 		Races plugin = Races.getPlugin();
-		File membersFile = new File(Consts.membersYML);
+		File membersFile = new File(Consts.playerDataYML);
 		if(membersFile.exists()) return;
 		
 		try {

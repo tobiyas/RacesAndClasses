@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.chat.channels.ChannelManager;
-import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
@@ -43,13 +42,13 @@ public class CommandExecutor_Race implements CommandExecutor {
 			sender.sendMessage("Only Players can use this command");
 			return true;
 		}
-			
+		
+		Player player = (Player) sender;
 		if(args.length == 0){
-			sender.sendMessage(ChatColor.RED + "Wrong Usage. Use /racehelp if you need help.");
+			postHelp(player, false);
 			return true;
 		}
-			
-		Player player = (Player) sender;
+		
 		String raceCommand = args[0];
 			
 		//Select race(only if has no race)
@@ -89,12 +88,16 @@ public class CommandExecutor_Race implements CommandExecutor {
 			return true;
 		}
 			
-		postHelp(player);
+		postHelp(player, true);
 		return true;
 	}
 	
-	private void postHelp(Player player){
-		player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+	private void postHelp(Player player, boolean wrongUsage){
+		if(wrongUsage)
+			player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		else
+			player.sendMessage(ChatColor.RED + "Use one of the following commands:");
+		
 		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "info");
 		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "list");
 		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeRace))
@@ -145,10 +148,11 @@ public class CommandExecutor_Race implements CommandExecutor {
 			return;
 		}
 		
-		double currentHealth = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
+		//Not sure, because it doesn't belong here.
+		/*double currentHealth = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
 		if(currentHealth != -1){
 			player.sendMessage(ChatColor.YELLOW + "Health: " + ChatColor.RED + currentHealth + "/" + container.getRaceMaxHealth());
-		}
+		}*/
 		
 		player.sendMessage(ChatColor.YELLOW + "Your race: " + ChatColor.LIGHT_PURPLE + container.getName());
 		player.sendMessage(ChatColor.YELLOW + "Your race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());

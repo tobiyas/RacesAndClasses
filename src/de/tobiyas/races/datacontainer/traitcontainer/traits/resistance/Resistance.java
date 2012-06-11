@@ -12,10 +12,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 
 public abstract class Resistance extends Observable implements ResistanceInterface {
@@ -94,7 +93,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		Entity entity = Eevent.getEntity();
 		if(!(entity instanceof Player)) return false;
 		Player player = (Player) entity;
-		if(checkContainer(player.getName())){
+		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
 				notifyObservers(new HealthModifyContainer(player.getName(), getNewValue(Eevent.getDamage()), "damage"));
 				setChanged();
@@ -106,25 +105,9 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		return false;
 	}
 	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
-		return false;
-	}
-	
 	private double getNewValue(int oldDmg){
 		double newDmg = 0;
 		switch(Operation){
-			case "": newDmg = oldDmg * value; break;
 			case "+": newDmg = oldDmg + value; break;
 			case "-" : newDmg = oldDmg - value; break;
 			case "*": newDmg = oldDmg * value; break;

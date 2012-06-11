@@ -28,4 +28,6 @@ public class PermissionNode {
 	public static final String debug = prePlugin + "debug";
 	
 	public static final String reload = prePlugin + "reload";
+
+	public static final String broadcast = prePlugin + "channel.broadcast";
 }

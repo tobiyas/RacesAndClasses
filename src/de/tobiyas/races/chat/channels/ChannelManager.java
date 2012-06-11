@@ -129,7 +129,8 @@ public class ChannelManager {
 		
 		ChannelContainer container = getContainer(channel);
 		if(container == null){
-			player.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
+			if(player != null)
+				player.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
 			return false;
 		}
 		

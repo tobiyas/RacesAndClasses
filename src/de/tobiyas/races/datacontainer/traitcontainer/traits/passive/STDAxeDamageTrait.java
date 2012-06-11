@@ -11,10 +11,9 @@ import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class STDAxeDamageTrait implements Trait {
 	
@@ -85,28 +84,13 @@ public class STDAxeDamageTrait implements Trait {
 		
 		if(Eevent.getDamager() instanceof Player){
 			Player player = (Player) Eevent.getDamager();
-			if(!checkContainer(player.getName())) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			int newDmg = getDamageOfAxe(player.getItemInHand().getType());
 			if(newDmg != -1){
 				Eevent.setDamage(newDmg);
 				return true;
 			}
 		}
-		return false;
-	}
-	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
 		return false;
 	}
 

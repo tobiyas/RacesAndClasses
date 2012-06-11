@@ -3,7 +3,6 @@ package de.tobiyas.races.datacontainer.traitcontainer;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 

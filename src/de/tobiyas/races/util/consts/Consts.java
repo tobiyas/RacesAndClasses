@@ -9,7 +9,7 @@ public class Consts {
 	private static final String racesPath = Races.getPlugin().getDataFolder() + File.separator;
 
 	//Paths
-	public static final String membersYML = racesPath + "playerdata.yml";
+	public static final String playerDataYML = racesPath + File.separator + "PlayerData" + File.separator + "playerdata.yml";
 	public static final String racesYML = racesPath + "races.yml";
 	public static final String classesYML = racesPath +"classes.yml";
 	public static final String channelsYML = racesPath + "channels.yml";

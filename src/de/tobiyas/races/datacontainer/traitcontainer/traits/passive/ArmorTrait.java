@@ -10,10 +10,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.util.items.ItemUtils;
@@ -90,7 +89,7 @@ public class ArmorTrait implements Trait {
 		Player player = (Player) Eevent.getWhoClicked();
 		
 		if(Eevent.getSlotType() != SlotType.ARMOR) return false;
-		if(!checkContainer(player.getName())) return true;
+		if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return true;
 		
 		ItemStack stack = Eevent.getCursor();
 		if(stack == null) return false;
@@ -101,21 +100,6 @@ public class ArmorTrait implements Trait {
 		}
 				
 		return true;
-	}
-	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
-		return false;
 	}
 	
 	private boolean hasPermission(ItemQuality quality){

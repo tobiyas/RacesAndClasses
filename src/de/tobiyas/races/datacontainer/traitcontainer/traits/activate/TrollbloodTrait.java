@@ -19,10 +19,9 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
+import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
@@ -95,7 +94,7 @@ public class TrollbloodTrait implements TraitsWithUplink {
 		Player player = Eevent.getPlayer();
 
 		if(player.getItemInHand().getType().getId() != itemIDInHand) return false;
-		if(checkContainer(player.getName())){
+		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(checkUplink(player))
 				return false;
 
@@ -112,21 +111,6 @@ public class TrollbloodTrait implements TraitsWithUplink {
 			player.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN + " toggled. " + 
 								ChatColor.LIGHT_PURPLE + i + ChatColor.GREEN + " poison effects removed.");
 		}
-		return false;
-	}
-	
-	private boolean checkContainer(String playerName){
-		if(raceContainer != null){
-			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
-			if(container == null) return true;
-			return raceContainer == container;
-		}
-		if(classContainer != null){
-			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
-			if(container == null) return true;
-			return classContainer == container;
-		}
-		
 		return false;
 	}
 	

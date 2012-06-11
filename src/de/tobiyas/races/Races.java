@@ -15,6 +15,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.races.chat.channels.ChannelManager;
+import de.tobiyas.races.commands.chat.CommandExecutor_BroadCast;
 import de.tobiyas.races.commands.chat.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.races.commands.chat.channels.CommandExecutor_Channel;
@@ -39,6 +40,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventM
 import de.tobiyas.races.listeners.Listener_Entity;
 import de.tobiyas.races.listeners.Listener_Player;
 import de.tobiyas.util.debug.logger.DebugLogger;
+import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
@@ -70,6 +72,8 @@ public class Races extends JavaPlugin{
 		
 		registerEvents();
 		registerCommands();
+		
+		initMetrics();
 		loadingDoneMessage();
 	}
 	
@@ -110,8 +114,14 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_HP();
 		new CommandExecutor_Channel();
 		new CommandExecutor_RaceGod();
+		new CommandExecutor_BroadCast();
 		
 		new CommandExecutor_RacesReload();
+	}
+	
+	private void initMetrics(){
+		if(interactConfig().getconfig_metrics_enabled())
+			SendMetrics.sendMetrics(this);
 	}
 	
 	@Override
