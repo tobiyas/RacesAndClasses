@@ -194,3 +194,28 @@ Commands:
 	
 -	"/channel edit <channelname> [property] [value]"
 	changes a property of a channel (NOT YET IMPLEMENTED)
+	
+
+TODO-LIST:
+
+	priority: (1 - 10) 1 = low, 10 = high
+	current Workstate: (0% - 100%) 0% = undone, 1% - 75% = in progress, 76% - 99% = testing, 100% = done.
+
+-	Chat:
+	- save/load  global/world/race  edit changes. (prio: 3) (0%)
+
+
+-	Traits:
+	- Add Berserker-Rage Trait when under 30% life. (prio: 7) (0%)
+
+
+-	HealthSystem
+	-See EventSystem (prio: 5)
+	
+	
+-	EventSystem
+	- Rebuild damage System to fit EntityDamageDoubleEvent (prio: 5) (0%)
+	
+	
+-	Vote System
+	- implement Vote System with benefits (prio: 1) (0%)
