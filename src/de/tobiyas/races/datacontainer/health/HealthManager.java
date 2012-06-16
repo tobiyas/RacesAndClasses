@@ -167,4 +167,10 @@ public class HealthManager implements Observer{
 		return false;
 	}
 
+	public double getMaxHealthOfPlayer(String playerName) {
+		HealthContainer container = playerHealth.get(playerName);
+		if(container == null) return -1;
+		return container.getMaxHealth();
+	}
+
 }

@@ -1,5 +1,7 @@
 package de.tobiyas.races.commands.help;
 
+import java.util.HashSet;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,9 +26,14 @@ public class CommandExecutor_TraitList implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
+		String page = "0";
+		if(args.length == 1)
+			page = args[0];
 		
-		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.LIGHT_PURPLE + "Trait-List" + ChatColor.YELLOW + "======");
-		for(String trait : TraitsList.getAllTraits())
+		HashSet<String> category = TraitsList.getCategory(page);
+		
+		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.LIGHT_PURPLE + "Trait-List PAGE: " + page + ChatColor.YELLOW + "======");
+		for(String trait : category)
 			sender.sendMessage(ChatColor.LIGHT_PURPLE + trait);
 		
 		return true;

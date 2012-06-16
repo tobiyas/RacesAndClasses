@@ -84,9 +84,6 @@ public class Listener_Player implements Listener {
 		Player player = event.getPlayer();
 		
 		if(orgMsg.charAt(0) == '/') return;
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		
-		if(container == null) return;
 		event.setCancelled(true);
 		
 		MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());

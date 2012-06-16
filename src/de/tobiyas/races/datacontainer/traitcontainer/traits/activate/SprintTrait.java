@@ -28,7 +28,7 @@ public class SprintTrait implements TraitsWithUplink {
 	private RaceContainer raceContainer;
 	private ClassContainer classContainer;
 	
-	private static HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
+	private HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
 	
 	private static int uplinkTime = 60*20;
 	private static int itemIDInHand = Material.APPLE.getId();

@@ -10,13 +10,17 @@ public class PermissionNode {
 	public static final String changeClass = prePlugin + "class.change";
 	public static final String selectClass = prePlugin + "class.select";
 	
-	public static final String raceChatWrite = prePlugin + "chat.basic.write";
-	public static final String raceChatRead = prePlugin + "chat.basic.read";
-	public static final String raceChatBasic = prePlugin + "chat.basic";
-	
 	public static final String channelCreatePrivate = prePlugin + "channel.create.private";
 	public static final String channelCreatePublic = prePlugin + "channel.create.public";
 	public static final String channelCreatePassword = prePlugin + "channel.create.password";
+	
+	public static final String channelGlobalBanPower = prePlugin + "chanel.global.banpower";
+	public static final String channelGlobalUnbanPower = prePlugin + "chanel.global.unbanpower";
+	
+	public static final String channelGlobalMutePower = prePlugin + "chanel.global.mutepower";
+	public static final String channelGlobalUnmutePower = prePlugin + "chanel.global.unmutepower";
+	
+	public static final String channelEdit = prePlugin + "channel.edit";
 	
 	public static final String whisper = prePlugin + "whisper";
 	public static final String healSelf = prePlugin + "heal.self";

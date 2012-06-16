@@ -2,36 +2,36 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
 import java.util.HashSet;
 
-import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
-public class AxeDamageIncrease implements Trait {
-	
+public class ArrowDamageIncrease implements Trait {
+
 	private double value;
 	private String operation;
 	
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
 	
-	public AxeDamageIncrease(RaceContainer raceContainer){
+	public ArrowDamageIncrease(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
 	}
 	
-	public AxeDamageIncrease(ClassContainer classContainer){
+	public ArrowDamageIncrease(ClassContainer classContainer){
 		this.classContainer = classContainer;
 	}
 	
 	@Override
-	public void generalInit(){
+	public void generalInit() {
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
 		listenedEvents.add(EntityDamageByEntityEvent.class);
 		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
@@ -39,14 +39,14 @@ public class AxeDamageIncrease implements Trait {
 
 	@Override
 	public String getName() {
-		return "AxeDamageIncreaseTrait";
+		return "ArrowDamageIncreaseTrait";
 	}
 
 	@Override
 	public RaceContainer getRace() {
 		return raceContainer;
 	}
-	
+
 	@Override
 	public ClassContainer getClazz() {
 		return classContainer;
@@ -59,7 +59,7 @@ public class AxeDamageIncrease implements Trait {
 
 	@Override
 	public String getValueString() {
-		return operation + " " +  String.valueOf(value);
+		return "damage: " + operation + " " + value;
 	}
 
 	@Override
@@ -93,37 +93,17 @@ public class AxeDamageIncrease implements Trait {
 	@Override
 	public boolean modify(Event event) {
 		if(!(event instanceof EntityDamageByEntityEvent)) return false;
-		
 		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
-		if(!(Eevent.getDamager() instanceof Player)) return false;
-		Player causer = (Player) Eevent.getDamager();
- 		
-		if(TraitHolderCombinder.checkContainer(causer.getName(), this)){
-			if(!checkItemIsAxe(causer.getItemInHand())) return false;
+		if(Eevent.getDamager().getType() != EntityType.ARROW) return false;
+		Arrow arrow = (Arrow) Eevent.getDamager();
+		if(arrow.getShooter() == null || arrow.getShooter().getType() != EntityType.PLAYER) return false;
+		Player shooter = (Player) arrow.getShooter();
+		
+		if(TraitHolderCombinder.checkContainer(shooter.getName(), this)){
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
 			Eevent.setDamage(newValue);
 			return true;
 		}
-		return false;
-	}
-	
-	private boolean checkItemIsAxe(ItemStack stack){
-		Material item = stack.getType();
-		if(item == Material.WOOD_AXE)
-			return true;
-		
-		if(item == Material.STONE_AXE)
-			return true;
-		
-		if(item == Material.GOLD_AXE)
-			return true;
-		
-		if(item == Material.IRON_AXE)
-			return true;
-		
-		if(item == Material.DIAMOND_AXE)
-			return true;
-			
 		return false;
 	}
 	

@@ -18,4 +18,7 @@ public class Consts {
 	
 	//Health
 	public static final int healthBarLength = 20;
+	
+	//Debugging
+	public static final int timingLength = 20;
 }

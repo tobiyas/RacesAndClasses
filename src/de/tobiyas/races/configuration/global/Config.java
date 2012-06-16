@@ -27,6 +27,10 @@ import de.tobiyas.races.Races;
 	private String config_globalchat_default_color;
 	private String config_globalchat_default_format;
 	
+	private String config_localchat_default_color;
+	private String config_localchat_default_format;
+	private int config_localchat_range;
+	
 	private int config_imunBetweenDamage;
 	private int config_defaultHealth;
 
@@ -63,10 +67,14 @@ import de.tobiyas.races.Races;
 		config.addDefault("chat.channel.world.default.color", "&4");
 		config.addDefault("chat.channel.world.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
 		config.addDefault("chat.channel.global.default.color", "&5");
-		config.addDefault("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");		
+		config.addDefault("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		
+		config.addDefault("chat.channel.local.default.color", "&f");
+		config.addDefault("chat.channel.local.default.format", "{color}[Local] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config.addDefault("chat.channel.local.range", 100);
 		
 		config.addDefault("health.defaultHealth", 20);
-		config.addDefault("health.imunBetweenDamage", 1000);
+		config.addDefault("health.imunBetweenDamage", 500);
 		
 		config.addDefault("debug.outputs.enable", false);
 		
@@ -96,8 +104,11 @@ import de.tobiyas.races.Races;
 		config_worldchat_default_color = config.getString("chat.channel.world.default.color", "&4");
 		config_worldchat_default_format = config.getString("chat.channel.world.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
 		config_globalchat_default_color = config.getString("chat.channel.global.default.color", "&5");
-		config_globalchat_default_format = config.getString("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");		
+		config_globalchat_default_format = config.getString("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
 		
+		config_localchat_default_color = config.getString("chat.channel.local.default.color", "&f");
+		config_localchat_default_format = config.getString("chat.channel.local.default.format", "{color}[Local] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_localchat_range = config.getInt("chat.channel.local.range", 100);		
 		
 		config_whisper_enable = config.getBoolean("chat.channelwhisper.enable", true);
 		
@@ -179,6 +190,18 @@ import de.tobiyas.races.Races;
 
 	public String getConfig_globalchat_default_format() {
 		return config_globalchat_default_format;
+	}
+	
+	public String getConfig_localchat_default_color(){
+		return config_localchat_default_color;
+	}
+	
+	public String getConfig_localchat_default_format(){
+		return config_localchat_default_format;
+	}
+
+	public int getConfig_localchat_range() {
+		return config_localchat_range;
 	}
 
 }

@@ -61,7 +61,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 			return true;
 		}
 		
-		if(channelCommand.equalsIgnoreCase("change")){
+		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post")){
 			if(args.length != 2){
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this:" + 
 									ChatColor.LIGHT_PURPLE + "/channel change <channelname>");
@@ -117,13 +117,68 @@ public class CommandExecutor_Channel implements CommandExecutor{
 			return true;
 		}
 		
-		if(channelCommand.equalsIgnoreCase("edit")){
-			if(args.length != 4){
-				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel leave <channelname>");
+		if(channelCommand.equalsIgnoreCase("ban")){
+			if(!(args.length == 3 ||  args.length == 4)){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel ban <channelname> <playername> [time in sec]");
 				return true;
 			}
-			//TODO
-			player.sendMessage(ChatColor.RED + "Not yet implemented.");
+			
+			int time = Integer.MAX_VALUE;
+			try{
+				time = Integer.valueOf(args[3]);
+			}catch(Exception e){
+			}
+			
+			ChannelManager.GetInstance().banPlayer(player, args[2], args[1], time);
+			return true;
+		}
+		
+		if(channelCommand.equalsIgnoreCase("unban")){
+			if(!(args.length == 3)){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel unban <channelname> <playername>");
+				return true;
+			}
+			
+			ChannelManager.GetInstance().unbanPlayer(player, args[2], args[1]);
+			return true;
+		}
+		
+		if(channelCommand.equalsIgnoreCase("mute")){
+			if(!(args.length == 3 ||  args.length == 4)){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel mute <channelname> <playername> [time in sec]");
+				return true;
+			}
+			
+			int time = Integer.MAX_VALUE;
+			try{
+				time = Integer.valueOf(args[3]);
+			}catch(Exception e){
+			}
+			
+			ChannelManager.GetInstance().mutePlayer(player, args[2], args[1], time);
+			return true;
+		}
+		
+		if(channelCommand.equalsIgnoreCase("unmute")){
+			if(!(args.length == 3)){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel unmute <channelname> <playername>");
+				return true;
+			}
+			
+			ChannelManager.GetInstance().unmutePlayer(player, args[2], args[1]);
+			return true;
+		}
+		
+		if(channelCommand.equalsIgnoreCase("edit")){
+			if(args.length != 4){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
+				return true;
+			}
+			String channel = args[1];
+			String property = args[2];
+			String newValue = args[3];
+			
+			channelEdit(player, channel, property, newValue);
 			return true;
 		}
 		
@@ -181,11 +236,6 @@ public class CommandExecutor_Channel implements CommandExecutor{
 			return;
 		}
 		
-		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.RaceChannel || level == ChannelLevel.WorldChannel){
-			player.sendMessage(ChatColor.RED + "You can't join a " + ChatColor.AQUA + level);
-			return;
-		}
-		
 		ChannelManager.GetInstance().joinChannel(player, channelName, password, true);
 	}
 	
@@ -193,11 +243,6 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(channelName);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channelName);
-			return;
-		}
-		
-		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.RaceChannel || level == ChannelLevel.WorldChannel){
-			player.sendMessage(ChatColor.RED + "You can't leave a " + ChatColor.AQUA + level);
 			return;
 		}
 		
@@ -222,15 +267,15 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		}
 		
 		if(channelLevel == ChannelLevel.PasswordChannel && 
-		   plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePassword))
+		   !plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePassword))
 			return;
 		
 		if(channelLevel == ChannelLevel.PublicChannel && 
-		   plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePublic))
+		   !plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePublic))
 			return;
 		
 		if(channelLevel == ChannelLevel.PrivateChannel && 
-		   plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePrivate))
+			!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePrivate))
 			return;
 		
 		if(channelLevel != ChannelLevel.PasswordChannel && channelPassword != "")
@@ -274,6 +319,28 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		}
 		
 		return ChannelLevel.NONE;
+	}
+	
+	private void channelEdit(Player player, String channel, String property, String newValue){
+		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(channel);
+		if(level == ChannelLevel.NONE){
+			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channel);
+			return;
+		}
+		
+		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.WorldChannel){
+			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelEdit)){
+				return;
+			}
+		}
+		
+		if(level == ChannelLevel.RaceChannel){
+			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelEdit)){
+				return;
+			}
+		}
+		
+		ChannelManager.GetInstance().editChannel(player, channel, property, newValue);
 	}
 	
 }

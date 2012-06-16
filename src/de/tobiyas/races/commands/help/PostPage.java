@@ -124,8 +124,10 @@ public class PostPage {
 	private static void page7(CommandSender sender){
 		postPageHead(sender, 7, "GENERAL");
 		sender.sendMessage(ChatColor.GREEN + "/hp " + ChatColor.YELLOW + "displays your current HP.");
-		if(Races.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.debug))
+		if(Races.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.debug)){
 			sender.sendMessage(ChatColor.GREEN + "/racedebug scan " + ChatColor.YELLOW + "Does a system scan. (debug purpose)");
+			sender.sendMessage(ChatColor.GREEN + "/racedebug timing " + ChatColor.YELLOW + "Does a event timing scan. (debug purpose)");
+		}
 		
 		if(Races.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.god))
 			sender.sendMessage(ChatColor.GREEN + "/racegod [playername] " + "gives a player godmode.");

@@ -5,7 +5,7 @@
  * powered by Kickstarter
  */
 
-package de.tobiyas.races.commands.chat;
+package de.tobiyas.races.commands.chat.channels;
 
 
 import org.bukkit.ChatColor;
@@ -18,7 +18,6 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.chat.channels.ChannelManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
-import de.tobiyas.races.util.consts.PermissionNode;
 
 
 public class CommandExecutor_Racechat implements CommandExecutor {
@@ -45,11 +44,7 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 			return true;
 		}
 		
-		Player player = (Player) sender;
-		
-		String[] permChecks = {PermissionNode.raceChatBasic, PermissionNode.raceChatWrite};
-		if(!plugin.getPermissionManager().hasAnyPermissions(sender, permChecks)) return true;
-		
+		Player player = (Player) sender;		
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
 		if(container == null){
 			player.sendMessage(ChatColor.RED + "You have no race selected.");

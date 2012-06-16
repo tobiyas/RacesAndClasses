@@ -15,10 +15,11 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.races.chat.channels.ChannelManager;
-import de.tobiyas.races.commands.chat.CommandExecutor_BroadCast;
-import de.tobiyas.races.commands.chat.CommandExecutor_Racechat;
+import de.tobiyas.races.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.races.commands.chat.CommandExecutor_Whisper;
+import de.tobiyas.races.commands.chat.channels.CommandExecutor_BroadCast;
 import de.tobiyas.races.commands.chat.channels.CommandExecutor_Channel;
+import de.tobiyas.races.commands.chat.channels.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.classes.CommandExecutor_Class;
 import de.tobiyas.races.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.races.commands.debug.CommandExecutor_RaceDebug;
@@ -115,19 +116,20 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_Channel();
 		new CommandExecutor_RaceGod();
 		new CommandExecutor_BroadCast();
+		new CommandExecutor_LocalChat();
 		
 		new CommandExecutor_RacesReload();
 	}
 	
 	private void initMetrics(){
 		if(interactConfig().getconfig_metrics_enabled())
-			SendMetrics.sendMetrics(this);
+			SendMetrics.sendMetrics(this, interactConfig().getconfig_enableDebugOutputs());
 	}
 	
 	@Override
 	public void onDisable(){
-		hManager.saveHealthContainer();
-		debugLogger.shutDown();
+		shutDownSequenz(false);
+		
 		log("disabled "+description.getFullName());
 
 	}
@@ -190,18 +192,21 @@ public class Races extends JavaPlugin{
 
 	public long fullReload(boolean shutDownBefore, boolean useGC){
 		long time = System.currentTimeMillis();
-		if(shutDownBefore){
-			hManager.saveHealthContainer();
-			debugLogger.shutDown();
-			plugin.reloadConfig();
-			ChannelManager.GetInstance().saveChannels();
-			Bukkit.getScheduler().cancelTasks(this);
-			if(useGC)
-				System.gc();
-		}
-		initManagers();
+		if(shutDownBefore)
+			shutDownSequenz(useGC);
 		
+		initManagers();
 		return System.currentTimeMillis() - time;
+	}
+	
+	private void shutDownSequenz(boolean useGC){
+		hManager.saveHealthContainer();
+		debugLogger.shutDown();
+		plugin.reloadConfig();
+		ChannelManager.GetInstance().saveChannels();
+		Bukkit.getScheduler().cancelTasks(this);
+		if(useGC)
+			System.gc();
 	}
 
 }

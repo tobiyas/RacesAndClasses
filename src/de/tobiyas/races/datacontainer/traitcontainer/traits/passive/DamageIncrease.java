@@ -4,6 +4,8 @@ import java.util.HashSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -95,8 +97,13 @@ public class DamageIncrease implements Trait {
 		if(!(event instanceof EntityDamageByEntityEvent)) return false;
 		
 		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
-		if(!(Eevent.getDamager() instanceof Player)) return false;
-		Player causer = (Player) Eevent.getDamager();
+		Entity entity = Eevent.getDamager();
+		if(entity instanceof Arrow)
+			entity = ((Arrow)entity).getShooter();
+		
+		
+		if(!(entity instanceof Player)) return false;
+		Player causer = (Player) entity;
  		
 		if(TraitHolderCombinder.checkContainer(causer.getName(), this)){
 			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));

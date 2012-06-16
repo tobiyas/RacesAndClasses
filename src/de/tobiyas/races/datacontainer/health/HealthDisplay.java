@@ -58,7 +58,7 @@ public class HealthDisplay implements Runnable {
 		
 		player.sendMessage(ChatColor.YELLOW + "Health: " + healthLeft + healthRest + 
 				ChatColor.YELLOW + " " + getColorOfPercent(newValue, maxHealth) + 
-				newValue + ChatColor.YELLOW + "/" + ChatColor.GREEN + maxHealth);
+				newValue + ChatColor.YELLOW + "/" + ChatColor.GREEN + (double) maxHealth);
 		oldValue = newValue;
 	}
 	

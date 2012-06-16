@@ -116,12 +116,12 @@ public class RaceManager {
 		return manager;
 	}
 
-	public LinkedList<String> getAllPlayerOfRace(RaceContainer container) {
+	public LinkedList<String> getAllPlayersOfRace(RaceContainer container) {
 		LinkedList<String> members = new LinkedList<String>();
 		
 		for(String member : memberList.keySet()){
 			RaceContainer tempContainer = memberList.get(member);
-			if(tempContainer.equals(container))
+			if(tempContainer != null && tempContainer.equals(container))
 				members.add(member);
 		}
 				

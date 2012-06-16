@@ -78,3 +78,8 @@ commands:
     aliases: [gbr]
     usage: |
            /globalbroadcast <message>
+  localchat:
+    description: sends a message to local chat
+    aliases: [lc,l]
+    usage: |
+           /<command> message

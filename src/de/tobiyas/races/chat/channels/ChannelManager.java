@@ -11,6 +11,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.chat.channels.container.ChannelContainer;
+import de.tobiyas.races.chat.channels.container.ChannelTicker;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
@@ -33,6 +35,7 @@ public class ChannelManager {
 	
 	public void init(){
 		channels.clear();
+		ChannelTicker.init();
 		createSTDChannels();
 		loadChannelsFromFile();
 	}
@@ -73,6 +76,7 @@ public class ChannelManager {
 		boolean worked = registerChannel(channelLevel, channelName, player);
 		if(worked){
 			ChannelContainer container = getContainer(channelName);
+			container.setAdmin(player.getName());
 			container.setPassword(channelPassword);
 			player.sendMessage(ChatColor.GREEN + "The channel " + ChatColor.AQUA + channelName + 
 								ChatColor.GREEN + " has been created successfully");
@@ -201,25 +205,133 @@ public class ChannelManager {
 		container.removePlayerFromChannel(player.getName(), notify);
 	}
 	
-	public boolean isMember(String playerName, String changeTo) {
-		ChannelContainer container = getContainer(changeTo);
+	public boolean isMember(String playerName, String channelName) {
+		ChannelContainer container = getContainer(channelName);
 		if(container == null)
 			return false;
 		
 		return container.isMember(playerName);
-	}	
+	}
+	
+	public void mutePlayer(Player admin, String mutedName, String channelName, int time){
+		ChannelContainer container = getContainer(channelName);
+		if(container == null){
+			admin.sendMessage(ChatColor.RED + "Channel not found.");
+			return;
+		}
+		
+		if(!container.checkPermissionMute(admin)){
+			admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+			return;
+		}
+		
+		if(!container.isMember(mutedName)){
+			admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+			return;
+		}
+		
+		if(container.isMuted(mutedName)){
+			admin.sendMessage(ChatColor.RED + "The Player is already muted.");
+			return;
+		}
+		
+		container.mutePlayer(mutedName, time);
+		broadcastMessageToChannel(channelName, null, " Player: " + mutedName + " got muted by: " + admin.getDisplayName());
+	}
+	
+	public void unmutePlayer(Player admin, String unmutedName, String channelName){
+		ChannelContainer container = getContainer(channelName);
+		if(container == null){
+			admin.sendMessage(ChatColor.RED + "Channel not found.");
+			return;
+		}
+		
+		if(!container.checkPermissionUnmute(admin)){
+			admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+			return;
+		}
+		
+		if(!container.isMember(unmutedName)){
+			admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+			return;
+		}
+		
+		if(!container.isMuted(unmutedName)){
+			admin.sendMessage(ChatColor.RED + "No player with this name is muted.");
+			return;
+		}
+		
+		container.unmutePlayer(unmutedName);
+		broadcastMessageToChannel(channelName, null, " Player: " + unmutedName + " got unmuted by: " + admin.getDisplayName());
+	}
+	
+	public void banPlayer(Player admin, String banName, String channelName, int time){
+		ChannelContainer container = getContainer(channelName);
+		if(container == null){
+			admin.sendMessage(ChatColor.RED + "Channel not found.");
+			return;
+		}
+		
+		if(!container.checkPermissionBann(admin)){
+			admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+			return;
+		}
+		
+		if(!container.isMember(banName)){
+			admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+			return;
+		}
+		
+		if(container.isBanned(banName)){
+			admin.sendMessage(ChatColor.RED + "This Player is already banned from the channel.");
+			return;
+		}
+		
+		container.banPlayer(banName, time);
+		broadcastMessageToChannel(channelName, null, " Player: " + banName + " got baned from channel by: " + admin.getDisplayName());
+		container.removePlayerFromChannel(banName, false);
+	}
+	
+	public void unbanPlayer(Player admin, String unbanName, String channelName){
+		ChannelContainer container = getContainer(channelName);
+		if(container == null){
+			admin.sendMessage(ChatColor.RED + "Channel not found.");
+			return;
+		}
+		
+		if(!container.checkPermissionMute(admin)){
+			admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+			return;
+		}
+		
+		if(!container.isBanned(unbanName)){
+			admin.sendMessage(ChatColor.RED + "No player with this name is banned.");
+			return;
+		}
+		
+		container.unbanPlayer(unbanName);
+		//broadcastMessageToChannel(channelName, null, " Player: " + unbanName + " got unbaned by: " + admin.getDisplayName());
+		admin.sendMessage(ChatColor.GREEN + "Player: " + ChatColor.LIGHT_PURPLE +  unbanName + ChatColor.GREEN +
+							" got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
+		
+		Player player = Bukkit.getPlayer(unbanName);
+		if(player != null)
+			player.sendMessage(ChatColor.GREEN + "You got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
+	}
 	
 	public static ChannelManager GetInstance(){
 		return instance;
 	}
 
 	public void removeChannel(ChannelContainer channelContainer) {
+		ChannelTicker.unregisterChannel(channelContainer);
 		String channelName = channelContainer.getChannelName();
+		
 		config.load();
 		config.set("channel." + channelContainer.getChannelLevel() + "." + channelName, 1);
 		config.set("channel." + channelContainer.getChannelLevel() + "." + channelName, null);
 		config.save();
-		channels.remove(channelName);		
+		channels.remove(channelName);
 	}
 	
 	public void playerLogin(Player player){
@@ -253,5 +365,14 @@ public class ChannelManager {
 		if(!oldRace.equals(""))
 			leaveChannel(player, oldRace, true);
 		joinChannel(player, newRace, "", true);
+	}
+
+	public void editChannel(Player player, String channel, String property,
+			String newValue) {
+		ChannelContainer container = getContainer(channel);
+		if(container == null)
+			return;
+		
+		container.editChannel(player, property, newValue);
 	}
 }

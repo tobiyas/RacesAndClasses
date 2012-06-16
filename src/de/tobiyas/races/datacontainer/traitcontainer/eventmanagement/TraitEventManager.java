@@ -22,6 +22,8 @@ import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class TraitEventManager extends Observable{
 	private Races plugin;
+	private static long timings = 0;
+	private static long calls = 0;
 	
 	private static TraitEventManager manager;
 	private HashMap<Class<?>, HashSet<Trait>> traitList;
@@ -46,7 +48,8 @@ public class TraitEventManager extends Observable{
 		setChanged();
 	}
 	
-	private boolean fireEventIntern(Event event){
+	private boolean fireEventIntern(Event event){		
+		calls ++;
 		boolean changedSomething = false;
 		if(eventIDs.containsKey(event.hashCode()))
 			return false;
@@ -58,7 +61,7 @@ public class TraitEventManager extends Observable{
 			if(event.getClass().isAssignableFrom(clazz))
 				traitsToCheck.addAll(traitList.get(clazz));
 		}
-				
+		
 		for(Trait trait: traitsToCheck){
 			try{
 				if(trait.modify(event))
@@ -153,7 +156,23 @@ public class TraitEventManager extends Observable{
 	}
 	
 	public static boolean fireEvent(Event event){
-		return getInstance().fireEventIntern(event);
+		long time = System.currentTimeMillis();
+		boolean result = getInstance().fireEventIntern(event);
+		timings += System.currentTimeMillis() - time;
+		
+		return result;
+	}
+	
+	public static long timingResults(){
+		long time = new Long(timings);
+		timings = 0;
+		return time;
+	}
+	
+	public static long getCalls(){
+		long tempCalls = new Long(calls);
+		calls = 0;
+		return tempCalls;
 	}
 	
 }
