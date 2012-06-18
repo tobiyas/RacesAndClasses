@@ -5,11 +5,14 @@ import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
@@ -21,7 +24,7 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
-public class DwarfSkinTrait implements TraitsWithUplink {
+public class BerserkerRageTrait implements TraitsWithUplink {
 
 	private double value;
 	private String Operation;
@@ -36,11 +39,11 @@ public class DwarfSkinTrait implements TraitsWithUplink {
 	private static double activationLimit = 0.3;
 	
 
-	public DwarfSkinTrait(RaceContainer raceContainer){
+	public BerserkerRageTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
 	}
 	
-	public DwarfSkinTrait(ClassContainer classContainer){
+	public BerserkerRageTrait(ClassContainer classContainer){
 		this.classContainer = classContainer;
 	}
 	
@@ -61,7 +64,7 @@ public class DwarfSkinTrait implements TraitsWithUplink {
 
 	@Override
 	public String getName() {
-		return "DwarfSkinTrait";
+		return "BerserkerRageTrait";
 	}
 
 	@Override
@@ -82,7 +85,7 @@ public class DwarfSkinTrait implements TraitsWithUplink {
 
 	@Override
 	public String getValueString() {
-		return "damage Reduce: " + Operation + value;
+		return "damage increase: " + Operation + value;
 	}
 
 	@Override
@@ -115,56 +118,65 @@ public class DwarfSkinTrait implements TraitsWithUplink {
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageEvent || event instanceof EntityDamageDoubleEvent)) return false;
-		
-		Entity entity = null;
-		if(event instanceof EntityDamageDoubleEvent)
-			entity = ((EntityDamageDoubleEvent) event).getEntity();
-		else
-			entity = ((EntityDamageEvent) event).getEntity();
-		
-		if(entity.getType() != EntityType.PLAYER) return false;
-		Player player = (Player) entity;
-		
-		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
-			double maxHealth = HealthManager.getHealthManager().getMaxHealthOfPlayer(player.getName());
-			double currentHealth =  HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
-			double healthPercent = currentHealth / maxHealth;
-			if(healthPercent > activationLimit) return false;
+		//Handle activation
+		if(event instanceof EntityDamageEvent || event instanceof EntityDamageDoubleEvent){
+			Entity entity = null;
 			
-			if(checkUplinkOrActive(player, false)) return false;
+			if(event instanceof EntityDamageDoubleEvent)
+				entity = ((EntityDamageDoubleEvent) event).getEntity();
 			
-			if(event instanceof EntityDamageDoubleEvent){
-				double damage = ((EntityDamageDoubleEvent) event).getDoubleValueDamage();
-				double newDamage = getNewValue(damage);
-				((EntityDamageDoubleEvent) event).setDoubleValueDamage(newDamage);
-			}else{
-				int damage = ((EntityDamageEvent) event).getDamage();
-				double newDamage = getNewValue(damage);
-				((EntityDamageEvent) event).setDamage((int) newDamage);
+			if(event instanceof EntityDamageEvent)
+				entity = ((EntityDamageEvent) event).getEntity();
+			
+			if(entity.getType() != EntityType.PLAYER) return false;
+			Player player = (Player) entity;
+			
+			if(TraitHolderCombinder.checkContainer(player.getName(), this)){
+				double maxHealth = HealthManager.getHealthManager().getMaxHealthOfPlayer(player.getName());
+				double currentHealth =  HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
+				double healthPercent = currentHealth / maxHealth;
+				if(healthPercent > activationLimit) return false;
+				
+				checkUplinkAndActive(player, false);
+				return false;
 			}
-	
-			return true;
 		}
+		
+		if(event instanceof EntityDamageByEntityEvent){			
+			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+			Entity entity = Eevent.getDamager();
+			if(entity instanceof Arrow) 
+				entity = ((Arrow) entity).getShooter();
+			
+			if(entity == null || entity.getType() != EntityType.PLAYER) return false;
+			Player player = (Player) entity;
+			
+			if(TraitHolderCombinder.checkContainer(player.getName(), this)){
+				if(!checkIfActive(player)) return false;
+				Eevent.setDamage((int) getNewValue(Eevent.getDamage()));
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
-	private boolean checkUplinkOrActive(Player player, boolean notify){
+	private boolean checkUplinkAndActive(Player player, boolean notify){
 		if(uplinkMap.containsKey(player.getName())){
-			int remainingTime = uplinkMap.get(player.getName());
-			if((remainingTime - uplinkTime) > 0)
-				return false;
-			
-			if(notify){	
-				player.sendMessage(ChatColor.RED + "You still have " + ChatColor.LIGHT_PURPLE + remainingTime + 
-									ChatColor.RED + " seconds uplink on " + ChatColor.LIGHT_PURPLE + getName());
-			}
-			return true;
+			return false;
 		}
 		
 		uplinkMap.put(player.getName(), uplinkTime + duration);
 		player.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN + " toggled.");
 		return false;
+	}
+	
+	private boolean checkIfActive(Player player){
+		String playerName = player.getName();
+		
+		if(!uplinkMap.containsKey(playerName)) return false;
+		int remainingTime = uplinkMap.get(playerName);
+		return (remainingTime - uplinkTime) > 0;
 	}
 	
 	private double getNewValue(double oldDmg){
@@ -202,6 +214,5 @@ public class DwarfSkinTrait implements TraitsWithUplink {
 				uplinkMap.put(player, remainingTime);
 		}
 	}
-
 
 }

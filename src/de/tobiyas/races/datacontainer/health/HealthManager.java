@@ -80,8 +80,8 @@ public class HealthManager implements Observer{
 		playerHealth.put(player, new HealthContainer(player, maxHealth, maxHealth));
 	}
 	
-	public double getHealthOfPlayer(String player){
-		HealthContainer container = playerHealth.get(player);
+	public double getHealthOfPlayer(String playerName){
+		HealthContainer container = getCreate(playerName, true);
 		if(container == null) return -1;
 		return container.getCurrentHealth();
 	}
@@ -96,7 +96,9 @@ public class HealthManager implements Observer{
 			else
 				maxHealth = container.getRaceMaxHealth();
 			
-			playerHealth.put(player, new HealthContainer(player, maxHealth, (int) maxHealth));
+			HealthContainer healthContainer = new HealthContainer(player, maxHealth, maxHealth);
+			healthContainer.checkStats();
+			playerHealth.put(player, healthContainer);
 		}else
 			hContainer.checkStats();
 	}
@@ -125,7 +127,7 @@ public class HealthManager implements Observer{
 	
 	private void damage(String playerName, double amount){
 		Player player = Bukkit.getPlayer(playerName);
-		HealthContainer hContainer = playerHealth.get(player.getName());
+		HealthContainer hContainer = getCreate(player.getName(), true);
 		
 		hContainer.reduceLife(amount);
 	}
@@ -136,23 +138,23 @@ public class HealthManager implements Observer{
 	
 	private void heal(String playerName, double amount){
 		Player player = Bukkit.getPlayer(playerName);
-		HealthContainer hContainer = playerHealth.get(player.getName());
+		HealthContainer hContainer =  getCreate(player.getName(), true);
 		
 		hContainer.increaseLife(amount);
 	}
 
-	public void resetHealth(String player) {
-		HealthContainer container = playerHealth.get(player);
+	public void resetHealth(String playerName) {
+		HealthContainer container = getCreate(playerName, true);
 		if(container == null) return;
 		container.fullHeal();
 	}
 
 	public ArrowManager getArrowManagerOfPlayer(String playerName) {
-		return playerHealth.get(playerName).getArrowManager();
+		return  getCreate(playerName, true).getArrowManager();
 	}
 
-	public boolean displayHealth(String name) {
-		HealthContainer container = playerHealth.get(name);
+	public boolean displayHealth(String playerName) {
+		HealthContainer container = getCreate(playerName, true);
 		if(container == null) return false;
 		container.forceHPOut();
 		return true;
@@ -168,9 +170,19 @@ public class HealthManager implements Observer{
 	}
 
 	public double getMaxHealthOfPlayer(String playerName) {
-		HealthContainer container = playerHealth.get(playerName);
+		HealthContainer container = getCreate(playerName, true);
 		if(container == null) return -1;
 		return container.getMaxHealth();
+	}
+	
+	private HealthContainer getCreate(String playerName, boolean create){
+		HealthContainer container = playerHealth.get(playerName);
+		if(container == null && create){
+			checkPlayer(playerName);
+			container = playerHealth.get(playerName);
+		}
+		
+		return container;
 	}
 
 }

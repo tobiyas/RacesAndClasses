@@ -46,7 +46,8 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		
 		Player player = (Player) sender;		
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		if(container == null){
+		RaceContainer stdContainer = RaceManager.getManager().getDefaultContainer();
+		if(container == null || container == stdContainer){
 			player.sendMessage(ChatColor.RED + "You have no race selected.");
 			return true;
 		}

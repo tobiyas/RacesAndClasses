@@ -4,18 +4,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Observable;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.health.EntityDamageDoubleEvent;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
+import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
 import de.tobiyas.races.datacontainer.traitcontainer.UplinkReducer;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByBlockDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
@@ -56,6 +63,8 @@ public class TraitEventManager extends Observable{
 		else
 			eventIDs.put(event.hashCode(), System.currentTimeMillis());
 		
+		if(replaceEvent(event)) return true;
+				
 		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
 		for(Class<?> clazz : traitList.keySet()){			
 			if(event.getClass().isAssignableFrom(clazz))
@@ -85,7 +94,7 @@ public class TraitEventManager extends Observable{
 			}else{
 				if(!(Eevent.getEntity() instanceof LivingEntity)) return false;
 				LivingEntity entity = (LivingEntity) Eevent.getEntity();
-				entity.damage(Eevent.getDamage());
+				entity.damage((int) Eevent.getDoubleValueDamage());
 			}
 		}else
 		if(event instanceof EntityDamageEvent){
@@ -115,6 +124,51 @@ public class TraitEventManager extends Observable{
 		}
 		
 		return changedSomething;
+	}
+	
+	private boolean replaceEvent(Event event){
+		if(event instanceof EntityDamageDoubleEvent) return false;
+		
+		if(event instanceof EntityDamageByEntityEvent){
+			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;				
+			EntityDamageByEntityDoubleEvent edEvent = new EntityDamageByEntityDoubleEvent(Eevent);
+			Eevent.setDamage(0);
+			fireEventIntern(edEvent);
+			return true;
+		}
+		
+		if(event instanceof EntityDamageByBlockEvent){
+			EntityDamageByBlockEvent Eevent = (EntityDamageByBlockEvent) event;
+			EntityDamageByBlockDoubleEvent edEvent = new EntityDamageByBlockDoubleEvent(Eevent);
+			Eevent.setDamage(0);
+			fireEventIntern(edEvent);
+			return true;
+		}
+		
+		if(event instanceof EntityDamageEvent){
+			EntityDamageEvent Eevent = (EntityDamageEvent) event;
+			
+			if(Eevent.getCause() == DamageCause.FIRE_TICK){
+				Eevent.setDamage(0);
+				return true;
+			}
+			
+			if((Eevent.getCause() == DamageCause.FIRE || 
+				Eevent.getCause() == DamageCause.LAVA) 
+				&& Eevent.getEntity() instanceof LivingEntity){
+				
+				if(DamageTicker.hasEffect(Eevent.getEntity(), DamageCause.FIRE) != 0)
+					DamageTicker.cancleEffects((LivingEntity) Eevent.getEntity(), DamageCause.FIRE);
+				
+				new DamageTicker((LivingEntity) Eevent.getEntity(), Eevent.getEntity().getFireTicks() / 20, 1, DamageCause.FIRE);
+			}
+			
+			EntityDamageDoubleEvent edEvent = new EntityDamageDoubleEvent(Eevent);
+			Eevent.setDamage(0);
+			fireEventIntern(edEvent);
+			return true;
+		}
+		return false;
 	}
 	
 	public void cleanEventList(){

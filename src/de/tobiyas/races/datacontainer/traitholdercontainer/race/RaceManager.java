@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.health.HealthManager;
@@ -35,6 +38,9 @@ public class RaceManager {
 	public void init(){
 		readRaceList();
 		readMemberList();
+		initSTDRace();
+		
+		checkForOnlineWithoutRace();
 	}
 	
 	private void readRaceList(){
@@ -65,7 +71,22 @@ public class RaceManager {
 			memberList.put(member, getRaceByName(raceName));
 		}
 				
-	}	
+	}
+	
+	private void initSTDRace(){
+		races.add(new RaceContainer());
+	}
+	
+	private void checkForOnlineWithoutRace(){
+		Player[] players = Bukkit.getOnlinePlayers();
+		
+		for(Player player : players){
+			String playerName = player.getName();
+			RaceContainer container = getRaceOfPlayer(playerName);
+			if(container == null)
+				addPlayerToRace(playerName, "DefaultRace");
+		}
+	}
 	
 	public RaceContainer getRaceOfPlayer(String player){
 		return memberList.get(player);
@@ -78,6 +99,10 @@ public class RaceManager {
 		}
 			
 		return null;
+	}
+	
+	public RaceContainer getDefaultContainer(){
+		return getRaceByName("DefaultRace");
 	}
 	
 	public ArrayList<String> listAllRaces(){

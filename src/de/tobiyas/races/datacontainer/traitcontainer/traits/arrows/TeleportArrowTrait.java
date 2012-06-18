@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -22,6 +21,7 @@ import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class TeleportArrowTrait extends AbstractArrow {
 	
@@ -41,7 +41,7 @@ public class TeleportArrowTrait extends AbstractArrow {
 	@Override
 	public void generalInit(){
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
+		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
 		listenedEvents.add(ProjectileHitEvent.class);
 		listenedEvents.add(PlayerInteractEvent.class);
 		listenedEvents.add(EntityShootBowEvent.class);
@@ -91,7 +91,7 @@ public class TeleportArrowTrait extends AbstractArrow {
 	}
 
 	@Override
-	protected boolean onHitEntity(EntityDamageByEntityEvent event) {
+	protected boolean onHitEntity(EntityDamageByEntityDoubleEvent event) {
 		//Not needed
 		return false;
 	}

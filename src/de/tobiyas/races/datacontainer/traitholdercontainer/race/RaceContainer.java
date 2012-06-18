@@ -9,6 +9,7 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.NormalArrow;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArmorTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.STDAxeDamageTrait;
 
 public class RaceContainer {
@@ -18,6 +19,8 @@ public class RaceContainer {
 	
 	private String raceTag;
 	private int raceMaxHealth;
+	
+	private boolean[] armorUsage;
 	
 	private HashSet<Trait> traits;
 	
@@ -31,9 +34,42 @@ public class RaceContainer {
 		readTraitSection();	
 	}
 	
+	public RaceContainer(){
+		this.config = null;
+		this.raceName = "DefaultRace";
+		
+		raceTag = "[DefaultRace]";
+		raceMaxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+		armorUsage = new boolean[]{false, false, false, false, false};
+		traits = new HashSet<Trait>();
+		
+		addSTDTraits();
+	}
+	
 	private void readConfigSection(){
 		raceTag = decodeColors(config.getString("races." + raceName + ".config.racetag"));
 		raceMaxHealth = config.getInt("races." + raceName + ".config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
+	
+		readArmor();
+	}
+	
+	private void readArmor(){
+		armorUsage = new boolean[]{false, false, false, false, false};
+		String armorString = config.getString("races." + raceName + ".config.armor", "").toLowerCase();
+		if(armorString.contains("leather"))
+			armorUsage[0] = true;
+		
+		if(armorString.contains("iron"))
+			armorUsage[1] = true;
+		
+		if(armorString.contains("gold"))
+			armorUsage[2] = true;
+		
+		if(armorString.contains("diamond"))
+			armorUsage[3] = true;
+		
+		if(armorString.contains("chain"))
+			armorUsage[4] = true;
 	}
 	
 	private String decodeColors(String message){
@@ -66,6 +102,11 @@ public class RaceContainer {
 		Trait axeDmg = new STDAxeDamageTrait(this);
 		axeDmg.generalInit();
 		traits.add(axeDmg);
+		
+		Trait armorTrait = new ArmorTrait(this);
+		armorTrait.generalInit();
+		armorTrait.setValue(armorUsage);
+		traits.add(armorTrait);
 	}
 	
 	/**
@@ -108,8 +149,21 @@ public class RaceContainer {
 		return traitSet;
 	}
 	
+	public String getArmorString(){
+		for(Trait trait : traits)
+			if(trait instanceof ArmorTrait)
+				return trait.getValueString();
+		
+		return "";
+	}
+	
 	public int getRaceMaxHealth(){
 		return raceMaxHealth;
+	}
+	
+	@Override
+	public String toString(){
+		return raceName;
 	}
 	
 }

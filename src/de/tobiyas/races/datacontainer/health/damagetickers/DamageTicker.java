@@ -5,14 +5,15 @@ import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.datacontainer.health.EntityDamageDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 
 public class DamageTicker implements Runnable{
 
@@ -29,7 +30,7 @@ public class DamageTicker implements Runnable{
 	
 	private static HashSet<DamageTicker> tickers = new HashSet<DamageTicker>();
 	
-	public DamageTicker(LivingEntity target, int duration, int damagePerTick, DamageCause cause){
+	public DamageTicker(LivingEntity target, int duration, double damagePerTick, DamageCause cause){
 		this.plugin = Races.getPlugin();
 		this.target = target;
 		this.duration = duration;
@@ -80,7 +81,6 @@ public class DamageTicker implements Runnable{
 	}
 	
 	public static int cancleEffects(LivingEntity entity, DamageCause cause){
-		
 		HashSet<DamageTicker> removeTickers = new HashSet<DamageTicker>();
 		for(DamageTicker ticker : tickers){
 			if(ticker.cancleIfFit(entity, cause))
@@ -91,5 +91,16 @@ public class DamageTicker implements Runnable{
 			tickers.remove(ticker);
 		
 		return removeTickers.size();
+	}
+	
+	
+	public static int hasEffect(Entity entity, DamageCause cause){
+		int i = 0;
+		for(DamageTicker ticker : tickers){
+			if(ticker.cause == cause)
+				i++;
+		}
+		
+		return i;
 	}
 }

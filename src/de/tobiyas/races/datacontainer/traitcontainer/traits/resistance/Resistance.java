@@ -7,7 +7,6 @@ import java.util.Observable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.races.datacontainer.health.HealthManager;
@@ -16,6 +15,7 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 
 public abstract class Resistance extends Observable implements ResistanceInterface {
 
@@ -30,7 +30,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	@Override
 	public void generalInit(){
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageEvent.class);
+		listenedEvents.add(EntityDamageDoubleEvent.class);
 		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 		
 		addObserver(HealthManager.getHealthManager());
@@ -87,15 +87,18 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageEvent)) return false;
-		EntityDamageEvent Eevent = (EntityDamageEvent) event;
+		if(!(event instanceof EntityDamageDoubleEvent)) return false;
+		EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
 		
 		Entity entity = Eevent.getEntity();
 		if(!(entity instanceof Player)) return false;
 		Player player = (Player) entity;
 		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
-				notifyObservers(new HealthModifyContainer(player.getName(), getNewValue(Eevent.getDamage()), "damage"));
+				double oldDmg = Eevent.getDoubleValueDamage();
+				double newDmg = getNewValue(oldDmg);
+				
+				notifyObservers(new HealthModifyContainer(player.getName(), newDmg, "damage"));
 				setChanged();
 				Eevent.setDamage(0);
 				return true;
@@ -105,7 +108,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 		return false;
 	}
 	
-	private double getNewValue(int oldDmg){
+	private double getNewValue(double oldDmg){
 		double newDmg = 0;
 		switch(Operation){
 			case "+": newDmg = oldDmg + value; break;

@@ -21,7 +21,6 @@ import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
 public class ArmorTrait implements Trait {
 	
 	private boolean[] armorPerms;
-	private String armorPermsString;
 	
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
@@ -63,13 +62,31 @@ public class ArmorTrait implements Trait {
 	
 	@Override
 	public String getValueString(){
-		return armorPermsString;
+		String perms = "";
+		if(armorPerms[0])
+			perms += "leather ";
+		if(armorPerms[1])
+			perms += "iron ";
+		if(armorPerms[2])
+			perms += "gold ";
+		if(armorPerms[3])
+			perms += "diamond ";
+		if(armorPerms[4])
+			perms += "chain";
+		if(perms.length() == 0)
+			perms = "none";
+		
+		return perms;
 	}
 
 	@Override
 	public void setValue(Object obj) {
+		if(obj instanceof boolean[]){
+			this.armorPerms = (boolean[]) obj;
+			return;
+		}
+		
 		int tempArms = Integer.valueOf((String) obj);
-		armorPermsString = String.valueOf(tempArms);
 		
 		char[] binString = Integer.toBinaryString(tempArms).toCharArray();
 		armorPerms = new boolean[]{false, false, false, false, false};
@@ -123,7 +140,7 @@ public class ArmorTrait implements Trait {
 	
 	@Override
 	public boolean isVisible() {
-		return true;
+		return false;
 	}
 
 }

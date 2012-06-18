@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -15,6 +14,7 @@ import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class PoisonArrowTrait extends AbstractArrow {
 
@@ -29,7 +29,7 @@ public class PoisonArrowTrait extends AbstractArrow {
 	@Override
 	public void generalInit(){
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
+		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
 		listenedEvents.add(ProjectileHitEvent.class);
 		listenedEvents.add(PlayerInteractEvent.class);;
 		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
@@ -69,11 +69,11 @@ public class PoisonArrowTrait extends AbstractArrow {
 	}
 
 	@Override
-	protected boolean onHitEntity(EntityDamageByEntityEvent event) {
+	protected boolean onHitEntity(EntityDamageByEntityDoubleEvent event) {
 		Entity hitTarget = event.getEntity();
 		if(!(hitTarget instanceof LivingEntity)) return false;
 		
-		int damagePerTick = (int) Math.ceil(totalDamage / duration);
+		double damagePerTick = totalDamage / duration;
 		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.POISON);
 		ticker.linkPotionEffect(PotionEffectTypeWrapper.POISON.createEffect(duration, 0));
 		return true;

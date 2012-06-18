@@ -14,11 +14,11 @@ import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.PoisonArrowTr
 import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.TeleportArrowTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArrowDamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.AxeDamageIncrease;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.BerserkerRageTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DamageReduce;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.DwarfSkinTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.HungerReplenish;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArmorTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.RegenerationTrait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.SwordDamageIncrease;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.resistance.DrainResistanceTrait;
@@ -36,33 +36,34 @@ public class TraitsList{
 		categorys.put("None", new HashSet<String>());
 		
 		//Passives
-		addTraitToList("DamageReduceTrait", DamageReduce.class);
-		addTraitToList("DamageIncreaseTrait", DamageIncrease.class);
-		addTraitToList("HungerReplenishTrait", HungerReplenish.class);
-		addTraitToList("ArmorTrait", ArmorTrait.class);
-		addTraitToList("RegenerationTrait", RegenerationTrait.class);
-		addTraitToList("DwarfSkinTrait", DwarfSkinTrait.class);
+		addTraitToList("DamageReduceTrait", DamageReduce.class, "passive");
+		addTraitToList("DamageIncreaseTrait", DamageIncrease.class, "passive");
+		addTraitToList("HungerReplenishTrait", HungerReplenish.class, "passive");
+		//addTraitToList("ArmorTrait", ArmorTrait.class);
+		addTraitToList("RegenerationTrait", RegenerationTrait.class, "passive");
+		addTraitToList("DwarfSkinTrait", DwarfSkinTrait.class, "passive");
+		addTraitToList("BerserkerRageTrait", BerserkerRageTrait.class, "passive");
 		
 		//Weapons
-		addTraitToList("AxeDamageIncreaseTrait", AxeDamageIncrease.class);
-		addTraitToList("SwordDamageIncreaseTrait", SwordDamageIncrease.class);
-		addTraitToList("ArrowDamageIncreaseTrait", ArrowDamageIncrease.class);
+		addTraitToList("AxeDamageIncreaseTrait", AxeDamageIncrease.class, "weapons");
+		addTraitToList("SwordDamageIncreaseTrait", SwordDamageIncrease.class, "weapons");
+		addTraitToList("ArrowDamageIncreaseTrait", ArrowDamageIncrease.class, "weapons");
 		
 		//Resistance
-		addTraitToList("FireResistanceTrait", FireResistanceTrait.class);
-		addTraitToList("DrainResistanceTrait", DrainResistanceTrait.class);
-		addTraitToList("FallResistanceTrait", FallResistanceTrait.class);
+		addTraitToList("FireResistanceTrait", FireResistanceTrait.class, "resistances");
+		addTraitToList("DrainResistanceTrait", DrainResistanceTrait.class, "resistances");
+		addTraitToList("FallResistanceTrait", FallResistanceTrait.class, "resistances");
 		
 		//Activate
-		addTraitToList("SprintTrait", SprintTrait.class);
-		addTraitToList("TrollbloodTrait", TrollbloodTrait.class);
-		addTraitToList("HealOthersTrait", HealOthersTrait.class);
+		addTraitToList("SprintTrait", SprintTrait.class, "activate");
+		addTraitToList("TrollbloodTrait", TrollbloodTrait.class, "activate");
+		addTraitToList("HealOthersTrait", HealOthersTrait.class, "activate");
 		
 		//Arrows
-		addTraitToList("FireArrowTrait", FireArrowTrait.class);
-		addTraitToList("TeleportArrowTrait", TeleportArrowTrait.class);
-		addTraitToList("ExplosiveArrowTrait", ExplosiveArrowTrait.class);
-		addTraitToList("PoisonArrowTrait", PoisonArrowTrait.class);
+		addTraitToList("FireArrowTrait", FireArrowTrait.class, "arrow");
+		addTraitToList("TeleportArrowTrait", TeleportArrowTrait.class, "arrow");
+		addTraitToList("ExplosiveArrowTrait", ExplosiveArrowTrait.class, "arrow");
+		addTraitToList("PoisonArrowTrait", PoisonArrowTrait.class, "arrow");
 	}
 	
 	public static void addTraitToList(String trait, Class<?> traitClass){
@@ -108,5 +109,13 @@ public class TraitsList{
 				return categorys.get(categoryInt);
 		
 		return null;
+	}
+
+	public static HashSet<String> getAllCategories() {
+		HashSet<String> cat = new HashSet<String>();
+		for(String name : categorys.keySet())
+			cat.add(name);
+		
+		return cat;
 	}
 }

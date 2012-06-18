@@ -1,11 +1,11 @@
-package de.tobiyas.races.datacontainer.health;
+package de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntityDamageDoubleEvent extends EntityDamageEvent{
 
-	private double damageValue;
+	protected double damageValue;
 	
 	public EntityDamageDoubleEvent(Entity damagee, DamageCause cause, double damageValue) {
 		super(damagee, cause, (int) Math.ceil(damageValue));
@@ -15,7 +15,7 @@ public class EntityDamageDoubleEvent extends EntityDamageEvent{
 	
 	public EntityDamageDoubleEvent(EntityDamageEvent event) {
 		super(event.getEntity(), event.getCause(), (int) Math.ceil(event.getDamage()));
-		setCancelled(false);
+		this.damageValue = event.getDamage();
 	}
 
 	public double getDoubleValueDamage(){

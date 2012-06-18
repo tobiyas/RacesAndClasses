@@ -122,22 +122,27 @@ public class ClassContainer {
 		return traitSet;
 	}
 	
-	public int modifyToClass(int value){
-		return evaluateClassMod(value);
+	public double modifyToClass(double maxHealth){
+		return evaluateClassMod(maxHealth);
 	}
 	
-	private int evaluateClassMod(int value){
+	private double evaluateClassMod(double maxHealth){
 		char firstChar = classHealthModify.charAt(0);
 		if(firstChar == '+')
-			return value + classHealthModValue;
+			return maxHealth + classHealthModValue;
 		
 		if(firstChar == '*')
-			return value * classHealthModValue;
+			return maxHealth * classHealthModValue;
 		
 		if(firstChar == '-')
-			return value - classHealthModValue;
+			return maxHealth - classHealthModValue;
 		
-		return value;
+		return maxHealth;
+	}
+	
+	@Override
+	public String toString(){
+		return className;
 	}
 	
 }

@@ -8,7 +8,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -18,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class ExplosiveArrowTrait extends AbstractArrow{
 	
@@ -36,7 +36,7 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 	public void generalInit(){
 		arrowMap = new HashMap<Arrow, Player>();
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
+		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
 		listenedEvents.add(ProjectileHitEvent.class);
 		listenedEvents.add(PlayerInteractEvent.class);
 		listenedEvents.add(EntityShootBowEvent.class);
@@ -85,7 +85,7 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 	}
 
 	@Override
-	protected boolean onHitEntity(EntityDamageByEntityEvent event) {
+	protected boolean onHitEntity(EntityDamageByEntityDoubleEvent event) {
 		if(!(event.getEntity() instanceof Arrow)) return false;
 		if(!arrowMap.containsKey(event.getEntity())) return false;
 		Arrow arrow = (Arrow) event.getEntity();

@@ -26,6 +26,12 @@ public class CommandExecutor_TraitList implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
+		
+		if(args.length == 0){
+			postAllCategorys(sender);
+			return true;
+		}
+		
 		String page = "0";
 		if(args.length == 1)
 			page = args[0];
@@ -33,10 +39,21 @@ public class CommandExecutor_TraitList implements CommandExecutor {
 		HashSet<String> category = TraitsList.getCategory(page);
 		
 		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.LIGHT_PURPLE + "Trait-List PAGE: " + page + ChatColor.YELLOW + "======");
+		if(category == null)
+			return true;
 		for(String trait : category)
 			sender.sendMessage(ChatColor.LIGHT_PURPLE + trait);
 		
 		return true;
+	}
+	
+	private void postAllCategorys(CommandSender sender){
+		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.LIGHT_PURPLE + "Trait-Categories:" + ChatColor.YELLOW + "======");
+		
+		HashSet<String> categories = TraitsList.getAllCategories();
+		for(String category : categories){
+			sender.sendMessage(ChatColor.AQUA + category);
+		}
 	}
 
 }

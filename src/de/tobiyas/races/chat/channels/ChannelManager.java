@@ -46,8 +46,10 @@ public class ChannelManager {
 		for(World world : Bukkit.getWorlds())
 			registerChannel(ChannelLevel.WorldChannel, world.getName());
 		
-		for(String race : RaceManager.getManager().listAllRaces())
+		for(String race : RaceManager.getManager().listAllRaces()){
+			if(race.equalsIgnoreCase("DefaultRace")) continue;
 			registerChannel(ChannelLevel.RaceChannel, race);
+		}
 	}
 	
 	private boolean registerChannel(ChannelLevel level, String channelName){

@@ -27,12 +27,29 @@ public class DefaultContainer {
 		YamlConfiguration raceConfig = new YamlConfiguration();
 		raceConfig.createSection("races");
 		
-		raceConfig.createSection("races.orc");
-		raceConfig.createSection("races.orc.config");
-		raceConfig.createSection("races.orc.traits");
+		raceConfig.createSection("races.Orc");
+		raceConfig.createSection("races.Orc.config");
+		raceConfig.createSection("races.Orc.traits");
 		
-		raceConfig.set("races.orc.config.racetag", "[Orc]");
-		raceConfig.set("races.orc.traits.DamageReduceTrait", 0.5);
+		raceConfig.set("races.Orc.config.racetag", "[Orc]");
+		raceConfig.set("races.Orc.config.raceMaxHealth", 30);
+		raceConfig.set("races.Orc.config.armor", "iron,diamond,chain");
+		
+		raceConfig.set("races.Orc.traits.DamageReduceTrait", 0.5);
+		raceConfig.set("races.Orc.traits.BerserkerRageTrait", "+1");
+
+		
+		raceConfig.createSection("races.Elv");
+		raceConfig.createSection("races.Elv.config");
+		raceConfig.createSection("races.Elv.traits");
+		
+		raceConfig.set("races.Elv.config.racetag", "[Elv]");
+		raceConfig.set("races.Elv.config.raceMaxHealth", 20);
+		raceConfig.set("races.Elv.config.armor", "leather,gold,chain");
+		
+		raceConfig.set("races.Elv.traits.FallResistanceTrait", "-2");
+		raceConfig.set("races.Elv.traits.SprintTrait", "10#3");
+		
 		
 		try {
 			raceConfig.save(raceFile);

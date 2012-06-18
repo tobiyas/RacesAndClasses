@@ -8,7 +8,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -18,6 +17,7 @@ import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public abstract class AbstractArrow implements TraitsWithUplink {
@@ -57,7 +57,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 	public boolean modify(Event event) {
 		if(!(event instanceof PlayerInteractEvent || 
 			event instanceof EntityShootBowEvent || 
-			event instanceof EntityDamageByEntityEvent ||
+			event instanceof EntityDamageByEntityDoubleEvent ||
 			event instanceof ProjectileHitEvent)) return false;
 		
 		//Change ArrowType
@@ -110,26 +110,25 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 			if(currentArrow == null) return false;
 			
 			boolean change = onHitLocation(Eevent);
-			arrow.remove();
 			return change;
 		}
 		
 		//Arrow Hits target
-		if(event instanceof EntityDamageByEntityEvent){
-			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+		if(event instanceof EntityDamageByEntityDoubleEvent){
+			EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 			if(Eevent.getDamager().getType() != EntityType.ARROW) return false;
-			
+
 			Entity shooter = ((Arrow) Eevent.getDamager()).getShooter();
 			if(shooter == null) return false;
 			if(shooter.getType() != EntityType.PLAYER) return false;
-			
+
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
-			
+
 			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
 			if(arrow == null || arrow != this) return false;
-			
+
 			boolean change = onHitEntity(Eevent);
 			Eevent.getDamager().remove();
 			return change;
@@ -140,7 +139,7 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 	
 	protected abstract boolean onShoot(EntityShootBowEvent event);
 	
-	protected abstract boolean onHitEntity(EntityDamageByEntityEvent event);
+	protected abstract boolean onHitEntity(EntityDamageByEntityDoubleEvent event);
 	
 	protected abstract boolean onHitLocation(ProjectileHitEvent event);
 	

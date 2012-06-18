@@ -42,7 +42,7 @@ public class DebugTimingEvents implements Runnable{
 		
 		if(seconds > Consts.timingLength){
 			long takenMS = System.currentTimeMillis() - startTime;
-			double percent = timing / takenMS;
+			double percent = timing*100 / takenMS;
 			
 			if(sender != null){
 				sender.sendMessage(ChatColor.GREEN + "Time taken in " + ChatColor.LIGHT_PURPLE + takenMS + ChatColor.GREEN +

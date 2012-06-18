@@ -1,4 +1,4 @@
-Breaf Summary: (V0.5)
+Breaf Summary: (V0.6)
 
 Traits(Passive):
 -	"DamageIncreaseTrait"
@@ -13,8 +13,15 @@ Traits(Passive):
 -	"HungerReplenishTrait"
 	Replenishes more/less hunger
 	
--	"ArmorTrait"
-	decides which sort of armor you can wear
+(-	"ArmorTrait" (Moved to config section.)
+	decides which sort of armor you can wear)
+	
+-	"BerserkerRageTrait"
+	modifies your damage, when your life is below 30% (percent in config changable).
+	
+-	"DwarfSkinTrait"
+	modifies your taken damage, when your life is below 30%.
+
 	
 	
 Traits(Weapons):
@@ -23,6 +30,9 @@ Traits(Weapons):
 	
 -	"SwordDamageIncreaseTrait"
 	Increases damage, when hitting with a sword
+	
+-	"ArrowDamageIncreaseTrait"
+	Increases damage done by arrows
 	
 
 Traits(Resistance):
@@ -73,15 +83,6 @@ Permissions:
 -	"races.class.select"
 	permission to select a class
 	
--	"races.chat.write"
-	permission to write in the chat channels (consider removing)
-	
--	"races.chat.read"
-	permission to read the chat channels (consider removing)
-	
--	"races.chat.basic"
-	permissions: "races.chat.read" and "races.chat.write" in one. (consider removing)
-	
 -	"races.channel.create.private"
 	permission to create a private channel
 	
@@ -89,7 +90,25 @@ Permissions:
 	permission to create a public channel
 	
 -	"races.channel.create.password"
-	permission to create a password channel	
+	permission to create a password channel
+	
+-	"races.channel.global.banpower"
+	permission to ban people from global, world, race channel.
+	
+-	"races.channel.global.unbanpower"
+	permission to unban people from global, world, race channel.
+	
+-	"races.channel.global.mutepower"
+	permission to mute people in global, world, race channel.
+	
+-	"races.channel.global.unmutepower"
+	permission to mute people in global, world, race channel.
+	
+-	"races.channel.edit"
+	permission to edit channels (ALL channels!)
+	
+-	"races.whisper"
+	permission to whisper someone with /whisper <playername> <message>
 	
 -	"races.raceinfo.display"
 	permission to use the /raceinfo command
@@ -133,7 +152,7 @@ Commands:
 	help for the plugin
 	
 -	"/traitlist"
-	lists all traits
+	lists all traits (currently broken)
 	
 -	"/whisper <target> <message>"
 	whispers a target a message (alias: /w)
@@ -145,7 +164,7 @@ Commands:
 	changes attributes in personal config
 	
 -	"/racedebug <debugcommand>"
-	runs a debug command. (currently only 'scan')
+	runs a debug command. (currently only 'scan' and 'timing')
 	
 -	"/raceheal [player]"
 	heals player
@@ -193,29 +212,52 @@ Commands:
 	only if the channeltype is 'PasswordChannel' the password will be checked.
 	
 -	"/channel edit <channelname> [property] [value]"
-	changes a property of a channel (NOT YET IMPLEMENTED)
+	changes a property of a channel. Properties are: format, color, admin, prefix, suffix, password
 	
+-	"/channel mute <channelname> <playername> [duration in seconds]"
+	mutes a player in a channel for x seconds. (no duration = forever)
+	
+-	"/channel unmute <channelname> <playername>"
+	unmutes a player in a channel.
+	
+-	"/channel ban <channelname> <playername> [duration in seconds]"
+	bans a player from a channel for x seconds. (no duration = forever)
+	
+-	"/channel unban <channelname> <playername>"
+	unbans a player from a channel.
+
 
 TODO-LIST:
 
 	priority: (1 - 10) 1 = low, 10 = high
 	current Workstate: (0% - 100%) 0% = undone, 1% - 75% = in progress, 76% - 99% = testing, 100% = done.
 
+-	Race System:
+	- reminder every x seconds, that you have not selected a race yet (prio: 4) (0%)
+
+
 -	Chat:
 	- save/load  global/world/race  edit changes. (prio: 3) (0%)
 
 
 -	Traits:
-	- Add Berserker-Rage Trait when under 30% life. (prio: 7) (0%)
+	- Add Berserker-Rage Trait when under 30% life. (prio: 7) (95%)
+	- Addapt all Traits to new EventSystem (combinet to EventSystem) (prio: 5) (80%)
 
 
 -	HealthSystem
-	-See EventSystem (prio: 5)
+	-See EventSystem (prio: 5) (80%)
 	
 	
 -	EventSystem
-	- Rebuild damage System to fit EntityDamageDoubleEvent (prio: 5) (0%)
+	- Rebuild damage System to fit EntityDamageDoubleEvent (prio: 5) (80%)
 	
 	
 -	Vote System
 	- implement Vote System with benefits (prio: 1) (0%)
+	
+	
+-	Help System
+	- implement tutorial (prio: 2) (0%)
+	- add stuff not added to help (prio: 8) (0%)
+	- fix traitlist (prio: 7) (0%)

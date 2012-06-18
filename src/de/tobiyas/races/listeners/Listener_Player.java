@@ -53,8 +53,10 @@ public class Listener_Player implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event){
 		Player player = event.getPlayer();
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		if(container == null){
+		if(container == null || container == RaceManager.getManager().getDefaultContainer()){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
+			if(container == null)
+				RaceManager.getManager().addPlayerToRace(player.getName(), "DefaultRace");
 		}
 		
 		HealthManager.getHealthManager().checkPlayer(player.getName());

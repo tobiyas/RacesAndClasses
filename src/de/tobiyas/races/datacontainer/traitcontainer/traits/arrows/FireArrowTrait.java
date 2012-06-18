@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -18,6 +17,7 @@ import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class FireArrowTrait extends AbstractArrow {
 	
@@ -32,7 +32,7 @@ public class FireArrowTrait extends AbstractArrow {
 	@Override
 	public void generalInit(){
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
+		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
 		listenedEvents.add(PlayerInteractEvent.class);
 		listenedEvents.add(EntityShootBowEvent.class);
 		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
@@ -65,17 +65,19 @@ public class FireArrowTrait extends AbstractArrow {
 	protected boolean onShoot(EntityShootBowEvent event){
 		Location loc = event.getEntity().getLocation();
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0);
+		event.getProjectile().setFireTicks(1000000);
 		return false;
 	}
 	
 	@Override
-	protected boolean onHitEntity(EntityDamageByEntityEvent event){
+	protected boolean onHitEntity(EntityDamageByEntityDoubleEvent event){
 		Entity hitTarget = event.getEntity();
 		if(!(hitTarget instanceof LivingEntity)) return false;
 		
-		int damagePerTick = (int) Math.ceil(totalDamage / duration);
+		double damagePerTick = totalDamage / duration;
 		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.FIRE_TICK);
 		ticker.playEffectOnDmg(Effect.MOBSPAWNER_FLAMES, 4);
+		hitTarget.setFireTicks(duration * 20);
 		return true;
 	}
 

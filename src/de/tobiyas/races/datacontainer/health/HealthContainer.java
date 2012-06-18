@@ -25,12 +25,12 @@ public class HealthContainer {
 	private String player;
 	
 	private double currentHealth;
-	private int maxHealth;
+	private double maxHealth;
 	private boolean hasGod;
 	
 	private long lastDamage;
 	
-	public HealthContainer(String player, double currentHealth, int maxHealth){
+	public HealthContainer(String player, double currentHealth, double maxHealth){
 		this.hasGod = false;
 		this.player = player;
 		this.currentHealth = currentHealth;
@@ -82,6 +82,7 @@ public class HealthContainer {
 	public void setPlayerPercentage(){
 		Player player = Bukkit.getPlayer(this.player);
 		if(player == null) return;
+		
 		if(currentHealth > maxHealth) currentHealth = maxHealth;
 		if(currentHealth < 0) currentHealth = 0;
 		
@@ -101,7 +102,7 @@ public class HealthContainer {
 		return currentHealth;
 	}
 	
-	public int getMaxHealth(){
+	public double getMaxHealth(){
 		return maxHealth;
 	}
 	
@@ -125,12 +126,13 @@ public class HealthContainer {
 		YAMLConfigExtended config = new YAMLConfigExtended(Races.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
 		config.load();
 		
-		double currentHealth = config.getDouble("playerdata." + player + ".currentHealth");
+		double currentHealth = config.getDouble("playerdata." + player + ".currentHealth", 20);
 		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
+		
 		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
 		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
 		
-		int maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+		double maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
 		if(raceContainer != null)
 			maxHealth = raceContainer.getRaceMaxHealth();
 		

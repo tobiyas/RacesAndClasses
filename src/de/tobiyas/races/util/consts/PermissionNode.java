@@ -4,11 +4,11 @@ public class PermissionNode {
 
 	private static String prePlugin = "races.";
 	
-	public static final String changeRace = prePlugin + "race.change";
-	public static final String selectRace = prePlugin + "race.select";
+	public static final String changeRace = prePlugin + "race.change"; //
+	public static final String selectRace = prePlugin + "race.select"; //
 	
-	public static final String changeClass = prePlugin + "class.change";
-	public static final String selectClass = prePlugin + "class.select";
+	public static final String changeClass = prePlugin + "class.change"; //
+	public static final String selectClass = prePlugin + "class.select"; //
 	
 	public static final String channelCreatePrivate = prePlugin + "channel.create.private";
 	public static final String channelCreatePublic = prePlugin + "channel.create.public";

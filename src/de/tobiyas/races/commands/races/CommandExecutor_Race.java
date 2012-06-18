@@ -109,23 +109,36 @@ public class CommandExecutor_Race implements CommandExecutor {
 	
 	private void selectRace(Player player, String newRace){
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		if(container == null)
+		RaceContainer stdContainer = RaceManager.getManager().getDefaultContainer();
+		if(container == null || container == stdContainer){
+			if(RaceManager.getManager().getRaceByName(newRace) != null && RaceManager.getManager().getRaceByName(newRace) == stdContainer){
+				player.sendMessage(ChatColor.RED + "You can't select the default race.");
+				return;
+			}
+				
 			if(RaceManager.getManager().addPlayerToRace(player.getName(), newRace)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
 				if(plugin.interactConfig().getconfig_channels_enable())
 					ChannelManager.GetInstance().playerChangeRace("", player);
 			}else
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
-		else
+		}else
 			player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + container.getName());
 	}
 	
 	private void changeRace(Player player, String newRace){
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
-		if(container != null){
+		RaceContainer stdContainer = RaceManager.getManager().getDefaultContainer();
+		
+		if(container != null && container != RaceManager.getManager().getDefaultContainer()){
 			String oldRace = container.getName();
 			if(newRace.equalsIgnoreCase(container.getName())){
 				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + container.getName());
+				return;
+			}
+			
+			if(RaceManager.getManager().getRaceByName(newRace) != null && RaceManager.getManager().getRaceByName(newRace) == stdContainer){
+				player.sendMessage(ChatColor.RED + "You can't select the default race.");
 				return;
 			}
 				
@@ -148,14 +161,9 @@ public class CommandExecutor_Race implements CommandExecutor {
 			return;
 		}
 		
-		//Not sure, because it doesn't belong here.
-		/*double currentHealth = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
-		if(currentHealth != -1){
-			player.sendMessage(ChatColor.YELLOW + "Health: " + ChatColor.RED + currentHealth + "/" + container.getRaceMaxHealth());
-		}*/
-		
 		player.sendMessage(ChatColor.YELLOW + "Your race: " + ChatColor.LIGHT_PURPLE + container.getName());
 		player.sendMessage(ChatColor.YELLOW + "Your race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
+		player.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
 		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
 		

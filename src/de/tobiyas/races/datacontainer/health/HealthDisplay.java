@@ -42,9 +42,9 @@ public class HealthDisplay implements Runnable {
 	
 	private void display(Player player){
 		double newValue = healthContainer.getCurrentHealth();
-		int maxHealth = healthContainer.getMaxHealth();
+		double maxHealth = healthContainer.getMaxHealth();
 		
-		int healthAbs = (int) ((newValue / maxHealth) * (Consts.healthBarLength));
+		double healthAbs = ((newValue / maxHealth) * (Consts.healthBarLength));
 		if(healthAbs < 0) healthAbs = 0;
 		if(healthAbs > maxHealth) healthAbs = maxHealth;
 		
@@ -53,7 +53,7 @@ public class HealthDisplay implements Runnable {
 			healthLeft += "|";
 		
 		String healthRest = ChatColor.RED + "";
-		for(int i = healthAbs; i < Consts.healthBarLength; i++)
+		for(int i = (int) healthAbs; i < Consts.healthBarLength; i++)
 			healthRest += "|";
 		
 		player.sendMessage(ChatColor.YELLOW + "Health: " + healthLeft + healthRest + 
@@ -76,7 +76,7 @@ public class HealthDisplay implements Runnable {
 		scedulerTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Races.getPlugin(), this, oldInterval, oldInterval);
 	}
 	
-	private ChatColor getColorOfPercent(double currentHealth, int maxHealth){
+	private ChatColor getColorOfPercent(double currentHealth, double maxHealth){
 		double percentage = currentHealth / maxHealth;
 		
 		if(percentage > 0.6)
