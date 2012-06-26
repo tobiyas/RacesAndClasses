@@ -1,4 +1,4 @@
-Breaf Summary: (V0.6)
+Breaf Summary: (V0.7)
 
 Traits(Passive):
 -	"DamageIncreaseTrait"
@@ -225,39 +225,10 @@ Commands:
 	
 -	"/channel unban <channelname> <playername>"
 	unbans a player from a channel.
+	
+-	"/localchat <message>"
+	sends a local message to all players x blocks away. (x configurable in config)
 
 
 TODO-LIST:
-
-	priority: (1 - 10) 1 = low, 10 = high
-	current Workstate: (0% - 100%) 0% = undone, 1% - 75% = in progress, 76% - 99% = testing, 100% = done.
-
--	Race System:
-	- reminder every x seconds, that you have not selected a race yet (prio: 4) (0%)
-
-
--	Chat:
-	- save/load  global/world/race  edit changes. (prio: 3) (0%)
-
-
--	Traits:
-	- Add Berserker-Rage Trait when under 30% life. (prio: 7) (95%)
-	- Addapt all Traits to new EventSystem (combinet to EventSystem) (prio: 5) (80%)
-
-
--	HealthSystem
-	-See EventSystem (prio: 5) (80%)
-	
-	
--	EventSystem
-	- Rebuild damage System to fit EntityDamageDoubleEvent (prio: 5) (80%)
-	
-	
--	Vote System
-	- implement Vote System with benefits (prio: 1) (0%)
-	
-	
--	Help System
-	- implement tutorial (prio: 2) (0%)
-	- add stuff not added to help (prio: 8) (0%)
-	- fix traitlist (prio: 7) (0%)
+Moved to: https://trello.com/board/races/4fdd09079323f4ba3d3c776d

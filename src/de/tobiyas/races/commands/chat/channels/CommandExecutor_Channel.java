@@ -297,9 +297,11 @@ public class CommandExecutor_Channel implements CommandExecutor{
 			return;
 		}
 		
-		if(!ChannelManager.GetInstance().isMember(player.getName(), changeTo)){
-			player.sendMessage(ChatColor.RED + "You are no member of: " + ChatColor.LIGHT_PURPLE + changeTo);
-			return;
+		if(level != ChannelLevel.LocalChannel){
+			if(!ChannelManager.GetInstance().isMember(player.getName(), changeTo)){
+				player.sendMessage(ChatColor.RED + "You are no member of: " + ChatColor.LIGHT_PURPLE + changeTo);
+				return;
+			}
 		}
 		
 		MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());

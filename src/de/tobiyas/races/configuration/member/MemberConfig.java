@@ -12,6 +12,7 @@ public class MemberConfig {
 	private boolean enableLifeDisplay;
 	private int lifeDisplayInterval;
 	private String currentChannel;
+	private boolean informCooldownReady;
 	
 	private static YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
 	
@@ -24,6 +25,7 @@ public class MemberConfig {
 		lifeDisplayInterval = config.getInt(configPre + "lifeDisplay.interval", 60);
 		
 		currentChannel = config.getString(configPre + "channels.current", "Global");
+		informCooldownReady = config.getBoolean(configPre + "cooldown.inform", true);
 		//Add other vars
 		save();
 	}
@@ -52,6 +54,13 @@ public class MemberConfig {
 		config.set("playerdata." + player + ".config.channels.current", newChannel);
 		config.save();
 		this.currentChannel = newChannel;
+	}
+	
+	public void setInformCooldown(boolean inform){
+		config.load();
+		config.set("playerdata." + player + ".config.cooldown.inform", inform);
+		config.save();
+		this.informCooldownReady = inform;
 	}
 	
 	public boolean getEnableLifeDisplay(){
@@ -93,6 +102,13 @@ public class MemberConfig {
 			return true;
 		}
 		
+		if(attribute.equalsIgnoreCase("cooldowninform")){
+			if(!isBool(value))
+				return false;
+			setInformCooldown(converToBool(value));
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -128,6 +144,7 @@ public class MemberConfig {
 		ArrayList<String> attributes = new ArrayList<String>();
 		attributes.add("DisplayInterval");
 		attributes.add("DisplayEnable");
+		attributes.add("CooldownInform");
 		
 		return attributes;
 	}
@@ -138,11 +155,17 @@ public class MemberConfig {
 		attributes.put("DisplayInterval: ", lifeDisplayInterval);
 		attributes.put("DisplayEnable: ", enableLifeDisplay);
 		attributes.put("CurrentChatChannel: ", currentChannel);
+		attributes.put("CooldownInform: ", informCooldownReady);
 		return attributes;
 	}
 
 
 	public String getCurrentChannel() {
 		return currentChannel;
+	}
+
+
+	public boolean getInformCooldownReady() {
+		return informCooldownReady;		
 	}
 }

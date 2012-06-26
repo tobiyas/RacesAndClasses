@@ -42,6 +42,7 @@ public class ChannelManager {
 	
 	private void createSTDChannels(){
 		registerChannel(ChannelLevel.GlobalChannel, "Global");
+		registerChannel(ChannelLevel.LocalChannel, "Local");
 		
 		for(World world : Bukkit.getWorlds())
 			registerChannel(ChannelLevel.WorldChannel, world.getName());
@@ -211,6 +212,9 @@ public class ChannelManager {
 		ChannelContainer container = getContainer(channelName);
 		if(container == null)
 			return false;
+		
+		if(container.getChannelLevel() == ChannelLevel.LocalChannel)
+			return true;
 		
 		return container.isMember(playerName);
 	}

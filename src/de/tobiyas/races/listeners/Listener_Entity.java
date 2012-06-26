@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -59,6 +60,11 @@ public class Listener_Entity extends Observable implements Listener {
 	@EventHandler
 	public void onEntityRegainHealthEvent(EntityRegainHealthEvent event){
 		TraitEventManager.fireEvent(event);
+	}
+	
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event){
+	
 	}
 
 

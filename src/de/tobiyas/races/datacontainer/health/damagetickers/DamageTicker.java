@@ -4,10 +4,8 @@ import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 
@@ -57,27 +55,34 @@ public class DamageTicker implements Runnable{
 		Bukkit.getScheduler().cancelTask(taskID);
 		return true;
 	}
+	
+	private void stopTask(){
+		Bukkit.getScheduler().cancelTask(taskID);
+		tickers.remove(this);
+	}
 
 	@Override
 	public void run() {
 		if(duration == 0 || target == null || target.isDead()){
-			Bukkit.getScheduler().cancelTask(taskID);
-			tickers.remove(this);
+			stopTask();
 			return;
 		}
 		
 		duration --;
-		target.playEffect(EntityEffect.HURT);
+		if(cause == DamageCause.FIRE){
+			if(target.getFireTicks() < 1){
+				stopTask();
+				return;
+			}
+		}
+		
 		if(effect != null){
 			for(int i = 0; i < effectAmount; i++)
 				target.getLocation().getWorld().playEffect(target.getLocation(), effect, 0);
 		}
 		
-		if(target instanceof Player){
-			EntityDamageDoubleEvent event = new EntityDamageDoubleEvent(target, cause, damagePerTick);
-			TraitEventManager.fireEvent(event);
-		}else
-			target.damage((int) damagePerTick);
+		EntityDamageDoubleEvent event = new EntityDamageDoubleEvent(target, cause, damagePerTick);
+		TraitEventManager.fireEvent(event);
 	}
 	
 	public static int cancleEffects(LivingEntity entity, DamageCause cause){

@@ -45,6 +45,9 @@ import de.tobiyas.races.Races;
 	private boolean config_channels_enable;
 
 	private boolean config_metrics_enabled;
+	
+	private boolean config_activate_reminder;
+	private int config_reminder_interval;
 
 	public Config(Races plugin){
 		this.plugin = plugin;
@@ -83,6 +86,9 @@ import de.tobiyas.races.Races;
 		config.addDefault("classes.enable", true);
 		
 		config.addDefault("metrics.enable", true);
+		
+		config.addDefault("races.remindDefaultRace.enable", true);
+		config.addDefault("races.remindDefaultRace.interval", 10);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -121,6 +127,9 @@ import de.tobiyas.races.Races;
 		
 		config_classes_enable = config.getBoolean("classes.enable", true);
 		config_metrics_enabled = config.getBoolean("metrics.enable", true);
+		
+		config_activate_reminder = config.getBoolean("races.remindDefaultRace.enable", true);
+		config_reminder_interval = config.getInt("races.remindDefaultRace.interval", 10);
 
 	}
 	
@@ -202,6 +211,14 @@ import de.tobiyas.races.Races;
 
 	public int getConfig_localchat_range() {
 		return config_localchat_range;
+	}
+	
+	public boolean getConfig_activate_reminder(){
+		return config_activate_reminder;
+	}
+	
+	public int getConfig_reminder_interval(){
+		return config_reminder_interval;
 	}
 
 }

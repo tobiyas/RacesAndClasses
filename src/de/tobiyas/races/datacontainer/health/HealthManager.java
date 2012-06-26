@@ -127,6 +127,10 @@ public class HealthManager implements Observer{
 	
 	private void damage(String playerName, double amount){
 		Player player = Bukkit.getPlayer(playerName);
+		if(player == null){
+			plugin.getDebugLogger().logError("Error on Damaging player: " + playerName);
+			return;
+		}
 		HealthContainer hContainer = getCreate(player.getName(), true);
 		
 		hContainer.reduceLife(amount);

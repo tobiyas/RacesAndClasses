@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.chat.ChatFormatter;
@@ -48,7 +49,7 @@ public class ChannelContainer {
 		channelFormat.setPrefix(prefix);
 		channelFormat.setSuffix(suffix);
 		
-		rescanPartitions();
+		rescanPartitions(null);
 		
 		ChannelTicker.registerChannel(this);
 	}
@@ -81,7 +82,7 @@ public class ChannelContainer {
 		channelFormat.setPrefix(prefix);
 		channelFormat.setSuffix(suffix);
 		
-		rescanPartitions();
+		rescanPartitions(null);
 		
 		ChannelTicker.registerChannel(this);
 	}
@@ -104,6 +105,11 @@ public class ChannelContainer {
 			case RaceChannel:
 				stdColor = plugin.interactConfig().getConfig_racechat_default_color();
 				stdFormat = plugin.interactConfig().getConfig_racechat_default_format();
+				break;
+				
+			case LocalChannel:
+				stdColor = plugin.interactConfig().getConfig_localchat_default_color();
+				stdFormat = plugin.interactConfig().getConfig_localchat_default_format();
 				break;
 				
 			default:
@@ -144,7 +150,8 @@ public class ChannelContainer {
 	public void saveChannel(YAMLConfigExtended config){
 		if(channelLevel == ChannelLevel.GlobalChannel || 
 			channelLevel == ChannelLevel.WorldChannel || 
-			channelLevel == ChannelLevel.RaceChannel) return;
+			channelLevel == ChannelLevel.RaceChannel ||
+			channelLevel == ChannelLevel.LocalChannel) return;
 		
 		config.load();
 		String channelPre = "channel." + channelLevel.name() + "." + channelName;
@@ -245,7 +252,7 @@ public class ChannelContainer {
 	}
 	
 	public void sendMessageInChannel(Player sender, String message){
-		//rescanPartitions();
+		if(channelLevel == ChannelLevel.LocalChannel) rescanPartitions(sender);
 
 		if(sender != null){
 			int isMuted = muteContainer.isMuted(sender.getName());
@@ -269,7 +276,8 @@ public class ChannelContainer {
 		}
 	}
 	
-	private void rescanPartitions(){
+	private void rescanPartitions(Player localPlayer){
+		participants.clear();
 		switch(channelLevel){
 			case GlobalChannel: 
 				participants.clear();
@@ -291,8 +299,17 @@ public class ChannelContainer {
 					if(player != null)
 						participants.add(playerName);
 				}
-					
 				break;
+				
+			case LocalChannel:
+				if(localPlayer == null) return;
+				int distance = plugin.interactConfig().getConfig_localchat_range();
+				Location loc = localPlayer.getLocation();
+				for(Player tempPlayer : loc.getWorld().getPlayers())
+					if(loc.distance(tempPlayer.getLocation()) < distance)
+						participants.add(tempPlayer.getName());
+				break;
+				
 			default: return;
 		}
 	}
@@ -359,6 +376,9 @@ public class ChannelContainer {
 		
 		player.sendMessage(ChatColor.YELLOW + "===== Channel Members: =====");
 		String memberString = "";
+		if(channelLevel == ChannelLevel.LocalChannel) 
+			rescanPartitions(player);
+			
 		for(String member : participants){
 			if(Bukkit.getPlayer(member) == null)
 				memberString += ChatColor.RED + member + " (offline), ";
@@ -385,7 +405,7 @@ public class ChannelContainer {
 	}
 
 	public boolean checkPermissionMute(Player admin) {
-		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel){
+		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel || channelLevel == ChannelLevel.LocalChannel){
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalMutePower);
 		}
 		
@@ -393,7 +413,7 @@ public class ChannelContainer {
 	}
 	
 	public boolean checkPermissionUnmute(Player admin) {
-		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel){
+		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel || channelLevel == ChannelLevel.LocalChannel){
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalUnmutePower);
 		}
 		
@@ -401,7 +421,7 @@ public class ChannelContainer {
 	}
 	
 	public boolean checkPermissionBann(Player admin) {
-		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel){
+		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel || channelLevel == ChannelLevel.LocalChannel){
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalBanPower);
 		}
 		
@@ -409,7 +429,7 @@ public class ChannelContainer {
 	}
 	
 	public boolean checkPermissionUnban(Player admin) {
-		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel){
+		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel || channelLevel == ChannelLevel.LocalChannel){
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalUnbanPower);
 		}
 		
@@ -426,7 +446,7 @@ public class ChannelContainer {
 
 	public void editChannel(Player player, String property, String newValue) {
 		String playerName = player.getName();
-		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel){
+		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel || channelLevel == ChannelLevel.LocalChannel){
 			if(!playerName.equalsIgnoreCase(channelAdmin)){
 				player.sendMessage(ChatColor.RED + "You must be the channel-admin to edit the channel");
 				return;

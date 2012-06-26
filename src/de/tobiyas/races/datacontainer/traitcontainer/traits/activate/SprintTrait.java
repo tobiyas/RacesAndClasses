@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.potion.PotionEffectTypeWrapper;
 
 import de.tobiyas.races.Races;
+import de.tobiyas.races.configuration.member.MemberConfig;
+import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
@@ -131,18 +133,32 @@ public class SprintTrait implements TraitsWithUplink {
 
 	@Override
 	public void tickReduceUplink() {
+		int precision = Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+		if(precision <= 0){
+			Races.getPlugin().getDebugLogger().logWarning("Trait: " + getName() + " could not reduce cooldown, because precision = " + precision);
+		}
+		
 		for(String player : uplinkMap.keySet()){
 			int remainingTime = uplinkMap.get(player);
-			remainingTime -= Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+			remainingTime -= precision;
 			
+			Player tempPlayer = Bukkit.getPlayer(player);
 			if(remainingTime == uplinkTime){
-				Player tempPlayer = Bukkit.getPlayer(player);
 				if(tempPlayer != null)
 					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
 			}
 				
-			if(remainingTime <= 0)
+			if(remainingTime <= 0){
 				uplinkMap.remove(player);
+				if(tempPlayer != null){
+					MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
+					if(config != null){
+						if(config.getInformCooldownReady())
+							tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
+													" is now ready again to use again.");
+					}
+				}
+			}
 			else
 				uplinkMap.put(player, remainingTime);
 		}

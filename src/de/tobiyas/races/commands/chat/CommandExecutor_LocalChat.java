@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.chat.LocalChat;
+import de.tobiyas.races.chat.channels.ChannelManager;
 
 public class CommandExecutor_LocalChat implements CommandExecutor{
 
@@ -32,7 +32,7 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 		
 		Player player = (Player) sender;		
 		if(args.length == 0){
-			player.sendMessage(ChatColor.RED + "No message givven.");
+			player.sendMessage(ChatColor.RED + "No message given.");
 			return true;
 		}
 		
@@ -40,8 +40,7 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 		for(String arg : args)
 			message += arg + " ";
 		
-		int chatRange = plugin.interactConfig().getConfig_localchat_range();
-		LocalChat.sendMessageLocaly(player, message, chatRange);
+		ChannelManager.GetInstance().broadcastMessageToChannel("Local", player, message);
 		return true;
 	}
 

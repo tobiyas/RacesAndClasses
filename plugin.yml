@@ -1,6 +1,6 @@
 name: Races
 main: de.tobiyas.races.Races
-version: 0.06
+version: 0.07
 website: http://
 author: tobiyas
 
@@ -83,3 +83,8 @@ commands:
     aliases: [lc,l]
     usage: |
            /<command> message
+  racesversion:
+    description: displays the full version of Races
+    aliases: []
+    usage: |
+           /<command>

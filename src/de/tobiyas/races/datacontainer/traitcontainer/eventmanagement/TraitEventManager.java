@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Observable;
 
+import org.bukkit.EntityEffect;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,6 +16,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.util.Vector;
+
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
@@ -23,6 +27,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.UplinkReducer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByBlockDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityKnockbackEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
@@ -37,6 +42,8 @@ public class TraitEventManager extends Observable{
 	private HashMap<Integer, Long> eventIDs;
 	
 	private UplinkReducer uplinkReducer;
+	private EntityDeathManager entityDeathManager;
+	private ImunTicker imunTicker;
 	
 
 	public TraitEventManager(){
@@ -47,9 +54,13 @@ public class TraitEventManager extends Observable{
 		eventIDs = new HashMap<Integer, Long>();
 		new DoubleEventRemover(this);
 		uplinkReducer = new UplinkReducer();
+		entityDeathManager = new EntityDeathManager();
+		imunTicker = new ImunTicker();
 	}
 	
 	public void init(){
+		entityDeathManager.init();
+		imunTicker.init();
 		addObserver(HealthManager.getHealthManager());
 		notifyObservers(null);
 		setChanged();
@@ -83,46 +94,7 @@ public class TraitEventManager extends Observable{
 			}
 		}
 		
-		if(event instanceof EntityDamageDoubleEvent){
-			EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
-			if(Eevent.getEntityType() == EntityType.PLAYER){
-				Player player = (Player)(Eevent.getEntity());
-				double dmg = Eevent.getDoubleValueDamage();
-				Eevent.setDamage(0);
-				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
-				setChanged();
-			}else{
-				if(!(Eevent.getEntity() instanceof LivingEntity)) return false;
-				LivingEntity entity = (LivingEntity) Eevent.getEntity();
-				entity.damage((int) Eevent.getDoubleValueDamage());
-			}
-		}else
-		if(event instanceof EntityDamageEvent){
-			EntityDamageEvent Eevent = (EntityDamageEvent) event;
-			if(Eevent.getEntityType() == EntityType.PLAYER){
-				Player player = (Player)(Eevent.getEntity());
-				int dmg = Eevent.getDamage();
-				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
-				setChanged();
-				Eevent.setDamage(0);
-			}else{
-				if(!(Eevent.getEntity() instanceof LivingEntity)) return false;
-				LivingEntity entity = (LivingEntity) Eevent.getEntity();
-				entity.damage(Eevent.getDamage());
-			}
-		}
-		
-		if(event instanceof EntityRegainHealthEvent){
-			EntityRegainHealthEvent Eevent = (EntityRegainHealthEvent) event;
-			if(Eevent.getEntityType() == EntityType.PLAYER){
-				Player player = (Player)(Eevent.getEntity());
-				int health = Eevent.getAmount();
-				Eevent.setAmount(0);
-				notifyObservers(new HealthModifyContainer(player.getName(), health, "heal"));
-				setChanged();
-			}
-		}
-		
+		fireDamage(event);
 		return changedSomething;
 	}
 	
@@ -169,6 +141,94 @@ public class TraitEventManager extends Observable{
 			return true;
 		}
 		return false;
+	}
+	
+	private void fireDamage(Event event){
+		if(event instanceof EntityDamageDoubleEvent){
+			EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
+			if(imunTicker.isImun(Eevent.getEntity())) return; //Check if imun to dmg
+			
+			if(event instanceof EntityDamageByEntityDoubleEvent) checkKnockBack(event);
+			checkDeath(Eevent);
+			
+			if(Eevent.getEntityType() == EntityType.PLAYER){
+				Player player = (Player)(Eevent.getEntity());
+				double dmg = Eevent.getDoubleValueDamage();
+				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
+				setChanged();
+			}else{
+				if(!(Eevent.getEntity() instanceof LivingEntity)) return;
+				LivingEntity entity = (LivingEntity) Eevent.getEntity();
+				
+				entity.playEffect(EntityEffect.HURT);
+				entity.damage((int) Eevent.getDoubleValueDamage());
+			}
+			imunTicker.addToImunList(Eevent.getEntity());
+		}else
+		//Should never be called again (only for debuging in)
+		if(event instanceof EntityDamageEvent){
+			EntityDamageEvent Eevent = (EntityDamageEvent) event;
+			if(Eevent.getEntityType() == EntityType.PLAYER){
+				Player player = (Player)(Eevent.getEntity());
+				int dmg = Eevent.getDamage();
+				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
+				setChanged();
+				Eevent.setDamage(0);
+			}else{
+				if(!(Eevent.getEntity() instanceof LivingEntity)) return;
+				LivingEntity entity = (LivingEntity) Eevent.getEntity();
+				
+				entity.playEffect(EntityEffect.HURT);
+				entity.damage(Eevent.getDamage());
+			}
+		}
+		
+		if(event instanceof EntityRegainHealthEvent){
+			EntityRegainHealthEvent Eevent = (EntityRegainHealthEvent) event;
+			if(Eevent.getEntityType() == EntityType.PLAYER){
+				Player player = (Player)(Eevent.getEntity());
+				int health = Eevent.getAmount();
+				Eevent.setAmount(0);
+				notifyObservers(new HealthModifyContainer(player.getName(), health, "heal"));
+				setChanged();
+			}
+		}
+	}
+	
+	
+	private void checkKnockBack(Event event){
+		if(!(event instanceof EntityDamageByEntityDoubleEvent)) return;
+		EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
+		Entity target = Eevent.getEntity();
+		Entity damager = Eevent.getDamager();
+		
+		if(target == null || damager == null || target.isDead())
+			return;
+		
+		if(imunTicker.isImun(target))
+			return;
+		
+		if(target.getType() == EntityType.ENDER_DRAGON)
+			return;
+		
+		EntityKnockbackEvent knockbackEvent = new EntityKnockbackEvent(target, damager);
+		fireEventIntern(knockbackEvent);
+				
+		Vector velocity = target.getVelocity();
+		velocity = velocity.add(knockbackEvent.getKnockback());
+		target.setVelocity(velocity);
+	}
+	
+	private void checkDeath(EntityDamageDoubleEvent event){
+		Entity entity = event.getEntity();
+		if(!(entity instanceof LivingEntity)) return;
+		if(entity instanceof Player) return;
+		if(imunTicker.isImun(entity)) return;
+		
+		LivingEntity lEntity = (LivingEntity) entity;
+		int currentHP = lEntity.getHealth();
+		if(currentHP - event.getDoubleValueDamage() <= 0)
+			entityDeathManager.addToDie(lEntity);
 	}
 	
 	public void cleanEventList(){
@@ -227,6 +287,10 @@ public class TraitEventManager extends Observable{
 		long tempCalls = new Long(calls);
 		calls = 0;
 		return tempCalls;
+	}
+	
+	public static ImunTicker getImunTicker(){
+		return getInstance().imunTicker;
 	}
 	
 }

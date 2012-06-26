@@ -28,6 +28,7 @@ import de.tobiyas.races.commands.health.CommandExecutor_HP;
 import de.tobiyas.races.commands.health.CommandExecutor_RaceGod;
 import de.tobiyas.races.commands.health.CommandExecutor_RaceHeal;
 import de.tobiyas.races.commands.help.CommandExecutor_RaceHelp;
+import de.tobiyas.races.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.races.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.races.CommandExecutor_Race;
 import de.tobiyas.races.configuration.global.Config;
@@ -119,6 +120,7 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_LocalChat();
 		
 		new CommandExecutor_RacesReload();
+		new CommandExecutor_RacesVersion();
 	}
 	
 	private void initMetrics(){

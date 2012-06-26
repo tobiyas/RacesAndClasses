@@ -18,6 +18,7 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContaine
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 
 public class ExplosiveArrowTrait extends AbstractArrow{
 	
@@ -101,11 +102,8 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 		HashSet<LivingEntity> damageTo = getEntitiesNear(loc, duration);
 		
 		for(LivingEntity entity : damageTo){
-			if(entity instanceof Player){
-				EntityDamageEvent newEvent = new EntityDamageEvent((Player)entity, DamageCause.BLOCK_EXPLOSION, (int) totalDamage);
-				TraitEventManager.fireEvent(newEvent);
-			}else
-				entity.damage((int) totalDamage);
+			EntityDamageEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage);
+			TraitEventManager.fireEvent(newEvent);
 		}
 		
 		arrowMap.remove(arrow);
@@ -140,16 +138,13 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 			loc.getWorld().createExplosion(loc, 0);
 		
 		HashSet<LivingEntity> damageTo = getEntitiesNear(loc, duration);
+		arrowMap.remove(arrow);
 		
 		for(LivingEntity entity : damageTo){
-			if(entity instanceof Player){
-				EntityDamageEvent newEvent = new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, (int) totalDamage);
-				TraitEventManager.fireEvent(newEvent);
-			}else
-				entity.damage((int) totalDamage);
+			EntityDamageDoubleEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage);
+			TraitEventManager.fireEvent(newEvent);
 		}
 		
-		arrowMap.remove(arrow);
 		return false;
 	}
 

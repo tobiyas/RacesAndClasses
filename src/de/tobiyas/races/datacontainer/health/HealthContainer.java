@@ -28,8 +28,6 @@ public class HealthContainer {
 	private double maxHealth;
 	private boolean hasGod;
 	
-	private long lastDamage;
-	
 	public HealthContainer(String player, double currentHealth, double maxHealth){
 		this.hasGod = false;
 		this.player = player;
@@ -37,7 +35,6 @@ public class HealthContainer {
 		this.maxHealth = maxHealth;
 		
 		if(currentHealth > maxHealth) currentHealth = maxHealth;
-		lastDamage = System.currentTimeMillis();
 		
 		Player onlinePlayer = Bukkit.getPlayer(player);
 		if(onlinePlayer != null)
@@ -53,10 +50,7 @@ public class HealthContainer {
 	}
 	
 	public void reduceLife(double amount){
-		if((System.currentTimeMillis() - lastDamage) < Races.getPlugin().interactConfig().getconfig_imunBetweenDamage())
-			return;
-
-		Player player = Bukkit.getPlayer(this.player);
+		Player player = Bukkit.getPlayer(this.player);		
 		if(player == null) return;
 		
 		if(player.getGameMode() == GameMode.CREATIVE)
@@ -70,13 +64,10 @@ public class HealthContainer {
 		if(currentHealth < 0){
 			if(player.isDead()) return;
 			player.setHealth(0);
-		}
-		else{
+		}else{
 			setPlayerPercentage();
 			player.playEffect(EntityEffect.HURT);
 		}
-		
-		lastDamage = System.currentTimeMillis();
 	}
 	
 	public void setPlayerPercentage(){

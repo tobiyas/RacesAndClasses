@@ -21,4 +21,10 @@ public class Consts {
 	
 	//Debugging
 	public static final int timingLength = 20;
+	
+	//Knockback
+	public static double knockBackMulti = 0.7;
+	
+	//Version
+	public static String currentDevStage = "A D";
 }

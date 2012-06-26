@@ -79,7 +79,11 @@ public class CommandExecutor_Race implements CommandExecutor {
 		
 		if(raceCommand.equalsIgnoreCase("info")){
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
-			raceInfo(player);
+			String inspectedPlayer = player.getName();
+			if(args.length > 1)
+				inspectedPlayer = args[1];
+			
+			raceInfo(player, inspectedPlayer);
 			return true;
 		}
 		
@@ -152,21 +156,29 @@ public class CommandExecutor_Race implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + "You have no Race you could change");
 	}
 	
-	private void raceInfo(Player player){
-		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player.getName());
+	private void raceInfo(Player player, String inspectedPlayer){
+		if(RaceManager.getManager().getRaceOfPlayer(inspectedPlayer) == null){
+			player.sendMessage(ChatColor.RED + "No player named: " + ChatColor.LIGHT_PURPLE + inspectedPlayer + ChatColor.RED + " found.");
+			return;
+		}
 		
-		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
+		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(inspectedPlayer);
+		
+		if(player.getName().equalsIgnoreCase(inspectedPlayer))
+			player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
+		else
+			player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO OF: " + inspectedPlayer + "=========");
+			
 		if(container == null){
 			player.sendMessage(ChatColor.YELLOW + "You have no race selected.");
 			return;
 		}
 		
-		player.sendMessage(ChatColor.YELLOW + "Your race: " + ChatColor.LIGHT_PURPLE + container.getName());
-		player.sendMessage(ChatColor.YELLOW + "Your race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
+		player.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getName());
+		player.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		player.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
 		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
-		
 		for(Trait trait : container.getVisibleTraits()){
 			player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getValueString());
 		}

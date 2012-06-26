@@ -12,6 +12,7 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.DefaultContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.reminder.RaceReminder;
 import de.tobiyas.races.util.consts.Consts;
 
 public class RaceManager {
@@ -41,6 +42,7 @@ public class RaceManager {
 		initSTDRace();
 		
 		checkForOnlineWithoutRace();
+		new RaceReminder();
 	}
 	
 	private void readRaceList(){

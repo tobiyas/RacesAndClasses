@@ -117,10 +117,15 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 		if(event instanceof EntityDamageByEntityDoubleEvent){
 			EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 			if(Eevent.getDamager().getType() != EntityType.ARROW) return false;
-
-			Entity shooter = ((Arrow) Eevent.getDamager()).getShooter();
-			if(shooter == null) return false;
+			
+			Arrow realArrow = (Arrow) Eevent.getDamager();
+			Entity shooter = realArrow.getShooter();
+			
+			if(shooter == null || realArrow == null) return false;
 			if(shooter.getType() != EntityType.PLAYER) return false;
+			
+			if(Eevent.getEntity() == shooter && realArrow.getTicksLived() < 10)
+				return false;
 
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
