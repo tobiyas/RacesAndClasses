@@ -6,6 +6,7 @@ import java.io.IOException;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.global.YAMLConfigExtended;
 import de.tobiyas.races.util.consts.Consts;
+import de.tobiyas.races.util.items.CreateDropContainer;
 
 public class DefaultTraitConfig {
 
@@ -24,6 +25,7 @@ public class DefaultTraitConfig {
 		createTraitConfig("STDAxeDamageTrait", "trait.damage.iron", 6, true);
 		createTraitConfig("STDAxeDamageTrait", "trait.damage.diamond", 7, true);
 		
+		CreateDropContainer.createAllContainers();		
 	}
 	
 	private static void createTraitConfig(String traitName, String config, Object value, boolean force){

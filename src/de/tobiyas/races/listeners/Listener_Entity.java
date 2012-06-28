@@ -64,7 +64,7 @@ public class Listener_Entity extends Observable implements Listener {
 	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
-	
+		TraitEventManager.fireEvent(event);
 	}
 
 

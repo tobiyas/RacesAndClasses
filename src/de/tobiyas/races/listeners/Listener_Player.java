@@ -63,6 +63,7 @@ public class Listener_Player implements Listener {
 		MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());
 		if(plugin.interactConfig().getconfig_channels_enable())
 			ChannelManager.GetInstance().playerLogin(player);
+		RaceManager.getManager().getRaceOfPlayer(player.getName()).setListEntry(player);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)

@@ -175,8 +175,8 @@ public class Races extends JavaPlugin{
 		debugLogger = new DebugLogger(this);
 		if(!config.getconfig_enableDebugOutputs())
 			debugLogger.disable();
-		if(!config.getconfig_enableDebugOutputs())
-			debugLogger.setAlsoToPlugin(false);
+		
+		debugLogger.setAlsoToPlugin(config.getconfig_enableDebugWriteThrough());
 	}
 
 	

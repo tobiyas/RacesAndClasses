@@ -7,6 +7,10 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public interface Trait{
 	
+	@interface TraitInfo{
+		int traitPriority() default 3;
+		Class<?>[] registerdClasses() default {};
+	};
 	public void generalInit();
 	
 	public String getName();

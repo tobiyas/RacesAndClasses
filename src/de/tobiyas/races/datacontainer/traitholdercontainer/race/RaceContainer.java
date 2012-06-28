@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
@@ -38,7 +39,7 @@ public class RaceContainer {
 		this.config = null;
 		this.raceName = "DefaultRace";
 		
-		raceTag = "[DefaultRace]";
+		raceTag = "[NoRace]";
 		raceMaxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
 		armorUsage = new boolean[]{false, false, false, false, false};
 		traits = new HashSet<Trait>();
@@ -164,6 +165,16 @@ public class RaceContainer {
 	@Override
 	public String toString(){
 		return raceName;
+	}
+
+	public void setListEntry(Player player) {
+		if(player == null) return;
+		if(!Races.getPlugin().interactConfig().getConfig_AdaptListName()) return;
+		String name = player.getName();
+		String total = raceTag + name;
+		if(total.length() > 16)
+			total = total.substring(0, 16);
+		player.setPlayerListName(total);
 	}
 	
 }

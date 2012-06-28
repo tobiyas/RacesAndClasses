@@ -36,10 +36,14 @@ import de.tobiyas.races.Races;
 
 	private int config_globalUplinkTickPresition;
 	
+	private boolean config_adaptListName;
+	
 	//Enables:
 	private boolean config_whisper_enable;
 	
 	private boolean config_enableDebugOutputs;
+	private boolean config_enableDebugWriteThrough;
+	
 	private boolean config_classes_enable;
 
 	private boolean config_channels_enable;
@@ -48,6 +52,7 @@ import de.tobiyas.races.Races;
 	
 	private boolean config_activate_reminder;
 	private int config_reminder_interval;
+	private boolean config_enable_expDropBonus;
 
 	public Config(Races plugin){
 		this.plugin = plugin;
@@ -57,7 +62,7 @@ import de.tobiyas.races.Races;
 
 	private void setupConfiguration(){
 		FileConfiguration config = plugin.getConfig();
-		config.options().header("");
+		//config.options().header("");
 
 		config.addDefault("chat.channel.enable", true);
 		config.addDefault("chat.whisper.enable", true);
@@ -79,7 +84,8 @@ import de.tobiyas.races.Races;
 		config.addDefault("health.defaultHealth", 20);
 		config.addDefault("health.imunBetweenDamage", 500);
 		
-		config.addDefault("debug.outputs.enable", false);
+		config.addDefault("debug.outputs.enable", true);
+		config.addDefault("debug.outputs.writethrough", false);
 		
 		config.addDefault("uplink.globalTickPresition", 10);
 		
@@ -89,6 +95,9 @@ import de.tobiyas.races.Races;
 		
 		config.addDefault("races.remindDefaultRace.enable", true);
 		config.addDefault("races.remindDefaultRace.interval", 10);
+		config.addDefault("races.display.adaptListName", true);
+		
+		config.addDefault("races.drops.enable", true);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -121,7 +130,8 @@ import de.tobiyas.races.Races;
 		config_defaultHealth = config.getInt("health.defaultHealth", 20);
 		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
 		
-		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", false);
+		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", true);
+		config_enableDebugWriteThrough = config.getBoolean("debug.outputs.writethrough", false);
 		
 		config_globalUplinkTickPresition = config.getInt("uplink.globalTickPresition", 10);
 		
@@ -130,6 +140,9 @@ import de.tobiyas.races.Races;
 		
 		config_activate_reminder = config.getBoolean("races.remindDefaultRace.enable", true);
 		config_reminder_interval = config.getInt("races.remindDefaultRace.interval", 10);
+		config_adaptListName = config.getBoolean("races.display.adaptListName", true);
+		
+		config_enable_expDropBonus = config.getBoolean("races.drops.enable", true);
 
 	}
 	
@@ -147,6 +160,10 @@ import de.tobiyas.races.Races;
 	
 	public boolean getconfig_enableDebugOutputs(){
 		return config_enableDebugOutputs;
+	}
+	
+	public boolean getconfig_enableDebugWriteThrough(){
+		return config_enableDebugWriteThrough;
 	}
 	
 	public int getconfig_globalUplinkTickPresition(){
@@ -219,6 +236,14 @@ import de.tobiyas.races.Races;
 	
 	public int getConfig_reminder_interval(){
 		return config_reminder_interval;
+	}
+	
+	public boolean getConfig_enable_expDropBonus(){
+		return config_enable_expDropBonus;
+	}
+
+	public boolean getConfig_AdaptListName() {
+		return config_adaptListName;
 	}
 
 }

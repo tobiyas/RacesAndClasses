@@ -85,8 +85,12 @@ public class RaceManager {
 		for(Player player : players){
 			String playerName = player.getName();
 			RaceContainer container = getRaceOfPlayer(playerName);
-			if(container == null)
+			if(container == null){
 				addPlayerToRace(playerName, "DefaultRace");
+				container = getRaceOfPlayer(playerName);
+			}
+			
+			container.setListEntry(player);
 		}
 	}
 	
@@ -126,6 +130,9 @@ public class RaceManager {
 		memberConfig.set("playerdata." + player + ".race", container.getName());
 		HealthManager.getHealthManager().checkPlayer(player);
 		memberConfig.save();
+		
+		Player tempPlayer = Bukkit.getPlayer(player);
+		container.setListEntry(tempPlayer);
 		
 		return true;
 	}

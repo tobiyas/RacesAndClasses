@@ -30,6 +30,9 @@ import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.Enti
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityKnockbackEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.statictraits.DeathCheckerTrait;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 
 public class TraitEventManager extends Observable{
@@ -64,6 +67,13 @@ public class TraitEventManager extends Observable{
 		addObserver(HealthManager.getHealthManager());
 		notifyObservers(null);
 		setChanged();
+		
+		createStaticTraits();
+	}
+	
+	private void createStaticTraits(){
+		DeathCheckerTrait dcTrait = new DeathCheckerTrait();
+		dcTrait.generalInit();
 	}
 	
 	private boolean fireEventIntern(Event event){		
@@ -87,10 +97,18 @@ public class TraitEventManager extends Observable{
 				if(trait.modify(event))
 					changedSomething = true;
 			}catch(Exception e){
+				RaceContainer raceContainer = trait.getRace();
+				ClassContainer classContainer = trait.getClazz();
+				String race = "NONE";
+				String clazz = "NONE";
+				if(raceContainer != null)
+					race = raceContainer.getName();
+				if(classContainer != null)
+					clazz = classContainer.getName();
+					
 				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of race: " + 
-						trait.getRace().getName() + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());
-				
-				e.printStackTrace();
+						race + " of class: " + clazz + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());
+				plugin.getDebugLogger().logStackTrace(e);
 			}
 		}
 		
@@ -121,11 +139,16 @@ public class TraitEventManager extends Observable{
 			EntityDamageEvent Eevent = (EntityDamageEvent) event;
 			
 			if(Eevent.getCause() == DamageCause.FIRE_TICK){
-				Eevent.setDamage(0);
-				return true;
+				if(DamageTicker.hasEffect(Eevent.getEntity(), DamageCause.FIRE) != 0){
+					Eevent.setDamage(0);
+					return true;
+				}else{
+					Eevent.setDamage(0);
+					Eevent = new EntityDamageEvent(Eevent.getEntity(), DamageCause.FIRE, 0);
+				}
 			}
 			
-			if((Eevent.getCause() == DamageCause.FIRE || 
+			if((Eevent.getCause() == DamageCause.FIRE ||
 				Eevent.getCause() == DamageCause.LAVA) 
 				&& Eevent.getEntity() instanceof LivingEntity){
 				
@@ -147,9 +170,7 @@ public class TraitEventManager extends Observable{
 		if(event instanceof EntityDamageDoubleEvent){
 			EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
 			if(imunTicker.isImun(Eevent.getEntity())) return; //Check if imun to dmg
-			
 			if(event instanceof EntityDamageByEntityDoubleEvent) checkKnockBack(event);
-			checkDeath(Eevent);
 			
 			if(Eevent.getEntityType() == EntityType.PLAYER){
 				Player player = (Player)(Eevent.getEntity());
@@ -161,11 +182,19 @@ public class TraitEventManager extends Observable{
 				LivingEntity entity = (LivingEntity) Eevent.getEntity();
 				
 				entity.playEffect(EntityEffect.HURT);
-				entity.damage((int) Eevent.getDoubleValueDamage());
+				int damage = (int) Math.ceil(Eevent.getDoubleValueDamage());
+				if(damage > 0){
+					boolean fromPlayer = Eevent instanceof EntityDamageByEntityDoubleEvent && 
+										((EntityDamageByEntityDoubleEvent)Eevent).getDamager() instanceof Player;
+					checkDropReset(entity, Eevent.getCause(), fromPlayer);
+					
+					entity.damage(damage);
+					entity.setLastDamageCause(Eevent);
+				}
 			}
 			imunTicker.addToImunList(Eevent.getEntity());
 		}else
-		//Should never be called again (only for debuging in)
+		//Should never be called again (only for debuging in source)
 		if(event instanceof EntityDamageEvent){
 			EntityDamageEvent Eevent = (EntityDamageEvent) event;
 			if(Eevent.getEntityType() == EntityType.PLAYER){
@@ -219,18 +248,6 @@ public class TraitEventManager extends Observable{
 		target.setVelocity(velocity);
 	}
 	
-	private void checkDeath(EntityDamageDoubleEvent event){
-		Entity entity = event.getEntity();
-		if(!(entity instanceof LivingEntity)) return;
-		if(entity instanceof Player) return;
-		if(imunTicker.isImun(entity)) return;
-		
-		LivingEntity lEntity = (LivingEntity) entity;
-		int currentHP = lEntity.getHealth();
-		if(currentHP - event.getDoubleValueDamage() <= 0)
-			entityDeathManager.addToDie(lEntity);
-	}
-	
 	public void cleanEventList(){
 		LinkedList<Integer> toRemove = new LinkedList<Integer>();
 		long currentTime = System.currentTimeMillis();
@@ -244,6 +261,22 @@ public class TraitEventManager extends Observable{
 		for(Integer inT : toRemove)
 			eventIDs.remove(inT);
 		
+	}
+	
+	private void checkDropReset(LivingEntity entity, DamageCause cause, boolean fromPlayer){
+		boolean reset = false;
+		if(cause == DamageCause.POISON)
+			reset = true;
+		
+		if(cause == DamageCause.ENTITY_ATTACK && fromPlayer)
+			reset = true;
+		
+		if(cause == DamageCause.FIRE_TICK)
+			reset = true;
+		
+		
+		if(reset)
+			EntityDeathManager.getManager().resetEntityHit(entity);
 	}
 	
 	public void registerTrait(Trait trait, HashSet<Class<?>> events){

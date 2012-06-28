@@ -43,6 +43,7 @@ public class TrollbloodTrait implements TraitsWithUplink {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {PlayerInteractEvent.class})
 	@Override
 	public void generalInit() {
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();

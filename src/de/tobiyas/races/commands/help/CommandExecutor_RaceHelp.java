@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
@@ -31,6 +32,21 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 		}
 		
 		String commandString = args[0];
+		
+		if(commandString.equalsIgnoreCase("testerror")){ //Produces Error! Only for testing!
+			if(sender instanceof Player && !((Player)sender).getName().equals("tobiyas")){
+				sender.sendMessage(ChatColor.RED + "You may not use this command!");
+				return true;
+			}
+			sender.sendMessage(ChatColor.GREEN + "Error is beeing fired!");
+			try{
+				throw new NullPointerException("useless generated exeption.");
+			}catch(NullPointerException e){
+				plugin.getDebugLogger().logStackTrace(e);
+				sender.sendMessage(ChatColor.GREEN + "Worked!");
+				return true;
+			}
+		}
 		
 		if(commandString.equalsIgnoreCase("page")){
 			int page = 1;

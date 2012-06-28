@@ -43,6 +43,7 @@ public class SprintTrait implements TraitsWithUplink {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {PlayerToggleSprintEvent.class})
 	@Override
 	public void generalInit() {
 		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();

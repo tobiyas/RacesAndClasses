@@ -25,6 +25,12 @@ public class Consts {
 	//Knockback
 	public static double knockBackMulti = 0.7;
 	
+	//DeathManager
+	public static int secondsPlayerHit = 5;
+	
 	//Version
 	public static String currentDevStage = "A D";
+	
+	//Enchants
+	public static int maxLevel = 5;
 }
