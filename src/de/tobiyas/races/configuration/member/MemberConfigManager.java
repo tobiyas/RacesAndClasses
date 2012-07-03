@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.util.consts.Consts;
 
 

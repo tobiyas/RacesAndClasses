@@ -1,7 +1,5 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +9,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class HungerReplenish implements Trait {
@@ -30,11 +27,9 @@ public class HungerReplenish implements Trait {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {FoodLevelChangeEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(FoodLevelChangeEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 
 	@Override
@@ -133,6 +128,13 @@ public class HungerReplenish implements Trait {
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof HungerReplenish)) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 
 }

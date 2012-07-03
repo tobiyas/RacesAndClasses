@@ -1,19 +1,16 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class SwordDamageIncrease implements Trait {
@@ -32,11 +29,9 @@ public class SwordDamageIncrease implements Trait {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 
 	@Override
@@ -94,16 +89,16 @@ public class SwordDamageIncrease implements Trait {
 	
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageByEntityEvent)) return false;
+		if(!(event instanceof EntityDamageByEntityDoubleEvent)) return false;
 		
-		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+		EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 		if(!(Eevent.getDamager() instanceof Player)) return false;
 		Player causer = (Player) Eevent.getDamager();
  		
 		if(TraitHolderCombinder.checkContainer(causer.getName(), this)){
 			if(!checkItemIsSword(causer.getItemInHand())) return false;
-			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
-			Eevent.setDamage(newValue);
+			double newValue = getNewValue(Eevent.getDoubleValueDamage());
+			Eevent.setDoubleValueDamage(newValue);
 			return true;
 		}
 		return false;
@@ -129,7 +124,7 @@ public class SwordDamageIncrease implements Trait {
 		return false;
 	}
 	
-	private double getNewValue(int oldDmg){
+	private double getNewValue(double oldDmg){
 		double newDmg = 0;
 		switch(operation){
 			case "+": newDmg = oldDmg + value; break;
@@ -150,6 +145,13 @@ public class SwordDamageIncrease implements Trait {
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof SwordDamageIncrease)) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 
 }

@@ -42,6 +42,7 @@ import de.tobiyas.races.Races;
 	private boolean config_whisper_enable;
 	
 	private boolean config_enableDebugOutputs;
+	private boolean config_enableErrorUpload;
 	private boolean config_enableDebugWriteThrough;
 	
 	private boolean config_classes_enable;
@@ -85,6 +86,7 @@ import de.tobiyas.races.Races;
 		config.addDefault("health.imunBetweenDamage", 500);
 		
 		config.addDefault("debug.outputs.enable", true);
+		config.addDefault("debug.outputs.errorUpload", true);
 		config.addDefault("debug.outputs.writethrough", false);
 		
 		config.addDefault("uplink.globalTickPresition", 10);
@@ -131,6 +133,7 @@ import de.tobiyas.races.Races;
 		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
 		
 		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", true);
+		config_enableErrorUpload = config.getBoolean("debug.outputs.errorUpload", true);
 		config_enableDebugWriteThrough = config.getBoolean("debug.outputs.writethrough", false);
 		
 		config_globalUplinkTickPresition = config.getInt("uplink.globalTickPresition", 10);
@@ -244,6 +247,10 @@ import de.tobiyas.races.Races;
 
 	public boolean getConfig_AdaptListName() {
 		return config_adaptListName;
+	}
+	
+	public boolean getConfig_enableErrorUpload(){
+		return config_enableErrorUpload;
 	}
 
 }

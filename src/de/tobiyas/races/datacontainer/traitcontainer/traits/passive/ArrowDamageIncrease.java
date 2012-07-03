@@ -1,14 +1,10 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -30,11 +26,9 @@ public class ArrowDamageIncrease implements Trait {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
 	@Override
 	public void generalInit() {
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 
 	@Override
@@ -92,22 +86,22 @@ public class ArrowDamageIncrease implements Trait {
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageByEntityEvent)) return false;
-		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+		if(!(event instanceof EntityDamageByEntityDoubleEvent)) return false;
+		EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 		if(Eevent.getDamager().getType() != EntityType.ARROW) return false;
 		Arrow arrow = (Arrow) Eevent.getDamager();
 		if(arrow.getShooter() == null || arrow.getShooter().getType() != EntityType.PLAYER) return false;
 		Player shooter = (Player) arrow.getShooter();
 		
 		if(TraitHolderCombinder.checkContainer(shooter.getName(), this)){
-			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
-			Eevent.setDamage(newValue);
+			double newValue = getNewValue(Eevent.getDoubleValueDamage());
+			Eevent.setDoubleValueDamage(newValue);
 			return true;
 		}
 		return false;
 	}
 	
-	private double getNewValue(int oldDmg){
+	private double getNewValue(double oldDmg){
 		double newDmg = 0;
 		switch(operation){
 			case "+": newDmg = oldDmg + value; break;
@@ -123,6 +117,12 @@ public class ArrowDamageIncrease implements Trait {
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		
+		return false;
 	}
 
 }

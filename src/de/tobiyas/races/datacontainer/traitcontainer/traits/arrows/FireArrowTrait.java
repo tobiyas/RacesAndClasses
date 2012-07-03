@@ -1,7 +1,5 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
-import java.util.HashSet;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,7 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class FireArrowTrait extends AbstractArrow {
@@ -29,13 +26,9 @@ public class FireArrowTrait extends AbstractArrow {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class, PlayerInteractEvent.class, EntityShootBowEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
-		listenedEvents.add(PlayerInteractEvent.class);
-		listenedEvents.add(EntityShootBowEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override

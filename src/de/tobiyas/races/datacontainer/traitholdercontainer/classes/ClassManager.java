@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import de.tobiyas.races.Races;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.races.util.consts.Consts;

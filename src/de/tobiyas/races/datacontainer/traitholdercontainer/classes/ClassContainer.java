@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
+import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
 
 public class ClassContainer {
 
@@ -17,6 +18,7 @@ public class ClassContainer {
 	private int classHealthModValue;
 	private String classHealthModify;
 	
+	private boolean[] armorUsage;
 	private HashSet<Trait> traits;
 	
 	private static ClassManager manager = ClassManager.getInstance();
@@ -32,6 +34,27 @@ public class ClassContainer {
 	private void readConfigSection(){
 		classTag = decodeColors(config.getString("classes." + className + ".config.classtag"));
 		classHealthModValue = evaluateValue(config.getString("classes." + className + ".config.health", "+0"));
+		
+		readArmor();
+	}
+	
+	private void readArmor(){
+		armorUsage = new boolean[]{false, false, false, false, false};
+		String armorString = config.getString("classes." + className + ".config.armor", "").toLowerCase();
+		if(armorString.contains("leather"))
+			armorUsage[0] = true;
+		
+		if(armorString.contains("iron"))
+			armorUsage[1] = true;
+		
+		if(armorString.contains("gold"))
+			armorUsage[2] = true;
+		
+		if(armorString.contains("diamond"))
+			armorUsage[3] = true;
+		
+		if(armorString.contains("chain"))
+			armorUsage[4] = true;
 	}
 	
 	private String decodeColors(String message){
@@ -138,6 +161,31 @@ public class ClassContainer {
 			return maxHealth - classHealthModValue;
 		
 		return maxHealth;
+	}
+	
+	public String getArmorString(){
+		HashSet<ItemQuality> qualities = getArmorPerms();
+		String armorString = "";
+		for(ItemQuality quality : qualities)
+			armorString += quality.name() + " ";
+		
+		return armorString;
+	}
+
+	public HashSet<ItemQuality> getArmorPerms(){
+		HashSet<ItemQuality> perms = new HashSet<ItemQuality>();
+		if(armorUsage[0])
+			perms.add(ItemQuality.Leather);
+		if(armorUsage[1])
+			perms.add(ItemQuality.Iron);
+		if(armorUsage[2])
+			perms.add(ItemQuality.Gold);
+		if(armorUsage[3])
+			perms.add(ItemQuality.Diamond);
+		if(armorUsage[4])
+			perms.add(ItemQuality.Fire);
+		
+		return perms;
 	}
 	
 	@Override

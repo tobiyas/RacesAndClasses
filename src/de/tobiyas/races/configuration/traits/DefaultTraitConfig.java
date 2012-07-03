@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.tobiyas.races.Races;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.util.consts.Consts;
 import de.tobiyas.races.util.items.CreateDropContainer;
 
@@ -24,6 +24,20 @@ public class DefaultTraitConfig {
 		createTraitConfig("STDAxeDamageTrait", "trait.damage.gold", 4, true);
 		createTraitConfig("STDAxeDamageTrait", "trait.damage.iron", 6, true);
 		createTraitConfig("STDAxeDamageTrait", "trait.damage.diamond", 7, true);
+		
+		createTraitConfig("HealOthersTrait", "trait.uplink", 60, true);
+		createTraitConfig("HealOthersTrait", "trait.iteminhand", 287, true);
+		
+		createTraitConfig("BerserkerRageTrait", "trait.uplink", 60, true);
+		createTraitConfig("BerserkerRageTrait", "trait.duration", 10, true);
+		createTraitConfig("BerserkerRageTrait", "trait.activationLimit", 30, true);
+		
+		createTraitConfig("DwarfSkinTrait", "trait.uplink", 60, true);
+		createTraitConfig("DwarfSkinTrait", "trait.duration", 10, true);
+		createTraitConfig("DwarfSkinTrait", "trait.activationLimit", 30, true);
+		
+		createTraitConfig("LastStandTrait", "trait.uplink", 60, true);
+		createTraitConfig("LastStandTrait", "trait.activationLimit", 30, true);
 		
 		CreateDropContainer.createAllContainers();		
 	}

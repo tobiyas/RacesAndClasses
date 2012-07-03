@@ -70,7 +70,7 @@ public class DamageTicker implements Runnable{
 		
 		duration --;
 		if(cause == DamageCause.FIRE){
-			if(target.getFireTicks() < 1){
+			if(target.getFireTicks() <= 1){
 				stopTask();
 				return;
 			}
@@ -81,7 +81,7 @@ public class DamageTicker implements Runnable{
 				target.getLocation().getWorld().playEffect(target.getLocation(), effect, 0);
 		}
 		
-		EntityDamageDoubleEvent event = new EntityDamageDoubleEvent(target, cause, damagePerTick);
+		EntityDamageDoubleEvent event = new EntityDamageDoubleEvent(target, cause, damagePerTick, true);
 		TraitEventManager.fireEvent(event);
 	}
 	

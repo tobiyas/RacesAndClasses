@@ -83,24 +83,9 @@ public class TraitHolderCombinder {
 	}
 	
 	private static Trait selectBetter(Trait trait1, Trait trait2){
-		Object value1 = trait1.getValue();
-		Object value2 = trait2.getValue();
-		
-		if(value1 instanceof Integer){
-			int intValue1 = (int) value1;
-			int intValue2 = (int) value2;
-			
-			return (intValue1 > intValue2 ? trait1 : trait2);
-		}
-		
-		if(value1 instanceof Double){
-			double intValue1 = (double) value1;
-			double intValue2 = (double) value2;
-			
-			return (intValue1 > intValue2 ? trait1 : trait2);
-		}
-		
-		return trait1;
+		if(trait1.isBetterThan(trait2))
+			return trait1;
+		return trait2;
 	}
 	
 	private static Trait containsTrait(HashSet<Trait> traits, Trait newTrait){

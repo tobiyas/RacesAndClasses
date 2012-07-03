@@ -18,6 +18,7 @@ import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public abstract class AbstractArrow implements TraitsWithUplink {
@@ -153,5 +154,13 @@ public abstract class AbstractArrow implements TraitsWithUplink {
 	@Override
 	public void tickReduceUplink(){
 		return;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait){
+		if(trait.getClass() != this.getClass()) return false;
+		
+		//TODO Not sure about this...
+		return false;
 	}
 }

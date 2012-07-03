@@ -1,23 +1,18 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.resistance;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
-public abstract class Resistance extends Observable implements ResistanceInterface {
+public abstract class Resistance implements ResistanceInterface {
 
 	protected List<DamageCause> resistances;
 	protected RaceContainer raceContainer = null;
@@ -27,13 +22,9 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	protected String Operation = "";
 	
 	
+	@TraitInfo(registerdClasses = {EntityDamageDoubleEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageDoubleEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
-		
-		addObserver(HealthManager.getHealthManager());
 	}
 	
 	@Override
@@ -98,9 +89,7 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 				double oldDmg = Eevent.getDoubleValueDamage();
 				double newDmg = getNewValue(oldDmg);
 				
-				notifyObservers(new HealthModifyContainer(player.getName(), newDmg, "damage"));
-				setChanged();
-				Eevent.setDamage(0);
+				Eevent.setDoubleValueDamage(newDmg);
 				return true;
 			}
 		}
@@ -124,5 +113,12 @@ public abstract class Resistance extends Observable implements ResistanceInterfa
 	@Override
 	public List<DamageCause> getResistanceTypes() {
 		return resistances;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait){
+		if(trait.getClass() != this.getClass()) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 }

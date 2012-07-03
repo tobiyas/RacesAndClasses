@@ -1,7 +1,5 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
@@ -9,7 +7,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class ToolTrait implements Trait{
@@ -28,11 +25,9 @@ public class ToolTrait implements Trait{
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {PlayerInteractEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(PlayerInteractEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override
@@ -77,7 +72,7 @@ public class ToolTrait implements Trait{
 
 	@Override
 	public boolean modify(Event event) {
-		
+		if(!(event instanceof PlayerInteractEvent)) return false;
 		//TODO implement me
 		return false;
 	}
@@ -88,6 +83,12 @@ public class ToolTrait implements Trait{
 	
 	@Override
 	public boolean isVisible() {
+		return true;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		//TODO not implemented yet
 		return true;
 	}
 

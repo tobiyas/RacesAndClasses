@@ -1,7 +1,5 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.arrows;
 
-import java.util.HashSet;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -13,7 +11,6 @@ import org.bukkit.potion.PotionEffectTypeWrapper;
 import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 
 public class PoisonArrowTrait extends AbstractArrow {
@@ -26,13 +23,9 @@ public class PoisonArrowTrait extends AbstractArrow {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class, ProjectileHitEvent.class, PlayerInteractEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
-		listenedEvents.add(ProjectileHitEvent.class);
-		listenedEvents.add(PlayerInteractEvent.class);;
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override

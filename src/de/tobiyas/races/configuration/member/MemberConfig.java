@@ -3,7 +3,7 @@ package de.tobiyas.races.configuration.member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.util.consts.Consts;
 
 public class MemberConfig {

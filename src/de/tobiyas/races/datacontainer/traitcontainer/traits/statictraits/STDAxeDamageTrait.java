@@ -1,48 +1,39 @@
-package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
-
-import java.util.HashSet;
+package de.tobiyas.races.datacontainer.traitcontainer.traits.statictraits;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
-import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
 public class STDAxeDamageTrait implements Trait {
 	
-	private int woodDmg;
-	private int stoneDmg;
-	private int goldDmg;
-	private int ironDmg;
-	private int diamondDmg;
+	private double woodDmg;
+	private double stoneDmg;
+	private double goldDmg;
+	private double ironDmg;
+	private double diamondDmg;
 	
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
 	
-	public STDAxeDamageTrait(RaceContainer raceContainer){
-		this.raceContainer = raceContainer;
+	public STDAxeDamageTrait(){
 	}
 
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
 	@Override
-	public void generalInit() {
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
-		
+	public void generalInit() {		
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
-			woodDmg = (int) config.getValue("trait.damage.wood", 4);
-			stoneDmg = (int) config.getValue("trait.damage.stone", 5);
-			goldDmg = (int) config.getValue("trait.damage.gold", 4);
-			ironDmg = (int) config.getValue("trait.damage.iron", 6);
-			diamondDmg = (int) config.getValue("trait.damage.diamond", 7);
+			woodDmg =  (Integer) config.getValue("trait.damage.wood", 4.0);
+			stoneDmg = (Integer) config.getValue("trait.damage.stone", 5.0);
+			goldDmg = (Integer) config.getValue("trait.damage.gold", 4.0);
+			ironDmg = (Integer) config.getValue("trait.damage.iron", 6.0);
+			diamondDmg = (Integer) config.getValue("trait.damage.diamond", 7.0);
 		}	
 	}
 
@@ -79,15 +70,14 @@ public class STDAxeDamageTrait implements Trait {
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageByEntityEvent)) return false;
-		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+		if(!(event instanceof EntityDamageByEntityDoubleEvent)) return false;
+		EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 		
 		if(Eevent.getDamager() instanceof Player){
 			Player player = (Player) Eevent.getDamager();
-			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
-			int newDmg = getDamageOfAxe(player.getItemInHand().getType());
+			double newDmg = getDamageOfAxe(player.getItemInHand().getType());
 			if(newDmg != -1){
-				Eevent.setDamage(newDmg);
+				Eevent.setDoubleValueDamage(newDmg);
 				return true;
 			}
 		}
@@ -99,7 +89,7 @@ public class STDAxeDamageTrait implements Trait {
 		return false;
 	}
 	
-	private int getDamageOfAxe(Material material){
+	private double getDamageOfAxe(Material material){
 		if(material == null) return -1;
 		
 		switch(material){
@@ -110,6 +100,12 @@ public class STDAxeDamageTrait implements Trait {
 			case DIAMOND_AXE: return diamondDmg;
 			default: return -1;
 		}
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		//STD and no difference
+		return true;
 	}
 
 }

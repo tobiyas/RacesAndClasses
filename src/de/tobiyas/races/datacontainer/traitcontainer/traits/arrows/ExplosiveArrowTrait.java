@@ -33,15 +33,10 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class, ProjectileHitEvent.class, PlayerInteractEvent.class, EntityShootBowEvent.class})
 	@Override
 	public void generalInit(){
 		arrowMap = new HashMap<Arrow, Player>();
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityDoubleEvent.class);
-		listenedEvents.add(ProjectileHitEvent.class);
-		listenedEvents.add(PlayerInteractEvent.class);
-		listenedEvents.add(EntityShootBowEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 	
 	@Override
@@ -102,7 +97,7 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 		HashSet<LivingEntity> damageTo = getEntitiesNear(loc, duration);
 		
 		for(LivingEntity entity : damageTo){
-			EntityDamageEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage);
+			EntityDamageEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage, true);
 			TraitEventManager.fireEvent(newEvent);
 		}
 		
@@ -141,7 +136,7 @@ public class ExplosiveArrowTrait extends AbstractArrow{
 		arrowMap.remove(arrow);
 		
 		for(LivingEntity entity : damageTo){
-			EntityDamageDoubleEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage);
+			EntityDamageDoubleEvent newEvent = new EntityDamageDoubleEvent(entity, DamageCause.BLOCK_EXPLOSION, totalDamage, true);
 			TraitEventManager.fireEvent(newEvent);
 		}
 		

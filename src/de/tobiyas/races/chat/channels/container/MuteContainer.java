@@ -3,7 +3,7 @@ package de.tobiyas.races.chat.channels.container;
 import java.util.HashMap;
 import java.util.Set;
 
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MuteContainer {
 

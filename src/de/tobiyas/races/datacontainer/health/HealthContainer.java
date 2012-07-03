@@ -8,9 +8,10 @@ import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.configuration.member.MemberConfig;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
+import de.tobiyas.races.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.races.datacontainer.arrow.ArrowManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
@@ -22,6 +23,7 @@ public class HealthContainer {
 	
 	private HealthDisplay display;
 	private ArrowManager arrowManager;
+	private ArmorToolManager armorToolManager;
 	private String player;
 	
 	private double currentHealth;
@@ -46,6 +48,7 @@ public class HealthContainer {
 		}
 		
 		arrowManager = new ArrowManager(player);
+		armorToolManager = new ArmorToolManager(player);
 		checkStats();
 	}
 	
@@ -157,6 +160,7 @@ public class HealthContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		
 		arrowManager.rescanClass();
+		armorToolManager.rescanPermission();
 		setPlayerPercentage();
 	}
 	
@@ -172,6 +176,10 @@ public class HealthContainer {
 	
 	public ArrowManager getArrowManager(){
 		return arrowManager;
+	}
+	
+	public ArmorToolManager getArmorToolManager(){
+		return armorToolManager;
 	}
 	
 	public void forceHPOut(){

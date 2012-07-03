@@ -22,15 +22,16 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.health.HealthManager;
 import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
+import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
 import de.tobiyas.races.datacontainer.traitcontainer.UplinkReducer;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByBlockDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityHealEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityKnockbackEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.statictraits.DeathCheckerTrait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 
@@ -72,8 +73,9 @@ public class TraitEventManager extends Observable{
 	}
 	
 	private void createStaticTraits(){
-		DeathCheckerTrait dcTrait = new DeathCheckerTrait();
-		dcTrait.generalInit();
+		TraitStore.buildTraitByName("DeathCheckerTrait");
+		TraitStore.buildTraitByName("STDAxeDamageTrait");
+		TraitStore.buildTraitByName("ArmorTrait");
 	}
 	
 	private boolean fireEventIntern(Event event){		
@@ -85,10 +87,10 @@ public class TraitEventManager extends Observable{
 			eventIDs.put(event.hashCode(), System.currentTimeMillis());
 		
 		if(replaceEvent(event)) return true;
-				
+		
 		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
-		for(Class<?> clazz : traitList.keySet()){			
-			if(event.getClass().isAssignableFrom(clazz))
+		for(Class<?> clazz : traitList.keySet()){
+			if(clazz.isAssignableFrom(event.getClass()))
 				traitsToCheck.addAll(traitList.get(clazz));
 		}
 		
@@ -113,10 +115,35 @@ public class TraitEventManager extends Observable{
 		}
 		
 		fireDamage(event);
+		fireHeal(event);
 		return changedSomething;
 	}
 	
 	private boolean replaceEvent(Event event){
+		if(checkFire(event)) return true;
+		if(replaceDamageEvent(event)) return true;
+		if(replaceHealEvent(event)) return true;
+		return false;
+	}
+	
+	private boolean checkFire(Event event){
+		if(!(event instanceof EntityDamageDoubleEvent)) return false;
+		EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
+		
+		if(Eevent.getCause() == DamageCause.FIRE || Eevent.getCause() == DamageCause.FIRE_TICK){
+			Entity entity = Eevent.getEntity();
+			if(!(entity instanceof LivingEntity)) return false;
+			
+			if(entity.getFireTicks() <= 0 && DamageTicker.hasEffect(entity, Eevent.getCause()) != 0){
+				DamageTicker.cancleEffects((LivingEntity) entity, Eevent.getCause());
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean replaceDamageEvent(Event event){
 		if(event instanceof EntityDamageDoubleEvent) return false;
 		
 		if(event instanceof EntityDamageByEntityEvent){
@@ -166,6 +193,20 @@ public class TraitEventManager extends Observable{
 		return false;
 	}
 	
+	private boolean replaceHealEvent(Event event){
+		if(event instanceof EntityHealEvent) return false;
+		
+		if(event instanceof EntityRegainHealthEvent){
+			EntityRegainHealthEvent Eevent = (EntityRegainHealthEvent) event;
+			EntityHealEvent ehEvent = new EntityHealEvent(Eevent);
+			Eevent.setAmount(0);
+			fireEventIntern(ehEvent);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private void fireDamage(Event event){
 		if(event instanceof EntityDamageDoubleEvent){
 			EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
@@ -211,15 +252,24 @@ public class TraitEventManager extends Observable{
 				entity.damage(Eevent.getDamage());
 			}
 		}
-		
-		if(event instanceof EntityRegainHealthEvent){
-			EntityRegainHealthEvent Eevent = (EntityRegainHealthEvent) event;
+	}
+	
+	private void fireHeal(Event event){
+		if(event instanceof EntityHealEvent){
+			EntityHealEvent Eevent = (EntityHealEvent) event;
 			if(Eevent.getEntityType() == EntityType.PLAYER){
 				Player player = (Player)(Eevent.getEntity());
 				int health = Eevent.getAmount();
-				Eevent.setAmount(0);
 				notifyObservers(new HealthModifyContainer(player.getName(), health, "heal"));
 				setChanged();
+			}else{
+				if(!(Eevent.getEntity() instanceof LivingEntity)) return;
+				LivingEntity entity = (LivingEntity) Eevent.getEntity();
+				int newHealth = entity.getHealth() + (int) Eevent.getDoubleValueAmount();
+				if(newHealth > entity.getMaxHealth())
+					newHealth = entity.getMaxHealth();
+				
+				entity.setHealth(newHealth);
 			}
 		}
 	}
@@ -247,6 +297,7 @@ public class TraitEventManager extends Observable{
 		velocity = velocity.add(knockbackEvent.getKnockback());
 		target.setVelocity(velocity);
 	}
+	
 	
 	public void cleanEventList(){
 		LinkedList<Integer> toRemove = new LinkedList<Integer>();
@@ -279,7 +330,8 @@ public class TraitEventManager extends Observable{
 			EntityDeathManager.getManager().resetEntityHit(entity);
 	}
 	
-	public void registerTrait(Trait trait, HashSet<Class<?>> events){
+	private void registerTraitIntern(Trait trait, HashSet<Class<?>> events, int priority){
+		//TODO register priority
 		for(Class<?> clazz : events){
 			HashSet<Trait> traits = traitList.get(clazz);
 			if(traits == null){
@@ -294,7 +346,7 @@ public class TraitEventManager extends Observable{
 			uplinkReducer.registerTrait((TraitsWithUplink) trait);
 	}
 	
-	public void unregisterTrait(Trait trait){
+	private void unregisterTraitIntern(Trait trait){
 		traitList.remove(trait);
 	}
 	
@@ -303,11 +355,16 @@ public class TraitEventManager extends Observable{
 	}
 	
 	public static boolean fireEvent(Event event){
-		long time = System.currentTimeMillis();
-		boolean result = getInstance().fireEventIntern(event);
-		timings += System.currentTimeMillis() - time;
-		
-		return result;
+		try{
+			long time = System.currentTimeMillis();
+			boolean result = getInstance().fireEventIntern(event);
+			timings += System.currentTimeMillis() - time;
+			
+			return result;
+		}catch(Exception e){
+			Races.getPlugin().getDebugLogger().logStackTrace(e);
+			return false;
+		}
 	}
 	
 	public static long timingResults(){
@@ -324,6 +381,14 @@ public class TraitEventManager extends Observable{
 	
 	public static ImunTicker getImunTicker(){
 		return getInstance().imunTicker;
+	}
+	
+	public static void registerTrait(Trait trait, HashSet<Class<?>> events, int priority){
+		getInstance().registerTraitIntern(trait, events, priority);
+	}
+	
+	public void unregisterTrait(Trait trait){
+		getInstance().unregisterTraitIntern(trait);
 	}
 	
 }

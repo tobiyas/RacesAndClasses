@@ -1,8 +1,6 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.activate;
 
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +18,7 @@ import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class SprintTrait implements TraitsWithUplink {
@@ -45,11 +43,7 @@ public class SprintTrait implements TraitsWithUplink {
 	
 	@TraitInfo(registerdClasses = {PlayerToggleSprintEvent.class})
 	@Override
-	public void generalInit() {
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(PlayerToggleSprintEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
-		
+	public void generalInit() {		
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
@@ -173,6 +167,12 @@ public class SprintTrait implements TraitsWithUplink {
 	public static void pasteHelpForTrait(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "The trait lets you sprint (move faster) for a short time.");
 		sender.sendMessage(ChatColor.YELLOW + "It can be used by toggleing sprint with a " + ChatColor.LIGHT_PURPLE + Material.getMaterial(itemIDInHand).name() + ChatColor.YELLOW + " in hands.");
+	}
+
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof SprintTrait)) return false;
+		return value >= (int) trait.getValue();
 	}
 
 }

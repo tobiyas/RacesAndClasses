@@ -9,9 +9,7 @@ import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.datacontainer.traitcontainer.TraitStore;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.arrows.NormalArrow;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.ArmorTrait;
-import de.tobiyas.races.datacontainer.traitcontainer.traits.passive.STDAxeDamageTrait;
+import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
 
 public class RaceContainer {
 
@@ -32,7 +30,7 @@ public class RaceContainer {
 		this.raceName = name;
 		
 		readConfigSection();
-		readTraitSection();	
+		readTraitSection();
 	}
 	
 	public RaceContainer(){
@@ -96,18 +94,8 @@ public class RaceContainer {
 	}
 	
 	private void addSTDTraits(){
-		Trait normalArrow = new NormalArrow(this);
-		normalArrow.generalInit();
+		Trait normalArrow = TraitStore.buildTraitByName("NormalArrow", this);
 		traits.add(normalArrow);
-		
-		Trait axeDmg = new STDAxeDamageTrait(this);
-		axeDmg.generalInit();
-		traits.add(axeDmg);
-		
-		Trait armorTrait = new ArmorTrait(this);
-		armorTrait.generalInit();
-		armorTrait.setValue(armorUsage);
-		traits.add(armorTrait);
 	}
 	
 	/**
@@ -151,11 +139,28 @@ public class RaceContainer {
 	}
 	
 	public String getArmorString(){
-		for(Trait trait : traits)
-			if(trait instanceof ArmorTrait)
-				return trait.getValueString();
+		HashSet<ItemQuality> qualities = getArmorPerms();
+		String armorString = "";
+		for(ItemQuality quality : qualities)
+			armorString += quality.name() + " ";
 		
-		return "";
+		return armorString;
+	}
+	
+	public HashSet<ItemQuality> getArmorPerms(){
+		HashSet<ItemQuality> perms = new HashSet<ItemQuality>();
+		if(armorUsage[0])
+			perms.add(ItemQuality.Leather);
+		if(armorUsage[1])
+			perms.add(ItemQuality.Iron);
+		if(armorUsage[2])
+			perms.add(ItemQuality.Gold);
+		if(armorUsage[3])
+			perms.add(ItemQuality.Diamond);
+		if(armorUsage[4])
+			perms.add(ItemQuality.Fire);
+		
+		return perms;
 	}
 	
 	public int getRaceMaxHealth(){

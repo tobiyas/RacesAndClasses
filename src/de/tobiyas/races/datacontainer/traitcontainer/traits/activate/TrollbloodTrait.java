@@ -2,8 +2,6 @@ package de.tobiyas.races.datacontainer.traitcontainer.traits.activate;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +20,7 @@ import de.tobiyas.races.datacontainer.health.damagetickers.DamageTicker;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 
 public class TrollbloodTrait implements TraitsWithUplink {
@@ -31,7 +29,7 @@ public class TrollbloodTrait implements TraitsWithUplink {
 	private ClassContainer classContainer = null;
 	private int duration;
 	
-	private static HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
+	private HashMap<String, Integer> uplinkMap = new HashMap<String, Integer>();
 	private static int uplinkTime = 60 * 20;
 	private static int itemIDInHand = Material.APPLE.getId();
 	
@@ -46,9 +44,6 @@ public class TrollbloodTrait implements TraitsWithUplink {
 	@TraitInfo(registerdClasses = {PlayerInteractEvent.class})
 	@Override
 	public void generalInit() {
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(PlayerInteractEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
@@ -153,6 +148,12 @@ public class TrollbloodTrait implements TraitsWithUplink {
 	public static void pasteHelpForTrait(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "The trait removes all poison effects on you.");
 		sender.sendMessage(ChatColor.YELLOW + "It can be used by 'left-click' with a " + ChatColor.LIGHT_PURPLE + Material.getMaterial(itemIDInHand).name() + ChatColor.YELLOW + " in hands.");
+	}
+
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof TrollbloodTrait)) return false;
+		return duration >= (int) trait.getValue();
 	}
 
 }

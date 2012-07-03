@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.bukkit.entity.EntityType;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.util.consts.Consts;
-import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;;
 
 public class CreateDropContainer {
 	

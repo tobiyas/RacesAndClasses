@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
 import de.tobiyas.races.chat.ChatFormatter;
 import de.tobiyas.races.chat.channels.ChannelManager;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.races.util.chat.ChannelLevel;

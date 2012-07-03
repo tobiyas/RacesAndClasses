@@ -6,10 +6,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.util.consts.Consts;
 import de.tobiyas.races.util.consts.PermissionNode;
+import de.tobiyas.races.util.tasks.DebugTask;
 
 public class CommandExecutor_RaceDebug implements CommandExecutor {
 
@@ -31,21 +33,44 @@ private Races plugin;
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.debug)) return true;
 		
 		if(args.length == 1){
-			if(args[0].equalsIgnoreCase("scan")){
+			String commandString = args[0];
+			if(commandString.equalsIgnoreCase("scan")){
 				long timeTook = runDebugScan();
 				sender.sendMessage(ChatColor.GREEN + "Full Scan finished (" + timeTook + "ms) and logged in Debug file.");
 				return true;
 			}
 			
-			if(args[0].equalsIgnoreCase("timing")){
+			if(commandString.equalsIgnoreCase("timing")){
 				sender.sendMessage(ChatColor.GREEN + "Profiling Event-Timings. Results in " + ChatColor.LIGHT_PURPLE + 
 									Consts.timingLength + ChatColor.GREEN + " seconds.");
 				new DebugTimingEvents(sender);
 				return true;
 			}
 			
+			if(commandString.equalsIgnoreCase("testerror")){ //Produces Error! Only for testing!
+				if(sender instanceof Player && !((Player)sender).isOp()){
+					sender.sendMessage(ChatColor.RED + "You may not use this command!");
+					return true;
+				}
+				
+				sender.sendMessage(ChatColor.GREEN + "Error is beeing fired!");
+				try{
+					throw new NullPointerException("useless generated exeption.");
+				}catch(NullPointerException e){
+					plugin.getDebugLogger().logStackTrace(e);
+					sender.sendMessage(ChatColor.GREEN + "Worked!");
+					return true;
+				}
+			}
 			
-			sender.sendMessage(ChatColor.RED + "No debug command found for: " + ChatColor.LIGHT_PURPLE + args[0]);
+			if(commandString.equalsIgnoreCase("tasks")){
+				sender.sendMessage(ChatColor.GREEN + "Testing all Schedulers Tasks! This can take some time.");
+				DebugTask.senderCall(sender);
+				return true;
+			}
+			
+			
+			sender.sendMessage(ChatColor.RED + "No debug command found for: " + ChatColor.LIGHT_PURPLE + commandString);
 			return true;
 		}
 		
@@ -57,6 +82,7 @@ private Races plugin;
 		sender.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
 		sender.sendMessage(ChatColor.RED + "/racedebug " + ChatColor.LIGHT_PURPLE + "scan");
 		sender.sendMessage(ChatColor.RED + "/racedebug " + ChatColor.LIGHT_PURPLE + "timing");
+		sender.sendMessage(ChatColor.RED + "/racedebug " + ChatColor.LIGHT_PURPLE + "testerror");
 		sender.sendMessage(ChatColor.RED + "Others coming soon.");
 	}
 	

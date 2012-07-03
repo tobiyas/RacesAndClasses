@@ -1,6 +1,6 @@
 package de.tobiyas.races.configuration.traits;
 
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.util.consts.Consts;
 
 public class TraitConfig {
@@ -23,5 +23,17 @@ public class TraitConfig {
 		config.load();
 		config.set(path, value);
 		config.save();
+	}
+
+	public double getDouble(String string, double defaultValue) {
+		Object ret = getValue(string, defaultValue);
+		if(ret instanceof Integer){
+			return ((Integer) ret).doubleValue();
+		}
+		
+		if(ret instanceof Double)
+			return (double) ret;
+		
+		return defaultValue;
 	}
 }

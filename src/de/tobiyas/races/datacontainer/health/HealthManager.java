@@ -10,7 +10,8 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import de.tobiyas.races.Races;
-import de.tobiyas.races.configuration.global.YAMLConfigExtended;
+import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.races.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.races.datacontainer.arrow.ArrowManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
@@ -154,7 +155,11 @@ public class HealthManager implements Observer{
 	}
 
 	public ArrowManager getArrowManagerOfPlayer(String playerName) {
-		return  getCreate(playerName, true).getArrowManager();
+		return getCreate(playerName, true).getArrowManager();
+	}
+	
+	public ArmorToolManager getArmorToolManagerOfPlayer(String playerName){
+		return getCreate(playerName, true).getArmorToolManager();
 	}
 
 	public boolean displayHealth(String playerName) {

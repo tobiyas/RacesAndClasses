@@ -10,7 +10,15 @@ public class EntityDamageByBlockDoubleEvent extends EntityDamageDoubleEvent {
 
 	public EntityDamageByBlockDoubleEvent(Block damager, Entity damagee,
 			DamageCause cause, double damage) {
-		super(damagee, cause, (int) damage);
+		super(damagee, cause, damage);
+		
+		this.causer = damager;
+		this.damageValue = damage;
+	}
+	
+	public EntityDamageByBlockDoubleEvent(Block damager, Entity damagee,
+			DamageCause cause, double damage, boolean raceCreated) {
+		super(damagee, cause, damage, raceCreated);
 		
 		this.causer = damager;
 		this.damageValue = damage;

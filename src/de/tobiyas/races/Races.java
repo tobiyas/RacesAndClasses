@@ -23,6 +23,7 @@ import de.tobiyas.races.commands.chat.channels.CommandExecutor_Racechat;
 import de.tobiyas.races.commands.classes.CommandExecutor_Class;
 import de.tobiyas.races.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.races.commands.debug.CommandExecutor_RaceDebug;
+import de.tobiyas.races.commands.general.CommandExecutor_PlayerInfo;
 import de.tobiyas.races.commands.general.CommandExecutor_RacesReload;
 import de.tobiyas.races.commands.health.CommandExecutor_HP;
 import de.tobiyas.races.commands.health.CommandExecutor_RaceGod;
@@ -41,6 +42,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.TraitsList;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.listeners.Listener_Entity;
 import de.tobiyas.races.listeners.Listener_Player;
+import de.tobiyas.races.util.tasks.DebugTask;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
@@ -80,6 +82,7 @@ public class Races extends JavaPlugin{
 	}
 	
 	private void initManagers(){
+		DebugTask.initDebugger();
 		setupConfiguration();
 		
 		MemberConfigManager mcManager = new MemberConfigManager();
@@ -118,6 +121,7 @@ public class Races extends JavaPlugin{
 		new CommandExecutor_RaceGod();
 		new CommandExecutor_BroadCast();
 		new CommandExecutor_LocalChat();
+		new CommandExecutor_PlayerInfo();
 		
 		new CommandExecutor_RacesReload();
 		new CommandExecutor_RacesVersion();
@@ -150,7 +154,7 @@ public class Races extends JavaPlugin{
 	}
 	
 	private void loadingDoneMessage(){
-		String traits = TraitsList.getAllTraits().size() + " traits";
+		String traits = TraitsList.getAllVisibleTraits().size() + " traits";
 		String races = ", " + RaceManager.getManager().listAllRaces().size() + " races";
 		
 		String classes = "";
@@ -175,6 +179,9 @@ public class Races extends JavaPlugin{
 		debugLogger = new DebugLogger(this);
 		if(!config.getconfig_enableDebugOutputs())
 			debugLogger.disable();
+		
+		if(!config.getConfig_enableErrorUpload())
+			debugLogger.disableUploads();
 		
 		debugLogger.setAlsoToPlugin(config.getconfig_enableDebugWriteThrough());
 	}

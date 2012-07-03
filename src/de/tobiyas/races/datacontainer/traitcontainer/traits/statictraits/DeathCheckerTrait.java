@@ -1,7 +1,6 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.statictraits;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.entity.EntityType;
@@ -15,7 +14,6 @@ import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.EntityDeathManager;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -32,13 +30,10 @@ public class DeathCheckerTrait implements Trait {
 		dropMap = new HashMap<EntityType, DropContainer>();
 	}
 
+	@TraitInfo(registerdClasses = {EntityDeathEvent.class})
 	@Override
 	public void generalInit() {
 		dropMap.clear();
-		
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDeathEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 		
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config == null){
@@ -129,6 +124,12 @@ public class DeathCheckerTrait implements Trait {
 	@Override
 	public boolean isVisible() {
 		return false;
+	}
+
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		//Singleton, Not needed.
+		return true;
 	}
 
 }

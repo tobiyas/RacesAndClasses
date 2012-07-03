@@ -1,8 +1,6 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
@@ -10,15 +8,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.traits.TraitConfig;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -36,7 +32,7 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 	
 	private static int uplinkTime = 60*20;
 	private static int duration = 10*20;
-	private static double activationLimit = 0.3;
+	private static double activationLimit = 30;
 	
 
 	public BerserkerRageTrait(RaceContainer raceContainer){
@@ -47,18 +43,14 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageDoubleEvent.class}) //TODO check if need EntityDamageEvent needed.
 	@Override
-	public void generalInit() {
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageEvent.class);
-		listenedEvents.add(EntityDamageDoubleEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
-		
+	public void generalInit() {		
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
 			duration = (int) config.getValue("trait.duration", 10) * 20;
-			activationLimit = (double) config.getValue("trait.activationLimit", 0.3);
+			activationLimit = config.getDouble("trait.activationLimit", 30);
 		}
 	}
 
@@ -119,14 +111,11 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 	@Override
 	public boolean modify(Event event) {
 		//Handle activation
-		if(event instanceof EntityDamageEvent || event instanceof EntityDamageDoubleEvent){
+		if(event instanceof EntityDamageDoubleEvent){
 			Entity entity = null;
 			
 			if(event instanceof EntityDamageDoubleEvent)
 				entity = ((EntityDamageDoubleEvent) event).getEntity();
-			
-			if(event instanceof EntityDamageEvent)
-				entity = ((EntityDamageEvent) event).getEntity();
 			
 			if(entity.getType() != EntityType.PLAYER) return false;
 			Player player = (Player) entity;
@@ -134,7 +123,7 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 			if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 				double maxHealth = HealthManager.getHealthManager().getMaxHealthOfPlayer(player.getName());
 				double currentHealth =  HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
-				double healthPercent = currentHealth / maxHealth;
+				double healthPercent = 100 * currentHealth / maxHealth;
 				if(healthPercent > activationLimit) return false;
 				
 				checkUplinkAndActive(player, false);
@@ -142,8 +131,8 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 			}
 		}
 		
-		if(event instanceof EntityDamageByEntityEvent){			
-			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
+		if(event instanceof EntityDamageByEntityDoubleEvent){			
+			EntityDamageByEntityDoubleEvent Eevent = (EntityDamageByEntityDoubleEvent) event;
 			Entity entity = Eevent.getDamager();
 			if(entity instanceof Arrow) 
 				entity = ((Arrow) entity).getShooter();
@@ -153,7 +142,8 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 			
 			if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 				if(!checkIfActive(player)) return false;
-				Eevent.setDamage((int) getNewValue(Eevent.getDamage()));
+				double newValue = getNewValue(Eevent.getDoubleValueDamage());
+				Eevent.setDoubleValueDamage(newValue);
 				return true;
 			}
 		}
@@ -213,6 +203,13 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 			else
 				uplinkMap.put(player, remainingTime);
 		}
+	}
+
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof BerserkerRageTrait)) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 
 }

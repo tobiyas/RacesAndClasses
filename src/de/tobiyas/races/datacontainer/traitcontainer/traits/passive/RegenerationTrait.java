@@ -1,24 +1,18 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-import java.util.Observable;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import de.tobiyas.races.datacontainer.health.HealthManager;
-import de.tobiyas.races.datacontainer.health.HealthModifyContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityHealEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
-public class RegenerationTrait extends Observable implements Trait {
+public class RegenerationTrait implements Trait {
 
 	private RaceContainer raceContainer = null;
 	private ClassContainer classContainer = null;
@@ -34,13 +28,9 @@ public class RegenerationTrait extends Observable implements Trait {
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityHealEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityRegainHealthEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
-		
-		addObserver(HealthManager.getHealthManager());
 	}
 	
 	@Override
@@ -98,24 +88,22 @@ public class RegenerationTrait extends Observable implements Trait {
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityRegainHealthEvent)) return false;
-		EntityRegainHealthEvent Eevent = (EntityRegainHealthEvent) event;
+		if(!(event instanceof EntityHealEvent)) return false;
+		EntityHealEvent Eevent = (EntityHealEvent) event;
 		
 		if(Eevent.getEntityType() != EntityType.PLAYER) return false;
 		Player player = (Player) Eevent.getEntity();
 		if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 		
 		if(Eevent.getRegainReason() == RegainReason.SATIATED){
-			double amount = getNewValue(Eevent.getAmount());
-			Eevent.setAmount(0);
-			notifyObservers(new HealthModifyContainer(player.getName(), amount, "heal"));
-			setChanged();
+			double amount = getNewValue(Eevent.getDoubleValueAmount());
+			Eevent.setDoubleValueAmount(amount);
 			return true;
 		}
 		return false;
 	}
 	
-	private double getNewValue(int oldValue){
+	private double getNewValue(double oldValue){
 		double newValue = 0;
 		switch(Operation){
 			case "+": newValue = oldValue + value; break;
@@ -135,6 +123,13 @@ public class RegenerationTrait extends Observable implements Trait {
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof RegenerationTrait)) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 
 }

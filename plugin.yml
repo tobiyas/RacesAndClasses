@@ -88,3 +88,8 @@ commands:
     aliases: []
     usage: |
            /<command>
+  playerinfo:
+    description: displays info to a player
+    aliases: []
+    usage: |
+           /<command> [playername]

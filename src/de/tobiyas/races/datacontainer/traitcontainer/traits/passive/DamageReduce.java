@@ -1,19 +1,15 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.passive;
 
-import java.util.HashSet;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.TraitEventManager;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageByEntityDoubleEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 
 public class DamageReduce implements Trait{
@@ -32,11 +28,9 @@ public class DamageReduce implements Trait{
 		this.classContainer = classContainer;
 	}
 	
+	@TraitInfo(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
 	@Override
 	public void generalInit(){
-		HashSet<Class<?>> listenedEvents = new HashSet<Class<?>>();
-		listenedEvents.add(EntityDamageByEntityEvent.class);
-		TraitEventManager.getInstance().registerTrait(this, listenedEvents);
 	}
 
 	@Override
@@ -94,21 +88,21 @@ public class DamageReduce implements Trait{
 
 	@Override
 	public boolean modify(Event event) {
-		if(!(event instanceof EntityDamageEvent)) return false;
-		EntityDamageEvent Eevent = (EntityDamageEvent) event;
+		if(!(event instanceof EntityDamageDoubleEvent)) return false;
+		EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
 		
 		if(Eevent.getEntityType() != EntityType.PLAYER) return false;
 		Player target = (Player) Eevent.getEntity();
 		
 		if(TraitHolderCombinder.checkContainer(target.getName(), this)){
-			int newValue = (int) Math.ceil(getNewValue(Eevent.getDamage()));
-			Eevent.setDamage(newValue);
+			double newValue = getNewValue(Eevent.getDoubleValueDamage());
+			Eevent.setDoubleValueDamage(newValue);
 			return true;
 		}
 		return false;
 	}
 	
-	private double getNewValue(int oldDmg){
+	private double getNewValue(double oldDmg){
 		double newDmg = 0;
 		switch(Operation){
 			case "+": newDmg = oldDmg + value; break;
@@ -129,5 +123,12 @@ public class DamageReduce implements Trait{
 	@Override
 	public boolean isVisible() {
 		return true;
+	}
+	
+	@Override
+	public boolean isBetterThan(Trait trait) {
+		if(!(trait instanceof DamageReduce)) return false;
+		
+		return value >= (double) trait.getValue();
 	}
 }
