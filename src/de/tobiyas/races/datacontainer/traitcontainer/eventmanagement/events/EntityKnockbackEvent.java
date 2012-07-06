@@ -46,7 +46,6 @@ public class EntityKnockbackEvent extends EntityEvent implements Cancellable {
 		Location result = locTarget.subtract(locDamager);
 		Vector knockBack = result.toVector();
 		knockBack.normalize();
-		
 		return knockBack;
 	}
 	

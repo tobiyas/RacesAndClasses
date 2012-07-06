@@ -30,6 +30,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.Enti
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityDamageDoubleEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityHealEvent;
 import de.tobiyas.races.datacontainer.traitcontainer.eventmanagement.events.EntityKnockbackEvent;
+import de.tobiyas.races.datacontainer.traitcontainer.imports.TraitWithUplinkPlugin;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
 import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -216,7 +217,7 @@ public class TraitEventManager extends Observable{
 			if(Eevent.getEntityType() == EntityType.PLAYER){
 				Player player = (Player)(Eevent.getEntity());
 				double dmg = Eevent.getDoubleValueDamage();
-				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
+				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage", Eevent.getCause()));
 				setChanged();
 			}else{
 				if(!(Eevent.getEntity() instanceof LivingEntity)) return;
@@ -241,7 +242,7 @@ public class TraitEventManager extends Observable{
 			if(Eevent.getEntityType() == EntityType.PLAYER){
 				Player player = (Player)(Eevent.getEntity());
 				int dmg = Eevent.getDamage();
-				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage"));
+				notifyObservers(new HealthModifyContainer(player.getName(), dmg, "damage", Eevent.getCause()));
 				setChanged();
 				Eevent.setDamage(0);
 			}else{
@@ -342,7 +343,7 @@ public class TraitEventManager extends Observable{
 			traits.add(trait);
 		}
 		
-		if(trait instanceof TraitsWithUplink)
+		if(trait instanceof TraitsWithUplink || trait instanceof TraitWithUplinkPlugin)
 			uplinkReducer.registerTrait((TraitsWithUplink) trait);
 	}
 	

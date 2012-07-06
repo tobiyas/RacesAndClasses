@@ -1,6 +1,7 @@
 package de.tobiyas.races.datacontainer.traitcontainer;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import org.bukkit.Bukkit;
 import de.tobiyas.races.Races;
@@ -12,7 +13,7 @@ public class UplinkReducer implements Runnable {
 	
 	public UplinkReducer(){
 		traits = new ArrayList<TraitsWithUplink>();
-		int precision = Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+		int precision = Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(Races.getPlugin(), this, precision, precision);
 	}
 	
@@ -24,7 +25,11 @@ public class UplinkReducer implements Runnable {
 	public void run() {
 		for(TraitsWithUplink trait : traits){
 			if(trait != null)
-				trait.tickReduceUplink();
+				try{
+					trait.tickReduceUplink();
+				}catch(ConcurrentModificationException e){
+					Races.getPlugin().getDebugLogger().logWarning("Uplink synchronizing Warning in Trait: " + trait.getName());
+				}
 		}
 	}
 

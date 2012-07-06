@@ -15,6 +15,31 @@ A plugin to include Races and Classes to Minecraft.
 Current Version: 0.07 (ALPHA)
 
 
+----{Version 0.08 AD}----
+
+--[ADDITIONAL FEATURES]--
+ -[ADD] added EXP/ItemDrop adjustment
+ -[ADD] Error/StackTrace uploader
+ -[ADD] command: /playerinfo [playername]  gives infos to the player given
+ -[ADD] annotation loading for Traits (implementation change)
+ -[ADD] new Trait: 'LastStandTrait'
+ -[ADD] added config option to change join/leave message for channels
+ -[ADD] Changed config style. Channel configs are outsourced to /channels/config.yml
+ -[ADD] Global/Race/World - Channels are now saving all settings changed.
+ -[ADD] added Armor Manager to manage Armor in HealthManager
+ -[ADD] added calculation to Armor
+ -[ADD] attemt to loading Races from external
+ (-[ADD] started for Testing interface)
+ 
+--[FIXES]--
+ -[FIX] fixed EXP not dropping [fixing ISSUE 1]
+ -[FIX] fixed cooldown ticker crashing in rare occations [fixing ISSUE 2]
+ 
+--[KNOWN BUGS]--
+ -NONE
+
+
+
 ----{Version 0.07 AD}----
 
 --[ADDITIONAL FEATURES]-- 
@@ -35,5 +60,5 @@ Current Version: 0.07 (ALPHA)
  
  
 --[KNOWN BUGS]--
- -[BUG] exp not dropping on Monster dead
- -[?BUG] cooldowns not counting down
+ -[BUG] exp not dropping on Monster dead [ISSUE 1]
+ -[?BUG] cooldowns not counting down [ISSUE 2]

@@ -39,7 +39,7 @@ public class ChatFormatter{
 		return format;
 	}
 	
-	public String format(String playerName, String msg){
+	public String format(String playerName, String msg, String forceFormat){
 		Player player = Bukkit.getPlayer(playerName);
 		RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
 		
@@ -63,7 +63,12 @@ public class ChatFormatter{
 			}
 		}
 		
-		String messageFormat = new String(format);
+		String messageFormat = "";
+		if(forceFormat == "")
+			messageFormat = new String(format);
+		else
+			messageFormat = new String(forceFormat);
+			
 		String raceTag = "NONE";
 		if(container != null)
 			raceTag = container.getTag();

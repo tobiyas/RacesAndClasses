@@ -39,7 +39,7 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 			return true;
 		}
 		
-		if(!plugin.interactConfig().getconfig_channels_enable()){
+		if(!plugin.getGeneralConfig().getconfig_channels_enable()){
 			sender.sendMessage(ChatColor.RED + "RaceChat is not active.");
 			return true;
 		}

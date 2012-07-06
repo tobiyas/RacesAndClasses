@@ -38,7 +38,7 @@ public class RaceContainer {
 		this.raceName = "DefaultRace";
 		
 		raceTag = "[NoRace]";
-		raceMaxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+		raceMaxHealth = Races.getPlugin().getGeneralConfig().getconfig_defaultHealth();
 		armorUsage = new boolean[]{false, false, false, false, false};
 		traits = new HashSet<Trait>();
 		
@@ -47,7 +47,7 @@ public class RaceContainer {
 	
 	private void readConfigSection(){
 		raceTag = decodeColors(config.getString("races." + raceName + ".config.racetag"));
-		raceMaxHealth = config.getInt("races." + raceName + ".config.raceMaxHealth", Races.getPlugin().interactConfig().getconfig_defaultHealth());
+		raceMaxHealth = config.getInt("races." + raceName + ".config.raceMaxHealth", Races.getPlugin().getGeneralConfig().getconfig_defaultHealth());
 	
 		readArmor();
 	}
@@ -158,7 +158,7 @@ public class RaceContainer {
 		if(armorUsage[3])
 			perms.add(ItemQuality.Diamond);
 		if(armorUsage[4])
-			perms.add(ItemQuality.Fire);
+			perms.add(ItemQuality.Chain);
 		
 		return perms;
 	}
@@ -174,7 +174,7 @@ public class RaceContainer {
 
 	public void setListEntry(Player player) {
 		if(player == null) return;
-		if(!Races.getPlugin().interactConfig().getConfig_AdaptListName()) return;
+		if(!Races.getPlugin().getGeneralConfig().getConfig_AdaptListName()) return;
 		String name = player.getName();
 		String total = raceTag + name;
 		if(total.length() > 16)

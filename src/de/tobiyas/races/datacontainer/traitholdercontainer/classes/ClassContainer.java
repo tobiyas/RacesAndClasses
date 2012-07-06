@@ -183,7 +183,7 @@ public class ClassContainer {
 		if(armorUsage[3])
 			perms.add(ItemQuality.Diamond);
 		if(armorUsage[4])
-			perms.add(ItemQuality.Fire);
+			perms.add(ItemQuality.Chain);
 		
 		return perms;
 	}

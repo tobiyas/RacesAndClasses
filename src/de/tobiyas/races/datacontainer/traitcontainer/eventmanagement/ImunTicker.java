@@ -22,7 +22,7 @@ public class ImunTicker implements Runnable {
 	
 	public void init(){
 		imunMap.clear();
-		imunTicks = (int) Math.ceil(plugin.interactConfig().getconfig_imunBetweenDamage() / 50);
+		imunTicks = (int) Math.ceil(plugin.getGeneralConfig().getconfig_imunBetweenDamage() / 50);
 		if(taskID > 0)
 			Bukkit.getScheduler().cancelTask(taskID);
 		

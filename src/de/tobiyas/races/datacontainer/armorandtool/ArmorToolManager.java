@@ -2,12 +2,16 @@ package de.tobiyas.races.datacontainer.armorandtool;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.races.util.items.ItemUtils;
 import de.tobiyas.races.util.items.ItemUtils.ItemQuality;
 
 public class ArmorToolManager {
@@ -38,6 +42,8 @@ public class ArmorToolManager {
 			
 			//Add Allowed ItemIDs here
 		}
+		
+		
 	}
 	
 	private void addPerm(ItemQuality quality){
@@ -60,4 +66,39 @@ public class ArmorToolManager {
 		
 		return false;
 	}
+	
+	public double calcDamageToArmor(double damage, DamageCause cause){
+		Player player = Bukkit.getPlayer(playerName);
+		if(player == null)
+			return damage;
+		
+		//check Cause
+		switch(cause){
+			case DROWNING:
+			case FIRE_TICK:
+			case FIRE:
+			case LAVA:
+			case FALL:
+			case POISON:
+			case STARVATION:
+			case SUICIDE:
+			case LIGHTNING: return damage;
+		}
+		
+		double playerArmor = getArmorLevel(player);
+		double playerDamageReduce = 1D - ((8D * playerArmor) / 200D);
+		return damage * playerDamageReduce;
+	}
+
+	public int getArmorLevel(Player player) {
+		int armorLevel = 0;
+		ItemStack inventory[] = player.getInventory().getArmorContents();
+		
+		for(ItemStack stack : inventory)
+			armorLevel += ItemUtils.getArmorValueOfItem(stack);
+		
+		return armorLevel;
+	}
+	
+	
 }

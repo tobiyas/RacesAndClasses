@@ -98,7 +98,7 @@ public class PostPage {
 		sender.sendMessage(ChatColor.GREEN + "/whisper <playername> <message> " + ChatColor.YELLOW + "whispers the target with a message.");
 		sender.sendMessage(ChatColor.GREEN + "/racechat <message> " + ChatColor.YELLOW + "sends a message to your race channel");
 		
-		int range = Races.getPlugin().interactConfig().getConfig_localchat_range();
+		int range = Races.getPlugin().getChannelConfig().getConfig_localchat_range();
 		sender.sendMessage(ChatColor.GREEN + "/localchat <message> " + ChatColor.YELLOW + "sends a message in a range of " + range);
 		sender.sendMessage(ChatColor.YELLOW + "More information to Channels can be displayed by the command '/racehelp page 5'");
 	}

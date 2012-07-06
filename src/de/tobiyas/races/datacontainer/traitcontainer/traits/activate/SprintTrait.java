@@ -107,7 +107,9 @@ public class SprintTrait implements TraitsWithUplink {
 		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(checkUplink(player)) return false;			
 			
-			uplinkMap.put(player.getName(), uplinkTime + duration);
+			synchronized(uplinkMap){
+				uplinkMap.put(player.getName(), uplinkTime + duration);
+			}
 			player.sendMessage(ChatColor.LIGHT_PURPLE + "SprintTrait " + ChatColor.GREEN + " toggled.");
 			player.addPotionEffect(PotionEffectTypeWrapper.SPEED.createEffect(duration, value - 1), true);
 			return true;
@@ -128,34 +130,36 @@ public class SprintTrait implements TraitsWithUplink {
 
 	@Override
 	public void tickReduceUplink() {
-		int precision = Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+		int precision = Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 		if(precision <= 0){
 			Races.getPlugin().getDebugLogger().logWarning("Trait: " + getName() + " could not reduce cooldown, because precision = " + precision);
 		}
 		
-		for(String player : uplinkMap.keySet()){
-			int remainingTime = uplinkMap.get(player);
-			remainingTime -= precision;
-			
-			Player tempPlayer = Bukkit.getPlayer(player);
-			if(remainingTime == uplinkTime){
-				if(tempPlayer != null)
-					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
-			}
+		synchronized(uplinkMap){
+			for(String player : uplinkMap.keySet()){
+				int remainingTime = uplinkMap.get(player);
+				remainingTime -= precision;
 				
-			if(remainingTime <= 0){
-				uplinkMap.remove(player);
-				if(tempPlayer != null){
-					MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
-					if(config != null){
-						if(config.getInformCooldownReady())
-							tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
-													" is now ready again to use again.");
+				Player tempPlayer = Bukkit.getPlayer(player);
+				if(remainingTime == uplinkTime){
+					if(tempPlayer != null)
+						tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
+				}
+					
+				if(remainingTime <= 0){
+					uplinkMap.remove(player);
+					if(tempPlayer != null){
+						MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
+						if(config != null){
+							if(config.getInformCooldownReady())
+								tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
+														" is now ready again to use again.");
+						}
 					}
 				}
+				else
+					uplinkMap.put(player, remainingTime);
 			}
-			else
-				uplinkMap.put(player, remainingTime);
 		}
 	}
 

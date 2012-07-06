@@ -76,7 +76,9 @@ public class TeleportArrowTrait extends AbstractArrow {
 		if(checkUplink(player)) return false;
 		
 		shootedArrows.put(arrow, player);
-		uplinkMap.put(((Player) player).getName(), uplinkTime);
+		synchronized(uplinkMap){
+			uplinkMap.put(((Player) player).getName(), uplinkTime);
+		}
 		player.sendMessage(ChatColor.LIGHT_PURPLE + getArrowName() + ChatColor.GREEN + " fired.");
 		return true;
 	}
@@ -131,21 +133,23 @@ public class TeleportArrowTrait extends AbstractArrow {
 	}
 	
 	@Override
-	public void tickReduceUplink() {		
-		for(String player : uplinkMap.keySet()){
-			int remainingTime = uplinkMap.get(player);
-			remainingTime -= Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
-			
-			if(remainingTime == uplinkTime){
-				Player tempPlayer = Bukkit.getPlayer(player);
-				if(tempPlayer != null)
-					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
-			}
+	public void tickReduceUplink() {
+		synchronized(uplinkMap){
+			for(String player : uplinkMap.keySet()){
+				int remainingTime = uplinkMap.get(player);
+				remainingTime -= Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 				
-			if(remainingTime <= 0)
-				uplinkMap.remove(player);
-			else
-				uplinkMap.put(player, remainingTime);
+				if(remainingTime == uplinkTime){
+					Player tempPlayer = Bukkit.getPlayer(player);
+					if(tempPlayer != null)
+						tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
+				}
+					
+				if(remainingTime <= 0)
+					uplinkMap.remove(player);
+				else
+					uplinkMap.put(player, remainingTime);
+			}
 		}
 	}
 	

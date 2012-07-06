@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -23,6 +25,7 @@ import de.tobiyas.races.datacontainer.traitcontainer.traits.TraitsWithUplink;
 import de.tobiyas.races.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.util.traitutil.TraitPriority;
 
 public class LastStandTrait implements TraitsWithUplink {
 	
@@ -44,7 +47,7 @@ public class LastStandTrait implements TraitsWithUplink {
 	}
 	
 	
-	@TraitInfo(registerdClasses = {EntityDamageDoubleEvent.class})
+	@TraitInfo(registerdClasses = {EntityDamageDoubleEvent.class}, traitPriority = TraitPriority.lowest)
 	@Override
 	public void generalInit() {
 		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
@@ -92,16 +95,15 @@ public class LastStandTrait implements TraitsWithUplink {
 	public boolean modify(Event event) {
 		if(!(event instanceof EntityDamageDoubleEvent)) return false;
 		EntityDamageDoubleEvent Eevent = (EntityDamageDoubleEvent) event;
-		
 		Entity entity = Eevent.getEntity();
-		if(!(entity instanceof Player)) return false;
 		
+		if(!(entity instanceof Player)) return false;
 		Player player = (Player) entity;
 		
 		if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 		if(checkUplink(player)) return false;
 		
-		double health = HealthManager.getHealthManager().getHealthOfPlayer(player.getName());
+		double health = HealthManager.getHealthManager().getHealthOfPlayer(player.getName()) - Eevent.getDoubleValueDamage();
 		double maxHealth = HealthManager.getHealthManager().getMaxHealthOfPlayer(player.getName());
 		double percent = 100 * health / maxHealth;
 		
@@ -110,8 +112,13 @@ public class LastStandTrait implements TraitsWithUplink {
 			TraitEventManager.fireEvent(ehEvent);
 			
 			if(!ehEvent.isCancelled() && ehEvent.getDoubleValueAmount() != 0){
+				System.out.println("test6");
 				player.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN + " toggled. You were healed.");
-				uplinkMap.put(player.getName(), uplinkTime);
+				Location loc = player.getLocation();
+				player.getWorld().playEffect(loc, Effect.POTION_BREAK, 1);
+				synchronized(uplinkMap){
+					uplinkMap.put(player.getName(), uplinkTime);
+				}
 				return true;
 			}
 		}
@@ -134,41 +141,43 @@ public class LastStandTrait implements TraitsWithUplink {
 
 	@Override
 	public void tickReduceUplink() {
-		int precision = Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+		int precision = Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 		if(precision <= 0){
 			Races.getPlugin().getDebugLogger().logWarning("Trait: " + getName() + " could not reduce cooldown, because precision = " + precision);
 		}
 		
-		for(String player : uplinkMap.keySet()){
-			int remainingTime = uplinkMap.get(player);
-			remainingTime -= precision;
-			
-			Player tempPlayer = Bukkit.getPlayer(player);
-			if(remainingTime == uplinkTime){
-				if(tempPlayer != null)
-					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
-			}
+		synchronized(uplinkMap){
+			for(String player : uplinkMap.keySet()){
+				int remainingTime = uplinkMap.get(player);
+				remainingTime -= precision;
 				
-			if(remainingTime <= 0){
-				uplinkMap.remove(player);
-				if(tempPlayer != null){
-					MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
-					if(config != null){
-						if(config.getInformCooldownReady())
-							tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
-													" is now ready again to use again.");
+				Player tempPlayer = Bukkit.getPlayer(player);
+				if(remainingTime == uplinkTime){
+					if(tempPlayer != null)
+						tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
+				}
+					
+				if(remainingTime <= 0){
+					uplinkMap.remove(player);
+					if(tempPlayer != null){
+						MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
+						if(config != null){
+							if(config.getInformCooldownReady())
+								tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
+														" is now ready again to use again.");
+						}
 					}
 				}
+				else
+					uplinkMap.put(player, remainingTime);
 			}
-			else
-				uplinkMap.put(player, remainingTime);
 		}
 	}
 
 	@Override
 	public boolean isBetterThan(Trait trait) {
 		if(!(trait instanceof LastStandTrait)) return false;
-		return uplinkTime >= (int) trait.getValue();
+		return value >= (double) trait.getValue();
 	}
 
 }

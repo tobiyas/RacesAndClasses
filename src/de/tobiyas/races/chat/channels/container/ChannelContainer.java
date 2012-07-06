@@ -66,8 +66,8 @@ public class ChannelContainer {
 		String prefix = config.getString(channelPre + ".prefix" , "§f[");
 		String suffix = config.getString(channelPre + ".suffix" , "§f]");
 		
-		String channelColor = config.getString(channelPre + ".channelColor", plugin.interactConfig().getConfig_channel_default_color());
-		String stdFormat = config.getString(channelPre + ".channelFormat", plugin.interactConfig().getConfig_channel_default_format());
+		String channelColor = config.getString(channelPre + ".channelColor", plugin.getChannelConfig().getConfig_channel_default_color());
+		String stdFormat = config.getString(channelPre + ".channelFormat", plugin.getChannelConfig().getConfig_channel_default_format());
 		
 		channelPassword = config.getString(channelPre + ".channelPassword", "");
 		channelAdmin = config.getString(channelPre + ".channelAdmin", "");
@@ -82,7 +82,11 @@ public class ChannelContainer {
 		channelFormat.setPrefix(prefix);
 		channelFormat.setSuffix(suffix);
 		
-		rescanPartitions(null);
+		if(!config.getBoolean(channelPre + ".saveLoad", false))
+			rescanPartitions(null);
+		
+		config.set(channelPre + ".saveLoad", false);
+		config.save();
 		
 		ChannelTicker.registerChannel(this);
 	}
@@ -93,28 +97,28 @@ public class ChannelContainer {
 		
 		switch(channelLevel){
 			case GlobalChannel:
-				stdColor = plugin.interactConfig().getConfig_globalchat_default_color();
-				stdFormat = plugin.interactConfig().getConfig_globalchat_default_format();
+				stdColor = plugin.getChannelConfig().getConfig_globalchat_default_color();
+				stdFormat = plugin.getChannelConfig().getConfig_globalchat_default_format();
 				break;
 			
 			case WorldChannel:
-				stdColor = plugin.interactConfig().getConfig_worldchat_default_color();
-				stdFormat = plugin.interactConfig().getConfig_worldchat_default_format();
+				stdColor = plugin.getChannelConfig().getConfig_worldchat_default_color();
+				stdFormat = plugin.getChannelConfig().getConfig_worldchat_default_format();
 				break;
 			
 			case RaceChannel:
-				stdColor = plugin.interactConfig().getConfig_racechat_default_color();
-				stdFormat = plugin.interactConfig().getConfig_racechat_default_format();
+				stdColor = plugin.getChannelConfig().getConfig_racechat_default_color();
+				stdFormat = plugin.getChannelConfig().getConfig_racechat_default_format();
 				break;
 				
 			case LocalChannel:
-				stdColor = plugin.interactConfig().getConfig_localchat_default_color();
-				stdFormat = plugin.interactConfig().getConfig_localchat_default_format();
+				stdColor = plugin.getChannelConfig().getConfig_localchat_default_color();
+				stdFormat = plugin.getChannelConfig().getConfig_localchat_default_format();
 				break;
 				
 			default:
-				stdColor = plugin.interactConfig().getConfig_channel_default_color();
-				stdFormat = plugin.interactConfig().getConfig_channel_default_format();
+				stdColor = plugin.getChannelConfig().getConfig_channel_default_color();
+				stdFormat = plugin.getChannelConfig().getConfig_channel_default_format();
 		}
 		
 		channelFormat = new ChatFormatter(channelName, stdColor, channelLevel, stdFormat);
@@ -148,23 +152,22 @@ public class ChannelContainer {
 	}
 	
 	public void saveChannel(YAMLConfigExtended config){
-		if(channelLevel == ChannelLevel.GlobalChannel || 
-			channelLevel == ChannelLevel.WorldChannel || 
-			channelLevel == ChannelLevel.RaceChannel ||
-			channelLevel == ChannelLevel.LocalChannel) return;
+		if(channelLevel == ChannelLevel.LocalChannel) return;
 		
 		config.load();
 		String channelPre = "channel." + channelLevel.name() + "." + channelName;
 		config.createSection(channelPre);
 		config.set(channelPre + ".prefix" , channelFormat.getPrefix());
 		config.set(channelPre + ".suffix" , channelFormat.getSuffix());
-		config.set(channelPre + ".color" , channelFormat.getColor());
+		config.set(channelPre + ".channelColor" , channelFormat.getColor());
 		config.set(channelPre + ".members" , participants);
-		config.set(channelPre + ".format", channelFormat.getFormat());
+		config.set(channelPre + ".channelFormat", channelFormat.getFormat());
 		config.set(channelPre + ".channelPassword", channelPassword);
 		config.set(channelPre + ".channelAdmin", channelAdmin);
 		config.createSection(channelPre + ".banned");
 		config.createSection(channelPre + ".muted");
+		
+		config.set(channelPre + ".saveLoad", true);
 		
 		banContainer.saveContainer(config, channelPre);
 		muteContainer.saveContainer(config, channelPre);
@@ -215,8 +218,10 @@ public class ChannelContainer {
 			
 		participants.add(playerName);
 		if(player != null){
-			if(notify)
-				sendMessageInChannel(null, "Player joined Channel: " + ChatColor.DARK_AQUA + player.getDisplayName());
+			if(notify){
+				String joinMessage = plugin.getChannelConfig().getConfig_PlayerJoinFormat();
+				sendMessageInChannel(player, "", joinMessage);
+			}
 		}
 	}
 	
@@ -228,8 +233,10 @@ public class ChannelContainer {
 		}
 		
 		if(player != null)
-			if(notify)
-				sendMessageInChannel(null, "Player left Channel: " + ChatColor.DARK_AQUA + player.getDisplayName());
+			if(notify){
+				String leaveMessage = plugin.getChannelConfig().getConfig_PlayerLeaveFormat();
+				sendMessageInChannel(player, "", leaveMessage);
+			}
 		
 		participants.remove(playerName);
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel){
@@ -241,7 +248,7 @@ public class ChannelContainer {
 					String oldChannelAdmin = channelAdmin;
 					String newChannelAdmin = participants.get(0);
 					setAdmin(newChannelAdmin);
-					sendMessageInChannel(null, "Channel-Admin changed from: " + ChatColor.RED + oldChannelAdmin + " TO " + newChannelAdmin);
+					sendMessageInChannel(null, "Channel-Admin changed from: " + ChatColor.RED + oldChannelAdmin + " TO " + newChannelAdmin, "");
 				}
 			}
 		}
@@ -251,7 +258,7 @@ public class ChannelContainer {
 		return participants;
 	}
 	
-	public void sendMessageInChannel(Player sender, String message){
+	public void sendMessageInChannel(Player sender, String message, String forceFormat){
 		if(channelLevel == ChannelLevel.LocalChannel) rescanPartitions(sender);
 
 		if(sender != null){
@@ -265,9 +272,9 @@ public class ChannelContainer {
 		
 		String modifiedMessage = "";
 		if(sender == null)
-			modifiedMessage = modifyMessageToPlayer("CONSOLE", message);
+			modifiedMessage = modifyMessageToPlayer("CONSOLE", message, forceFormat);
 		else
-			modifiedMessage = modifyMessageToPlayer(sender.getName(), message);
+			modifiedMessage = modifyMessageToPlayer(sender.getName(), message, forceFormat);
 		
 		for(String playerName : participants){
 			Player player = Bukkit.getPlayer(playerName);
@@ -277,7 +284,6 @@ public class ChannelContainer {
 	}
 	
 	private void rescanPartitions(Player localPlayer){
-		participants.clear();
 		switch(channelLevel){
 			case GlobalChannel: 
 				participants.clear();
@@ -291,7 +297,7 @@ public class ChannelContainer {
 					participants.add(player.getName());
 				break;
 				
-			case RaceChannel: 
+			case RaceChannel:
 				participants.clear();
 				RaceContainer container = RaceManager.getManager().getRaceByName(channelName);
 				for(String playerName : RaceManager.getManager().getAllPlayersOfRace(container)){
@@ -303,7 +309,7 @@ public class ChannelContainer {
 				
 			case LocalChannel:
 				if(localPlayer == null) return;
-				int distance = plugin.interactConfig().getConfig_localchat_range();
+				int distance = plugin.getChannelConfig().getConfig_localchat_range();
 				Location loc = localPlayer.getLocation();
 				for(Player tempPlayer : loc.getWorld().getPlayers())
 					if(loc.distance(tempPlayer.getLocation()) < distance)
@@ -314,8 +320,8 @@ public class ChannelContainer {
 		}
 	}
 	
-	private String modifyMessageToPlayer(String playerName, String message){		
-		return channelFormat.format(playerName, message);
+	private String modifyMessageToPlayer(String playerName, String message, String forceFormat){		
+		return channelFormat.format(playerName, message, forceFormat);
 	}
 	
 	private String getTimeString(int timeInSec){
@@ -487,7 +493,7 @@ public class ChannelContainer {
 			}
 		
 		if(isIn){
-			this.sendMessageInChannel(null, "New Admin of this channel is: " + ChatColor.LIGHT_PURPLE + newAdmin);
+			this.sendMessageInChannel(null, "New Admin of this channel is: " + ChatColor.LIGHT_PURPLE + newAdmin, "");
 			channelAdmin = newAdmin;
 			return true;
 		}

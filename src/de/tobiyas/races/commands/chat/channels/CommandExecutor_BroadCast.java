@@ -25,7 +25,7 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.broadcast)) return true;
-		if(!plugin.interactConfig().getconfig_channels_enable()){
+		if(!plugin.getGeneralConfig().getconfig_channels_enable()){
 			sender.sendMessage(ChatColor.RED + "Channels are disabled.");
 			return true;
 		}

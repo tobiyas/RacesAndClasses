@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
 import de.tobiyas.races.Races;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.configuration.member.MemberConfig;
@@ -52,7 +54,7 @@ public class HealthContainer {
 		checkStats();
 	}
 	
-	public void reduceLife(double amount){
+	public void reduceLife(double amount, DamageCause cause){
 		Player player = Bukkit.getPlayer(this.player);		
 		if(player == null) return;
 		
@@ -62,7 +64,8 @@ public class HealthContainer {
 		if(hasGod)
 			return;
 		
-		currentHealth -= amount;
+		double modifiedDamage = armorToolManager.calcDamageToArmor(amount, cause);
+		currentHealth -= modifiedDamage; //TODO TEST!
 		
 		if(currentHealth < 0){
 			if(player.isDead()) return;
@@ -83,6 +86,7 @@ public class HealthContainer {
 		int transferredValue = (int) Math.ceil((currentHealth/maxHealth) * 20);
 		if(transferredValue == 20 && (currentHealth != maxHealth))
 			transferredValue = 19;
+		
 		player.setHealth(transferredValue);
 	}
 	
@@ -126,7 +130,7 @@ public class HealthContainer {
 		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
 		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
 		
-		double maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+		double maxHealth = Races.getPlugin().getGeneralConfig().getconfig_defaultHealth();
 		if(raceContainer != null)
 			maxHealth = raceContainer.getRaceMaxHealth();
 		
@@ -149,7 +153,7 @@ public class HealthContainer {
 		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
 		
 		if(raceContainer == null) 
-			maxHealth = Races.getPlugin().interactConfig().getconfig_defaultHealth();
+			maxHealth = Races.getPlugin().getGeneralConfig().getconfig_defaultHealth();
 		else{
 			int tempMaxHealth = raceContainer.getRaceMaxHealth();
 			if(tempMaxHealth <= 0) return;

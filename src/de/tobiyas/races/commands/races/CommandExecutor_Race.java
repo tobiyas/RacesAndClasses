@@ -122,7 +122,7 @@ public class CommandExecutor_Race implements CommandExecutor {
 				
 			if(RaceManager.getManager().addPlayerToRace(player.getName(), newRace)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
-				if(plugin.interactConfig().getconfig_channels_enable())
+				if(plugin.getGeneralConfig().getconfig_channels_enable())
 					ChannelManager.GetInstance().playerChangeRace("", player);
 			}else
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
@@ -148,7 +148,7 @@ public class CommandExecutor_Race implements CommandExecutor {
 				
 			if(RaceManager.getManager().changePlayerRace(player.getName(), newRace)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
-				if(plugin.interactConfig().getconfig_channels_enable())
+				if(plugin.getGeneralConfig().getconfig_channels_enable())
 					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
 			}else
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");

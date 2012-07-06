@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.races.Races;
 import de.tobiyas.races.configuration.member.MemberConfig;
@@ -39,6 +40,7 @@ public class HealOthersTrait implements TraitsWithUplink{
 	
 	private static int uplinkTime = 60*20;
 	private static int itemIDInHand = Material.STRING.getId();
+	private static boolean consume = true;
 
 	public HealOthersTrait(RaceContainer raceContainer){
 		this.raceContainer = raceContainer;
@@ -55,6 +57,7 @@ public class HealOthersTrait implements TraitsWithUplink{
 		if(config != null){
 			uplinkTime = (int) config.getValue("trait.uplink", 60) * 20;
 			itemIDInHand = (int) config.getValue("trait.iteminhand", Material.STRING.getId());
+			consume = (boolean) config.getValue("trait.consume", true);
 		}
 	}
 
@@ -146,7 +149,16 @@ public class HealOthersTrait implements TraitsWithUplink{
 						loc.getWorld().playEffect(loc, Effect.POTION_BREAK, 1);
 						player.sendMessage(ChatColor.GREEN + "You healed " + ChatColor.LIGHT_PURPLE + "yourself" + ChatColor.GREEN + " for: " + 
 											ChatColor.AQUA + entityHealEvent.getDoubleValueAmount() + ChatColor.GREEN + " HP.");
-						uplinkMap.put(player.getName(), uplinkTime);
+						synchronized(uplinkMap){
+							uplinkMap.put(player.getName(), uplinkTime);
+						}
+						if(consume){
+							int newAmount = player.getItemInHand().getAmount() - 1;
+							if(newAmount == 0)
+								player.setItemInHand(new ItemStack(Material.AIR));
+							else
+								player.getItemInHand().setAmount(newAmount);
+						}
 						return true;
 					}
 				}
@@ -174,34 +186,36 @@ public class HealOthersTrait implements TraitsWithUplink{
 
 	@Override
 	public void tickReduceUplink() {
-		int precision = Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
+		int precision = Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 		if(precision <= 0){
 			Races.getPlugin().getDebugLogger().logWarning("Trait: " + getName() + " could not reduce cooldown, because precision = " + precision);
 		}
 		
-		for(String player : uplinkMap.keySet()){
-			int remainingTime = uplinkMap.get(player);
-			remainingTime -= precision;
-			
-			Player tempPlayer = Bukkit.getPlayer(player);
-			if(remainingTime == uplinkTime){
-				if(tempPlayer != null)
-					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
-			}
+		synchronized(uplinkMap){
+			for(String player : uplinkMap.keySet()){
+				int remainingTime = uplinkMap.get(player);
+				remainingTime -= precision;
 				
-			if(remainingTime <= 0){
-				uplinkMap.remove(player);
-				if(tempPlayer != null){
-					MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
-					if(config != null){
-						if(config.getInformCooldownReady())
-							tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
-													" is now ready again to use again.");
+				Player tempPlayer = Bukkit.getPlayer(player);
+				if(remainingTime == uplinkTime){
+					if(tempPlayer != null)
+						tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
+				}
+					
+				if(remainingTime <= 0){
+					uplinkMap.remove(player);
+					if(tempPlayer != null){
+						MemberConfig config = MemberConfigManager.getInstance().getConfigOfPlayer(player);
+						if(config != null){
+							if(config.getInformCooldownReady())
+								tempPlayer.sendMessage(ChatColor.GREEN + "The trait: " + ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN +
+														" is now ready again to use again.");
+						}
 					}
 				}
+				else
+					uplinkMap.put(player, remainingTime);
 			}
-			else
-				uplinkMap.put(player, remainingTime);
 		}
 	}
 

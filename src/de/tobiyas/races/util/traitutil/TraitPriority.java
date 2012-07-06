@@ -2,13 +2,13 @@ package de.tobiyas.races.util.traitutil;
 
 public class TraitPriority {
 
-	public static int last = 0;
-	public static int lowest = 1;
-	public static int low = 2;
-	public static int middle = 3;
-	public static int high = 4;
-	public static int highest = 5;
-	public static int first = 6;
+	public static final int last = 0;
+	public static final int lowest = 1;
+	public static final int low = 2;
+	public static final int middle = 3;
+	public static final int high = 4;
+	public static final int highest = 5;
+	public static final int first = 6;
 	
 	
 	private int prio;

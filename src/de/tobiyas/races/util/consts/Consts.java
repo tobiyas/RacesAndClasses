@@ -7,14 +7,18 @@ import de.tobiyas.races.Races;
 public class Consts {
 	
 	private static final String racesPath = Races.getPlugin().getDataFolder() + File.separator;
-
+	
 	//Paths
+	public static final String channelConfigPathYML = racesPath + "channels" + File.separator;
+	public static final String traitConfigDir = Races.getPlugin().getDataFolder() + File.separator + "TraitConfig" + File.separator;
+	
+	
+	//Files
 	public static final String playerDataYML = racesPath + File.separator + "PlayerData" + File.separator + "playerdata.yml";
 	public static final String racesYML = racesPath + "races.yml";
 	public static final String classesYML = racesPath +"classes.yml";
-	public static final String channelsYML = racesPath + "channels.yml";
-	
-	public static final String traitConfigDir = Races.getPlugin().getDataFolder() + File.separator + "TraitConfig" + File.separator;
+	public static final String channelsYML = channelConfigPathYML + "channels.yml";
+	public static final String channelConfigYML = channelConfigPathYML + "config.yml";
 	
 	//Health
 	public static final int healthBarLength = 20;

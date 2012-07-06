@@ -156,7 +156,10 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 			return false;
 		}
 		
-		uplinkMap.put(player.getName(), uplinkTime + duration);
+		synchronized (uplinkMap) {
+			uplinkMap.put(player.getName(), uplinkTime + duration);
+		}
+		
 		player.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.GREEN + " toggled.");
 		return false;
 	}
@@ -188,20 +191,22 @@ public class BerserkerRageTrait implements TraitsWithUplink {
 
 	@Override
 	public void tickReduceUplink() {
-		for(String player : uplinkMap.keySet()){
-			int remainingTime = uplinkMap.get(player);
-			remainingTime -= Races.getPlugin().interactConfig().getconfig_globalUplinkTickPresition();
-			
-			if(remainingTime == uplinkTime){
-				Player tempPlayer = Bukkit.getPlayer(player);
-				if(tempPlayer != null)
-					tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
-			}
+		synchronized(uplinkMap){
+			for(String player : uplinkMap.keySet()){
+				int remainingTime = uplinkMap.get(player);
+				remainingTime -= Races.getPlugin().getGeneralConfig().getconfig_globalUplinkTickPresition();
 				
-			if(remainingTime <= 0)
-				uplinkMap.remove(player);
-			else
-				uplinkMap.put(player, remainingTime);
+				if(remainingTime == uplinkTime){
+					Player tempPlayer = Bukkit.getPlayer(player);
+					if(tempPlayer != null)
+						tempPlayer.sendMessage(ChatColor.LIGHT_PURPLE + getName() + ChatColor.RED + " has faded.");
+				}
+					
+				if(remainingTime <= 0)
+					uplinkMap.remove(player);
+				else
+					uplinkMap.put(player, remainingTime);
+			}
 		}
 	}
 

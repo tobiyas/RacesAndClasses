@@ -1,4 +1,4 @@
-Breaf Summary: (V0.7)
+Breaf Summary: (V0.8)
 
 Traits(Passive):
 -	"DamageIncreaseTrait"
@@ -21,6 +21,9 @@ Traits(Passive):
 	
 -	"DwarfSkinTrait"
 	modifies your taken damage, when your life is below 30%.
+	
+-	"LastStandTrait"
+	When your health drops below x%, you will be healed by y (with cooldown)
 
 	
 	
@@ -202,7 +205,7 @@ Commands:
 -	"/channel leave <channelname>"
 	leaves a channel. (not possible for Global, Race or World channels)
 	
--	"/channel post <channelname>"
+-	"/channel <post/change/switch> <channelname>"
 	changes your curren channel, where you post normal messages to the one provided. 
 	(if you use '/channel post Global', your further posts will be sent to the global channel)
 	

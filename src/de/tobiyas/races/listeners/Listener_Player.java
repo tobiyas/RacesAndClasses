@@ -44,7 +44,7 @@ public class Listener_Player implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerLeave(PlayerQuitEvent event){
-		if(plugin.interactConfig().getconfig_channels_enable()){
+		if(plugin.getGeneralConfig().getconfig_channels_enable()){
 			Player player = event.getPlayer();
 			ChannelManager.GetInstance().playerQuit(player);
 		}
@@ -62,14 +62,14 @@ public class Listener_Player implements Listener {
 		
 		HealthManager.getHealthManager().checkPlayer(player.getName());
 		MemberConfigManager.getInstance().getConfigOfPlayer(player.getName());
-		if(plugin.interactConfig().getconfig_channels_enable())
+		if(plugin.getGeneralConfig().getconfig_channels_enable())
 			ChannelManager.GetInstance().playerLogin(player);
 		RaceManager.getManager().getRaceOfPlayer(player.getName()).setListEntry(player);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
-		if(plugin.interactConfig().getconfig_channels_enable()){
+		if(plugin.getGeneralConfig().getconfig_channels_enable()){
 			World oldWorld = event.getFrom();
 			Player player = event.getPlayer();
 			ChannelManager.GetInstance().playerChangedWorld(oldWorld, player);
@@ -83,7 +83,7 @@ public class Listener_Player implements Listener {
 	
 	@EventHandler
 	public void onPlayerChat(PlayerChatEvent event){
-		if(!plugin.interactConfig().getconfig_channels_enable()) return;
+		if(!plugin.getGeneralConfig().getconfig_channels_enable()) return;
 		String orgMsg = event.getMessage();
 		Player player = event.getPlayer();
 		

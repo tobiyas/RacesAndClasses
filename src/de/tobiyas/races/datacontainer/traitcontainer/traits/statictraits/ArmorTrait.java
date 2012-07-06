@@ -1,7 +1,7 @@
 package de.tobiyas.races.datacontainer.traitcontainer.traits.statictraits;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -63,7 +63,7 @@ public class ArmorTrait implements Trait {
 		if(player == null) return false;
 
 		ItemStack stack = Eevent.getCursor();
-		if(stack == null) return false;
+		if(stack == null || stack.getType() == Material.AIR) return false;
 		
 		if(Eevent.getSlotType() != SlotType.ARMOR) return false;
 		if(!HealthManager.getHealthManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(stack)){ 
@@ -72,18 +72,6 @@ public class ArmorTrait implements Trait {
 		}
 
 		return true;
-	}
-
-
-	public static void pasteHelpForTrait(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW + "The Value is defined as a binary.");
-		sender.sendMessage(ChatColor.YELLOW + "binary 1 = Leather-Armor");
-		sender.sendMessage(ChatColor.YELLOW + "binary 2 = Iron-Armor");
-		sender.sendMessage(ChatColor.YELLOW + "binary 4 = Gold-Armor");
-		sender.sendMessage(ChatColor.YELLOW + "binary 8 = Diamond-Armor");
-		sender.sendMessage(ChatColor.YELLOW + "binary 16 = Fire-Armor");
-		sender.sendMessage(ChatColor.YELLOW + "Combine the numbers and you have your Permissions.");
-		return;
 	}
 
 	@Override

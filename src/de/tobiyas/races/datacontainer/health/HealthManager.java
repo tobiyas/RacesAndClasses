@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
 import de.tobiyas.races.Races;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.races.datacontainer.armorandtool.ArmorToolManager;
@@ -74,7 +76,7 @@ public class HealthManager implements Observer{
 		int maxHealth = 1;
 		
 		if(container == null)
-			maxHealth = plugin.interactConfig().getconfig_defaultHealth();
+			maxHealth = plugin.getGeneralConfig().getconfig_defaultHealth();
 		else
 			maxHealth = container.getRaceMaxHealth();
 		
@@ -93,7 +95,7 @@ public class HealthManager implements Observer{
 			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(player);
 			double maxHealth;
 			if(container == null)
-				maxHealth = plugin.interactConfig().getconfig_defaultHealth();
+				maxHealth = plugin.getGeneralConfig().getconfig_defaultHealth();
 			else
 				maxHealth = container.getRaceMaxHealth();
 			
@@ -123,10 +125,10 @@ public class HealthManager implements Observer{
 	}
 	
 	private void damage(HealthModifyContainer container){
-		damage(container.getPlayer(), container.getAmount());
+		damage(container.getPlayer(), container.getAmount(), container.getCause());
 	}
 	
-	private void damage(String playerName, double amount){
+	private void damage(String playerName, double amount, DamageCause cause){
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null){
 			plugin.getDebugLogger().logError("Error on Damaging player: " + playerName);
@@ -134,7 +136,7 @@ public class HealthManager implements Observer{
 		}
 		HealthContainer hContainer = getCreate(player.getName(), true);
 		
-		hContainer.reduceLife(amount);
+		hContainer.reduceLife(amount, cause);
 	}
 	
 	private void heal(HealthModifyContainer container){

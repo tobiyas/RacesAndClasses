@@ -36,8 +36,8 @@ public class ChannelManager {
 	public void init(){
 		channels.clear();
 		ChannelTicker.init();
-		createSTDChannels();
 		loadChannelsFromFile();
+		createSTDChannels();
 	}
 	
 	private void createSTDChannels(){
@@ -141,7 +141,7 @@ public class ChannelManager {
 			return false;
 		}
 		
-		container.sendMessageInChannel(player, message);
+		container.sendMessageInChannel(player, message, "");
 		return true;		
 	}
 	

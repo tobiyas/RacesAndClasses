@@ -16,13 +16,13 @@ public class RaceReminder implements Runnable {
 	
 	public RaceReminder(){
 		plugin = Races.getPlugin();
-		int reminderTime = plugin.interactConfig().getConfig_reminder_interval() * 20 * 60;
+		int reminderTime = plugin.getGeneralConfig().getConfig_reminder_interval() * 20 * 60;
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, reminderTime, reminderTime);
 	}
 	
 	@Override
 	public void run() {
-		if(plugin.interactConfig().getConfig_activate_reminder()){
+		if(plugin.getGeneralConfig().getConfig_activate_reminder()){
 			RaceContainer defaultContainer = RaceManager.getManager().getDefaultContainer();
 			LinkedList<String> list = RaceManager.getManager().getAllPlayersOfRace(defaultContainer);
 			for(String name : list){

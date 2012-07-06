@@ -86,7 +86,7 @@ public class DeathCheckerTrait implements Trait {
 
 	@Override
 	public boolean modify(Event event) {
-		if(!plugin.interactConfig().getConfig_enable_expDropBonus()) return false;
+		if(!plugin.getGeneralConfig().getConfig_enable_expDropBonus()) return false;
 		
 		if(!(event instanceof EntityDeathEvent)) return false;
 		EntityDeathEvent Eevent = (EntityDeathEvent) event;

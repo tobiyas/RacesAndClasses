@@ -29,7 +29,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
-		if(!plugin.interactConfig().getconfig_channels_enable()){
+		if(!plugin.getGeneralConfig().getconfig_channels_enable()){
 			sender.sendMessage(ChatColor.RED + "Channels are disabled.");
 			return true;
 		}
@@ -61,7 +61,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 			return true;
 		}
 		
-		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post")){
+		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post") || channelCommand.equalsIgnoreCase("switch")){
 			if(args.length != 2){
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this:" + 
 									ChatColor.LIGHT_PURPLE + "/channel change <channelname>");
@@ -192,7 +192,7 @@ public class CommandExecutor_Channel implements CommandExecutor{
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "post " + ChatColor.YELLOW + "<channelname>");
+		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "<post/change/switch> " + ChatColor.YELLOW + "<channelname>");
 		
 		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "join " + ChatColor.YELLOW + "<channelname> " + 
 							ChatColor.AQUA + "[password]");

@@ -32,7 +32,9 @@ import de.tobiyas.races.commands.help.CommandExecutor_RaceHelp;
 import de.tobiyas.races.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.races.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.races.commands.races.CommandExecutor_Race;
-import de.tobiyas.races.configuration.global.Config;
+import de.tobiyas.races.configuration.global.ChannelConfig;
+import de.tobiyas.races.configuration.global.ConfigManager;
+import de.tobiyas.races.configuration.global.GeneralConfig;
 import de.tobiyas.races.configuration.member.MemberConfigManager;
 import de.tobiyas.races.configuration.traits.TraitConfigManager;
 import de.tobiyas.races.datacontainer.health.HealthManager;
@@ -55,7 +57,7 @@ public class Races extends JavaPlugin{
 	private PluginDescriptionFile description;
 
 	private String prefix;
-	private Config config;
+	private ConfigManager configManager;
 	
 	private HealthManager hManager;
 	
@@ -99,10 +101,10 @@ public class Races extends JavaPlugin{
 		tcManager.init();
 		tManager.init();
 		rManager.init();
-		if(plugin.interactConfig().getconfig_classes_enable())
+		if(plugin.getGeneralConfig().getconfig_classes_enable())
 			cManager.init();
 		hManager.init();
-		if(plugin.interactConfig().getconfig_channels_enable())
+		if(plugin.getGeneralConfig().getconfig_channels_enable())
 			chanManager.init();
 	}
 	
@@ -128,8 +130,8 @@ public class Races extends JavaPlugin{
 	}
 	
 	private void initMetrics(){
-		if(interactConfig().getconfig_metrics_enabled())
-			SendMetrics.sendMetrics(this, interactConfig().getconfig_enableDebugOutputs());
+		if(getGeneralConfig().getconfig_metrics_enabled())
+			SendMetrics.sendMetrics(this, getGeneralConfig().getconfig_enableDebugOutputs());
 	}
 	
 	@Override
@@ -158,11 +160,11 @@ public class Races extends JavaPlugin{
 		String races = ", " + RaceManager.getManager().listAllRaces().size() + " races";
 		
 		String classes = "";
-		if(plugin.interactConfig().getconfig_classes_enable())
+		if(plugin.getGeneralConfig().getconfig_classes_enable())
 			classes = ", " +ClassManager.getInstance().getClassNames().size() + " classes";
 		
 		String channels = "";
-		if(plugin.interactConfig().getconfig_channels_enable())
+		if(plugin.getGeneralConfig().getconfig_channels_enable())
 			channels = ", " + ChannelManager.GetInstance().listAllChannels().size() + " channels";
 		
 		log("loaded: " + traits + races + classes + channels);
@@ -171,24 +173,29 @@ public class Races extends JavaPlugin{
 
 
 	private void setupConfiguration(){
-		config = new Config(this);
+		configManager = new ConfigManager();
+		configManager.init();
 		setupDebugLogger();
 	}
 	
 	private void setupDebugLogger(){
 		debugLogger = new DebugLogger(this);
-		if(!config.getconfig_enableDebugOutputs())
+		if(!getGeneralConfig().getconfig_enableDebugOutputs())
 			debugLogger.disable();
 		
-		if(!config.getConfig_enableErrorUpload())
+		if(!getGeneralConfig().getConfig_enableErrorUpload())
 			debugLogger.disableUploads();
 		
-		debugLogger.setAlsoToPlugin(config.getconfig_enableDebugWriteThrough());
+		debugLogger.setAlsoToPlugin(getGeneralConfig().getconfig_enableDebugWriteThrough());
 	}
 
 	
-	public Config interactConfig(){
-		return config;
+	public GeneralConfig getGeneralConfig(){
+		return configManager.getGeneralConfig();
+	}
+	
+	public ChannelConfig getChannelConfig(){
+		return configManager.getChannelConfig();
 	}
 	
 	public PermissionManager getPermissionManager(){

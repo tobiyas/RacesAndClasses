@@ -29,7 +29,7 @@ public class CommandExecutor_Class implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!plugin.interactConfig().getconfig_classes_enable()){
+		if(!plugin.getGeneralConfig().getconfig_classes_enable()){
 			sender.sendMessage(ChatColor.RED + "Classes are not activated.");
 			return true;
 		}

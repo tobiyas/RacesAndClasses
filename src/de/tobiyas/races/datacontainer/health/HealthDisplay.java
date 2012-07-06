@@ -49,16 +49,26 @@ public class HealthDisplay implements Runnable {
 		if(healthAbs > maxHealth) healthAbs = maxHealth;
 		
 		String healthLeft = ChatColor.GREEN + "";
-		for(int i = 0; i < healthAbs; i++)
+		int totalLength = Consts.healthBarLength;
+		for(int i = 0; i < healthAbs; i++){
 			healthLeft += "|";
+			totalLength --;
+		}
 		
 		String healthRest = ChatColor.RED + "";
-		for(int i = (int) healthAbs; i < Consts.healthBarLength; i++)
+		for(; totalLength > 0; totalLength--)
 			healthRest += "|";
 		
+		if(newValue == maxHealth)
+			healthRest += ChatColor.GREEN + "|";
+		else
+			healthRest += ChatColor.RED + "|";
+		
+		int pre = (int) Math.floor(newValue);
+		int after = (int) Math.floor(newValue * 100D) % 100;
 		player.sendMessage(ChatColor.YELLOW + "Health: " + healthLeft + healthRest + 
 				ChatColor.YELLOW + " " + getColorOfPercent(newValue, maxHealth) + 
-				newValue + ChatColor.YELLOW + "/" + ChatColor.GREEN + (double) maxHealth);
+				pre + "." + after + ChatColor.YELLOW + "/" + ChatColor.GREEN + (double) maxHealth);
 		oldValue = newValue;
 	}
 	
