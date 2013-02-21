@@ -12,7 +12,28 @@ A plugin to include Races and Classes to Minecraft.
 -----------------------
 
 
-Current Version: 0.07 (ALPHA)
+----Issue List:-----
+[ISSUE 1] (v 0.07): exp not dropping on Monster dead (fixed: v0.08)
+[ISSUE 2] (v 0.07): cooldowns not counting down (fixed: v0.08)
+[ISSUE 3] (v 0.08): Starting up with player in database but not in Race giving error (fixed: v0.09)
+--------------------
+
+
+
+Current Version: 0.09 (ALPHA)
+
+
+----{Version 0.09 AD}----
+
+--[ADDITIONAL FEATURES]--
+ -[ADD] Some more testing
+ 
+--[FIXES]--
+ -[FIX] fixed some startup errors [fixing ISSUE 3]
+ 
+--[KNOWN BUGS]--
+ -NONE
+
 
 
 ----{Version 0.08 AD}----
@@ -36,7 +57,7 @@ Current Version: 0.07 (ALPHA)
  -[FIX] fixed cooldown ticker crashing in rare occations [fixing ISSUE 2]
  
 --[KNOWN BUGS]--
- -NONE
+ -Starting up with player in database but not in Race giving error [ISSUE 3]
 
 
 

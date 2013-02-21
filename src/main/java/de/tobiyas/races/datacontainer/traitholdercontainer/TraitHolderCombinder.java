@@ -1,0 +1,103 @@
+package de.tobiyas.races.datacontainer.traitholdercontainer;
+
+import java.util.HashSet;
+
+import de.tobiyas.races.datacontainer.traitcontainer.traits.Trait;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.races.datacontainer.traitholdercontainer.race.RaceManager;
+
+public class TraitHolderCombinder {
+	
+	public static boolean checkContainer(String playerName, Trait trait){
+		RaceContainer raceContainer = trait.getRace();
+		ClassContainer classContainer = trait.getClazz();
+		if(raceContainer != null){
+			RaceContainer container = RaceManager.getManager().getRaceOfPlayer(playerName);
+			if(container == null) return false;
+			return raceContainer == container;
+		}
+		if(classContainer != null){
+			ClassContainer container = ClassManager.getInstance().getClassOfPlayer(playerName);
+			if(container == null) return false;
+			return classContainer == container;
+		}
+		
+		return false;
+	}
+
+	public static HashSet<Trait> getAllTraitsOfPlayer(String player){
+		HashSet<Trait> traits = new HashSet<Trait>();
+		
+		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
+		if(raceContainer != null)
+			traits.addAll(raceContainer.getTraits());
+		
+		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
+		if(classContainer != null)
+			traits.addAll(classContainer.getTraits());
+		
+		return traits;
+	}
+	
+	public static HashSet<Trait> getVisibleTraitsOfPlayer(String player){
+		HashSet<Trait> traits = new HashSet<Trait>();
+		
+		RaceContainer raceContainer = RaceManager.getManager().getRaceOfPlayer(player);
+		if(raceContainer != null)
+			traits.addAll(raceContainer.getVisibleTraits());
+		
+		ClassContainer classContainer = ClassManager.getInstance().getClassOfPlayer(player);
+		if(classContainer != null)
+			traits.addAll(classContainer.getVisibleTraits());
+		
+		return traits;
+	}
+	
+	public static HashSet<Trait> getReducedTraitsOfPlayer(String player){
+		HashSet<Trait> traits = getAllTraitsOfPlayer(player);
+		traits = filterForDoubles(traits);
+		return traits;
+	}
+	
+	public static HashSet<Trait> getReducedVisibleTraitsOfPlayer(String player){
+		HashSet<Trait> traits = getVisibleTraitsOfPlayer(player);
+		traits = filterForDoubles(traits);
+		return traits;
+	}
+	
+	private static HashSet<Trait> filterForDoubles(HashSet<Trait> traits){
+		HashSet<Trait> filtered = new HashSet<Trait>();
+		for(Trait trait : traits){
+			Trait doubled = containsTrait(filtered, trait);
+			if(doubled == null)
+				filtered.add(trait);
+			else{
+				filtered.remove(doubled);
+				filtered.add(selectBetter(doubled, trait));
+			}
+				
+		}
+		return filtered;
+	}
+	
+	private static Trait selectBetter(Trait trait1, Trait trait2){
+		if(trait1.isBetterThan(trait2))
+			return trait1;
+		return trait2;
+	}
+	
+	private static Trait containsTrait(HashSet<Trait> traits, Trait newTrait){
+		if(newTrait == null)
+			return null;
+			
+		for(Trait trait : traits)
+			if(trait != null && sameTrait(trait, newTrait)) return trait;
+		return null;
+	}
+	
+	private static boolean sameTrait(Trait trait1, Trait trait2){
+		return trait1.getName().equalsIgnoreCase(trait2.getName());
+	}
+}

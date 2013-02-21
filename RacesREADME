@@ -231,6 +231,9 @@ Commands:
 	
 -	"/localchat <message>"
 	sends a local message to all players x blocks away. (x configurable in config)
+	
+-	"/racestutorial <skip/start/stop/reset>"
+	executes the given command to your tutorial
 
 
 TODO-LIST:
