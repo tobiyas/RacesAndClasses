@@ -14,8 +14,8 @@ public class WordParsing {
 	 * @param intValue to try parsing
 	 * @return true if parsable, false otherwise.
 	 */
-	public static boolean isInt(String intValue){
-		return parseInt(intValue) != Integer.MIN_VALUE;
+	public static boolean isInt(Object intValue){
+		return convertToInt(intValue) != Integer.MIN_VALUE;
 	}
 	
 	/**
@@ -24,13 +24,21 @@ public class WordParsing {
 	 * 
 	 * @return
 	 */
-	public static int parseInt(String intValue){
-		try{
-			int newInt = Integer.valueOf(intValue);
-			return newInt;
-		}catch(NumberFormatException e){
-			return Integer.MIN_VALUE;
+	public static int convertToInt(Object intValue){
+		if(intValue instanceof Integer){
+			return (Integer) intValue;
 		}
+		
+		if(intValue instanceof String){
+			try{
+				int newInt = Integer.valueOf((String) intValue);
+				return newInt;
+			}catch(NumberFormatException e){
+				return Integer.MIN_VALUE;
+			}
+		}
+		
+		return Integer.MIN_VALUE;
 	}
 	
 	
@@ -41,12 +49,21 @@ public class WordParsing {
 	 * @param bool
 	 * @return
 	 */
-	public static boolean converToBool(String bool){
-		bool = bool.toLowerCase();
-		if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
-			return true;
-		if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
+	public static boolean convertToBool(Object object){
+		if(object instanceof Boolean){
+			return (Boolean) object;
+		}
+		
+		if(object instanceof String){
+			String bool = (String) object;
+			bool = bool.toLowerCase();
+			if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
+				return true;
+			if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
+				return false;
+			
 			return false;
+		}
 		
 		return false;
 	}
@@ -59,12 +76,22 @@ public class WordParsing {
 	 * @param bool to check
 	 * @return
 	 */
-	public static boolean isBool(String bool){
-		bool = bool.toLowerCase();
-		if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
+	public static boolean isBool(Object object){
+		if(object instanceof Boolean){
 			return true;
-		if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
-			return true;
+		}
+		
+		if(object instanceof String){
+			String bool = (String) object;
+			
+			bool = bool.toLowerCase();
+			if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
+				return true;
+			if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
+				return true;
+			
+			return false;			
+		}
 		
 		return false;
 	}
@@ -77,7 +104,7 @@ public class WordParsing {
 	 * @param doubleValue the value to check
 	 * @return true if parsable
 	 */
-	public static boolean isDouble(String doubleValue){
+	public static boolean isDouble(Object doubleValue){
 		return convertToDouble(doubleValue) != Double.MIN_VALUE;
 	}
 	
@@ -89,12 +116,20 @@ public class WordParsing {
 	 * @param doubleValue to parse
 	 * @return the parsed value or MIN_VALUE
 	 */
-	public static double convertToDouble(String doubleValue){
-		try{
-			return Double.parseDouble(doubleValue);
-		}catch(NumberFormatException exp){
-			return Double.MIN_VALUE;
+	public static double convertToDouble(Object doubleValue){
+		if(doubleValue instanceof Double){
+			return (Double) doubleValue;
 		}
+		
+		if(doubleValue instanceof String){
+			try{
+				return Double.parseDouble((String) doubleValue);
+			}catch(NumberFormatException exp){
+				return Double.MIN_VALUE;
+			}
+		}
+		
+		return Double.MIN_VALUE;
 	}
 
 
@@ -107,14 +142,14 @@ public class WordParsing {
 	 * 
 	 * @return the wanted converted value or null if not possible
 	 */
-	public static Object parseToSaveFormat(String value, SaveFormat toParseInto){
+	public static Object parseToSaveFormat(Object value, SaveFormat toParseInto){
 		switch (toParseInto) {
 		case BOOLEAN:
-			return isBool(value) ? converToBool(value) : null;
+			return isBool(value) ? convertToBool(value) : null;
 		case DOUBLE:
 			return isDouble(value) ? convertToDouble(value) : null;
 		case INT:
-			return isInt(value) ? converToBool(value) : null;
+			return isInt(value) ? convertToInt(value) : null;
 		case STRING:
 			return value;
 		case UNKNOWN:

@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
+import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 
 public class ClassContainer extends AbstractTraitHolder{
 	
@@ -33,7 +34,7 @@ public class ClassContainer extends AbstractTraitHolder{
 				throw new Exception();
 			}
 			
-			holderTag = decodeColors(config.getString(holderName + ".config.classtag"));
+			holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag"));
 			classHealthModValue = evaluateValue(config.getString(holderName + ".config.health", "+0"));
 			
 			readArmor();

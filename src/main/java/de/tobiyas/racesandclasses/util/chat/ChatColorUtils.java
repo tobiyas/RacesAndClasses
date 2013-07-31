@@ -8,7 +8,8 @@ public class ChatColorUtils {
 	 * @param string
 	 * @return
 	 */
-	public static String decodeColors(String string){
-		return string.replaceAll("(&([a-f0-9]))", "§$2");
+	public static String decodeColors(String message){
+		if(message == null) return "";
+		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
 }

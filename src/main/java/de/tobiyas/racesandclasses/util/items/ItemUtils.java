@@ -26,6 +26,13 @@ public class ItemUtils {
 		
 	}
 	
+	
+	/**
+	 * Gets the Item Quality of a piece of armor
+	 * 
+	 * @param stack to check
+	 * @return
+	 */
 	public static ItemQuality getItemValue(ItemStack stack){
 		switch(stack.getTypeId()){
 			case 298 :
@@ -57,6 +64,14 @@ public class ItemUtils {
 		}
 	}
 	
+	
+	/**
+	 * Returns the robustness of an Item.
+	 * This is only applied for Armor.
+	 * 
+	 * @param stack to check
+	 * @return int representation of robustness
+	 */
 	public static int getArmorValueOfItem(ItemStack stack){
 		if(stack == null || stack.getType() == Material.AIR) return 0;
 		
@@ -155,34 +170,38 @@ public class ItemUtils {
 	
 	
 	/**
+	 * Gets the ItemStack in the Armor Inventory slot of a Player.
+	 * Returns null if {@link ItemStack#NONE} is passed.
 	 * 
+	 * @param player to check
+	 * @param slot to check
 	 * 
-	 * @param player
-	 * @param slot
-	 * @return
+	 * @return the itemStack in the slot
 	 */
 	public static ItemStack getItemInArmorSlotOfPlayer(Player player, ArmorSlot slot){
-		switch (slot) {
-		
-		case BOOTS:
-			return player.getInventory().getBoots();
-		
-		case CHESTPLATE:
-			return player.getInventory().getChestplate();
-		
-		case HELMET:
-			return player.getInventory().getHelmet();
-		
-		case LEGGINGS:
-			return player.getInventory().getLeggings();
-		
-		case NONE:
+		if(slot == null){
 			return null;
-			
-		default:
-			return null;
-
 		}
+		
+		switch (slot) {
+			case BOOTS:
+				return player.getInventory().getBoots();
+			
+			case CHESTPLATE:
+				return player.getInventory().getChestplate();
+			
+			case HELMET:
+				return player.getInventory().getHelmet();
+			
+			case LEGGINGS:
+				return player.getInventory().getLeggings();
+			
+			case NONE:
+				return null;
+		}
+		
+		//dead code.
+		return null;
 	}
 	
 }

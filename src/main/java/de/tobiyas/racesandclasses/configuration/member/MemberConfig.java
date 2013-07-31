@@ -3,6 +3,8 @@ package de.tobiyas.racesandclasses.configuration.member;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.ConfigOption.SaveFormat;
@@ -41,9 +43,19 @@ public class MemberConfig {
 	 */
 	private static RacesAndClasses plugin;
 	
+	/**
+	 * The prefix for the config
+	 */
 	private final String configPre;
 	
-	private MemberConfig(String player){
+	
+	/**
+	 * Constructs a new Member Config for a player.
+	 * It loads from the YAML loaded, if the player is found, and creates a new one if no exists.
+	 * 
+	 * @param player to create
+	 */
+	protected MemberConfig(String player){
 		plugin = RacesAndClasses.getPlugin();
 		
 		config.load();
@@ -55,16 +67,16 @@ public class MemberConfig {
 
 		//first load the default values we know already
 		ConfigOption lifeDisplayEnable = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "lifeDisplay.enable", "displayenable", defaultEnableHealthBar, true);
+				configPre, "lifeDisplay.enable", MemberConfig.lifeDisplayEnable, defaultEnableHealthBar, true);
 		
 		ConfigOption lifeDisplayInterval = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "lifeDisplay.interval", "displayinterval", 60, true);
+				configPre, "lifeDisplay.interval", MemberConfig.displayInterval, 60, true);
 		
 		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "channels.current", "chatchannel", "Global", true);
+				configPre, "channels.current", MemberConfig.chatChannel, "Global", true);
 		
 		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "cooldown.inform", "cooldowninform", true, true);
+				configPre, "cooldown.inform", MemberConfig.cooldownInformation, true, true);
 		
 		configList.add(lifeDisplayEnable);
 		configList.add(lifeDisplayInterval);
@@ -124,7 +136,7 @@ public class MemberConfig {
 	 * @param value to change to
 	 * @return true if worked, false otherwise
 	 */
-	public boolean changeAttribute(String attribute, String value) {
+	public boolean changeAttribute(String attribute, Object value) {
 		ConfigOption option = configList.getConfigOptionByDisplayName(attribute);
 		if(option == null){
 			return false;
@@ -133,22 +145,24 @@ public class MemberConfig {
 		SaveFormat format = option.getFormat();
 		
 		Object convertedValue = WordParsing.parseToSaveFormat(value, format);
-		option.setValue(convertedValue);
+		boolean returnValue = option.setValue(convertedValue);
 		option.saveToYaml(config, configPre);
 		
-		return false;
+		return returnValue;
 	}
 	
 		
 	/**
-	 * Gets all display names of all attributes that are visible
+	 * Gets all display names of all attributes
+	 * 
+	 * @param withInvisible if true, also returns invisible attributes
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> getSupportetAttributes(){
-		ArrayList<String> attributes = new ArrayList<String>();
+	public List<String> getSupportetAttributes(boolean withInvisible){
+		List<String> attributes = new ArrayList<String>();
 		for(ConfigOption option : configList){
-			if(option.isVisible()){
+			if(withInvisible || option.isVisible()){
 				attributes.add(option.getDisplayName());
 			}
 		}
@@ -159,14 +173,15 @@ public class MemberConfig {
 
 	/**
 	 * Returns a map of display names to values of the config.
-	 * Only visible options are shown.
+	 * 
+	 * @param withInvisible if true, also returns invisible attributes
 	 * 
 	 * @return
 	 */
-	public HashMap<String, Object> getCurrentConfig() {
-		HashMap<String, Object> attributes = new HashMap<String, Object>();
+	public Map<String, Object> getCurrentConfig(boolean withInvisible) {
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		for(ConfigOption option : configList){
-			if(option.isVisible()){
+			if(withInvisible || option.isVisible()){
 				attributes.put(option.getDisplayName(), option.getValue());
 			}
 		}
@@ -196,7 +211,7 @@ public class MemberConfig {
 	 * @return
 	 */
 	public boolean getInformCooldownReady() {
-		ConfigOption option = configList.getConfigOptionByDisplayName(chatChannel);
+		ConfigOption option = configList.getConfigOptionByDisplayName(cooldownInformation);
 		if(option == null){
 			return true;
 		}
@@ -277,5 +292,41 @@ public class MemberConfig {
 		}
 		
 		return option.setValue(newValue);
+	}
+	
+	
+	/**
+	 * Creates a new Option for the path and the display name.
+	 * If any collision occurs (path already exist or display name already exists), false is returned.
+	 * If the value can not be decoded to a correct value, false is returned.
+	 * 
+	 * True is returned, when everything worked.
+	 * 
+	 * @param path to set
+	 * @param displayName to set
+	 * @param value to set
+	 * @param defaultValue to set
+	 * @param visible to set
+	 * 
+	 * @return true if worked, false otherwise
+	 */
+	public boolean addOption(String path, String displayName, Object value, Object defaultValue, boolean visible){
+		ConfigOption option = configList.getConfigOptionByPath(path);
+		if(option != null){
+			return false;
+		}
+
+		option = configList.getConfigOptionByDisplayName(displayName);
+		if(option != null){
+			return false;
+		}
+		
+		option = new ConfigOption(path, displayName, value, defaultValue, visible);
+		if(option.getFormat() == SaveFormat.UNKNOWN){
+			return false;
+		}
+		
+		configList.add(option);
+		return true;
 	}
 }

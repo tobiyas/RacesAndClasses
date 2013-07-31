@@ -12,6 +12,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class RaceContainer extends AbstractTraitHolder{
@@ -34,7 +35,7 @@ public class RaceContainer extends AbstractTraitHolder{
 				throw new Exception();
 			}
 			
-			holderTag = decodeColors(config.getString(holderName + ".config.racetag"));
+			holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.racetag"));
 			raceMaxHealth = config.getInt(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
 			raceChatColor = config.getString(holderName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
 			raceChatFormat = config.getString(holderName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());

@@ -152,8 +152,8 @@ public abstract class AbstractChannelContainerTest {
 			String channelPre = "channel." + sut.getChannelLevel().name() + "." + sut.getChannelName();
 			
 			assertTrue(config.isConfigurationSection(channelPre));
-			//assertTrue(config.isConfigurationSection(channelPre + ".banned")); //TODO check why this fails
-			//assertTrue(config.isConfigurationSection(channelPre + ".muted")); //TODO check why this fails
+			assertTrue(config.isConfigurationSection(channelPre + ".banned")); //TODO check why this fails
+			assertTrue(config.isConfigurationSection(channelPre + ".muted")); //TODO check why this fails
 			
 			assertEquals("§f[", config.getString(channelPre + ".prefix"));
 			assertEquals("§f]", config.getString(channelPre + ".suffix"));

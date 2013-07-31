@@ -20,21 +20,43 @@ import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractTraitHolder {
+	/**
+	 * The config of the holder to store / load stuff
+	 */
 	protected YamlConfiguration config;
+	
+	/**
+	 * The name of the holder
+	 */
 	protected String holderName;
 	
+	/**
+	 * The pretty tag of the holder
+	 */
 	protected String holderTag;
 	
+	/**
+	 * The armor permissions of the Holder
+	 */
 	protected boolean[] armorUsage;
+	
+	/**
+	 * A set of Traits that the holder contains
+	 */
 	protected HashSet<Trait> traits;
 	
+	/**
+	 * The permission container holding all Permissions for the holder
+	 */
 	protected HolderPermissions holderPermissions;
+	
+	
 	
 	/**
 	 * Creates an {@link AbstractTraitHolder}
 	 * 
-	 * @param config
-	 * @param name
+	 * @param config to load from
+	 * @param name of the holder
 	 */
 	protected AbstractTraitHolder(YamlConfiguration config, String name) {
 		this.config = config;
@@ -42,6 +64,14 @@ public abstract class AbstractTraitHolder {
 		
 	}
 	
+	/**
+	 * Loads the Holder from the config file passed in constructor.
+	 * If parsing fails, a HolderParsingException is thrown.
+	 * 
+	 * @return the parsed Holder
+	 * 
+	 * @throws HolderParsingException if the parsing failed.
+	 */
 	public AbstractTraitHolder load() throws HolderParsingException{
 		readConfigSection();
 		readTraitSection();
@@ -51,9 +81,18 @@ public abstract class AbstractTraitHolder {
 	}
 	
 
+	/**
+	 * Reads the configuration section of the holder.
+	 * Expect this to be called in the load process.
+	 * 
+	 * @throws HolderConfigParseException if the parsing failed.
+	 */
 	protected abstract void readConfigSection() throws HolderConfigParseException;
 	
 	
+	/**
+	 * Reads the Armor permissions from the Holder and parses it.
+	 */
 	protected void readArmor(){
 		armorUsage = new boolean[]{false, false, false, false, false};
 		String armorString = config.getString(holderName + ".config.armor", "").toLowerCase();
@@ -73,12 +112,13 @@ public abstract class AbstractTraitHolder {
 			armorUsage[4] = true;
 	}
 	
-	protected String decodeColors(String message){
-		if(message == null) return "";
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
-	}
 	
-	
+	/**
+	 * Parses the Trait section of the Holder.
+	 * When parsing fails, an {@link HolderTraitParseException} is thrown.
+	 * 
+	 * @throws HolderTraitParseException if parsing fails.
+	 */
 	protected void readTraitSection() throws HolderTraitParseException{
 		traits = new HashSet<Trait>();
 		
@@ -106,6 +146,9 @@ public abstract class AbstractTraitHolder {
 		addSTDTraits();
 	}
 	
+	/**
+	 * Reads the Permission section of the Holder.
+	 */
 	protected void readPermissionSection() {
 		holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
 		
@@ -118,9 +161,20 @@ public abstract class AbstractTraitHolder {
 	}
 	
 
+	/**
+	 * Adds STD Traits that every holder has to the Trait list.
+	 */
 	protected abstract void addSTDTraits();
 	
-	public abstract boolean containsPlayer(String name);
+	
+	/**
+	 * Returns if a Player is member of this holder
+	 * 
+	 * @param playerName to check
+	 * @return true if is member, false otherwise
+	 */
+	public abstract boolean containsPlayer(String playerName);
+	
 	
 	/**
 	 * Returns the Permissions this holder has additional
@@ -130,6 +184,7 @@ public abstract class AbstractTraitHolder {
 	public HolderPermissions getPermissions(){
 		return holderPermissions;
 	}
+	
 	
 	/**
 	 * The name of the Holder
@@ -201,6 +256,9 @@ public abstract class AbstractTraitHolder {
 	}
 
 	
+	/**
+	 * Returns a List of {@link ItemQuality} what this Holder can wear
+	 */
 	public HashSet<ItemQuality> getArmorPerms(){
 		HashSet<ItemQuality> perms = new HashSet<ItemQuality>();
 		if(armorUsage[0])
@@ -221,6 +279,7 @@ public abstract class AbstractTraitHolder {
 	public String toString(){
 		return holderName;
 	}
+	
 	
 	/**
 	 * Returns the type name of the container

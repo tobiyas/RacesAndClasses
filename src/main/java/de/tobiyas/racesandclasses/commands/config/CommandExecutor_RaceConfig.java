@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.commands.config;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -42,7 +42,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 				return true;
 			}
 			
-			HashMap<String, Object> configLines = config.getCurrentConfig();
+			Map<String, Object> configLines = config.getCurrentConfig(false);
 			
 			for(String attribute : configLines.keySet()){
 				String value = String.valueOf(configLines.get(attribute));

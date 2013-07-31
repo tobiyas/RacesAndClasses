@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.help;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,8 +26,14 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
+		String senderName = sender.getName();
+		if(sender == Bukkit.getConsoleSender()){
+			senderName = "console";
+		}
+		
 		if(args.length == 0){
-			PostPage.postPage(sender, 1);
+			String[] messages = HelpPage.getPageContent(senderName, 1).toArray(new String[0]);
+			sender.sendMessage(messages);
 			return true;
 		}
 		
@@ -41,7 +48,8 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 					sender.sendMessage(ChatColor.RED + "The Page-Number must be an Integer value.");
 					return true;
 				}
-			PostPage.postPage(sender, page);
+			String[] messages = HelpPage.getPageContent(senderName, page).toArray(new String[0]);
+			sender.sendMessage(messages);
 			return true;
 		}
 		
@@ -53,7 +61,8 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 			return true;
 		}
 		
-		PostPage.postPage(sender, commandString);	
+		String[] messages = HelpPage.getCategoryPage(senderName, commandString).toArray(new String[0]);
+		sender.sendMessage(messages);
 		return true;
 	}
 	

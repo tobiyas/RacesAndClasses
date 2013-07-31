@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.generate.plugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.junit.Assert;
@@ -26,14 +28,19 @@ public class GenerateRaces {
 			Field staticPlugin = RacesAndClasses.class.getDeclaredField("plugin");
 			staticPlugin.setAccessible(true);
 			staticPlugin.set(null, null);
+			
 			Assert.assertNull(RacesAndClasses.getPlugin());
 		}catch(Exception exp){
 			Assert.fail("Teardown of RacesAndClasses Plugin failed.");
 		}
 	}
 	
+	
+	/**
+	 * Generates a Mock for the Plugin
+	 */
 	public static void generateRaces(){
-		RacesAndClasses plugin = Mockito.mock(RacesAndClasses.class);
+		RacesAndClasses plugin = Mockito.mock(RacesAndClasses.class, Mockito.RETURNS_DEEP_STUBS);
 		plugin.testingMode = true;
 		
 		
@@ -61,11 +68,35 @@ public class GenerateRaces {
 			staticClassManager.setAccessible(true);
 			staticClassManager.set(null, classManagerMock);
 			
+			//Mock pluginDir output
+			Mockito.when(plugin.getDataFolder()).thenReturn(createTempDirectory());
 			
 		}catch(Exception e){
 			System.out.println("Problem at setting Races fields.");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Creates a temporary Directory in the System temp dir.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public static File createTempDirectory() throws IOException{
+	    final File temp;
+
+	    temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
+
+	    if(!(temp.delete())){
+	        throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
+	    }
+
+	    if(!(temp.mkdir())){
+	        throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
+	    }
+
+	    return (temp);
 	}
 
 	

@@ -23,23 +23,23 @@ public class ConfigOption {
 	/**
 	 * The path to the player invisible part
 	 */
-	private final static String DEFAULT_VISIBLE_PATH = "visible";
+	protected final static String DEFAULT_VISIBLE_PATH = "visible";
 	/**
 	 * The path to the value
 	 */
-	private final static String DEFAULT_VALUE_PATH = "val";
+	protected final static String DEFAULT_VALUE_PATH = "val";
 	/**
 	 * The path to the value
 	 */
-	private final static String DEFAULT_DEFAULTVALUE_PATH = "defval";
+	protected final static String DEFAULT_DEFAULTVALUE_PATH = "defval";
 	/**
 	 * The path to the value
 	 */
-	private final static String DEFAULT_FORMAT_PATH = "format";
+	protected final static String DEFAULT_FORMAT_PATH = "format";
 	/**
 	 * path to nice human readable name
 	 */
-	private final static String DEFAULT_DISPLAY_NAME_PATH = "name";
+	protected final static String DEFAULT_DISPLAY_NAME_PATH = "name";
 	
 	
 	
@@ -129,34 +129,6 @@ public class ConfigOption {
 		this.defaultValue = defaultValue;
 		this.displayName = displayName;
 		this.format = identifyFormat(value);
-	}
-	
-	
-	/**
-	 * tries to identify the format of a Object
-	 * Returns UNKNOWN if nothing matched 
-	 *  
-	 * @param value to check
-	 * @return
-	 */
-	private static SaveFormat identifyFormat(Object value){
-		if(value instanceof String){
-			return SaveFormat.STRING;
-		}
-		
-		if(value instanceof Integer){
-			return SaveFormat.INT;
-		}
-		
-		if(value instanceof Boolean){
-			return SaveFormat.BOOLEAN;
-		}
-		
-		if(value instanceof Double){
-			return SaveFormat.DOUBLE;
-		}
-		
-		return SaveFormat.UNKNOWN;
 	}
 
 	
@@ -263,7 +235,7 @@ public class ConfigOption {
 		String displayName = config.getString(pre + "." + path + "." + DEFAULT_DISPLAY_NAME_PATH, path);
 		
 		if(identifyFormat(value) == SaveFormat.UNKNOWN){
-			throw new IOException("Could not determin Type of '" + path + "' was: " + value.toString());
+			throw new IOException("Could not determin Type of '" + path + "' was: " + value);
 		}
 		
 		return new ConfigOption(path, displayName, value, defaultValue, visible);
@@ -312,5 +284,89 @@ public class ConfigOption {
 		}catch(IOException exp){
 			return false;
 		}
+	}
+	
+	/**
+	 * tries to identify the format of a Object
+	 * Returns UNKNOWN if nothing matched 
+	 *  
+	 * @param value to check
+	 * @return
+	 */
+	protected static SaveFormat identifyFormat(Object value){
+		if(value instanceof String){
+			return SaveFormat.STRING;
+		}
+		
+		if(value instanceof Integer){
+			return SaveFormat.INT;
+		}
+		
+		if(value instanceof Boolean){
+			return SaveFormat.BOOLEAN;
+		}
+		
+		if(value instanceof Double){
+			return SaveFormat.DOUBLE;
+		}
+		
+		return SaveFormat.UNKNOWN;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result
+				+ ((displayName == null) ? 0 : displayName.hashCode());
+		result = prime * result + ((format == null) ? 0 : format.hashCode());
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + (visible ? 1231 : 1237);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConfigOption other = (ConfigOption) obj;
+		if (defaultValue == null) {
+			if (other.defaultValue != null)
+				return false;
+		} else if (!defaultValue.equals(other.defaultValue))
+			return false;
+		if (displayName == null) {
+			if (other.displayName != null)
+				return false;
+		} else if (!displayName.equals(other.displayName))
+			return false;
+		if (format != other.format)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		if (visible != other.visible)
+			return false;
+		return true;
 	}
 }
