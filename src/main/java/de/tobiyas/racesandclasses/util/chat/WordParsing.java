@@ -1,0 +1,127 @@
+package de.tobiyas.racesandclasses.util.chat;
+
+import de.tobiyas.racesandclasses.configuration.member.ConfigOption.SaveFormat;
+
+public class WordParsing {
+
+
+	/**
+	 * Checks if the passed value is parsable to an int.
+	 * True if parsable, false if not.
+	 * 
+	 * RESTRICTION: false positive on {@link Integer#MIN_VALUE}
+	 * 
+	 * @param intValue to try parsing
+	 * @return true if parsable, false otherwise.
+	 */
+	public static boolean isInt(String intValue){
+		return parseInt(intValue) != Integer.MIN_VALUE;
+	}
+	
+	/**
+	 * Parses the passed String to an int.
+	 * If it can not parse, {@link Integer#MIN_VALUE} is returned.
+	 * 
+	 * @return
+	 */
+	public static int parseInt(String intValue){
+		try{
+			int newInt = Integer.valueOf(intValue);
+			return newInt;
+		}catch(NumberFormatException e){
+			return Integer.MIN_VALUE;
+		}
+	}
+	
+	
+	/**
+	 * Converts the most used terms of boolean as String to an Boolean.
+	 * Returns false if none could be resolved.
+	 * 
+	 * @param bool
+	 * @return
+	 */
+	public static boolean converToBool(String bool){
+		bool = bool.toLowerCase();
+		if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
+			return true;
+		if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
+			return false;
+		
+		return false;
+	}
+	
+	/**
+	 * Checks if the value passes is a legit boolean expression.
+	 * Returns true if it can be parsed correctly.
+	 * False otherwise.
+	 * 
+	 * @param bool to check
+	 * @return
+	 */
+	public static boolean isBool(String bool){
+		bool = bool.toLowerCase();
+		if(bool.equalsIgnoreCase("on") || bool.equalsIgnoreCase("true") || bool.equalsIgnoreCase("1") || bool.equalsIgnoreCase("yes"))
+			return true;
+		if(bool.equalsIgnoreCase("off") || bool.equalsIgnoreCase("false") || bool.equalsIgnoreCase("0") || bool.equalsIgnoreCase("no"))
+			return true;
+		
+		return false;
+	}
+	
+	
+	/**
+	 * Checks if the value passed is parsable to double.
+	 * True if it is parsable, false otherwise.
+	 * 
+	 * @param doubleValue the value to check
+	 * @return true if parsable
+	 */
+	public static boolean isDouble(String doubleValue){
+		return convertToDouble(doubleValue) != Double.MIN_VALUE;
+	}
+	
+	
+	/**
+	 * Gets the Double value of a String.
+	 * If not parsable, {@link Double#MIN_VALUE} is returned
+	 * 
+	 * @param doubleValue to parse
+	 * @return the parsed value or MIN_VALUE
+	 */
+	public static double convertToDouble(String doubleValue){
+		try{
+			return Double.parseDouble(doubleValue);
+		}catch(NumberFormatException exp){
+			return Double.MIN_VALUE;
+		}
+	}
+
+
+	/**
+	 * Parses the passed Value into the wanted format.
+	 * If parsing is not possible, null is returned.
+	 * 
+	 * @param value to parse.
+	 * @param toParseInto to parse into.
+	 * 
+	 * @return the wanted converted value or null if not possible
+	 */
+	public static Object parseToSaveFormat(String value, SaveFormat toParseInto){
+		switch (toParseInto) {
+		case BOOLEAN:
+			return isBool(value) ? converToBool(value) : null;
+		case DOUBLE:
+			return isDouble(value) ? convertToDouble(value) : null;
+		case INT:
+			return isInt(value) ? converToBool(value) : null;
+		case STRING:
+			return value;
+		case UNKNOWN:
+			return null;
+		}
+		
+		//should not get here
+		return null;
+	}
+}
