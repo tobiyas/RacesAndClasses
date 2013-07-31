@@ -1,0 +1,14 @@
+package de.tobiyas.racesandclasses.chat.channels.container.specificchannels;
+
+import de.tobiyas.racesandclasses.chat.channels.container.ChannelContainer;
+import de.tobiyas.racesandclasses.chat.channels.container.AbstractChannelContainerTest;
+import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
+
+public class PublicChanneltest extends AbstractChannelContainerTest {
+
+	@Override
+	protected ChannelContainer generateSut() {
+		return new ChannelContainer(channelName, ChannelLevel.PublicChannel);
+	}
+
+}

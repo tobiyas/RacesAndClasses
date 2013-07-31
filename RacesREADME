@@ -13,9 +13,6 @@ Traits(Passive):
 -	"HungerReplenishTrait"
 	Replenishes more/less hunger
 	
-(-	"ArmorTrait" (Moved to config section.)
-	decides which sort of armor you can wear)
-	
 -	"BerserkerRageTrait"
 	modifies your damage, when your life is below 30% (percent in config changable).
 	

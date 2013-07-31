@@ -1,12 +1,12 @@
-name: Races
-main: de.tobiyas.races.Races
-version: 0.09
-website: http://
+name: RacesAndClasses
+main: de.tobiyas.racesandclasses.RacesAndClasses
+version: 1.0.2
+website: http://dev.bukkit.org/bukkit-mods/racesandclasses/
 author: tobiyas
 
 softdepends: [Vault]
 description: >
-             Races for Players
+             Races and Classes for Players
 commands:
   race:
     description: Sets the Race of the player
@@ -20,7 +20,7 @@ commands:
            /racechate <message>
   racehelp:
     description: help for races
-    aliases: [rhelp]
+    aliases: [rhelp,rac,rachelp]
     usage: |
            /racehelp <helpstring>
   whisper:
@@ -82,19 +82,24 @@ commands:
     description: sends a message to local chat
     aliases: [lc,l]
     usage: |
-           /<command> message
+           /localchat message
   racesversion:
     description: displays the full version of Races
     aliases: []
     usage: |
-           /<command>
+           /racesversion
   playerinfo:
     description: displays info to a player
     aliases: []
     usage: |
-           /<command> [playername]
+           /playerinfo [playername]
   racestutorial:
     description: use to handle tutorials.
     aliases: []
     usage: |
-           /<command> <start/stop/skip/reset/repost>
+           /racestutorial <start/stop/skip/reset/repost>
+  racstatistics:
+    description: displays statistics
+    aliases: [rass]
+    usage: |
+           /racstatistics <trait name> 

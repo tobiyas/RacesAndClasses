@@ -1,4 +1,11 @@
 *.class
+doc/
+null/
+.settings/
+/target/
+
+copyJar.bat
+testlolwtd
 
 # Package Files #
 *.jar
