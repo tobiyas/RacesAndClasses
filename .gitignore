@@ -11,3 +11,6 @@ testlolwtd
 *.jar
 *.war
 *.ear
+/bin
+/.classpath
+/.project
