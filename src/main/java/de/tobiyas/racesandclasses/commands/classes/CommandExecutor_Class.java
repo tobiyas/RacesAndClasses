@@ -14,8 +14,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
-import de.tobiyas.racesandclasses.eventprocessing.events.classevent.ClassChangeEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
@@ -24,8 +24,15 @@ import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class CommandExecutor_Class extends Observable implements CommandExecutor {
 	
+	/**
+	 * The plugin called stuff upon
+	 */
 	private RacesAndClasses plugin;
 	
+	
+	/**
+	 * Registers the Command "class" to the plugin.
+	 */
 	public CommandExecutor_Class(){
 		plugin = RacesAndClasses.getPlugin();
 		try{
@@ -77,13 +84,12 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 					player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className 
 							+ ChatColor.RED + " does not exist.");
 				}
-			}
-			
-			
+			}	
 			
 			info(player, classHolder);
 			return true;
 		}
+		
 		
 		//listing of all classes
 		if(potentialCommand.equalsIgnoreCase("list")){
@@ -96,7 +102,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		//Select class(only if has no class)
 		if(potentialCommand.equalsIgnoreCase("select")){
-			if(args.length == 1){
+			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
+			if(useGUI){
 				player.openInventory(new HolderInventory(player, ClassManager.getInstance()));
 				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
 				return true;
@@ -113,6 +120,13 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 		//Change races (only if has already a class)
 		if(potentialCommand.equalsIgnoreCase("change")){
+			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
+			if(useGUI){
+				player.openInventory(new HolderInventory(player, ClassManager.getInstance()));
+				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+				return true;
+			}
+			
 			if(args.length != 2){
 				postHelp(player);
 				return true;

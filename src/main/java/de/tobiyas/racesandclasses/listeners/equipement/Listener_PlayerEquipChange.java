@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
+import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 import de.tobiyas.racesandclasses.util.items.ArmorContainer;
 import de.tobiyas.racesandclasses.util.items.ItemUtils;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
@@ -41,6 +42,7 @@ public class Listener_PlayerEquipChange implements Listener {
 		inventoryCache = new HashMap<String, ArmorContainer>();
 	}
 	
+	
 	@EventHandler
 	public void playerClickedOnGroudToEquipItem(PlayerInteractEvent event){
 		ArmorSlot armorSlot = ItemUtils.getItemSlotEquiping(event.getItem());
@@ -57,7 +59,7 @@ public class Listener_PlayerEquipChange implements Listener {
 			if(equipEvent.isCancelled()){
 				event.setCancelled(true);
 				
-				InvResync.resync(event.getPlayer());
+				InventoryResync.resync(event.getPlayer());
 			}
 		}
 	}
@@ -104,7 +106,7 @@ public class Listener_PlayerEquipChange implements Listener {
 			
 			if(event.isCancelled()) {
 				removeArmor(player, change);
-				InvResync.resync(player);
+				InventoryResync.resync(player);
 			}
 		}
 		
@@ -133,36 +135,6 @@ public class Listener_PlayerEquipChange implements Listener {
 		default:
 			break;
 		}
-	}
-
-	
-	/**
-	 * Resyncs the Inventory of a Player
-	 * @author Tobiyas
-	 *
-	 */
-	private static class InvResync implements Runnable{
-
-		public static void resync(Player player){
-			RacesAndClasses plugin = RacesAndClasses.getPlugin();
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new InvResync(player), 1);
-		}
-		
-		private final Player player;
-		
-		public InvResync(final Player player){
-			this.player = player;
-		}
-		
-		@SuppressWarnings("deprecation") //let's see if it still works
-		@Override
-		public void run() {
-			//it's an attempt
-			if(player != null && player.isOnline()){
-				player.updateInventory();
-			}
-		}
-		
 	}
 	
 }

@@ -28,11 +28,11 @@ public class CommandExecutor_RacesReload implements CommandExecutor {
 		
 		long timeTaken = 0;
 		if(args.length == 1){
-			timeTaken = plugin.fullReload(true, args[0].equalsIgnoreCase("gc"));
+			timeTaken = plugin.fullReload(true, args[0].contains("gc"));
 		}else
 			timeTaken = plugin.fullReload(true, false);
 		
-		plugin.getDebugLogger().log("Reload called by: " + sender.getName() + " took: " + timeTaken + " ms.");
+		plugin.getDebugLogger().log("[RaC] Reload called by: " + sender.getName() + " took: " + timeTaken + " ms.");
 		sender.sendMessage(ChatColor.GREEN + "Reload of " + ChatColor.LIGHT_PURPLE + "Races" + ChatColor.GREEN + 
 							" done successfully. Time taken: " + ChatColor.LIGHT_PURPLE + timeTaken + ChatColor.GREEN + " ms");
 		return true;

@@ -60,24 +60,60 @@ import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class RacesAndClasses extends JavaPlugin{
+	/**
+	 * Set if currently in testing mode.
+	 */
 	public boolean testingMode = false;
+	
+	/**
+	 * The Logger to call logging stuff on
+	 */
 	protected DebugLogger debugLogger;
 	
+	/**
+	 * The Plugin description File. AKA plugin.yml
+	 */
 	protected PluginDescriptionFile description;
 
+	/**
+	 * The Prefix of the plugin pasted to the Console / Debugger
+	 */
 	protected String prefix;
+	
+	/**
+	 * The Configuration Manager of the Plugin
+	 */
 	protected ConfigManager configManager;
 	
+	/**
+	 * The Health Manager of the Plugin
+	 */
 	protected HealthManager healthManager;
 	
+	/**
+	 * The CooldownManager of the Plugin
+	 */
 	protected CooldownManager cooldownManager;
 	
+	/**
+	 * The singleton plugin Instance used.
+	 */
 	protected static RacesAndClasses plugin;
 	
+	/**
+	 * The Permission manager handling Permission checks
+	 */
 	protected PermissionManager permManager;
 	
+	/**
+	 * tells if an Error occurred on startup.
+	 */
 	protected boolean errored = false;
 	
+	/**
+	 * The Statistic Gatherer gathering his stuff.
+	 * ALL HAIL THE MIGHTY NOM NOM!
+	 */
 	protected StatisticGatherer statistics;
 
 	
@@ -89,6 +125,7 @@ public class RacesAndClasses extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		statistics = new StatisticGatherer(System.currentTimeMillis());
+		//We seal the startup away to prevent further erroring afterwards.
 		try{
 			plugin = this;
 			

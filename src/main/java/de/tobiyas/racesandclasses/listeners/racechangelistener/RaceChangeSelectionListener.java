@@ -8,8 +8,8 @@ import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
-import de.tobiyas.racesandclasses.eventprocessing.events.classevent.ClassSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.raceevent.RaceSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 /**

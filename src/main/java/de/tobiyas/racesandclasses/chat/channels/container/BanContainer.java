@@ -82,6 +82,10 @@ public class BanContainer {
 			int time = banned.get(name);
 			config.set(channelPre + ".banned." + name, time);
 		}
+		
+		if(banned.keySet().size() == 0){
+			config.set(channelPre + ".banned.empty", true);
+		}
 	}
 
 	/**

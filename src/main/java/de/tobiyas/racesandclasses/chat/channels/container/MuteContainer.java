@@ -71,6 +71,10 @@ public class MuteContainer {
 			int time = muted.get(name);
 			config.set(channelPre + ".muted." + name, time);
 		}
+		
+		if(muted.keySet().size() == 0){
+			config.set(channelPre + ".muted.empty", true);
+		}
 	}
 	
 	/**

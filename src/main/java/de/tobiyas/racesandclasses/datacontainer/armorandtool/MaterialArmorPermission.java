@@ -19,7 +19,7 @@ public class MaterialArmorPermission implements AbstractItemPermission{
 	}
 
 	@Override
-	public boolean alreadyIsRegistered(ItemQuality quality) {
+	public boolean isAlreadyRegistered(ItemQuality quality) {
 		return quality == this.quality;
 	}
 }

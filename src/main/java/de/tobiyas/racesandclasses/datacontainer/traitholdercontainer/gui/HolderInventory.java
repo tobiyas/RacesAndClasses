@@ -55,7 +55,7 @@ public class HolderInventory extends InventoryView{
 		}
 		
 		String inventoryName = "Select your " + holderManager.getContainerTypeAsString() + ", " + player.getName();
-		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, inventoryName);//inventorySize);
+		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, inventoryName);
 		
 		fillWithHolders(holderManager);
 	}
@@ -73,10 +73,13 @@ public class HolderInventory extends InventoryView{
 			
 			ItemStack item = new ItemStack(Material.BOOK_AND_QUILL);
 			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName(holder.getTag());
+			
+			boolean isEmptyTag = holder.getTag() == null || holder.getTag().equals("");
+			meta.setDisplayName(isEmptyTag ? "[" + holder.getName() + "]" : holder.getTag());
 			
 			List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
 			
+			//add armor as lore
 			lore.add(ChatColor.AQUA + "armor:");
 			if(holder.getArmorPerms().size() > 0){
 				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
@@ -86,9 +89,10 @@ public class HolderInventory extends InventoryView{
 			
 			lore.add(ChatColor.AQUA + "traits:");
 			
+			//add trait text as lore
 			for(Trait trait: holder.getVisibleTraits()){
 				lore.add(ChatColor.DARK_AQUA + trait.getName() + ": " );
-				lore.add("	" + ChatColor.YELLOW + trait.getPrettyConfiguration());
+				lore.add("  " + ChatColor.YELLOW + trait.getPrettyConfiguration());
 			}
 			
 			meta.setLore(lore);
@@ -121,7 +125,7 @@ public class HolderInventory extends InventoryView{
 
 	@Override
 	public Inventory getBottomInventory() {
-		return player.getInventory(); //Bukkit.getServer().createInventory(player, 36);
+		return player.getInventory();
 	}
 
 	@Override

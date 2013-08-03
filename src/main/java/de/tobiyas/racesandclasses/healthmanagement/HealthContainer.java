@@ -91,17 +91,18 @@ public class HealthContainer {
 		RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(playerName);
 		ClassContainer classContainer = (ClassContainer) ClassManager.getInstance().getHolderOfPlayer(playerName);
 		
-		if(raceContainer == null) 
+		if(raceContainer == null) {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-		else{
+		}else{
 			int tempMaxHealth = raceContainer.getRaceMaxHealth();
 			if(tempMaxHealth <= 0) return;
 			maxHealth = tempMaxHealth;
 		}
 		
-		if(classContainer != null)
+		if(classContainer != null){
 			maxHealth = classContainer.modifyToClass(maxHealth);
-		
+		}
+			
 		arrowManager.rescanClass();
 		armorToolManager.rescanPermission();
 		armorToolManager.checkArmorNotValidEquiped();

@@ -100,6 +100,6 @@ commands:
            /racestutorial <start/stop/skip/reset/repost>
   racstatistics:
     description: displays statistics
-    aliases: [rass]
+    aliases: [racs]
     usage: |
            /racstatistics <trait name> 

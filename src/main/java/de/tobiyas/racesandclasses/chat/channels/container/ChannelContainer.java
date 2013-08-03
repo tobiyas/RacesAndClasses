@@ -207,8 +207,6 @@ public class ChannelContainer extends Observable{
 		config.set(channelPre + ".channelFormat", channelFormat.getFormat());
 		config.set(channelPre + ".channelPassword", channelPassword);
 		config.set(channelPre + ".channelAdmin", channelAdmin);
-		config.createSection(channelPre + ".banned");
-		config.createSection(channelPre + ".muted");
 		
 		config.set(channelPre + ".saveLoad", true);
 		

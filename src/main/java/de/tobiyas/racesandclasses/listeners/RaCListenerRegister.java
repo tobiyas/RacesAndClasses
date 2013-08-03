@@ -17,8 +17,6 @@ public class RaCListenerRegister {
 	 * that are registered to Bukkit Event system.
 	 */
 	public static void registerCustoms(){
-		
-		
 		new ClassChangeSelectionListener();
 		new ClassChangeListenerGui();
 		new RaceChangeListenerGui();

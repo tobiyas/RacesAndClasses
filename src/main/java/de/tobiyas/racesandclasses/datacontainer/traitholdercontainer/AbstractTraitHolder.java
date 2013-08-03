@@ -60,8 +60,7 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected AbstractTraitHolder(YamlConfiguration config, String name) {
 		this.config = config;
-		this.holderName = name;
-		
+		this.holderName = name;	
 	}
 	
 	/**
@@ -110,6 +109,14 @@ public abstract class AbstractTraitHolder {
 		
 		if(armorString.contains("chain"))
 			armorUsage[4] = true;
+		
+		if(armorString.contains("all")){
+			armorUsage[0] = true;
+			armorUsage[1] = true;
+			armorUsage[2] = true;
+			armorUsage[3] = true;
+			armorUsage[4] = true;
+		}
 	}
 	
 	

@@ -72,6 +72,10 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	//Uplink for Class change command
 	private int config_classChangeCommandUplink;
 	
+	private boolean config_useClassGUIToSelect;
+	private boolean config_useRaceGUIToSelect;
+	
+	
 	/**
 	 * Inits the Config system.
 	 * Also loads the config directly
@@ -128,6 +132,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		
 		config.addDefault("general.copyDefaultTraitsOnStartup", true);
 		
+		config.addDefault("races.gui.enable", true);
+		config.addDefault("classes.gui.enable", true);
+		
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -182,6 +189,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config_classChangeCommandUplink = config.getInt("classes.change.uplinkInSeconds", 0);
 		
 		config_raceChangeCommandUplink = config.getInt("races.change.uplinkInSeconds", 0);
+		
+		config_useRaceGUIToSelect = config.getBoolean("races.gui.enable", true);
+		config_useClassGUIToSelect = config.getBoolean("classes.gui.enable", true);
 		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
 		//be sure to have lower case to not be casesensitive
@@ -295,7 +305,19 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	public int getConfig_classChangeCommandUplink() {
 		return config_classChangeCommandUplink;
 	}
-	
 
+	/**
+	 * @return the config_useClassGUIToSelect
+	 */
+	public boolean isConfig_useClassGUIToSelect() {
+		return config_useClassGUIToSelect;
+	}
+
+	/**
+	 * @return the config_useRaceGUIToSelect
+	 */
+	public boolean isConfig_useRaceGUIToSelect() {
+		return config_useRaceGUIToSelect;
+	}
 
 }

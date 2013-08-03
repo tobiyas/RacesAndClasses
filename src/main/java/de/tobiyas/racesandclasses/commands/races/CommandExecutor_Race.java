@@ -23,8 +23,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
-import de.tobiyas.racesandclasses.eventprocessing.events.raceevent.RaceChangeEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.raceevent.RaceSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceChangeEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
@@ -66,7 +66,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		if(raceCommand.equalsIgnoreCase("select")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectRace)) return true;
 			
-			if(args.length == 1){
+			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
+			if(useGUI){
 				player.openInventory(new HolderInventory(player, RaceManager.getInstance()));
 				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
 				return true;
@@ -85,6 +86,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		//Change races (only if has already a race)
 		if(raceCommand.equalsIgnoreCase("change")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeRace)) return true;
+			
+			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
+			if(useGUI){
+				player.openInventory(new HolderInventory(player, RaceManager.getInstance()));
+				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
+				return true;
+			}
+			
 			if(args.length != 2){
 				player.sendMessage(ChatColor.RED + "This command needs 1 argument: /race change <racename>");
 				return true;

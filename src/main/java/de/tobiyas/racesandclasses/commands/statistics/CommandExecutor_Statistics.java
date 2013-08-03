@@ -66,7 +66,7 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Total events on Trait " + ChatColor.DARK_PURPLE + traitName 
 				+ ChatColor.LIGHT_PURPLE + ": " + ChatColor.AQUA + totalEvents);
 		
-		double eventsPerMin = StatisticAPI.getTotalTriggersOfTrait(traitName);
+		double eventsPerMin = StatisticAPI.getTotalTriggersOfTraitPerMinute(traitName);
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Events / Minute on Trait " + ChatColor.DARK_PURPLE + traitName 
 				+ ChatColor.LIGHT_PURPLE + ": " + ChatColor.AQUA + eventsPerMin);
 	}

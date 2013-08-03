@@ -13,7 +13,7 @@ import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundExceptio
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
-import de.tobiyas.racesandclasses.eventprocessing.events.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 /**

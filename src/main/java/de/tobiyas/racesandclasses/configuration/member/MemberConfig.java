@@ -329,4 +329,16 @@ public class MemberConfig {
 		configList.add(option);
 		return true;
 	}
+
+
+	/**
+	 * Checks if a Config option with the given name is present.
+	 * Returns true if the name is found as DisplayName
+	 * 
+	 * @param identifier to check for
+	 * @return true if found, false otherwise.
+	 */
+	public boolean containsValue(String identifier) {
+		return configList.contains(identifier);
+	}
 }

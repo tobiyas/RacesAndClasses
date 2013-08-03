@@ -25,6 +25,7 @@ public class ArmorToolManager {
 		this.itemPerms = new HashSet<AbstractItemPermission>();
 	}
 	
+	
 	public void rescanPermission(){
 		itemPerms.clear();
 		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(playerName);
@@ -40,22 +41,43 @@ public class ArmorToolManager {
 			for(ItemQuality quality : classContainer.getArmorPerms()){
 				addPerm(quality);
 			}
-			
-			//Add Allowed ItemIDs here
 		}
 		
-		
+		addDefaultPerm();		
 	}
 	
+	
+	private void addDefaultPerm() {
+		//permission for HEADS (skull, ...)
+		itemPerms.add(new ItemPermission(Material.SKULL_ITEM));
+		itemPerms.add(new ItemPermission(Material.PUMPKIN));
+		
+		//Other stuff to put into armor slots //TODO ?
+	}
+
+	
+	/**
+	 * Adds a Permission to the Permission list
+	 * 
+	 * @param quality
+	 */
 	private void addPerm(ItemQuality quality){
-		for(AbstractItemPermission perm : itemPerms)
-			if(perm.alreadyIsRegistered(quality)) 
+		for(AbstractItemPermission perm : itemPerms){
+			if(perm.isAlreadyRegistered(quality)) {
 				return;
+			}
+		}
 		
 		itemPerms.add(new MaterialArmorPermission(quality));
 	}
 	
 	
+	/**
+	 * Checks if the item is permitted to be used
+	 * 
+	 * @param stack to check
+	 * @return true if permission granted, false otherwise
+	 */
 	public boolean hasPermissionForItem(ItemStack stack){
 		if(stack == null || stack.getType() == Material.AIR){
 			return true;
@@ -70,6 +92,15 @@ public class ArmorToolManager {
 		return false;
 	}
 	
+	
+	/**
+	 * Calculates the damage to the Armor
+	 * 
+	 * @param damage
+	 * @param cause
+	 * 
+	 * @return the Damage after modification
+	 */
 	public double calcDamageToArmor(double damage, DamageCause cause){
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null){
@@ -95,6 +126,7 @@ public class ArmorToolManager {
 		return damage * playerDamageReduce;
 	}
 
+	
 	public int getArmorLevel(Player player) {
 		int armorLevel = 0;
 		ItemStack inventory[] = player.getInventory().getArmorContents();

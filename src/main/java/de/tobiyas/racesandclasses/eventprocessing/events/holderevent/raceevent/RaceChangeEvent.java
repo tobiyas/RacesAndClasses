@@ -1,22 +1,23 @@
-package de.tobiyas.racesandclasses.eventprocessing.events.classevent;
+package de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 
-public class ClassChangeEvent extends ClassSelectEvent {
+public class RaceChangeEvent extends RaceSelectEvent {
 
+	
+	
 	/**
 	 * The static list of all handlers that are interested in this event
 	 */
 	private static final HandlerList handlers = new HandlerList();
 	
-	
 	/**
-	 * The Class the player changes from.
+	 * The race to change from
 	 */
-	private ClassContainer oldClass;
+	private RaceContainer oldRace;
 	
 	
 	/**
@@ -26,15 +27,15 @@ public class ClassChangeEvent extends ClassSelectEvent {
 	 * @param classToSelect new Class
 	 * @param oldClass old Class
 	 */
-	public ClassChangeEvent(Player player, ClassContainer classToSelect, ClassContainer oldClass) {
-		super(player, classToSelect);
+	public RaceChangeEvent(Player player, RaceContainer raceToSelect, RaceContainer oldRace) {
+		super(player, raceToSelect);
 		
-		this.oldClass = oldClass;
+		this.oldRace = oldRace;
 	}
 	
 	
-	public ClassContainer getOldClass() {
-		return oldClass;
+	public RaceContainer getOldRace() {
+		return oldRace;
 	}
 
 
@@ -51,4 +52,5 @@ public class ClassChangeEvent extends ClassSelectEvent {
 	public HandlerList getHandlers() {
 		return handlers;
 	}
+
 }

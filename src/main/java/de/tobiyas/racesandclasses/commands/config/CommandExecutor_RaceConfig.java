@@ -46,7 +46,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			
 			for(String attribute : configLines.keySet()){
 				String value = String.valueOf(configLines.get(attribute));
-				player.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.BLUE + value);
+				player.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.AQUA + ": " + ChatColor.BLUE + value);
 			}
 			
 			return true;

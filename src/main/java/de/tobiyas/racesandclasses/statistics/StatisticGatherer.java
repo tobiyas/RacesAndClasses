@@ -62,8 +62,8 @@ public class StatisticGatherer {
 	        }
 	    }
 	    
-	    String diff = "days: " + Integer.toString(dd) + " hours:" + Integer.toString(hh) + " minutes:"
-	            + Integer.toString(mm) + " seconds:" + Integer.toString(ss);
+	    String diff = "days: " + Integer.toString(dd) + " hours: " + Integer.toString(hh) + " minutes: "
+	            + Integer.toString(mm) + " seconds: " + Integer.toString(ss);
 	    return diff;
 	}
 	

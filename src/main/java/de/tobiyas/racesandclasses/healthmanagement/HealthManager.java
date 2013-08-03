@@ -89,10 +89,11 @@ public class HealthManager{
 		if(hContainer == null){
 			RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player);
 			double maxHealth;
-			if(container == null)
+			if(container == null){
 				maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-			else
+			}else{
 				maxHealth = container.getRaceMaxHealth();
+			}
 			
 			HealthContainer healthContainer = new HealthContainer(player, maxHealth);
 			healthContainer.checkStats();

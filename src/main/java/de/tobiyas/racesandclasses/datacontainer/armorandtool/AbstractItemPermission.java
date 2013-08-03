@@ -8,5 +8,5 @@ public interface AbstractItemPermission {
 
 	public boolean hasPermission(ItemStack item);
 	
-	public boolean alreadyIsRegistered(ItemQuality quality);
+	public boolean isAlreadyRegistered(ItemQuality quality);
 }
