@@ -110,7 +110,11 @@ public class HealthContainer {
 		Player player = Bukkit.getPlayer(playerName);
 		if(player != null && player.isOnline()){
 			Player bukkitPlayer = Bukkit.getPlayer(playerName);
-			CompatibilityModifier.BukkitPlayer.safeSetMaxHealth(maxHealth, bukkitPlayer);
+			
+			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);
+			if(Math.abs(currentMaxHealth - maxHealth) > 0.5){
+				CompatibilityModifier.BukkitPlayer.safeSetMaxHealth(maxHealth, bukkitPlayer);
+			}
 		}
 	}
 	

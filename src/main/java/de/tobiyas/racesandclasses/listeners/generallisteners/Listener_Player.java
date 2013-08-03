@@ -93,6 +93,7 @@ public class Listener_Player implements Listener {
 				return;
 			}
 		}
+
 		ChannelManager.GetInstance().broadcastMessageToChannel(channel, player, orgMsg);
 	}
 	
