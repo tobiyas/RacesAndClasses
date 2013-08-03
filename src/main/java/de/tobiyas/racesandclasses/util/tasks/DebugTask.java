@@ -41,7 +41,7 @@ public class DebugTask implements Runnable, Observer{
 			
 			int reacted = tasks.get(runnable);
 			if(reacted > 1){
-				System.out.println("possible malfunction of: " + runnable.getName());
+				plugin.log("possible malfunction of: " + runnable.getName());
 				//Handle Possible Misbehavior
 				crashAndRestart++;
 			}

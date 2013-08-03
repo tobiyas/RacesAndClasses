@@ -4,6 +4,7 @@ import static de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser.config
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,12 +24,12 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * The config of the holder to store / load stuff
 	 */
-	protected YamlConfiguration config;
+	protected final YamlConfiguration config;
 	
 	/**
 	 * The name of the holder
 	 */
-	protected String holderName;
+	protected final String holderName;
 	
 	/**
 	 * The pretty tag of the holder
@@ -48,8 +49,13 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * The permission container holding all Permissions for the holder
 	 */
-	protected HolderPermissions holderPermissions;
+	protected final HolderPermissions holderPermissions;
 	
+	
+	/**
+	 * Logs all parsing exceptions happening during startup.
+	 */
+	protected final List<HolderTraitParseException> parsingExceptionsHappened;
 	
 	
 	/**
@@ -60,7 +66,10 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected AbstractTraitHolder(YamlConfiguration config, String name) {
 		this.config = config;
-		this.holderName = name;	
+		this.holderName = name;
+		this.parsingExceptionsHappened = new LinkedList<HolderTraitParseException>();
+		
+		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
 	}
 	
 	/**
@@ -126,15 +135,17 @@ public abstract class AbstractTraitHolder {
 	 * 
 	 * @throws HolderTraitParseException if parsing fails.
 	 */
-	protected void readTraitSection() throws HolderTraitParseException{
+	protected void readTraitSection(){
 		traits = new HashSet<Trait>();
 		
 		if(!config.isConfigurationSection(holderName + ".traits")){
-			throw new HolderTraitParseException("The Holder: " + holderName + " has no 'traits' section.'");
+			return; //trait section is not necessary
 		}
 		
 		Set<String> traitNames = config.getConfigurationSection(holderName + ".traits").getKeys(false);
 		if(traitNames == null || traitNames.size() == 0) return;
+		
+		List<HolderTraitParseException> exceptionList = new LinkedList<HolderTraitParseException>();
 		
 		for(String traitName : traitNames){
 			try{
@@ -146,18 +157,19 @@ public abstract class AbstractTraitHolder {
 					traits.add(trait);
 				}
 			}catch(TraitConfigurationFailedException exp){
-				throw new HolderTraitParseException(exp.getMessage());
+				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
 			}
 		}
 		
 		addSTDTraits();
+		this.parsingExceptionsHappened.addAll(exceptionList);
 	}
 	
 	/**
 	 * Reads the Permission section of the Holder.
 	 */
 	protected void readPermissionSection() {
-		holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
+		holderPermissions.clear();
 		
 		if(!config.isList(holderName + ".permissions")){
 			return;
@@ -289,9 +301,17 @@ public abstract class AbstractTraitHolder {
 	
 	
 	/**
-	 * Returns the type name of the container
+	 * Returns the type name of the container.
+	 * WARNING: This method is already called in the Constructor!!! So make sure it returns an constant String!
 	 * 
 	 * @return
 	 */
 	protected abstract String getContainerTypeAsString();
+
+	/**
+	 * @return the parsingExceptionsHappened
+	 */
+	public List<HolderTraitParseException> getParsingExceptionsHappened() {
+		return parsingExceptionsHappened;
+	}
 }

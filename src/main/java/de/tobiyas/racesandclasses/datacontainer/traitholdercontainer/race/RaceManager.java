@@ -73,6 +73,7 @@ public class RaceManager extends AbstractHolderManager {
 	protected AbstractTraitHolder generateTraitHolderAndLoad(
 			YAMLConfigExtended traitHolderConfig, String holderName)
 			throws HolderParsingException {
+		
 		return RaceContainer.loadRace(traitHolderConfig, holderName);
 	}
 

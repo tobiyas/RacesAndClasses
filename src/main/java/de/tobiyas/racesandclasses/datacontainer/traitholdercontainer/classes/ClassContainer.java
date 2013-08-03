@@ -79,9 +79,9 @@ public class ClassContainer extends AbstractTraitHolder{
 	 * @return the container
 	 * @throws HolderParsingException 
 	 */
-	public static ClassContainer loadClass(YamlConfiguration config, String name) throws HolderParsingException{
+	public static AbstractTraitHolder loadClass(YamlConfiguration config, String name) throws HolderParsingException{
 		ClassContainer container = new ClassContainer(config, name);
-		return container;
+		return (ClassContainer) container.load();
 	}
 
 	

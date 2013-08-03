@@ -81,6 +81,10 @@ public class PermissionRegisterer implements Runnable{
 	private void registerTraitHolders() {
 		for(AbstractTraitHolder holder : traitHolderList){
 			HolderPermissions permissions = holder.getPermissions();
+			if(permissions == null || permissions.getPermissions().size() ==0){
+				continue;
+			}
+			
 			String groupName = permissions.getGroupIdentificationName();
 			
 			for(String permission : permissions.getPermissions()){
@@ -96,7 +100,7 @@ public class PermissionRegisterer implements Runnable{
 	private void giveMembersAccessToGroups() {
 		for(String member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
-			if(holder == null) continue;
+			if(holder == null) continue; // || holder.getPermissions() == null) continue;
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			vaultPermissions.playerAddGroup((String)null, member, groupName);

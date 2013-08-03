@@ -28,7 +28,8 @@ public class ClassManager extends AbstractHolderManager{
 	protected AbstractTraitHolder generateTraitHolderAndLoad(
 			YAMLConfigExtended traitHolderConfig, String holderName)
 			throws HolderParsingException {
-		return ClassContainer.loadClass(traitHolderConfig, holderName).load();
+		
+		return ClassContainer.loadClass(traitHolderConfig, holderName);
 	}
 
 
