@@ -56,7 +56,8 @@ public abstract class AbstractArrow implements TraitWithUplink{
 	public boolean modify(Event event) {
 		if(!(event instanceof PlayerInteractEvent || 
 			event instanceof EntityShootBowEvent || 
-			event instanceof ProjectileHitEvent)) return false;
+			event instanceof ProjectileHitEvent ||
+			event instanceof EntityDamageByEntityEvent)) return false;
 		
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){

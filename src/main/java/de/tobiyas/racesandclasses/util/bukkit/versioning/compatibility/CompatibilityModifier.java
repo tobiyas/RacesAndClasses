@@ -204,6 +204,7 @@ public class CompatibilityModifier {
 		}
 	}
 	
+	
 	public static class EntityHeal{
 		
 		
@@ -262,6 +263,27 @@ public class CompatibilityModifier {
 				}catch(Exception exp){
 					return 0;
 				}
+			}
+		}
+	}
+	
+	
+	public static class LivingEntity{
+		
+		/**
+		 * Does damage to an entity safely to healthVersions.
+		 * 
+		 * @param entity to damage
+		 * @param value to do damage
+		 */
+		public static void safeDamageEntity(org.bukkit.entity.LivingEntity entity, double value){
+			if(CertainVersionChecker.isAbove1_6()){
+				entity.damage(value);
+			}else{
+				try{
+					Method method = org.bukkit.entity.LivingEntity.class.getMethod("damage", Integer.class);					
+					method.invoke(entity, (int) value);
+				}catch(Exception exp){}//silent fail
 			}
 		}
 	}

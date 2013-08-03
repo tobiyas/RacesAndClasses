@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 
@@ -105,7 +105,7 @@ public class DamageTicker implements Runnable{
 				target.getLocation().getWorld().playEffect(target.getLocation(), effect, 0);
 		}
 		
-		Event event = null;
+		EntityDamageEvent event = null;
 		
 		try{
 			if(this.damager == null){
@@ -115,7 +115,17 @@ public class DamageTicker implements Runnable{
 			}
 
 			TraitEventManager.fireEvent(event);
-		
+			
+			if(!event.isCancelled()){
+				double value = CompatibilityModifier.EntityDamage.safeGetDamage(event);
+				if(cause == DamageCause.FIRE_TICK){
+					value -= 1;
+				}
+				
+				if(target != null && !target.isDead() && value > 0){
+					CompatibilityModifier.LivingEntity.safeDamageEntity(target, value);
+				}
+			}
 		}catch(Exception exp){}	//silent fail
 		
 	}
