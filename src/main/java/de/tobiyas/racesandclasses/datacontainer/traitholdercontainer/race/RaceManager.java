@@ -14,11 +14,8 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class RaceManager extends AbstractHolderManager {
 
-	private static RaceManager manager;
-
 	public RaceManager() {
 		super(Consts.playerDataYML, Consts.racesYML);
-		manager = this;
 
 		DefaultContainer.createSTDRaces();
 	}
@@ -64,10 +61,6 @@ public class RaceManager extends AbstractHolderManager {
 			}
 	}
 
-
-	public static RaceManager getInstance() {
-		return manager;
-	}
 
 	@Override
 	protected AbstractTraitHolder generateTraitHolderAndLoad(

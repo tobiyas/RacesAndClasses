@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
@@ -21,6 +22,12 @@ import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractTraitHolder {
+	
+	/**
+	 * The plugin to call stuff on
+	 */
+	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	/**
 	 * The config of the holder to store / load stuff
 	 */
@@ -158,6 +165,8 @@ public abstract class AbstractTraitHolder {
 				}
 			}catch(TraitConfigurationFailedException exp){
 				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
+				plugin.log("Error on parsing: '" + getName() + "' Problem was: '" + exp.getMessage() 
+						+ "' On Trait: '" + traitName + "'.");
 			}
 		}
 		

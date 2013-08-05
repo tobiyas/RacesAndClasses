@@ -24,7 +24,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	/**
 	 * The Main plugin
 	 */
-	protected final RacesAndClasses plugin;
+	protected static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	/**
 	 * The holder manager cotrolling the holders
@@ -35,7 +35,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 	 * Registers to Bukkit EventListener
 	 */
 	public HolderChangeListenerGui(AbstractHolderManager manager){	
-		plugin = RacesAndClasses.getPlugin();
 		this.manager = manager;
 		
 		//safety check to prevent registering some code that will error.

@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class RaceReminder implements Runnable {
@@ -24,8 +23,8 @@ public class RaceReminder implements Runnable {
 	@Override
 	public void run() {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_activate_reminder()){
-			AbstractTraitHolder defaultContainer = RaceManager.getInstance().getDefaultHolder();
-			List<String> list = RaceManager.getInstance().getAllPlayersOfHolder(defaultContainer);
+			AbstractTraitHolder defaultContainer = plugin.getRaceManager().getDefaultHolder();
+			List<String> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
 			for(String name : list){
 				Player player = Bukkit.getPlayer(name);
 
@@ -51,7 +50,7 @@ public class RaceReminder implements Runnable {
 		
 		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.prePlugin + "races.*")) return true;
 		
-		for(String raceName : RaceManager.getInstance().listAllVisibleHolders()){
+		for(String raceName : plugin.getRaceManager().listAllVisibleHolders()){
 			if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.prePlugin + "races." + raceName)){
 				return true;
 			}

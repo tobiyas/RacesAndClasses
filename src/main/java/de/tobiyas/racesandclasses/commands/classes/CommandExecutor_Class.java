@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
@@ -71,7 +70,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			AbstractTraitHolder classHolder = null;
 			
 			if(args.length < 2){
-				classHolder = ClassManager.getInstance().getHolderOfPlayer(player.getName());
+				classHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(classHolder == null){
 					player.sendMessage(ChatColor.RED + "You have no class selected. Use " + ChatColor.LIGHT_PURPLE + "/class info <class name>" 
 							+ ChatColor.RED + "  to inspect a class.");
@@ -79,7 +78,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				}				
 			}else{
 				String className = args[1];
-				classHolder = ClassManager.getInstance().getHolderByName(className);
+				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
 					player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className 
 							+ ChatColor.RED + " does not exist.");
@@ -104,7 +103,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		if(potentialCommand.equalsIgnoreCase("select")){
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, ClassManager.getInstance()));
+				player.openInventory(new HolderInventory(player, plugin.getClassManager()));
 				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
 				return true;
 			}
@@ -122,7 +121,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		if(potentialCommand.equalsIgnoreCase("change")){
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, ClassManager.getInstance()));
+				player.openInventory(new HolderInventory(player, plugin.getClassManager()));
 				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
 				return true;
 			}
@@ -173,7 +172,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	private void list(Player player){
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "Classes" + ChatColor.YELLOW + " =====");
 		
-		List<String> classes = ClassManager.getInstance().getAllHolderNames();
+		List<String> classes = plugin.getClassManager().getAllHolderNames();
 		if(classes.size() == 0){
 			player.sendMessage(ChatColor.RED + "No Classes in the list.");
 			return;
@@ -188,7 +187,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectClass)) return false;
 		
-		ClassContainer classContainer = (ClassContainer) ClassManager.getInstance().getHolderByName(potentialClass);
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		boolean classExists = classContainer != null;
 		if(!classExists){
 			player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");
@@ -204,7 +203,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		
 		if(classContainer == null){	
-			if(ClassManager.getInstance().addPlayerToHolder(player.getName(), potentialClass)){
+			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
 				return true;
 			}
@@ -218,8 +217,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	
 	private void change(Player player, String potentialClass){
 		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeClass)) return;
-		ClassContainer oldClassContainer = (ClassContainer) ClassManager.getInstance().getHolderOfPlayer(player.getName());
-		ClassContainer newClassContainer = (ClassContainer) ClassManager.getInstance().getHolderByName(potentialClass);
+		ClassContainer oldClassContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player.getName());
+		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
 			player.sendMessage(ChatColor.RED + "You have no class you could change");
@@ -245,7 +244,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				return;
 			}
 			
-			if(ClassManager.getInstance().changePlayerHolder(player.getName(), potentialClass))
+			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass))
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
 			else
 				player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");

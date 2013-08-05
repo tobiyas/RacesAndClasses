@@ -1,12 +1,17 @@
 package de.tobiyas.racesandclasses.generate.plugin;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.RETURNS_SMART_NULLS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -20,9 +25,12 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceMa
 import de.tobiyas.util.debug.logger.DebugLogger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(RacesAndClasses.class)
+@PrepareForTest({JavaPlugin.class, RacesAndClasses.class})
 public class GenerateRaces {
 
+	/**
+	 * Drops the mock by setting the static {@link RacesAndClasses#plugin} field to null;
+	 */
 	public static void dropMock(){
 		try{
 			Field staticPlugin = RacesAndClasses.class.getDeclaredField("plugin");
@@ -40,7 +48,7 @@ public class GenerateRaces {
 	 * Generates a Mock for the Plugin
 	 */
 	public static void generateRaces(){
-		RacesAndClasses plugin = Mockito.mock(RacesAndClasses.class, Mockito.RETURNS_DEEP_STUBS);
+		RacesAndClasses plugin = mock(RacesAndClasses.class, RETURNS_DEEP_STUBS);
 		plugin.testingMode = true;
 		
 		
@@ -50,26 +58,23 @@ public class GenerateRaces {
 			staticPlugin.set(null, plugin);
 			
 			//Mock outputs
-			Mockito.when(plugin.getDebugLogger()).thenReturn(Mockito.mock(DebugLogger.class));
+			when(plugin.getDebugLogger()).thenReturn(mock(DebugLogger.class));
 			
 			//Mock Configs
 			mockConfig(plugin);
 
 			
 			//Mock RaceManager
-			RaceManager raceManagerMock = Mockito.mock(RaceManager.class);
-			Field staticRaceManager = RaceManager.class.getDeclaredField("manager");
-			staticRaceManager.setAccessible(true);
-			staticRaceManager.set(null, raceManagerMock);
+			RaceManager raceManagerMock = mock(RaceManager.class);
+			when(plugin.getRaceManager()).thenReturn(raceManagerMock);
 			
 			//Mock ClassManager
-			ClassManager classManagerMock = Mockito.mock(ClassManager.class);
-			Field staticClassManager = ClassManager.class.getDeclaredField("classManager");
-			staticClassManager.setAccessible(true);
-			staticClassManager.set(null, classManagerMock);
+			ClassManager classManagerMock = mock(ClassManager.class);
+			when(plugin.getClassManager()).thenReturn(classManagerMock);
 			
 			//Mock pluginDir output
-			Mockito.when(plugin.getDataFolder()).thenReturn(createTempDirectory());
+			//File tempDir = createTempDirectory(); //TODO try fixing somehow...
+			//PowerMockito.when(plugin, "getDataFolder").thenReturn(tempDir);
 			
 		}catch(Exception e){
 			System.out.println("Problem at setting Races fields.");
@@ -106,16 +111,16 @@ public class GenerateRaces {
 	 * @param plugin
 	 */
 	private static void mockConfig(RacesAndClasses plugin) {
-		ConfigManager configManager = Mockito.mock(ConfigManager.class);
+		ConfigManager configManager = mock(ConfigManager.class);
 		
-		GeneralConfig generalConfigMock = Mockito.mock(GeneralConfig.class, Mockito.RETURNS_SMART_NULLS);
-		ChannelConfig channelConfigMock = Mockito.mock(ChannelConfig.class, Mockito.RETURNS_SMART_NULLS);
-		RaceToClassConfiguration raceClassConfigMock = Mockito.mock(RaceToClassConfiguration.class, Mockito.RETURNS_SMART_NULLS);
+		GeneralConfig generalConfigMock = mock(GeneralConfig.class, RETURNS_SMART_NULLS);
+		ChannelConfig channelConfigMock = mock(ChannelConfig.class, RETURNS_SMART_NULLS);
+		RaceToClassConfiguration raceClassConfigMock = mock(RaceToClassConfiguration.class, RETURNS_SMART_NULLS);
 		
-		Mockito.when(configManager.getGeneralConfig()).thenReturn(generalConfigMock);
-		Mockito.when(configManager.getChannelConfig()).thenReturn(channelConfigMock);
-		Mockito.when(configManager.getRaceToClassConfig()).thenReturn(raceClassConfigMock);
+		when(configManager.getGeneralConfig()).thenReturn(generalConfigMock);
+		when(configManager.getChannelConfig()).thenReturn(channelConfigMock);
+		when(configManager.getRaceToClassConfig()).thenReturn(raceClassConfigMock);
 		
-		Mockito.when(plugin.getConfigManager()).thenReturn(configManager);
+		when(plugin.getConfigManager()).thenReturn(configManager);
 	}
 }

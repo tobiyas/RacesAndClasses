@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
@@ -12,7 +11,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.R
 public class RaceChangeListenerGui extends HolderChangeListenerGui {
 
 	public RaceChangeListenerGui() {
-		super(RaceManager.getInstance());
+		super(plugin.getRaceManager());
 	}
 
 	

@@ -3,11 +3,16 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 
 public class TraitHolderCombinder {
+	
+	/**
+	 * The Plugin to call stuff on
+	 */
+	private static RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	
 	/**
 	 * Checks if the player passed has access to the trait passed.
@@ -20,13 +25,13 @@ public class TraitHolderCombinder {
 	public static boolean checkContainer(String playerName, Trait trait){
 		AbstractTraitHolder holder = trait.getTraitHolder();
 		
-		AbstractTraitHolder raceHolder = RaceManager.getInstance().getHolderOfPlayer(playerName);
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
 		if(raceHolder == null) return false;
 		if(holder == raceHolder){
 			return true;
 		}
 		
-		AbstractTraitHolder classHolder = ClassManager.getInstance().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
 		if(classHolder == null) return false;
 		if(holder == classHolder){
 			return true;
@@ -46,12 +51,12 @@ public class TraitHolderCombinder {
 	public static Set<Trait> getAllTraitsOfPlayer(String player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
-		AbstractTraitHolder raceContainer = RaceManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(raceContainer != null){
 			traits.addAll(raceContainer.getTraits());
 		}
 			
-		AbstractTraitHolder classContainer = ClassManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
 		if(classContainer != null){
 			traits.addAll(classContainer.getTraits());
 		}
@@ -70,12 +75,12 @@ public class TraitHolderCombinder {
 	public static Set<Trait> getVisibleTraitsOfPlayer(String player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
-		AbstractTraitHolder raceContainer = RaceManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(raceContainer != null){
 			traits.addAll(raceContainer.getVisibleTraits());
 		}
 		
-		AbstractTraitHolder classContainer = ClassManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
 		if(classContainer != null){
 			traits.addAll(classContainer.getVisibleTraits());
 		}

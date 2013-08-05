@@ -68,7 +68,7 @@ public class RaceContainer extends AbstractTraitHolder{
 	
 	@Override
 	public boolean containsPlayer(String player){
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);
 	}
@@ -103,10 +103,14 @@ public class RaceContainer extends AbstractTraitHolder{
 	 * @return
 	 */
 	public static RaceContainer generateSTDRace(){
+		String defaultName = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultRaceName();
+		String defaultTag = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultRaceTag();
+		Consts.defaultRace = defaultName;
+		
 		String holderName = Consts.defaultRace;
 		RaceContainer container = new RaceContainer(null, holderName);
 
-		container.holderTag = "[NoRace]";
+		container.holderTag = defaultTag;
 		container.raceChatColor = "";
 		container.raceChatFormat = "";
 

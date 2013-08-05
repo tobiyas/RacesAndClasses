@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 
 public class CommandExecutor_PlayerInfo implements CommandExecutor {
 
@@ -50,8 +48,8 @@ private RacesAndClasses plugin;
 			return true;
 		}
 		
-		AbstractTraitHolder raceContainer = RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		AbstractTraitHolder classContainer = ClassManager.getInstance().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player.getName());
 		String className = "None";
 		if(classContainer != null)
 			className = classContainer.getName();

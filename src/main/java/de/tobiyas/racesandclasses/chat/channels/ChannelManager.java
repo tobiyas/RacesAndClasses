@@ -15,7 +15,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelContainer;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelTicker;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -74,7 +73,7 @@ public class ChannelManager {
 		for(World world : Bukkit.getWorlds())
 			registerChannel(ChannelLevel.WorldChannel, world.getName());
 		
-		for(String race : RaceManager.getInstance().listAllVisibleHolders()){
+		for(String race : plugin.getRaceManager().listAllVisibleHolders()){
 			if(race.equalsIgnoreCase(Consts.defaultRace)) continue;
 			registerChannel(ChannelLevel.RaceChannel, race);
 		}
@@ -520,7 +519,7 @@ public class ChannelManager {
 		this.joinChannel(player, "Global", "", true);
 		this.joinChannel(player, player.getWorld().getName(), "", false);
 		
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		if(container != null){
 			this.joinChannel(player, container.getName(), "", false);
 		}
@@ -535,7 +534,7 @@ public class ChannelManager {
 		this.leaveChannel(player, "Global", true);
 		this.leaveChannel(player, player.getWorld().getName(), false);
 		
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		if(container != null){
 			this.leaveChannel(player, container.getName(), false);
 		}
@@ -560,7 +559,7 @@ public class ChannelManager {
 	 * @param player
 	 */
 	public void playerChangeRace(String oldRace, Player player){
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		String newRace = container.getName();
 		
 		if(!oldRace.equals(""))

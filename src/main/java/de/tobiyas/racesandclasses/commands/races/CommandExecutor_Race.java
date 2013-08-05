@@ -22,7 +22,6 @@ import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
@@ -68,7 +67,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, RaceManager.getInstance()));
+				player.openInventory(new HolderInventory(player, plugin.getRaceManager()));
 				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
 				return true;
 			}
@@ -89,7 +88,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, RaceManager.getInstance()));
+				player.openInventory(new HolderInventory(player, plugin.getRaceManager()));
 				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
 				return true;
 			}
@@ -107,7 +106,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		//Info to a race
 		if(raceCommand.equalsIgnoreCase("info")){
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
-			String inspectedRace = RaceManager.getInstance().getHolderOfPlayer(player.getName()).getName();
+			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()).getName();
 			if(args.length > 1){
 				inspectedRace = args[1];
 			}
@@ -144,10 +143,10 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void selectRace(Player player, String newRaceName){
-		RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		RaceContainer stdContainer = (RaceContainer) RaceManager.getInstance().getDefaultHolder();
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		RaceContainer stdContainer = (RaceContainer) plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
-			RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderByName(newRaceName);
+			RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(newRaceName);
 			
 			if(raceContainer == null){
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRaceName + ChatColor.RED + " was not found.");
@@ -167,7 +166,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(RaceManager.getInstance().addPlayerToHolder(player.getName(), newRaceName)){
+			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRaceName);
 				if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 					ChannelManager.GetInstance().playerChangeRace("", player);
@@ -180,22 +179,22 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void changeRace(Player player, String newRace){
-		AbstractTraitHolder oldContainer = RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		AbstractTraitHolder stdContainer = RaceManager.getInstance().getDefaultHolder();
+		AbstractTraitHolder oldContainer = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		
-		if(oldContainer != null && oldContainer != RaceManager.getInstance().getDefaultHolder()){
+		if(oldContainer != null && oldContainer != plugin.getRaceManager().getDefaultHolder()){
 			String oldRace = oldContainer.getName();
 			if(newRace.equalsIgnoreCase(oldContainer.getName())){
 				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + oldContainer.getName());
 				return;
 			}
 			
-			if(RaceManager.getInstance().getHolderByName(newRace) != null && RaceManager.getInstance().getHolderByName(newRace) == stdContainer){
+			if(plugin.getRaceManager().getHolderByName(newRace) != null && plugin.getRaceManager().getHolderByName(newRace) == stdContainer){
 				player.sendMessage(ChatColor.RED + "You can't select the default race.");
 				return;
 			}
 			
-			AbstractTraitHolder newContainer = RaceManager.getInstance().getHolderByName(newRace);
+			AbstractTraitHolder newContainer = plugin.getRaceManager().getHolderByName(newRace);
 			if(newContainer == null){
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
 				return;
@@ -209,7 +208,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(RaceManager.getInstance().changePlayerHolder(player.getName(), newRace)){
+			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
 				if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
@@ -223,8 +222,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void raceInfo(Player player, String inspectedRace){
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderByName(inspectedRace);
-		AbstractTraitHolder containerOfPlayer =  RaceManager.getInstance().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(inspectedRace);
+		AbstractTraitHolder containerOfPlayer =  plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		if(container == null){
 			player.sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + inspectedRace + ChatColor.RED + " found.");
 			return;
@@ -254,10 +253,10 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void raceList(Player player){
-		ArrayList<String> races = RaceManager.getInstance().listAllVisibleHolders();
-		AbstractTraitHolder playerRace = RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		if(playerRace == RaceManager.getInstance().getDefaultHolder()){
-			races.add(RaceManager.getInstance().getDefaultHolder().getName());
+		ArrayList<String> races = plugin.getRaceManager().listAllVisibleHolders();
+		AbstractTraitHolder playerRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		if(playerRace == plugin.getRaceManager().getDefaultHolder()){
+			races.add(plugin.getRaceManager().getDefaultHolder().getName());
 		}
 		
 		player.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");

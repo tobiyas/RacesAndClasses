@@ -8,18 +8,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import de.tobiyas.util.config.YAMLConfigExtended;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.ChatFormatter;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ChannelContainer extends Observable{
 
@@ -78,7 +78,7 @@ public class ChannelContainer extends Observable{
 		String channelColor = config.getString(channelPre + ".channelColor", plugin.getConfigManager().getChannelConfig().getConfig_channel_default_color());
 		String stdFormat = config.getString(channelPre + ".channelFormat", plugin.getConfigManager().getChannelConfig().getConfig_channel_default_format());
 		
-		RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderByName(channelName);
+		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(channelName);
 		boolean forceOverride = channelLevel == ChannelLevel.RaceChannel && raceContainer != null;
 		
 		if(forceOverride){
@@ -131,7 +131,7 @@ public class ChannelContainer extends Observable{
 				break;
 			
 			case RaceChannel:
-				RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderByName(channelName);
+				RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(channelName);
 				if(raceContainer == null){
 					stdColor = plugin.getConfigManager().getChannelConfig().getConfig_racechat_default_color();
 					stdFormat = plugin.getConfigManager().getChannelConfig().getConfig_racechat_default_format();
@@ -234,7 +234,7 @@ public class ChannelContainer extends Observable{
 		}
 		
 		if(channelLevel == ChannelLevel.RaceChannel){
-			AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(playerName);
+			AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
 			
 			if(container == null || !container.getName().equalsIgnoreCase(channelName)){
 				player.sendMessage(ChatColor.RED + "You don't belong to this race.");
@@ -355,8 +355,8 @@ public class ChannelContainer extends Observable{
 				
 			case RaceChannel:
 				participants.clear();
-				RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderByName(channelName);
-				List<String> allPlayersOfRace = RaceManager.getInstance().getAllPlayersOfHolder(container);
+				RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(channelName);
+				List<String> allPlayersOfRace = plugin.getRaceManager().getAllPlayersOfHolder(container);
 				for(String playerName : allPlayersOfRace) {
 					Player player = Bukkit.getPlayer(playerName);
 					if(player != null)

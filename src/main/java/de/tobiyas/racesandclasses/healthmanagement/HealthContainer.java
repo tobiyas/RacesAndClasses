@@ -11,14 +11,14 @@ import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class HealthContainer {
+	
+	private static RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	private HealthDisplayRunner display;
 	private ArrowManager arrowManager;
@@ -71,8 +71,8 @@ public class HealthContainer {
 		
 		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
 		
-		RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player);
-		ClassContainer classContainer = (ClassContainer) ClassManager.getInstance().getHolderOfPlayer(player);
+		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
 		
 		double maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
 		if(raceContainer != null)
@@ -88,8 +88,8 @@ public class HealthContainer {
 	}
 
 	public void checkStats() {
-		RaceContainer raceContainer = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(playerName);
-		ClassContainer classContainer = (ClassContainer) ClassManager.getInstance().getHolderOfPlayer(playerName);
+		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerName);
 		
 		if(raceContainer == null) {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();

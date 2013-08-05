@@ -115,6 +115,16 @@ public class RacesAndClasses extends JavaPlugin{
 	 * ALL HAIL THE MIGHTY NOM NOM!
 	 */
 	protected StatisticGatherer statistics;
+	
+	/**
+	 * The RaceManager of the Plugin
+	 */
+	protected RaceManager raceManager;
+	
+	/**
+	 * The Class manager of the plugin
+	 */
+	protected ClassManager classManager;
 
 	
 	//Empty Constructor for Bukkit.
@@ -179,8 +189,8 @@ public class RacesAndClasses extends JavaPlugin{
 		TraitConfigManager traitConfigManager = new TraitConfigManager();
 		
 		TraitEventManager traitEventManager = new TraitEventManager();
-		RaceManager raceManager = new RaceManager();
-		ClassManager classManager = new ClassManager();
+		raceManager = new RaceManager();
+		classManager = new ClassManager();
 		healthManager = new HealthManager();
 		ChannelManager channelManager = new ChannelManager();
 		permManager = new PermissionManager(this);
@@ -278,11 +288,11 @@ public class RacesAndClasses extends JavaPlugin{
 	
 	private void loadingDoneMessage(){
 		String traits = TraitsList.getAllVisibleTraits().size() + " traits";
-		String races = ", " + RaceManager.getInstance().listAllVisibleHolders().size() + " races";
+		String races = ", " + plugin.getRaceManager().listAllVisibleHolders().size() + " races";
 		
 		String classes = "";
 		if(configManager.getGeneralConfig().isConfig_classes_enable()){
-			classes = ", " +ClassManager.getInstance().getAllHolderNames().size() + " classes";
+			classes = ", " + plugin.getClassManager().getAllHolderNames().size() + " classes";
 		}
 		
 		String channels = "";
@@ -392,5 +402,21 @@ public class RacesAndClasses extends JavaPlugin{
 	 */
 	public StatisticGatherer getStatistics(){
 		return statistics;
+	}
+
+
+	/**
+	 * @return the raceManager
+	 */
+	public RaceManager getRaceManager() {
+		return raceManager;
+	}
+
+
+	/**
+	 * @return the classManager
+	 */
+	public ClassManager getClassManager() {
+		return classManager;
 	}
 }

@@ -9,20 +9,13 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ClassManager extends AbstractHolderManager{
 
-	private static ClassManager classManager;
-
 	
 	public ClassManager(){
 		super(Consts.playerDataYML, Consts.classesYML);
-		classManager = this;
 		
 		DefaultContainer.createSTDClasses();
 	}
 	
-	
-	public static ClassManager getInstance(){
-		return classManager;
-	}
 
 	@Override
 	protected AbstractTraitHolder generateTraitHolderAndLoad(

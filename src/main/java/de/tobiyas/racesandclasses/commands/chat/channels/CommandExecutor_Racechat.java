@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 
 
 public class CommandExecutor_Racechat implements CommandExecutor {
@@ -45,8 +44,8 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;		
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		AbstractTraitHolder stdContainer = RaceManager.getInstance().getDefaultHolder();
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
 			player.sendMessage(ChatColor.RED + "You have no race selected.");
 			return true;

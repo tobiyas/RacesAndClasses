@@ -75,6 +75,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	private boolean config_useClassGUIToSelect;
 	private boolean config_useRaceGUIToSelect;
 	
+	private String config_defaultRaceName;
+	private String config_defaultRaceTag;
+	
 	
 	/**
 	 * Inits the Config system.
@@ -119,6 +122,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config.addDefault("races.drops.enable", true);
 		config.addDefault("races.permissions.usePermissionsForEachRace", false);
 		config.addDefault("races.change.uplinkInSeconds", 0);
+		config.addDefault("races.defaultrace.name", "DefaultRace");
+		config.addDefault("races.defaultrace.tag", "[NoRace]");
 
 		config.addDefault("classes.permissions.usePermissionsForEachClasses", false);
 		config.addDefault("classes.useRaceClassSelectionMatrix", false);
@@ -193,8 +198,12 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config_useRaceGUIToSelect = config.getBoolean("races.gui.enable", true);
 		config_useClassGUIToSelect = config.getBoolean("classes.gui.enable", true);
 		
+		config_defaultRaceName = config.getString("races.defaultrace.name", "DefaultRace");
+		config_defaultRaceTag = config.getString("races.defaultrace.tag", "[NoRace]");
+		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
-		//be sure to have lower case to not be casesensitive
+		
+		//be sure to have lower case to not be case sensitive
 		config_worldsDisabled = new LinkedList<String>();
 		for(String tempName : temp_config_worldsDisabled){
 			config_worldsDisabled.add(tempName.toLowerCase());
@@ -318,6 +327,15 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	 */
 	public boolean isConfig_useRaceGUIToSelect() {
 		return config_useRaceGUIToSelect;
+	}
+
+	
+	public String getConfig_defaultRaceName() {
+		return config_defaultRaceName;
+	}
+
+	public String getConfig_defaultRaceTag() {
+		return config_defaultRaceTag;
 	}
 
 }

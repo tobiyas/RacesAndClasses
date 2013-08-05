@@ -23,7 +23,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
@@ -47,11 +46,11 @@ public class Listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event){
 		Player player = event.getPlayer();
-		RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player.getName());
-		if(container == null || container == RaceManager.getInstance().getDefaultHolder()){
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		if(container == null || container == plugin.getRaceManager().getDefaultHolder()){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
 			if(container == null){
-				RaceManager.getInstance().addPlayerToHolder(player.getName(), Consts.defaultRace);
+				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace);
 			}
 		}
 		

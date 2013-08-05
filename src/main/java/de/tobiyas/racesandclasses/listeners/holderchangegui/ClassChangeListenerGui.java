@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
@@ -13,7 +12,7 @@ public class ClassChangeListenerGui extends HolderChangeListenerGui {
 
 	
 	public ClassChangeListenerGui(){
-		super(ClassManager.getInstance());
+		super(plugin.getClassManager());
 	}
 
 	

@@ -13,8 +13,6 @@ public class ClassContainer extends AbstractTraitHolder{
 	private double classHealthModValue;
 	
 	
-	//private static ClassManager manager = ClassManager.getInstance();
-	
 	/**
 	 * Private constructor to only build via static builder
 	 * 
@@ -87,7 +85,7 @@ public class ClassContainer extends AbstractTraitHolder{
 	
 	@Override
 	public boolean containsPlayer(String player){
-		AbstractTraitHolder container = ClassManager.getInstance().getHolderOfPlayer(player);
+		AbstractTraitHolder container = plugin.getClassManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);
 	}

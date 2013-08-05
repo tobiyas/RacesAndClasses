@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 
 
@@ -41,7 +41,8 @@ public class ChatFormatter{
 	
 	public String format(String playerName, String msg, String forceFormat){
 		Player player = Bukkit.getPlayer(playerName);
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(playerName);
+		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
 		
 		String displayName;
 		String realName;

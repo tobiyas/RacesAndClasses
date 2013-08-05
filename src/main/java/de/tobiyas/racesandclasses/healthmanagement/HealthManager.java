@@ -9,7 +9,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -67,7 +66,7 @@ public class HealthManager{
 	}
 	
 	public void addPlayer(String player){
-		RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player);
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		int maxHealth = 1;
 		
 		if(container == null)
@@ -87,7 +86,7 @@ public class HealthManager{
 	public void checkPlayer(String player){
 		HealthContainer hContainer = playerHealth.get(player);
 		if(hContainer == null){
-			RaceContainer container = (RaceContainer) RaceManager.getInstance().getHolderOfPlayer(player);
+			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 			double maxHealth;
 			if(container == null){
 				maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();

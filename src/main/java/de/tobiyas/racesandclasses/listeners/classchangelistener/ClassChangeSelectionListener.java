@@ -12,7 +12,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundException;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -56,7 +55,7 @@ public class ClassChangeSelectionListener implements Listener {
 			
 			String className = event.getClassToSelect().getName();
 			
-			AbstractTraitHolder holder = RaceManager.getInstance().getHolderOfPlayer(playerName);
+			AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(playerName);
 			String raceName = holder.getName();
 			
 			try{

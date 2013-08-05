@@ -8,15 +8,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.items.ItemUtils;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
 public class ArmorToolManager {
 
+	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	private HashSet<AbstractItemPermission> itemPerms;
 	private String playerName;
 	
@@ -28,7 +29,7 @@ public class ArmorToolManager {
 	
 	public void rescanPermission(){
 		itemPerms.clear();
-		AbstractTraitHolder container = RaceManager.getInstance().getHolderOfPlayer(playerName);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
 		
 		for(ItemQuality quality : container.getArmorPerms()){
 			addPerm(quality);
@@ -36,7 +37,7 @@ public class ArmorToolManager {
 			
 		//Add ItemIDs or other here.
 		
-		AbstractTraitHolder classContainer = ClassManager.getInstance().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(playerName);
 		if(classContainer != null){
 			for(ItemQuality quality : classContainer.getArmorPerms()){
 				addPerm(quality);
