@@ -13,9 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.eventprocessing.EntityDeathManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
@@ -50,7 +48,7 @@ public class DeathCheckerTrait implements Trait {
 		plugin = RacesAndClasses.getPlugin();
 		dropMap = new HashMap<EntityType, DropContainer>();
 		
-		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
+		TraitConfig config = plugin.getConfigManager().getTraitConfigManager().getConfigOfTrait(getName());
 		if(config == null){
 			initListsDefault();
 		}
@@ -97,10 +95,6 @@ public class DeathCheckerTrait implements Trait {
 		
 		LivingEntity entity = Eevent.getEntity();
 		if(entity == null || entity instanceof Player) return false;
-		
-		boolean willDrop = EntityDeathManager.getManager().willDrop(entity);
-		if(!willDrop) return false;
-		
 		
 		int exp = Eevent.getDroppedExp();
 		List<ItemStack> items = Eevent.getDrops();

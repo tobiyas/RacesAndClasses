@@ -12,8 +12,8 @@ public class AbstractTraitHolderTest {
 	
 	@Before
 	public void init(){
-		GenerateRaces.generateRaces();
 		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
 	}
 	
 	

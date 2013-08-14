@@ -51,12 +51,17 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * A set of Traits that the holder contains
 	 */
-	protected HashSet<Trait> traits;
+	protected Set<Trait> traits;
 	
 	/**
 	 * The permission container holding all Permissions for the holder
 	 */
 	protected final HolderPermissions holderPermissions;
+	
+	/**
+	 * The magic bonus to the mana pool.
+	 */
+	protected double manaBonus;
 	
 	
 	/**
@@ -77,6 +82,7 @@ public abstract class AbstractTraitHolder {
 		this.parsingExceptionsHappened = new LinkedList<HolderTraitParseException>();
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
+		this.manaBonus = 0;
 	}
 	
 	/**
@@ -322,5 +328,12 @@ public abstract class AbstractTraitHolder {
 	 */
 	public List<HolderTraitParseException> getParsingExceptionsHappened() {
 		return parsingExceptionsHappened;
+	}
+
+	/**
+	 * @return the manaBonus
+	 */
+	public double getManaBonus() {
+		return manaBonus;
 	}
 }

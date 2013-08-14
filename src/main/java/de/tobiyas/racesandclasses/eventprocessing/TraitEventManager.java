@@ -5,10 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
@@ -27,9 +25,6 @@ public class TraitEventManager{
 	private HashMap<Class<?>, HashSet<Trait>> traitList;
 	private HashMap<Integer, Long> eventIDs;
 	
-	private EntityDeathManager entityDeathManager;
-	private ImunTicker imunTicker;
-	
 	private List<String> registeredEventsAsName = new LinkedList<String>();
 
 
@@ -43,17 +38,12 @@ public class TraitEventManager{
 		traitList = new HashMap<Class<?>, HashSet<Trait>>();
 		eventIDs = new HashMap<Integer, Long>();
 		new DoubleEventRemover(this);
-		entityDeathManager = new EntityDeathManager();
-		imunTicker = new ImunTicker();
 	}
 	
 	/**
 	 * Inits the system by registering all needed stuff
 	 */
 	public void init(){
-		entityDeathManager.init();
-		imunTicker.init();
-		
 		createStaticTraits();
 	}
 	
@@ -61,9 +51,9 @@ public class TraitEventManager{
 	 * Creates all Traits that are present for ALL players.
 	 */
 	private void createStaticTraits(){
-		TraitStore.buildStaticTraitByName("DeathCheckerTrait");
-		TraitStore.buildStaticTraitByName("STDAxeDamageTrait");
-		TraitStore.buildStaticTraitByName("ArmorTrait");
+		TraitStore.buildTraitWithoutHolderByName("DeathCheckerTrait");
+		TraitStore.buildTraitWithoutHolderByName("STDAxeDamageTrait");
+		TraitStore.buildTraitWithoutHolderByName("ArmorTrait");
 	}
 	
 	/**
@@ -85,13 +75,15 @@ public class TraitEventManager{
 		
 		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
 		for(Class<?> clazz : traitList.keySet()){
-			if(clazz.isAssignableFrom(event.getClass()))
+			if(clazz.isAssignableFrom(event.getClass())){
 				traitsToCheck.addAll(traitList.get(clazz));
+			}
 		}
+		
 		
 		for(Trait trait: traitsToCheck){
 			try{
-				plugin.getStatistics().traitTriggered(trait);
+				plugin.getStatistics().traitTriggered(trait); //Statistic gathering
 				if(trait.modify(event)){
 					changedSomething = true;
 				}
@@ -146,23 +138,6 @@ public class TraitEventManager{
 		
 	}
 	
-	@SuppressWarnings(value = "unused")
-	private void checkDropReset(LivingEntity entity, DamageCause cause, boolean fromPlayer){
-		boolean reset = false;
-		if(cause == DamageCause.POISON)
-			reset = true;
-		
-		if(cause == DamageCause.ENTITY_ATTACK && fromPlayer)
-			reset = true;
-		
-		if(cause == DamageCause.FIRE_TICK)
-			reset = true;
-		
-		
-		if(reset){
-			EntityDeathManager.getManager().resetEntityHit(entity);
-		}
-	}
 	
 	private void registerTraitIntern(Trait trait, HashSet<Class<? extends Event>> events, int priority){
 		//TODO register priority
@@ -226,9 +201,6 @@ public class TraitEventManager{
 		return tempCalls;
 	}
 	
-	public static ImunTicker getImunTicker(){
-		return getInstance().imunTicker;
-	}
 	
 	public static void registerTrait(Trait trait, HashSet<Class<? extends Event>> events, int priority){
 		getInstance().registerTraitIntern(trait, events, priority);

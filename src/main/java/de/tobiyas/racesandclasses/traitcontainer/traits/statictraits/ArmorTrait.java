@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
@@ -18,7 +18,9 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 
 public class ArmorTrait implements Trait {
 
-	private AbstractTraitHolder traitHolder;
+	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
+	protected AbstractTraitHolder traitHolder;
 
 	@TraitEventsUsed(registerdClasses = {PlayerEquipsArmorEvent.class})
 	@Override
@@ -62,7 +64,7 @@ public class ArmorTrait implements Trait {
 		ItemStack armorItem = playerEquipEvent.getArmorItem();
 		if(armorItem == null) return false;
 		
-		if(!HealthManager.getHealthManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(armorItem)){ 
+		if(!plugin.getHealthManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(armorItem)){ 
 			player.sendMessage(ChatColor.RED + "You are not allowed to use " 
 					+ ChatColor.LIGHT_PURPLE + getMaterialName(armorItem.getType()) + ChatColor.RED + ".");
 			playerEquipEvent.setCancelled(true);

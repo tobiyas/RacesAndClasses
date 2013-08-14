@@ -16,7 +16,6 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderI
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -40,7 +39,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			plugin.log("ERROR: Could not register command /class.");
 		}
 		
-		TutorialManager.registerObserver(this);
+		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 
@@ -51,15 +50,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return true;
 		}
 		
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("Only Players can use this command");
-			return true;
-		}
-		
-		Player player = (Player) sender;
-		
 		if(args.length == 0){
-			postHelp(player);
+			postHelp(sender);
 			return true;
 		}
 		
@@ -70,41 +62,76 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			AbstractTraitHolder classHolder = null;
 			
 			if(args.length < 2){
-				classHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
+				classHolder = plugin.getClassManager().getHolderOfPlayer(sender.getName());
 				if(classHolder == null){
-					player.sendMessage(ChatColor.RED + "You have no class selected. Use " + ChatColor.LIGHT_PURPLE + "/class info <class name>" 
+					sender.sendMessage(ChatColor.RED + "You have no class selected. Use " + ChatColor.LIGHT_PURPLE + "/class info <class name>" 
 							+ ChatColor.RED + "  to inspect a class.");
 					return true;
-				}				
+				}
 			}else{
 				String className = args[1];
 				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
-					player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className 
+					sender.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className 
 							+ ChatColor.RED + " does not exist.");
 				}
 			}	
 			
-			info(player, classHolder);
+			info(sender, classHolder);
 			return true;
 		}
 		
 		
 		//listing of all classes
 		if(potentialCommand.equalsIgnoreCase("list")){
-			list(player);
-			this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.infoClass));
-			this.setChanged();
+			list(sender);
+			
+			if(sender instanceof Player){
+				this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.infoClass));
+				this.setChanged();
+			}
 			return true;
 		}
 		
 		
 		//Select class(only if has no class)
 		if(potentialCommand.equalsIgnoreCase("select")){
+			if(!checkPlayer(sender)) return true;
+			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.selectClass)) return true;
+
+			Player player = (Player) sender;
+			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, plugin.getClassManager()));
+				
+				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
+				if(currentClass != plugin.getClassManager().getDefaultHolder()){
+					player.sendMessage(ChatColor.RED + "You already have a class: " + ChatColor.AQUA + currentClass.getName()
+							+ ChatColor.RED + ". Use " + ChatColor.LIGHT_PURPLE + "/class change" + ChatColor.RED + " to change your class.");
+					return true;
+				}
+				
+				ClassSelectEvent ccEvent = new ClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
+				plugin.getServer().getPluginManager().callEvent(ccEvent);
+				
+				if(ccEvent.isCancelled()){
+					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					return true;
+				}
+				
+				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
+				if(holderInventory.getNumberOfHolder() <= 0){
+					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+					return true;
+				}
+				
+				player.openInventory(holderInventory);
 				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+				return true;
+			}
+			
+			if(args.length == 1 ){
+				postHelp(sender);
 				return true;
 			}
 			
@@ -119,14 +146,41 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 		//Change races (only if has already a class)
 		if(potentialCommand.equalsIgnoreCase("change")){
+			if(!checkPlayer(sender)) return true;
+			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.changeClass)) return true;
+
+			Player player = (Player) sender;
+			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, plugin.getClassManager()));
+				
+				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
+				if(currentClass == plugin.getClassManager().getDefaultHolder()){
+					player.sendMessage(ChatColor.RED + "You don't have any class. Use " + ChatColor.LIGHT_PURPLE + "/class select" 
+							+ ChatColor.RED + " to select a class.");
+					return true;
+				}
+				
+				ClassSelectEvent ccEvent = new ClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
+				plugin.getServer().getPluginManager().callEvent(ccEvent);
+				
+				if(ccEvent.isCancelled()){
+					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					return true;
+				}
+				
+				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
+				if(holderInventory.getNumberOfHolder() <= 0){
+					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+					return true;
+				}
+				
+				player.openInventory(holderInventory);
 				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
 				return true;
 			}
 			
-			if(args.length != 2){
+			if(args.length == 1){
 				postHelp(player);
 				return true;
 			}
@@ -137,11 +191,22 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return true;
 		}
 			
-		postHelp(player);
+		postHelp(sender);
 		return true;
 	}
 	
-	private void postHelp(Player player){
+	
+	private boolean checkPlayer(CommandSender sender) {
+		if(sender instanceof Player){
+			return true;
+		}
+		
+		sender.sendMessage(ChatColor.RED + "[RAC] Only players can use this command." );
+		return false;
+	}
+	
+	
+	private void postHelp(CommandSender player){
 		player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
@@ -152,7 +217,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<classname>");
 	}
 	
-	private void info(Player player, AbstractTraitHolder holder){
+	private void info(CommandSender player, AbstractTraitHolder holder){
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "ClassInfo" + ChatColor.YELLOW + " =====");
 		
 		if(holder == null){
@@ -169,7 +234,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		}
 	}
 	
-	private void list(Player player){
+	private void list(CommandSender player){
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "Classes" + ChatColor.YELLOW + " =====");
 		
 		List<String> classes = plugin.getClassManager().getAllHolderNames();
@@ -178,14 +243,20 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return;
 		}
 		
-		for(String classe : classes )
-			player.sendMessage(ChatColor.BLUE + classe);
+		AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(player.getName());
+		String nameOfOwnClass = holder != null ? holder.getName() : "";
+		
+		for(String classe : classes ){
+			if(classe.equalsIgnoreCase(nameOfOwnClass)){
+				player.sendMessage(ChatColor.RED + classe + ChatColor.YELLOW + "  <-- Your Class!");
+			}else{
+				player.sendMessage(ChatColor.BLUE + classe);
+			}
+		}
 	}
 	
 	private boolean select(Player player, String potentialClass){
 		potentialClass = potentialClass.toLowerCase();
-		
-		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectClass)) return false;
 		
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		boolean classExists = classContainer != null;
@@ -202,7 +273,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		}
 		
 		
-		if(classContainer == null){	
+		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
+		if(currentHolder == null){	
 			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
 				return true;
@@ -244,10 +316,11 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				return;
 			}
 			
-			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass))
+			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
-			else
+			}else{
 				player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");
+			}
 		}
 		
 	}

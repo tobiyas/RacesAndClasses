@@ -12,6 +12,7 @@
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -22,10 +23,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 	private boolean config_racechat_encrypt;
 	
-	private int config_imunBetweenDamage;
 	private int config_defaultHealth;
 
-	private int config_globalUplinkTickPresition;
 	
 	private boolean config_adaptListName;
 	
@@ -34,7 +33,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	
 	private boolean config_enableDebugOutputs;
 	private boolean config_enableErrorUpload;
-	private boolean config_enableDebugWriteThrough;
 	
 	private boolean config_classes_enable;
 
@@ -50,7 +48,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	
 	private boolean config_tutorials_enable;
 	
-	private boolean config_useInternImunSystem;
 	
 	private boolean config_usePermissionsForRaces;
 	private boolean config_usePermissionsForClasses;
@@ -78,6 +75,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	private String config_defaultRaceName;
 	private String config_defaultRaceTag;
 	
+	private int config_itemForMagic;
+	
 	
 	/**
 	 * Inits the Config system.
@@ -101,15 +100,10 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config.addDefault("chat.channel.enable", true);
 		
 		config.addDefault("health.defaultHealth", 20);
-		config.addDefault("health.useInternImunsystem", true);
-		config.addDefault("health.imunBetweenDamage", 500);
 		config.addDefault("health.bar.inChat.enable", true);
 		
 		config.addDefault("debug.outputs.enable", true);
 		config.addDefault("debug.outputs.errorUpload", true);
-		config.addDefault("debug.outputs.writethrough", false);
-		
-		config.addDefault("uplink.globalTickPresition", 10);
 		
 		config.addDefault("classes.enable", true);
 		
@@ -140,6 +134,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config.addDefault("races.gui.enable", true);
 		config.addDefault("classes.gui.enable", true);
 		
+		config.addDefault("magic.wandId", Material.STICK.getId());
+		
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -160,14 +156,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config_whisper_enable = config.getBoolean("chat.channelwhisper.enable", true);
 		
 		config_defaultHealth = config.getInt("health.defaultHealth", 20);
-		config_useInternImunSystem = config.getBoolean("health.useInternImunsystem", true);
-		config_imunBetweenDamage = config.getInt("health.imunBetweenDamage", 1000);
 		
 		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", true);
 		config_enableErrorUpload = config.getBoolean("debug.outputs.errorUpload", true);
-		config_enableDebugWriteThrough = config.getBoolean("debug.outputs.writethrough", false);
-		
-		config_globalUplinkTickPresition = config.getInt("uplink.globalTickPresition", 10);
 		
 		config_classes_enable = config.getBoolean("classes.enable", true);
 		config_metrics_enabled = config.getBoolean("metrics.enable", true);
@@ -185,7 +176,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config_enable_healthbar_in_chat = config.getBoolean("health.bar.inChat.enable", true);
 		
 		config_usePermissionsForRaces = config.getBoolean("races.permissions.usePermissionsForEachRace", false);
-		config_usePermissionsForClasses = config.getBoolean("classes.permissions.usePermissionsForEachClass", false);
+		config_usePermissionsForClasses = config.getBoolean("classes.permissions.usePermissionsForEachClasses", false);
 		
 		config_copyDefaultTraitsOnStartup = config.getBoolean("general.copyDefaultTraitsOnStartup", true);
 		
@@ -201,6 +192,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		config_defaultRaceName = config.getString("races.defaultrace.name", "DefaultRace");
 		config_defaultRaceTag = config.getString("races.defaultrace.tag", "[NoRace]");
 		
+		config_itemForMagic = config.getInt("magic.wandId", Material.STICK.getId());
+		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
 		
 		//be sure to have lower case to not be case sensitive
@@ -208,23 +201,15 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		for(String tempName : temp_config_worldsDisabled){
 			config_worldsDisabled.add(tempName.toLowerCase());
 		}
-		
 	}
+	
 
 	public boolean isConfig_racechat_encrypt() {
 		return config_racechat_encrypt;
 	}
 
-	public int getConfig_imunBetweenDamage() {
-		return config_imunBetweenDamage;
-	}
-
 	public int getConfig_defaultHealth() {
 		return config_defaultHealth;
-	}
-
-	public int getConfig_globalUplinkTickPresition() {
-		return config_globalUplinkTickPresition;
 	}
 
 	public boolean isConfig_adaptListName() {
@@ -241,10 +226,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 	public boolean isConfig_enableErrorUpload() {
 		return config_enableErrorUpload;
-	}
-
-	public boolean isConfig_enableDebugWriteThrough() {
-		return config_enableDebugWriteThrough;
 	}
 
 	public boolean isConfig_classes_enable() {
@@ -277,10 +258,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 	public boolean isConfig_tutorials_enable() {
 		return config_tutorials_enable;
-	}
-
-	public boolean isConfig_useInternImunSystem() {
-		return config_useInternImunSystem;
 	}
 
 	public boolean isConfig_usePermissionsForRaces() {
@@ -336,6 +313,13 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 	public String getConfig_defaultRaceTag() {
 		return config_defaultRaceTag;
+	}
+
+	/**
+	 * @return the config_itemForMagic
+	 */
+	public int getConfig_itemForMagic() {
+		return config_itemForMagic;
 	}
 
 }

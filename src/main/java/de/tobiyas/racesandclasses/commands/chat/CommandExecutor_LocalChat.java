@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 
 public class CommandExecutor_LocalChat implements CommandExecutor{
 
@@ -37,10 +36,11 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 		}
 		
 		String message = "";
-		for(String arg : args)
+		for(String arg : args){
 			message += arg + " ";
+		}
 		
-		ChannelManager.GetInstance().broadcastMessageToChannel("Local", player, message);
+		plugin.getChannelManager().broadcastMessageToChannel("Local", player, message);
 		return true;
 	}
 

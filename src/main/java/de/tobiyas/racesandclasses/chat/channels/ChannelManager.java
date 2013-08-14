@@ -4,15 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelContainer;
+import de.tobiyas.racesandclasses.chat.channels.container.ChannelInvalidException;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelTicker;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
@@ -20,11 +23,6 @@ import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ChannelManager {
-	
-	/**
-	 * singleton instance
-	 */
-	protected static ChannelManager instance;
 	
 	/**
 	 * plugin main
@@ -46,7 +44,6 @@ public class ChannelManager {
 	 */
 	public ChannelManager(){
 		plugin = RacesAndClasses.getPlugin();
-		instance = this;
 		channels = new HashMap<String, ChannelContainer>();
 		config = new YAMLConfigExtended(Consts.channelsYML);
 	}
@@ -92,8 +89,13 @@ public class ChannelManager {
 			return null;
 		}
 		
-		channels.put(channelName, new ChannelContainer(channelName, level));
-		return container;
+		try{
+			channels.put(channelName, new ChannelContainer(channelName, level));
+			return container;
+		}catch(ChannelInvalidException exp){
+			//tried to do a RaceChannel that did not work...
+			return null;
+		}
 	}
 	
 	/**
@@ -176,12 +178,18 @@ public class ChannelManager {
 	private void loadChannelsFromFile(){
 		createStructure();
 		config.load();
-		for(ChannelLevel level : ChannelLevel.values())
+		for(ChannelLevel level : ChannelLevel.values()){
 			for(String channelName : config.getChildren("channel." + level.name())){
-				ChannelContainer container = ChannelContainer.constructFromYml(config, channelName, level);
-				if(container != null)
-					channels.put(channelName, container);
+				try{
+					ChannelContainer container = ChannelContainer.constructFromYml(config, channelName, level);
+					if(container != null){
+						channels.put(channelName, container);
+					}
+				}catch(ChannelInvalidException exp){
+					continue;
+				}
 			}
+		}
 	}
 	
 	/**
@@ -200,22 +208,22 @@ public class ChannelManager {
 	 * This can be sent from an Player or from the Console (player = null)
 	 * 
 	 * @param channel
-	 * @param player
+	 * @param sender
 	 * @param message
 	 * 
 	 * @return true if worked, false if channel not found
 	 */
-	public boolean broadcastMessageToChannel(String channel, Player player,
+	public boolean broadcastMessageToChannel(String channel, CommandSender sender,
 			String message) {
 		
 		ChannelContainer container = getContainer(channel);
 		if(container == null){
-			if(player != null)
-				player.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
+			if(sender != null)
+				sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
 			return false;
 		}
 		
-		container.sendMessageInChannel(player, message, "");
+		container.sendMessageInChannel(sender, message, "");
 		return true;		
 	}
 	
@@ -224,7 +232,7 @@ public class ChannelManager {
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> listAllChannels(){
+	public List<String> listAllChannels(){
 		ArrayList<String> channelList = new ArrayList<String>();
 		for(String channel : channels.keySet())
 			channelList.add(channel);
@@ -236,7 +244,7 @@ public class ChannelManager {
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> listAllPublicChannels() {
+	public List<String> listAllPublicChannels() {
 		ArrayList<String> channelList = new ArrayList<String>();
 		for(String channel : channels.keySet()){
 			ChannelContainer container = getContainer(channel);
@@ -252,17 +260,17 @@ public class ChannelManager {
 	/**
 	 * Posts the channel info to a player.
 	 * 
-	 * @param player
+	 * @param sender
 	 * @param channel
 	 */
-	public void postChannelInfo(Player player, String channel) {
+	public void postChannelInfo(CommandSender sender, String channel) {
 		ChannelContainer container = getContainer(channel);
 		if(container == null){
-			player.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " could not be found.");
+			sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " could not be found.");
 			return;
 		}
 		
-		container.postInfo(player);
+		container.postInfo(sender);
 	}
 	
 	/**
@@ -552,19 +560,37 @@ public class ChannelManager {
 		joinChannel(player, newWorld.getName(), "", true);
 	}
 	
+	
 	/**
 	 * Changes the race channel if a player changes his race
 	 * 
 	 * @param oldRace
 	 * @param player
 	 */
-	public void playerChangeRace(String oldRace, Player player){
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
-		String newRace = container.getName();
+	public void playerLeaveRace(String oldRace, Player player){
+		if(player == null) return;
 		
-		if(!oldRace.equals(""))
-			leaveChannel(player, oldRace, true);
-		joinChannel(player, newRace, "", true);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(oldRace);
+		if(container == null) return;
+		
+		String raceToLeave = container.getName();		
+		leaveChannel(player, raceToLeave, true);
+	}
+	
+	/**
+	 * Changes the race channel if a player changes his race
+	 * 
+	 * @param oldRace
+	 * @param player
+	 */
+	public void playerJoinRace(String newRace, Player player){
+		if(player == null) return;
+		
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(newRace);
+		if(container == null) return;
+		
+		String raceToLeave = container.getName();		
+		joinChannel(player, raceToLeave, "", true);
 	}
 
 	/**
@@ -587,12 +613,4 @@ public class ChannelManager {
 		container.editChannel(player, property, newValue);
 	}
 	
-	/**
-	 * Retrieves the Singleton instance of the ChannelManager
-	 * @return
-	 */
-	public static ChannelManager GetInstance(){
-		return instance;
-	}
-
 }

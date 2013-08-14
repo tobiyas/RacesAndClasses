@@ -14,7 +14,7 @@ import de.tobiyas.racesandclasses.APIs.CooldownApi;
  * 
  * @author tobiyas
  */
-public interface TraitWithUplink extends Trait{
+public interface TraitWithUplink {
 	
 	
 	/**

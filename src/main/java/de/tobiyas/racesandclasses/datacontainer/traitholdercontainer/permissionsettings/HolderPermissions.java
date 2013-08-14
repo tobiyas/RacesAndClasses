@@ -40,4 +40,5 @@ public class HolderPermissions {
 	public void clear(){
 		this.permissionList.clear();
 	}
+
 }

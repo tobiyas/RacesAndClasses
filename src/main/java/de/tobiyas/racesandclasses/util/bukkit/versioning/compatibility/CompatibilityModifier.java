@@ -267,6 +267,49 @@ public class CompatibilityModifier {
 		}
 	}
 	
+	public static class EntityRegainHealth{
+		
+		
+		/**
+		 * Sets the Amount to the corresponding value
+		 * 
+		 * @param event
+		 * @param amount
+		 */
+		public static void safeSetAmount(EntityRegainHealthEvent event, double amount){
+			if(CertainVersionChecker.isAbove1_6()){
+				event.setAmount(amount);
+			}else{
+				try{
+					Method method = EntityRegainHealthEvent.class.getMethod("setAmount", int.class);
+					
+					int intAmount = (int) amount;
+					method.invoke(event, intAmount);
+				}catch(Exception exp){}
+			}
+		}
+		
+		
+		/**
+		 * Gets the amount safely of an {@link EntityRegainHealthEvent}
+		 * 
+		 * @param event
+		 * @return
+		 */
+		public static double safeGetAmount(EntityRegainHealthEvent event){
+			if(CertainVersionChecker.isAbove1_6()){
+				return event.getAmount();
+			}else{
+				try{
+					Method method = EntityRegainHealthEvent.class.getMethod("getAmount");					
+					return (Double) method.invoke(event);
+				}catch(Exception exp){
+					return 0;
+				}
+			}
+		}
+	}
+	
 	
 	public static class LivingEntity{
 		

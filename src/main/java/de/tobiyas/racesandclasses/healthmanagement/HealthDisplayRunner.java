@@ -7,6 +7,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
 import de.tobiyas.racesandclasses.healthmanagement.display.ChatHealthBar;
 import de.tobiyas.racesandclasses.healthmanagement.display.HealthDisplay;
+import de.tobiyas.racesandclasses.healthmanagement.display.HealthDisplay.DisplayType;
+import de.tobiyas.racesandclasses.healthmanagement.display.ScoreBoardHealthBar;
 
 public class HealthDisplayRunner implements Runnable {
 	
@@ -19,6 +21,12 @@ public class HealthDisplayRunner implements Runnable {
 	
 	private int scedulerTask;
 	
+	/**
+	 * Inits the HealthDisplaytRunner that shows the Health.
+	 * 
+	 * @param config to load options from
+	 * @param healthContainer to contact with.
+	 */
 	public HealthDisplayRunner(MemberConfig config, HealthContainer healthContainer){
 		if(config == null) return;
 		this.config = config;
@@ -28,7 +36,32 @@ public class HealthDisplayRunner implements Runnable {
 		oldInterval = config.getLifeDisplayInterval();
 		scedulerTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, oldInterval, oldInterval);
 		
-		display = new ChatHealthBar(config.getName()); //TODO Use different
+		Object healthDisplayTypeAsObject = config.getValueDisplayName("healthDisplayType");
+		String healthDisplayType = "score";
+		if(healthDisplayTypeAsObject != null && healthDisplayTypeAsObject instanceof String){
+			healthDisplayType = (String) healthDisplayTypeAsObject;
+		}
+		
+		DisplayType type = DisplayType.resolve(healthDisplayType);
+		
+		display = generateFromType(type, config.getName());
+	}
+	
+	
+	private HealthDisplay generateFromType(DisplayType type, String name){
+		switch (type) {
+		case Chat:
+			return new ChatHealthBar(name);
+		
+		case Scoreboard:
+			return new ScoreBoardHealthBar(name);
+
+		//case Spout: //TODO maybe add.
+			//return new SpoutHealthBar(name);
+			
+		default:
+			return new ChatHealthBar(name);
+		}
 	}
 
 	@Override

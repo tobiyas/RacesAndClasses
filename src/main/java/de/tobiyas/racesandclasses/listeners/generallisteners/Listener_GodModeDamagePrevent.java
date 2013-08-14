@@ -10,7 +10,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 
 public class Listener_GodModeDamagePrevent implements Listener{
 
@@ -29,7 +28,7 @@ public class Listener_GodModeDamagePrevent implements Listener{
 		
 		//safe cast because of check before
 		Player player = (Player) event.getEntity();
-		if(HealthManager.getHealthManager().isGod(player.getName())){
+		if(plugin.getHealthManager().isGod(player.getName())){
 			event.setCancelled(true);
 		}
 	}
@@ -42,7 +41,7 @@ public class Listener_GodModeDamagePrevent implements Listener{
 		
 		//safe cast because of check before
 		Player player = (Player) event.getEntity();
-		if(HealthManager.getHealthManager().isGod(player.getName())){
+		if(plugin.getHealthManager().isGod(player.getName())){
 			player.sendMessage(ChatColor.GREEN + "Sorry, even " + ChatColor.GOLD + "GOD"
 				+ ChatColor.GREEN + " could not prevent your death.  " + ChatColor.BLUE + ":(");
 		}

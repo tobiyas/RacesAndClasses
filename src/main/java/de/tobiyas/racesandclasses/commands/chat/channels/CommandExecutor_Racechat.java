@@ -15,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 
@@ -34,12 +33,17 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("Only players can use this command.");
+			sender.sendMessage(ChatColor.RED + "Only players can use this command.");
 			return true;
 		}
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			sender.sendMessage(ChatColor.RED + "RaceChat is not active.");
+			return true;
+		}
+		
+		if(args.length == 0){
+			sender.sendMessage(ChatColor.RED + "You tried to send an empty Message.");
 			return true;
 		}
 		
@@ -56,7 +60,7 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 			message += snippet + " ";
 		}
 
-		ChannelManager.GetInstance().broadcastMessageToChannel(container.getName(), player, message);
+		plugin.getChannelManager().broadcastMessageToChannel(container.getName(), player, message);
 		return true;
 	}
 }

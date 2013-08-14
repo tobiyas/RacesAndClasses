@@ -22,8 +22,8 @@ public class PostPageTest {
 	
 	@Before
 	public void before(){
-		GenerateRaces.generateRaces();
 		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
 		
 		GenerateBukkitServer.generatePlayerOnServer(name);
 	}

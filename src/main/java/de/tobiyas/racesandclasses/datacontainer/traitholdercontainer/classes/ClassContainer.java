@@ -6,10 +6,12 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
+import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ClassContainer extends AbstractTraitHolder{
 	
-	private String classHealthModify;
+	protected String classHealthModify;
 	private double classHealthModValue;
 	
 	
@@ -25,6 +27,16 @@ public class ClassContainer extends AbstractTraitHolder{
 	}
 	
 	
+	/**
+	 * Creates a ClassContainer for Sub-classed classes
+	 * 
+	 * @param name to create
+	 */
+	protected ClassContainer(String name){
+		super(new YAMLConfigExtended(Consts.classesYML) ,name);
+	}
+	
+	
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
@@ -32,8 +44,9 @@ public class ClassContainer extends AbstractTraitHolder{
 				throw new Exception();
 			}
 			
-			holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag"));
-			classHealthModValue = evaluateValue(config.getString(holderName + ".config.health", "+0"));
+			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
+			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag"));
+			this.classHealthModValue = evaluateValue(config.getString(holderName + ".config.health", "+0"));
 			
 			readArmor();
 		}catch(Exception exp){
@@ -41,7 +54,7 @@ public class ClassContainer extends AbstractTraitHolder{
 		}
 	}
 	
-	protected int evaluateValue(String val){
+	protected double evaluateValue(String val){
 		char firstChar = val.charAt(0);
 		
 		classHealthModify = "";
@@ -60,7 +73,7 @@ public class ClassContainer extends AbstractTraitHolder{
 		else
 			val = val.substring(1, val.length());
 
-		return Integer.valueOf(val);
+		return Double.valueOf(val);
 	}
 	
 	

@@ -3,19 +3,16 @@ package de.tobiyas.racesandclasses.configuration.traits;
 import java.io.File;
 import java.util.HashMap;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class TraitConfigManager {
 
 	private HashMap<String, TraitConfig> configs;
 	
-	private static TraitConfigManager traitConfigManager;
 	
 	public TraitConfigManager(){
-		traitConfigManager = this;
-		RacesAndClasses.getPlugin();
 		configs = new HashMap<String, TraitConfig>();
+		
 		checkDirs();
 	}
 	
@@ -26,7 +23,9 @@ public class TraitConfigManager {
 		DefaultTraitConfig.createDefaultTraitConfig();
 	}
 	
-	public void init(){
+	
+	public void reload(){
+		configs.clear();
 		File configDir = new File(Consts.traitConfigDir);
 		
 		for(File file : configDir.listFiles()){
@@ -39,14 +38,10 @@ public class TraitConfigManager {
 		}
 	}
 	
+	
 	public TraitConfig getConfigOfTrait(String traitName){
 		TraitConfig config = configs.get(traitName);
 		return config;
 	}
-	
-	public static TraitConfigManager getInstance(){
-		return traitConfigManager;
-	}
-	
 	
 }

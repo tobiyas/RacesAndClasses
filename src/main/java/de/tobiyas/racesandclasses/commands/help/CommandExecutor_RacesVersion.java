@@ -27,30 +27,44 @@ public class CommandExecutor_RacesVersion implements CommandExecutor{
 		
 		sender.sendMessage(ChatColor.YELLOW + "The Current Version of Races: " + ChatColor.RED + plugin.getDescription().getVersion());
 		
-		if(Consts.currentDevStage.contains("A"))
+		if(Consts.currentDevStage.contains("A")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.RED + "ALPHA" + ChatColor.YELLOW + 
 								" stage. Not all Featurs are yet implemented.");
+			return true;
+		}
 		
-		if(Consts.currentDevStage.contains("B"))
+			
+		if(Consts.currentDevStage.contains("B")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.DARK_PURPLE + "BETA" + ChatColor.YELLOW + 
 								" stage. Main Featurs are all running. Bugs are possible");
-		
-		if(Consts.currentDevStage.contains("R"))
+			return true;
+		}
+			
+		if(Consts.currentDevStage.contains("R")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.GREEN + "RELEASE" + ChatColor.YELLOW + 
 								" stage. All Features should work without Errors.");
+			return true;
+		}
 		
-		if(Consts.currentDevStage.contains("D"))
+			
+		if(Consts.currentDevStage.contains("D")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.AQUA + "DEVELOPEMENT" + 
 								ChatColor.YELLOW + " stage. Some Features are not completed and will be completed soon.");
-		
-		if(Consts.currentDevStage.contains("E"))
+			return true;
+		}
+			
+		if(Consts.currentDevStage.contains("E")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.LIGHT_PURPLE + "EXPERIMENTAL" + ChatColor.YELLOW + 
 								" stage. Changes can be rejected and will not be stable.");
-		
-		if(Consts.currentDevStage.contains("S"))
+			return true;
+		}
+			
+		if(Consts.currentDevStage.contains("S")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.GREEN + "STABLE" + ChatColor.YELLOW + 
 								" stage. All Features should work without Errors.");
-		
+			return true;
+		}
+			
 		return true;
 	}
 

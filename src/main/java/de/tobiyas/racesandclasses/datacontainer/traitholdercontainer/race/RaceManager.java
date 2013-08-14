@@ -7,8 +7,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHol
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder.RaceReminder;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -27,7 +27,7 @@ public class RaceManager extends AbstractHolderManager {
 		checkForPossiblyWrongInitialized();
 		new RaceReminder();
 
-		TutorialManager.registerObserver(this);
+		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 
@@ -86,12 +86,37 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean addPlayerToHolder(String player, String newHolderName){
+	public boolean changePlayerHolder(String player, String newHolderName){
+		if(getHolderByName(newHolderName) == null) return false;
+		
+		String oldRace = getHolderOfPlayer(player).getName();
+		
+		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
+		
+		memberList.remove(player);
+		
+		memberConfig.load();
+		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
+		memberConfig.save();
+		
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
+			plugin.getChannelManager().playerLeaveRace(oldRace, Bukkit.getPlayer(player));
+		}
+		
+		return addPlayerToHolder(player, newHolderName);
+	}
+	
+	@Override
+	public boolean addPlayerToHolder(String player, String newHolderName){		
 		boolean worked = super.addPlayerToHolder(player, newHolderName);
 		if(worked){
 			AbstractTraitHolder holder = getHolderOfPlayer(player);
 			if(holder instanceof RaceContainer){
 				((RaceContainer)holder).editTABListEntry(player);
+			}
+			
+			if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
+				plugin.getChannelManager().playerJoinRace(holder.getName(), Bukkit.getPlayer(player));
 			}
 		}
 		

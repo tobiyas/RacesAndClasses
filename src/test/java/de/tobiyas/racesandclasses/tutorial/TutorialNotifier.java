@@ -2,14 +2,14 @@ package de.tobiyas.racesandclasses.tutorial;
 
 import java.util.Observable;
 
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class TutorialNotifier extends Observable{
 
+
 	public TutorialNotifier(){
-		TutorialManager.registerObserver(this);
+		RacesAndClasses.getPlugin().getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 	

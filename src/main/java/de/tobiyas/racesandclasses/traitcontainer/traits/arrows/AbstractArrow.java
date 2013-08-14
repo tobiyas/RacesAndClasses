@@ -15,15 +15,17 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 
 
-public abstract class AbstractArrow implements TraitWithUplink{
+public abstract class AbstractArrow implements TraitWithUplink, Trait{
+	
+	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	protected AbstractTraitHolder traitHolder;
 	
@@ -78,7 +80,7 @@ public abstract class AbstractArrow implements TraitWithUplink{
 			Player player = (Player) Eevent.getEntity();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
-			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
 			if(arrow == null || arrow != this) return false;
 			
@@ -97,7 +99,7 @@ public abstract class AbstractArrow implements TraitWithUplink{
 			Player player = (Player) arrow.getShooter();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
-			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow currentArrow = arrowManager.getCurrentArrow();
 			if(currentArrow == null) return false;
 			
@@ -122,7 +124,7 @@ public abstract class AbstractArrow implements TraitWithUplink{
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 
-			ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
 			if(arrow == null || arrow != this) return false;
 
@@ -141,7 +143,7 @@ public abstract class AbstractArrow implements TraitWithUplink{
 	 * @return
 	 */
 	private boolean changeArrowType(Player player){
-		ArrowManager arrowManager = HealthManager.getHealthManager().getArrowManagerOfPlayer(player.getName());
+		ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return false;
 		

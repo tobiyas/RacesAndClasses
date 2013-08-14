@@ -4,16 +4,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class Listener_PlayerRespawn implements Listener{
 
+	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	public Listener_PlayerRespawn() {
 	}
 
 	
 	@EventHandler
 	public void resetPlayerMaxHealthAfterDeath(PlayerRespawnEvent event){
-		HealthManager.getHealthManager().checkPlayer(event.getPlayer().getName());
+		plugin.getHealthManager().checkPlayer(event.getPlayer().getName());
 	}
 }

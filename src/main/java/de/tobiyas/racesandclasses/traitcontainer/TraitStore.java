@@ -232,7 +232,7 @@ public class TraitStore {
 	 * 
 	 * @param string
 	 */
-	public static Trait buildStaticTraitByName(String traitName) {
+	public static Trait buildTraitWithoutHolderByName(String traitName) {
 		try{
 			Trait trait = buildTrait(traitName, null);
 			

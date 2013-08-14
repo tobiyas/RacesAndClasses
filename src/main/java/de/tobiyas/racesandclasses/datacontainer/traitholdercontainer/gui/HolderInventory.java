@@ -17,11 +17,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class HolderInventory extends InventoryView{
 
+	/**
+	 * The Number of holders given in the selection.
+	 */
+	protected int numberOfHolder;
+	
 	/**
 	 * The player that will select a holder
 	 */
@@ -49,6 +58,8 @@ public class HolderInventory extends InventoryView{
 		
 		this.player = player;
 		
+		this.numberOfHolder = 0;
+		
 		int inventorySize = (int) (Math.ceil((holderManager.getAllHolderNames().size() / 9d)) + 1)  * 9;
 		if(inventorySize < 35){
 			inventorySize = 36;
@@ -68,6 +79,12 @@ public class HolderInventory extends InventoryView{
 	 */
 	private void fillWithHolders(AbstractHolderManager manager){
 		for(String holderName : manager.listAllVisibleHolders()){
+			if(plugin.testingMode){ 
+				//Testing seems to not realize Bukkit is present. Method not found on ItemStack.
+				this.numberOfHolder++;
+				continue;
+			}
+			
 			AbstractTraitHolder holder = manager.getHolderByName(holderName);
 			if(!hasPermission(holder, manager)) continue;
 			
@@ -99,6 +116,7 @@ public class HolderInventory extends InventoryView{
 			item.setItemMeta(meta);
 			
 			holderInventory.addItem(item);
+			this.numberOfHolder++;
 		}
 	}
 
@@ -111,10 +129,23 @@ public class HolderInventory extends InventoryView{
 	 * @return true if the player has access, false otherwise.
 	 */
 	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()) return true;
-		
-		String holderPermission = PermissionNode.prePlugin + manager.getContainerTypeAsString() + "." + holder.getName();
+		/*String holderPermission = PermissionNode.prePlugin + manager.getContainerTypeAsString() + "s." + holder.getName();
 		return plugin.getPermissionManager().checkPermissionsSilent(player, holderPermission);
+		*/
+		
+		HolderSelectEvent event = null;
+		if(manager == plugin.getClassManager()){
+			event = new ClassSelectEvent(player, (ClassContainer) holder);
+		}
+		
+		if(manager == plugin.getRaceManager()){
+			event = new RaceSelectEvent(player, (RaceContainer) holder);
+		}
+		
+		if(event == null) return true;
+		
+		plugin.getServer().getPluginManager().callEvent(event);
+		return !event.isCancelled();
 	}
 
 
@@ -136,6 +167,14 @@ public class HolderInventory extends InventoryView{
 	@Override
 	public InventoryType getType() {
 		return InventoryType.CHEST;
+	}
+
+
+	/**
+	 * @return the numberOfHolder
+	 */
+	public int getNumberOfHolder() {
+		return numberOfHolder;
 	}
 
 }

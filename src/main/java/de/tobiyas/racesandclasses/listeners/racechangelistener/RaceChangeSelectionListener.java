@@ -45,6 +45,8 @@ public class RaceChangeSelectionListener implements Listener {
 	
 	@EventHandler
 	public void checkPlayerhasPermissionToRace(RaceSelectEvent event){
+		if(event.getRaceToSelect() == plugin.getRaceManager().getDefaultHolder()) return;
+		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()){
 			Player player = event.getPlayer();
 			String raceName = event.getRaceToSelect().getName();

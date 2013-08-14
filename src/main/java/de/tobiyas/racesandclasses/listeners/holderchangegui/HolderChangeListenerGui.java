@@ -15,12 +15,11 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
-import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 
 public abstract class HolderChangeListenerGui implements Listener {
-
+	
 	/**
 	 * The Main plugin
 	 */
@@ -131,7 +130,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 			selectEvent = generateHolderChangeEvent(playerName, newHolder, holder);
 		}
 		
-		TraitEventManager.fireEvent(selectEvent);
+		plugin.getServer().getPluginManager().callEvent(selectEvent);
 		if(selectEvent.isCancelled()){
 			Player player = Bukkit.getPlayer(playerName);
 			if(player != null){

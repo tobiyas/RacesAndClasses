@@ -17,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tobiyas.racesandclasses.chat.channels.MockChannelManager;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -37,24 +36,22 @@ public abstract class AbstractChannelContainerTest {
 	protected String offlinePlayer = "offline";
 	
 	@Before
-	public void generateTestEnvironmente(){
-		GenerateRaces.generateRaces();
+	public void generateTestEnvironmente() throws ChannelInvalidException{
 		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
 		GenerateBukkitServer.generatePlayerOnServer(addingPlayer);
 		GenerateBukkitServer.generatePlayerOnServer(notAddedPlayer);
 		
-		MockChannelManager.generateMock();
 		
 		sut = generateSut();
 	}
 	
-	protected abstract ChannelContainer generateSut();
+	protected abstract ChannelContainer generateSut() throws ChannelInvalidException;
 	
 	@After
 	public void tearDown(){
 		GenerateBukkitServer.dropServer();
 		GenerateRaces.dropMock();
-		MockChannelManager.dropMock();
 	}
 	
 	
@@ -226,7 +223,7 @@ public abstract class AbstractChannelContainerTest {
 	
 	
 	@Test
-	public void loading_from_yaml_file_works() throws IOException{
+	public void loading_from_yaml_file_works() throws IOException, ChannelInvalidException{
 		//easiest way to check the stats
 		File tempFile = File.createTempFile("channelContainerTemp", ".yml");
 		try{

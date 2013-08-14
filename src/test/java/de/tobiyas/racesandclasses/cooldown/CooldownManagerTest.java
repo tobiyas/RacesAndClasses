@@ -16,8 +16,8 @@ public class CooldownManagerTest {
 	
 	@Before
 	public void setupServerMock(){
-		sut = new CooldownManager();
 		GenerateBukkitServer.generateServer();
+		sut = new CooldownManager();
 	}
 	
 	@After

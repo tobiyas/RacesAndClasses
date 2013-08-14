@@ -8,7 +8,7 @@
 package de.tobiyas.racesandclasses.commands.races;
 
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
@@ -18,14 +18,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -42,20 +40,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			plugin.log("ERROR: Could not register command /race.");
 		}
 		
-		TutorialManager.registerObserver(this);
+		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("Only Players can use this command");
-			return true;
-		}
-		
-		Player player = (Player) sender;
+	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {		
 		if(args.length == 0){
-			postHelp(player, false);
+			postHelp(sender, false);
 			return true;
 		}
 		
@@ -63,11 +55,35 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 		//Select race(only if has no race)
 		if(raceCommand.equalsIgnoreCase("select")){
+			if(!checkPlayer(sender)) return true;
+			Player player = (Player) sender;
+			
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectRace)) return true;
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, plugin.getRaceManager()));
+				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+				if(currentRace != plugin.getRaceManager().getDefaultHolder()){
+					player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.AQUA + currentRace.getName() 
+							+ ChatColor.RED + ". Use " + ChatColor.LIGHT_PURPLE + "/race change" + ChatColor.RED + " to change your race.");
+					return true;
+				}
+				
+				RaceSelectEvent ccEvent = new RaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
+				plugin.getServer().getPluginManager().callEvent(ccEvent);
+				
+				if(ccEvent.isCancelled()){
+					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					return true;
+				}
+				
+				HolderInventory holderInventory = new HolderInventory(player, plugin.getRaceManager());
+				if(holderInventory.getNumberOfHolder() <= 0){
+					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Race to select.");
+					return true;
+				}
+				
+				player.openInventory(holderInventory);
 				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
 				return true;
 			}
@@ -84,11 +100,35 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 		//Change races (only if has already a race)
 		if(raceCommand.equalsIgnoreCase("change")){
+			if(!checkPlayer(sender)) return true;
+			Player player = (Player) sender;
+			
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeRace)) return true;
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				player.openInventory(new HolderInventory(player, plugin.getRaceManager()));
+				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+				if(currentRace == plugin.getRaceManager().getDefaultHolder()){
+					player.sendMessage(ChatColor.RED + "You don't have a race. Use " + ChatColor.LIGHT_PURPLE + "/race select" 
+							+ ChatColor.RED + " to select a race.");
+					return true;
+				}
+				
+				RaceSelectEvent ccEvent = new RaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
+				plugin.getServer().getPluginManager().callEvent(ccEvent);
+				
+				if(ccEvent.isCancelled()){
+					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					return true;
+				}
+				
+				HolderInventory holderInventory = new HolderInventory(player, plugin.getRaceManager());
+				if(holderInventory.getNumberOfHolder() <= 0){
+					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Race to select.");
+					return true;
+				}
+				
+				player.openInventory(holderInventory);
 				player.sendMessage(ChatColor.GREEN + "Opening Race Selection...");
 				return true;
 			}
@@ -106,40 +146,52 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		//Info to a race
 		if(raceCommand.equalsIgnoreCase("info")){
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
-			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()).getName();
+			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(sender.getName()).getName();
+			
 			if(args.length > 1){
 				inspectedRace = args[1];
 			}
 			
-			raceInfo(player, inspectedRace);
+			raceInfo(sender, inspectedRace);
 			return true;
 		}
 		
 		//lists all races
 		if(raceCommand.equalsIgnoreCase("list")){
-			raceList(player);
-			this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.infoRace));
+			raceList(sender);
+			this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.infoRace));
 			this.setChanged();
 			return true;
 		}
 			
-		postHelp(player, true);
+		postHelp(sender, true);
 		return true;
 	}
 	
-	private void postHelp(Player player, boolean wrongUsage){
+	
+	private boolean checkPlayer(CommandSender sender) {
+		if(sender instanceof Player){
+			return true;
+		}
+		
+		sender.sendMessage(ChatColor.RED + "[RAC] Only players can use this command." );
+		return false;
+	}
+
+	
+	private void postHelp(CommandSender sender, boolean wrongUsage){
 		if(wrongUsage)
-			player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+			sender.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
 		else
-			player.sendMessage(ChatColor.RED + "Use one of the following commands:");
+			sender.sendMessage(ChatColor.RED + "Use one of the following commands:");
 		
-		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "info");
-		player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "list");
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeRace))
-			player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "select " + ChatColor.YELLOW + "<racename>");
+		sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "info");
+		sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "list");
+		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.changeRace))
+			sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "select " + ChatColor.YELLOW + "<racename>");
 		
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.selectRace))
-			player.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<racename>");
+		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.selectRace))
+			sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<racename>");
 	}
 	
 	private void selectRace(Player player, String newRaceName){
@@ -168,9 +220,6 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRaceName);
-				if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-					ChannelManager.GetInstance().playerChangeRace("", player);
-				}
 			}
 				
 		}else{
@@ -183,7 +232,6 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		
 		if(oldContainer != null && oldContainer != plugin.getRaceManager().getDefaultHolder()){
-			String oldRace = oldContainer.getName();
 			if(newRace.equalsIgnoreCase(oldContainer.getName())){
 				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + oldContainer.getName());
 				return;
@@ -210,9 +258,6 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
-				if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-					ChannelManager.GetInstance().playerChangeRace(oldRace, player);
-				}
 			}else{
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
 			}
@@ -221,51 +266,52 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 	}
 	
-	private void raceInfo(Player player, String inspectedRace){
+	private void raceInfo(CommandSender sender, String inspectedRace){
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(inspectedRace);
-		AbstractTraitHolder containerOfPlayer =  plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		AbstractTraitHolder containerOfPlayer = plugin.getRaceManager().getHolderOfPlayer(sender.getName());
 		if(container == null){
-			player.sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + inspectedRace + ChatColor.RED + " found.");
+			sender.sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + inspectedRace + ChatColor.RED + " found.");
 			return;
 		}
 		
 		if(container.equals(containerOfPlayer)){
-			player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
+			sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
 		
 			if(containerOfPlayer == null){
-				player.sendMessage(ChatColor.YELLOW + "You have no race selected.");
+				sender.sendMessage(ChatColor.YELLOW + "You have no race selected.");
 				return;
 			}
 
 		}else{
-			player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO OF: " + inspectedRace + ChatColor.YELLOW + "=========");
+			sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO OF: " + inspectedRace + ChatColor.YELLOW + "=========");
 		}
 			
 		
-		player.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getName());
-		player.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
-		player.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
+		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getName());
+		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
+		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
-		player.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
+		sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
 		for(Trait trait : container.getVisibleTraits()){
-			player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getPrettyConfiguration());
+			sender.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getPrettyConfiguration());
 		}
 	}
 	
-	private void raceList(Player player){
-		ArrayList<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		AbstractTraitHolder playerRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
-		if(playerRace == plugin.getRaceManager().getDefaultHolder()){
+	private void raceList(CommandSender sender){
+		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
+		AbstractTraitHolder senderRace = plugin.getRaceManager().getHolderOfPlayer(sender.getName());
+		
+		if(senderRace == plugin.getRaceManager().getDefaultHolder()){
 			races.add(plugin.getRaceManager().getDefaultHolder().getName());
 		}
 		
-		player.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
+		sender.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
 		
 		for(String race : races){
-			if(playerRace != null && race.equals(playerRace.getName())){
-				player.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- Your race");
+			if(senderRace != null && race.equals(senderRace.getName())){
+				sender.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- Your Race!");
 			}else{	
-				player.sendMessage(ChatColor.BLUE + race);
+				sender.sendMessage(ChatColor.BLUE + race);
 			}
 		}
 	}

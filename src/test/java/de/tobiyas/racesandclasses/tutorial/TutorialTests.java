@@ -5,11 +5,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
+import de.tobiyas.racesandclasses.generate.plugin.MockRaCPlugin;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
 public class TutorialTests {
 
@@ -23,8 +23,10 @@ public class TutorialTests {
 		
 		GenerateRaces.generateRaces();
 		
-		TutorialManager.init();
-		TutorialManager.enable();
+		TutorialManager tutorialManager = new TutorialManager();
+		MockRaCPlugin plugin = (MockRaCPlugin) RacesAndClasses.getPlugin();
+		plugin.setTutorialManager(tutorialManager);
+		
 		notifier = new TutorialNotifier();
 	}
 	
@@ -44,25 +46,25 @@ public class TutorialTests {
 	
 	//tests Start
 	private void testStart(){
-		TutorialManager.start(player);
+		RacesAndClasses.getPlugin().getTutorialManager().start(player);
 		
 		TutorialStepContainer container = new TutorialStepContainer(player, TutorialState.start);
-		TutorialStepContainer currentContainer = TutorialManager.getCurrentState(player);
+		TutorialStepContainer currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 		
-		TutorialManager.skip(player);
+		RacesAndClasses.getPlugin().getTutorialManager().skip(player);
 	}
 	
 	//tests Race section
 	private void testRace(){
 		TutorialStepContainer container = new TutorialStepContainer(player, TutorialState.infoRace);
-		TutorialStepContainer currentContainer = TutorialManager.getCurrentState(player);
+		TutorialStepContainer currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 		
 		notifier.fireContainer(container);
 		
 		container = new TutorialStepContainer(player, TutorialState.selectRace);
-		currentContainer = TutorialManager.getCurrentState(player);
+		currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 		
 		notifier.fireContainer(container);
@@ -71,13 +73,13 @@ public class TutorialTests {
 	//tests Class section
 	private void testClass(){
 		TutorialStepContainer container = new TutorialStepContainer(player, TutorialState.infoClass);
-		TutorialStepContainer currentContainer = TutorialManager.getCurrentState(player);
+		TutorialStepContainer currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 			
 		notifier.fireContainer(container);
 		
 		container = new TutorialStepContainer(player, TutorialState.selectClass);
-		currentContainer = TutorialManager.getCurrentState(player);
+		currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 			
 		notifier.fireContainer(container);
@@ -86,14 +88,14 @@ public class TutorialTests {
 	//tests Channel section
 	private void testChannels(){
 		TutorialStepContainer container = new TutorialStepContainer(player, TutorialState.channels);
-		TutorialStepContainer currentContainer = TutorialManager.getCurrentState(player);
+		TutorialStepContainer currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 				
 		notifier.fireContainer(container);
 				
 		for(int i = 2; i <= 6; i++){
 			container = new TutorialStepContainer(player, TutorialState.channels, i);
-			currentContainer = TutorialManager.getCurrentState(player);
+			currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 			validate(container, currentContainer);
 					
 			notifier.fireContainer(container);
@@ -103,12 +105,12 @@ public class TutorialTests {
 	//tests End section
 	private void testEnd(){
 		TutorialStepContainer container = new TutorialStepContainer(player, TutorialState.end);
-		TutorialStepContainer currentContainer = TutorialManager.getCurrentState(player);
+		TutorialStepContainer currentContainer = RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player);
 		validate(container, currentContainer);
 		
-		TutorialManager.stop(player);
+		RacesAndClasses.getPlugin().getTutorialManager().stop(player);
 		
-		Assert.assertNull(TutorialManager.getCurrentState(player));
+		Assert.assertNull(RacesAndClasses.getPlugin().getTutorialManager().getCurrentState(player));
 	}
 	
 	private void validate(TutorialStepContainer container1, TutorialStepContainer container2){
@@ -120,7 +122,7 @@ public class TutorialTests {
 	@Test
 	public void testSettingState(){
 		testStart();
-		TutorialManager.setState(player, "channels");
+		RacesAndClasses.getPlugin().getTutorialManager().setState(player, "channels");
 		testChannels();
 	}
 	
@@ -139,7 +141,7 @@ public class TutorialTests {
 	
 	@After
 	public void tearDown(){
-		TutorialManager.shutDown();
+		//RacesAndClasses.getPlugin().getTutorialManager().shutDown();
 		notifier = null;
 		
 		GenerateBukkitServer.dropServer();

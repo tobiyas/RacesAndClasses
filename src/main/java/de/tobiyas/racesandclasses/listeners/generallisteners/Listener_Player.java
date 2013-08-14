@@ -20,10 +20,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 
@@ -39,7 +37,7 @@ public class Listener_Player implements Listener {
 	public void onPlayerLeave(PlayerQuitEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			Player player = event.getPlayer();
-			ChannelManager.GetInstance().playerQuit(player);
+			plugin.getChannelManager().playerQuit(player);
 		}
 	}
 
@@ -54,10 +52,10 @@ public class Listener_Player implements Listener {
 			}
 		}
 		
-		HealthManager.getHealthManager().checkPlayer(player.getName());
+		plugin.getHealthManager().checkPlayer(player.getName());
 		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			ChannelManager.GetInstance().playerLogin(player);
+			plugin.getChannelManager().playerLogin(player);
 		}
 		
 		container.editTABListEntry(player.getName());
@@ -68,7 +66,7 @@ public class Listener_Player implements Listener {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			World oldWorld = event.getFrom();
 			Player player = event.getPlayer();
-			ChannelManager.GetInstance().playerChangedWorld(oldWorld, player);
+			plugin.getChannelManager().playerChangedWorld(oldWorld, player);
 		}
 	}
 	
@@ -86,14 +84,14 @@ public class Listener_Player implements Listener {
 		
 		if(config != null){
 			channel = config.getCurrentChannel();
-			if(!ChannelManager.GetInstance().isMember(player.getName(), channel)){
+			if(!plugin.getChannelManager().isMember(player.getName(), channel)){
 				player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
 									ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
 				return;
 			}
 		}
 
-		ChannelManager.GetInstance().broadcastMessageToChannel(channel, player, orgMsg);
+		plugin.getChannelManager().broadcastMessageToChannel(channel, player, orgMsg);
 	}
 	
 }

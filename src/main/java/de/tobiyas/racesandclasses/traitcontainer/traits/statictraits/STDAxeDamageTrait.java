@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
@@ -17,6 +17,11 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 public class STDAxeDamageTrait implements Trait {
+	
+	/**
+	 * The Plugin to get the Managers from.
+	 */
+	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	private double woodDmg;
 	private double stoneDmg;
@@ -42,7 +47,7 @@ public class STDAxeDamageTrait implements Trait {
 	@TraitEventsUsed(registerdClasses = {EntityDamageByEntityEvent.class})
 	@Override
 	public void generalInit() {		
-		TraitConfig config = TraitConfigManager.getInstance().getConfigOfTrait(getName());
+		TraitConfig config = plugin.getConfigManager().getTraitConfigManager().getConfigOfTrait(getName());
 		if(config != null){
 			woodDmg =  (Integer) config.getValue("trait.damage.wood", 4.0);
 			stoneDmg = (Integer) config.getValue("trait.damage.stone", 5.0);

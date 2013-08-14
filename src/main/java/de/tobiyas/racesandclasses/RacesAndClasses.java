@@ -37,9 +37,7 @@ import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
-import de.tobiyas.racesandclasses.configuration.global.ConfigManager;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
-import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
+import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
@@ -125,7 +123,19 @@ public class RacesAndClasses extends JavaPlugin{
 	 * The Class manager of the plugin
 	 */
 	protected ClassManager classManager;
+	
+	/**
+	 * The Channel manager used to manage channel activity
+	 */
+	protected ChannelManager channelManager;
+	
+	
+	/**
+	 * The Tutorial Manager to start / step the tutorial on.
+	 */
+	protected TutorialManager tutorialManager;
 
+	
 	
 	//Empty Constructor for Bukkit.
 	public RacesAndClasses(){
@@ -142,7 +152,7 @@ public class RacesAndClasses extends JavaPlugin{
 			description = getDescription();
 			prefix = "["+description.getName()+"] ";
 			
-			//temp debug logger
+			//temporary debug logger
 			debugLogger = new DebugLogger(this);
 			debugLogger.setAlsoToPlugin(true);
 			
@@ -155,6 +165,7 @@ public class RacesAndClasses extends JavaPlugin{
 			
 			initMetrics();
 			loadingDoneMessage();
+			
 		}catch(Exception e){
 			log("An Error has accured during startup sequence: " + e.getLocalizedMessage());
 			debugLogger.logStackTrace(e);
@@ -185,14 +196,13 @@ public class RacesAndClasses extends JavaPlugin{
 		}
 
 		//Create all Managers
-		MemberConfigManager memberConfigManager = new MemberConfigManager();
-		TraitConfigManager traitConfigManager = new TraitConfigManager();
-		
 		TraitEventManager traitEventManager = new TraitEventManager();
+		
+		tutorialManager = new TutorialManager();
 		raceManager = new RaceManager();
 		classManager = new ClassManager();
 		healthManager = new HealthManager();
-		ChannelManager channelManager = new ChannelManager();
+		channelManager = new ChannelManager();
 		permManager = new PermissionManager(this);
 		
 		cooldownManager = new CooldownManager();
@@ -201,28 +211,28 @@ public class RacesAndClasses extends JavaPlugin{
 		
 		//init of Managers
 		//Tutorials
-		TutorialManager.init();
+		tutorialManager.reload();
 		if(!configManager.getGeneralConfig().isConfig_tutorials_enable()){
-			TutorialManager.disable();
+			tutorialManager.disable();
 		}
 		
 		//Cooldown Manager
 		cooldownManager.init();
-		
-		//Member Config
-		memberConfigManager.reload();
-		//Trait Config Manager
-		traitConfigManager.init();
+
 		//Trait Event Manager
 		traitEventManager.init();
+		
 		//Race Manager
 		raceManager.init();
+		
 		//Class Manager
 		if(configManager.getGeneralConfig().isConfig_classes_enable()){
 			classManager.init();
 		}
+		
 		//Health Manager
 		healthManager.init();
+		
 		//Channel Manager
 		if(configManager.getGeneralConfig().isConfig_channels_enable()){
 			channelManager.init();
@@ -297,7 +307,7 @@ public class RacesAndClasses extends JavaPlugin{
 		
 		String channels = "";
 		if(configManager.getGeneralConfig().isConfig_channels_enable()){
-			channels = ", " + ChannelManager.GetInstance().listAllChannels().size() + " channels";
+			channels = ", " + channelManager.listAllChannels().size() + " channels";
 		}
 		
 		String events = ", hooked " + TraitEventManager.getInstance().getRegisteredEventsAsName().size() + " Events";
@@ -309,12 +319,15 @@ public class RacesAndClasses extends JavaPlugin{
 
 	private void setupConfiguration(){
 		configManager = new ConfigManager();
-		configManager.init();
+		configManager.reload();
 		setupDebugLogger();
 	}
 	
 	private void setupDebugLogger(){
-		debugLogger = new DebugLogger(this);
+		if(debugLogger == null){
+			debugLogger = new DebugLogger(this);
+		}
+		
 		if(!configManager.getGeneralConfig().isConfig_enableDebugOutputs()){
 			debugLogger.disable();
 		}
@@ -363,11 +376,12 @@ public class RacesAndClasses extends JavaPlugin{
 		debugLogger.shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
-		ChannelManager.GetInstance().saveChannels();
-		TutorialManager.shutDown();
+		channelManager.saveChannels();
+		tutorialManager.shutDown();
 		Bukkit.getScheduler().cancelTasks(this);
-		if(useGC)
+		if(useGC){
 			System.gc();
+		}
 	}
 	
 	
@@ -419,4 +433,30 @@ public class RacesAndClasses extends JavaPlugin{
 	public ClassManager getClassManager() {
 		return classManager;
 	}
+	
+	
+	/**
+	 * @return the channelManager
+	 * @return
+	 */
+	public ChannelManager getChannelManager(){
+		return channelManager;
+	}
+
+
+	/**
+	 * @return the healthManager
+	 */
+	public HealthManager getHealthManager() {
+		return healthManager;
+	}
+
+
+	/**
+	 * @return the tutorialManager
+	 */
+	public TutorialManager getTutorialManager() {
+		return tutorialManager;
+	}
+	
 }

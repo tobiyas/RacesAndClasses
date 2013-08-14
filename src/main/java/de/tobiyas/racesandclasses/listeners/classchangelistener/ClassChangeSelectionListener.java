@@ -49,6 +49,8 @@ public class ClassChangeSelectionListener implements Listener {
 	
 	@EventHandler
 	public void checkRaceHasPermissionForClass(ClassSelectEvent event){
+		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
+		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaceClassSelectionMatrix()){
 			Player playerSelecting = event.getPlayer();
 			String playerName = playerSelecting.getName();
@@ -74,6 +76,8 @@ public class ClassChangeSelectionListener implements Listener {
 		
 	@EventHandler
 	public void checkPlayerhasPermissionToClass(ClassSelectEvent event){
+		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
+		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForClasses()){
 			Player player = event.getPlayer();
 			String className = event.getClassToSelect().getName();

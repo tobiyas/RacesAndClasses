@@ -1,6 +1,8 @@
 package de.tobiyas.racesandclasses.util.items;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -10,7 +12,6 @@ import static org.mockito.Mockito.when;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
@@ -140,19 +141,34 @@ public class ItemUtilsTest {
 	}
 	
 	
-	@Ignore("Jenkis fails this") //TODO fixme
 	@Test
 	public void get_armor_slot_items_from_player_works(){
 		Player player = mock(Player.class, RETURNS_DEEP_STUBS);
-		when(player.getInventory().getBoots()).thenReturn(new ItemStack(Material.LEATHER_BOOTS));
-		when(player.getInventory().getLeggings()).thenReturn(new ItemStack(Material.LEATHER_LEGGINGS));
-		when(player.getInventory().getChestplate()).thenReturn(new ItemStack(Material.LEATHER_CHESTPLATE));
-		when(player.getInventory().getHelmet()).thenReturn(new ItemStack(Material.LEATHER_HELMET));
+
 		
-		assertEquals(new ItemStack(Material.LEATHER_BOOTS), ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.BOOTS));
-		assertEquals(new ItemStack(Material.LEATHER_LEGGINGS), ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.LEGGINGS));
-		assertEquals(new ItemStack(Material.LEATHER_CHESTPLATE), ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.CHESTPLATE));
-		assertEquals(new ItemStack(Material.LEATHER_HELMET), ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.HELMET));
+		ItemStack boots = mock(ItemStack.class, RETURNS_DEEP_STUBS);
+		when(boots.getType()).thenReturn(Material.LEATHER_BOOTS);
+		
+		ItemStack leggings = mock(ItemStack.class, RETURNS_DEEP_STUBS);
+		when(leggings.getType()).thenReturn(Material.LEATHER_LEGGINGS);
+		
+		ItemStack chest = mock(ItemStack.class, RETURNS_DEEP_STUBS);
+		when(chest.getType()).thenReturn(Material.LEATHER_CHESTPLATE);
+		
+		ItemStack helmet = mock(ItemStack.class, RETURNS_DEEP_STUBS);
+		when(helmet.getType()).thenReturn(Material.LEATHER_HELMET);
+		
+		
+		when(player.getInventory().getBoots()).thenReturn(boots);
+		when(player.getInventory().getLeggings()).thenReturn(leggings);
+		when(player.getInventory().getChestplate()).thenReturn(chest);
+		when(player.getInventory().getHelmet()).thenReturn(helmet);
+		
+		assertEquals(boots, ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.BOOTS));
+		assertEquals(leggings, ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.LEGGINGS));
+		assertEquals(chest, ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.CHESTPLATE));
+		assertEquals(helmet, ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.HELMET));
+		
 		assertNull(ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.NONE));
 		
 		assertNull(ItemUtils.getItemInArmorSlotOfPlayer(player, null));

@@ -25,8 +25,8 @@ public class ChannelTickerTest {
 	@Before
 	public void mockStatics(){
 		ChannelTicker.ticker = null;
-		GenerateRaces.generateRaces();
 		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
 				
 		BukkitScheduler scheduler = Bukkit.getScheduler();
 		Mockito.when(scheduler.scheduleSyncRepeatingTask(Mockito.any(RacesAndClasses.class), Mockito.any(Runnable.class), 

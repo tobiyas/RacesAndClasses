@@ -8,6 +8,7 @@ import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.ClassChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.RaceChangeListenerGui;
+import de.tobiyas.racesandclasses.listeners.racechangelistener.RaceChangeSelectionListener;
 
 public class RaCListenerRegister {
 
@@ -18,6 +19,8 @@ public class RaCListenerRegister {
 	 */
 	public static void registerCustoms(){
 		new ClassChangeSelectionListener();
+		new RaceChangeSelectionListener();
+		
 		new ClassChangeListenerGui();
 		new RaceChangeListenerGui();
 	}

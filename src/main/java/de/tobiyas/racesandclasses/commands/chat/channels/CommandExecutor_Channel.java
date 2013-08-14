@@ -9,9 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -29,7 +27,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			plugin.log("ERROR: Could not register command /channel.");
 		}
 		
-		TutorialManager.registerObserver(this);
+		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 	
@@ -40,15 +38,10 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			sender.sendMessage(ChatColor.RED + "Channels are disabled.");
 			return true;
 		}
-		
-		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "This command can only be used by Players.");
-			return true;
-		}
-		Player player = (Player) sender;
+
 		
 		if(args.length == 0){
-			postHelp(player);
+			postHelp(sender);
 			return true;
 		}
 		
@@ -56,19 +49,31 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("info")){
 			String channelName = "";
-			if(args.length == 2)
+			if(args.length == 2){
 				channelName = args[1];
-			
-			postChannelInfo(player, channelName);
+			}
+				
+			postChannelInfo(sender, channelName);
 			return true;
 		}
 		
 		if(channelCommand.equalsIgnoreCase("list")){
-			listChannels(player);
+			listChannels(sender);
 			return true;
 		}
 		
-		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post") || channelCommand.equalsIgnoreCase("switch")){
+		
+		if(!(sender instanceof Player)){
+			sender.sendMessage(ChatColor.RED + "This command can only be used by Players.");
+			return true;
+		}
+	
+		Player player = (Player) sender;
+		
+		
+		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post") || channelCommand.equalsIgnoreCase("switch")
+				|| channelCommand.equalsIgnoreCase("ch")){
+			
 			if(args.length != 2){
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this:" + 
 									ChatColor.LIGHT_PURPLE + "/channel change <channelname>");
@@ -86,10 +91,12 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 									ChatColor.RED + " needs a channelname. And optionaly a password");
 				return true;
 			}
+			
 			String channelName = args[1];
 			String password = "";
-			if(args.length == 3)
+			if(args.length == 3){
 				password = args[2];
+			}
 			
 			joinChannel(player, channelName, password);
 			return true;
@@ -110,6 +117,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel create <channelname> [channelType] [password]");
 				return true;
 			}
+			
 			String channelName = args[1];
 			String channelType = "PublicChannel";
 			String channelPassword = "";
@@ -136,7 +144,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			ChannelManager.GetInstance().banPlayer(player, args[2], args[1], time);
+			plugin.getChannelManager().banPlayer(player, args[2], args[1], time);
 			return true;
 		}
 		
@@ -146,7 +154,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			ChannelManager.GetInstance().unbanPlayer(player, args[2], args[1]);
+			plugin.getChannelManager().unbanPlayer(player, args[2], args[1]);
 			return true;
 		}
 		
@@ -162,7 +170,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			ChannelManager.GetInstance().mutePlayer(player, args[2], args[1], time);
+			plugin.getChannelManager().mutePlayer(player, args[2], args[1], time);
 			return true;
 		}
 		
@@ -172,7 +180,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			ChannelManager.GetInstance().unmutePlayer(player, args[2], args[1]);
+			plugin.getChannelManager().unmutePlayer(player, args[2], args[1]);
 			return true;
 		}
 		
@@ -181,6 +189,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
 				return true;
 			}
+			
 			String channel = args[1];
 			String property = args[2];
 			String newValue = args[3];
@@ -194,70 +203,74 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		return true;
 	}
 	
-	private void postHelp(Player player){
-		player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
+	private void postHelp(CommandSender sender){
+		sender.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "<post/change/switch> " + ChatColor.YELLOW + "<channelname>");
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "<post/change/switch> " + ChatColor.YELLOW + "<channelname>");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "join " + ChatColor.YELLOW + "<channelname> " + 
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "join " + ChatColor.YELLOW + "<channelname> " + 
 							ChatColor.AQUA + "[password]");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "leave " + ChatColor.YELLOW + "<channelname> ");
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "leave " + ChatColor.YELLOW + "<channelname> ");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "create " + ChatColor.YELLOW + "<channelname> " +
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "create " + ChatColor.YELLOW + "<channelname> " +
 						   ChatColor.AQUA + "[channeltype] [password]");
 		
-		player.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelname> " +
+		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelname> " +
 							ChatColor.AQUA + "<property> <newValue>");
 	}
 	
-	private void postChannelInfo(Player player, String channel){
+	
+	private void postChannelInfo(CommandSender sender, String channel){
 		if(channel == ""){
-			channel = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName()).getCurrentChannel();
+			channel = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(sender.getName()).getCurrentChannel();
 		}
 		
-		player.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + " Channel Information: " + 
+		sender.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + " Channel Information: " + 
 							ChatColor.AQUA + channel + ChatColor.YELLOW + " =====");
-		ChannelManager.GetInstance().postChannelInfo(player, channel);
+		plugin.getChannelManager().postChannelInfo(sender, channel);
 	}
 	
-	private void listChannels(Player player){
-		player.sendMessage(ChatColor.YELLOW + "======" + ChatColor.RED + "Channel-List:" + ChatColor.YELLOW + "=====");
-		player.sendMessage(ChatColor.YELLOW + "HINT: Format is: " + ChatColor.BLUE + "ChannelName: " + ChatColor.AQUA + "ChannelLevel");
+	
+	private void listChannels(CommandSender sender){
+		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.RED + "Channel-List:" + ChatColor.YELLOW + "=====");
+		sender.sendMessage(ChatColor.YELLOW + "HINT: Format is: " + ChatColor.BLUE + "ChannelName: " + ChatColor.AQUA + "ChannelLevel");
 		for(ChannelLevel level : ChannelLevel.values())
-			for(String channel : ChannelManager.GetInstance().listAllPublicChannels()){
-				if(ChannelManager.GetInstance().getChannelLevel(channel) == level){
+			for(String channel : plugin.getChannelManager().listAllPublicChannels()){
+				if(plugin.getChannelManager().getChannelLevel(channel) == level){
 					String addition = "";
-					if(ChannelManager.GetInstance().isMember(player.getName(), channel))
+					if(plugin.getChannelManager().isMember(sender.getName(), channel)){
 						addition =  ChatColor.YELLOW + "   <-[Joined]";
-					player.sendMessage(ChatColor.BLUE + channel + ": " + ChatColor.AQUA + level.name() + addition);
+					}
+					
+					sender.sendMessage(ChatColor.BLUE + channel + ": " + ChatColor.AQUA + level.name() + addition);
 				}
 			}
 		
-		this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.channels, 1));
+		this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 1));
 		this.setChanged();
 	}
 	
 	private void joinChannel(Player player, String channelName, String password){
-		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(channelName);
+		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channelName);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channelName);
 			return;
 		}
 		
-		ChannelManager.GetInstance().joinChannel(player, channelName, password, true);
+		plugin.getChannelManager().joinChannel(player, channelName, password, true);
 	}
 	
 	private void leaveChannel(Player player, String channelName){
-		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(channelName);
+		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channelName);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channelName);
 			return;
 		}
 		
-		ChannelManager.GetInstance().leaveChannel(player, channelName, true);
+		plugin.getChannelManager().leaveChannel(player, channelName, true);
 		
 		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 		if(channelName.equalsIgnoreCase(config.getCurrentChannel())){
@@ -273,7 +286,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			return;
 		}
 		
-		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel || channelLevel == ChannelLevel.WorldChannel){
+		if(channelLevel == ChannelLevel.GlobalChannel || channelLevel == ChannelLevel.RaceChannel 
+				|| channelLevel == ChannelLevel.WorldChannel || channelLevel == ChannelLevel.LocalChannel){
 			player.sendMessage(ChatColor.RED + "You can't create a new " + ChatColor.AQUA + channelLevel);
 			return;
 		}
@@ -294,23 +308,23 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			player.sendMessage(ChatColor.YELLOW + "[INFO] You try to create a non-password channel with a password. The password will be ignored.");
 		
 		
-		if(ChannelManager.GetInstance().getChannelLevel(channelName) != ChannelLevel.NONE){
+		if(plugin.getChannelManager().getChannelLevel(channelName) != ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "This channel already exisists.");
 			return;
 		}
 		
-		ChannelManager.GetInstance().registerChannel(channelLevel, channelName, channelPassword, player);
+		plugin.getChannelManager().registerChannel(channelLevel, channelName, channelPassword, player);
 	}
 	
 	private void changeChannel(Player player, String changeTo){
-		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(changeTo);
+		ChannelLevel level = plugin.getChannelManager().getChannelLevel(changeTo);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + changeTo);
 			return;
 		}
 		
 		if(level != ChannelLevel.LocalChannel){
-			if(!ChannelManager.GetInstance().isMember(player.getName(), changeTo)){
+			if(!plugin.getChannelManager().isMember(player.getName(), changeTo)){
 				player.sendMessage(ChatColor.RED + "You are no member of: " + ChatColor.LIGHT_PURPLE + changeTo);
 				return;
 			}
@@ -332,34 +346,32 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	}
 	
 	private ChannelLevel getChannelLevel(String channelType){
+		channelType = channelType.toLowerCase();
+		
 		for(ChannelLevel level : ChannelLevel.values()){
-			if(level.name().equalsIgnoreCase(channelType))
+			String realChannelName = level.name().toLowerCase();
+			if(realChannelName.contains(channelType)){
 				return level;
+			}
 		}
 		
 		return ChannelLevel.NONE;
 	}
 	
 	private void channelEdit(Player player, String channel, String property, String newValue){
-		ChannelLevel level = ChannelManager.GetInstance().getChannelLevel(channel);
+		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channel);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channel);
 			return;
 		}
 		
-		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.WorldChannel){
+		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.WorldChannel || level == ChannelLevel.RaceChannel){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelEdit)){
 				return;
 			}
 		}
 		
-		if(level == ChannelLevel.RaceChannel){
-			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelEdit)){
-				return;
-			}
-		}
-		
-		ChannelManager.GetInstance().editChannel(player, channel, property, newValue);
+		plugin.getChannelManager().editChannel(player, channel, property, newValue);
 	}
 	
 }

@@ -1,7 +1,10 @@
-package de.tobiyas.racesandclasses.configuration.global;
+package de.tobiyas.racesandclasses.configuration.managing;
 
+import de.tobiyas.racesandclasses.configuration.global.ChannelConfig;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceToClassConfiguration;
+import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
 
 public class ConfigManager {
 	
@@ -10,6 +13,7 @@ public class ConfigManager {
 	private RaceToClassConfiguration raceToClassConfig;
 	
 	private MemberConfigManager memberConfigManager;
+	private TraitConfigManager traitConfigManager;
 	
 	
 	/**
@@ -20,16 +24,18 @@ public class ConfigManager {
 		channelConfig = new ChannelConfig();
 		raceToClassConfig = new RaceToClassConfiguration();
 		memberConfigManager = new MemberConfigManager();
+		traitConfigManager = new TraitConfigManager();
 	}
 	
 	/**
 	 * reloads all Configurations
 	 */
-	public void init(){
+	public void reload(){
 		generalConfig.reload();
 		channelConfig.reload();
 		raceToClassConfig.reload();
 		memberConfigManager.reload();
+		traitConfigManager.reload();
 	}
 	
 	
@@ -68,6 +74,13 @@ public class ConfigManager {
 	 */
 	public MemberConfigManager getMemberConfigManager() {
 		return memberConfigManager;
+	}
+
+	/**
+	 * @return the traitConfigManager
+	 */
+	public TraitConfigManager getTraitConfigManager() {
+		return traitConfigManager;
 	}
 	
 

@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class CommandExecutor_RacesTutorial implements CommandExecutor{
@@ -130,19 +129,19 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	}
 	
 	private void tutorialStart(Player player){
-		if(TutorialManager.getCurrentState(player.getName()) != null){
+		if(plugin.getTutorialManager().getCurrentState(player.getName()) != null){
 			player.sendMessage(ChatColor.RED + "You already have a Tutorial Running.");
 			return;
 		}
 		
-		if(!TutorialManager.start(player.getName()))
+		if(!plugin.getTutorialManager().start(player.getName()))
 			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
 	}
 	
 	private void tutorialStop(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(TutorialManager.stop(player.getName()))
+		if(plugin.getTutorialManager().stop(player.getName()))
 			player.sendMessage(ChatColor.RED + "Tutorial Stopped. To restart it, use " + ChatColor.AQUA + "/racestutorial start");
 		else
 			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
@@ -151,33 +150,33 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void tutorialSkip(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!TutorialManager.skip(player.getName()))
+		if(!plugin.getTutorialManager().skip(player.getName()))
 			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
 	}
 	
 	private void tutorialReset(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!TutorialManager.reset(player.getName()))
+		if(!plugin.getTutorialManager().reset(player.getName()))
 			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
 	}
 	
 	private void tutorialRepost(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!TutorialManager.repost(player.getName()))
+		if(!plugin.getTutorialManager().repost(player.getName()))
 			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
 	}
 	
 	private void setState(Player player, String state){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!TutorialManager.setState(player.getName(), state))
+		if(!plugin.getTutorialManager().setState(player.getName(), state))
 			player.sendMessage(ChatColor.RED + "Can not set state at this moment.");
 	}
 	
 	private boolean checkHasTutorial(Player player){
-		if(TutorialManager.getCurrentState(player.getName()) == null){
+		if(plugin.getTutorialManager().getCurrentState(player.getName()) == null){
 			player.sendMessage(ChatColor.RED + "You have no Tutorial running.");
 			return false;
 		}

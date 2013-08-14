@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class CommandExecutor_RaceGod implements CommandExecutor {
@@ -52,7 +51,7 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 			return true;
 		}
 		
-		if(HealthManager.getHealthManager().switchGod(target.getName())){
+		if(plugin.getHealthManager().switchGod(target.getName())){
 			sender.sendMessage(ChatColor.GREEN + "Success.");
 		}else
 			sender.sendMessage(ChatColor.RED + "failed.");

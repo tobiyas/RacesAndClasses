@@ -264,6 +264,20 @@ public class MemberConfig {
 		return configList.containsPathName(path) ? configList.getConfigOptionByPath(path).getValue() : null;
 	}
 	
+	
+	/**
+	 * Returns the value corresponding to the path passed
+	 * If not found, defaultValue is returned
+	 * 
+	 * @param path
+	 * @param defaultValue the value returned if not found.
+	 * @return
+	 */
+	public Object getValueOfPath(String path, Object defaultValue){
+		return configList.containsPathName(path) ? configList.getConfigOptionByPath(path).getValue() : defaultValue;
+	}
+	
+	
 	/**
 	 * Returns the value corresponding to the display name passed
 	 * If not found, Null is returned.
@@ -273,6 +287,18 @@ public class MemberConfig {
 	 */
 	public Object getValueDisplayName(String displayName){
 		return configList.contains(displayName) ? configList.getConfigOptionByDisplayName(displayName).getValue() : null;
+	}
+	
+	/**
+	 * Returns the value corresponding to the display name passed
+	 * If not found, Null is returned.
+	 * 
+	 * @param displayName
+	 * @param defaultValue the value returned if not found.
+	 * @return
+	 */
+	public Object getValueDisplayName(String displayName, Object defaultValue){
+		return configList.contains(displayName) ? configList.getConfigOptionByDisplayName(displayName).getValue() : defaultValue;
 	}
 	
 	

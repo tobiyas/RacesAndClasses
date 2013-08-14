@@ -14,31 +14,42 @@ import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class RaceContainer extends AbstractTraitHolder{
 
-	private int raceMaxHealth;
+	protected double raceMaxHealth;
 	
-	private String raceChatColor;
-	private String raceChatFormat;
+	protected String raceChatColor;
+	protected String raceChatFormat;
 	
 	
-	protected RaceContainer(YamlConfiguration config, String name){
+	private RaceContainer(YamlConfiguration config, String name){
 		super(config, name);
 	}
 	
+	
+	/**
+	 * Creates the RaceContainer from a sub-class
+	 * 
+	 * @param name
+	 */
+	protected RaceContainer(String name){
+		super(new YAMLConfigExtended(Consts.racesYML), name);
+	}
 	
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
 			if(!config.isConfigurationSection(holderName + ".config")){
-				throw new Exception();
+				return;
 			}
 			
-			holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.racetag"));
-			raceMaxHealth = config.getInt(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
-			raceChatColor = config.getString(holderName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
-			raceChatFormat = config.getString(holderName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
+			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
+			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.racetag", "[" + holderName + "]"));
+			this.raceMaxHealth = config.getInt(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
+			this.raceChatColor = config.getString(holderName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
+			this.raceChatFormat = config.getString(holderName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
 			
 			readArmor();
 		}catch(Exception exp){
@@ -74,7 +85,7 @@ public class RaceContainer extends AbstractTraitHolder{
 	}
 
 	
-	public int getRaceMaxHealth(){
+	public double getRaceMaxHealth(){
 		return raceMaxHealth;
 	}
 

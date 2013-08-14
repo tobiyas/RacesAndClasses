@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.tutorial;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.tutorial.steps.ChannelsState;
 import de.tobiyas.racesandclasses.tutorial.steps.EndState;
 import de.tobiyas.racesandclasses.tutorial.steps.InfoClassState;
@@ -16,6 +17,9 @@ public class TutorialPath {
 	private String playerName;
 	private StepInterface currentState;
 	private boolean activationSequence;
+	
+	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	
 	public TutorialPath(String playerName){
 		this.playerName = playerName;
@@ -43,7 +47,7 @@ public class TutorialPath {
 		currentState = constructNewStep(currentState.getState().getNextStep());
 		
 		if(currentState == null){
-			TutorialManager.unregister(playerName);
+			plugin.getTutorialManager().unregister(playerName);
 		}
 		return true;
 	}
@@ -54,7 +58,7 @@ public class TutorialPath {
 	}
 	
 	public boolean stop(){
-		TutorialManager.unregister(playerName);
+		plugin.getTutorialManager().unregister(playerName);
 		return true;
 	}
 	

@@ -17,6 +17,7 @@ public class ChatHealthBar extends AbstractHealthDisplay{
 		super(playerName);
 	}
 
+	
 	@Override
 	public void display(double currentHealth, double maxHealth) {
 		String barString = calcForHealth(currentHealth, maxHealth, Consts.healthBarLength);

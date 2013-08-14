@@ -44,7 +44,7 @@ public class PermissionRegisterer implements Runnable{
 	
 	@Override
 	public void run() {
-		checkVault();
+		vaultPermissions = checkVault();
 		if(traitHolderList.size() <= 0) return;
 		if(vaultPermissions == null) return;
 		if(!vaultPermissions.hasGroupSupport()) return;
@@ -100,20 +100,62 @@ public class PermissionRegisterer implements Runnable{
 	private void giveMembersAccessToGroups() {
 		for(String member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
-			if(holder == null) continue; // || holder.getPermissions() == null) continue;
+			if(holder == null) continue;
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
-			vaultPermissions.playerAddGroup((String)null, member, groupName);
+			
+			String[] groups = vaultPermissions.getPlayerGroups((String)null, member);
+			for(String group : groups){
+				if(group.startsWith(typeName)){
+					vaultPermissions.playerRemoveGroup((String) null, member, group);
+				}
+			}
+			
+			vaultPermissions.playerAddGroup((String) null, member, groupName);
 		}
 	}
 
 
 	/**
 	 * Gets the service for Vault
+	 * 
+	 * WARNING: Returns null if the Groups are not supported!!!
 	 */
-	private void checkVault(){
+	private static Permission checkVault(){
         RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        vaultPermissions = rsp.getProvider();
+        Permission perms = rsp.getProvider();
+        
+        return perms.hasGroupSupport() ? perms : null;
+	}
+
+
+	
+	/**
+	 * removes an Player from all groups with the passed prefix.
+	 * This only works if Vault is active.
+	 */
+	public static void removePlayer(String player, String prefix) {
+		Permission vaultPermissions = checkVault();
+		if(vaultPermissions != null){
+			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player);
+			for(String groupName : groupNames){
+				if(groupName.startsWith(prefix + "-")){
+					vaultPermissions.playerRemoveGroup((String)null, player, groupName);
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * removes an Player from the group.
+	 * This only works if Vault is active.
+	 */
+	public static void addPlayer(String player, String groupName) {
+		Permission vaultPermissions = checkVault();
+		if(vaultPermissions != null){
+			vaultPermissions.playerAddGroup((String) null, player, groupName);
+		}
 	}
 
 }

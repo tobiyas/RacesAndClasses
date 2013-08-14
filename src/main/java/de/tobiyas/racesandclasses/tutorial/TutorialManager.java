@@ -17,24 +17,21 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class TutorialManager implements Observer{
 
-	private static TutorialManager tutorialManager;
 	private boolean enabled;
 	
 	private RacesAndClasses plugin;
 	private HashMap<String, TutorialPath> tutorialStates;
 	
 	
-	private TutorialManager(){
-		tutorialManager = this;
+	public TutorialManager(){
 		plugin = RacesAndClasses.getPlugin();
 		tutorialStates = new HashMap<String, TutorialPath>();
 		enabled = true;
-		
-		if(!plugin.testingMode)
-			load();
 	}
 	
-	private void load(){
+	public void reload(){
+		tutorialStates.clear();
+		
 		YAMLConfigExtended config = checkFileExists();
 		if(config.getValidLoad() == false)
 			return;
@@ -188,114 +185,100 @@ public class TutorialManager implements Observer{
 	}
 		
 	
-	//Below only statics!
+	//Below only Functions visible to the outside!
 	
-	//helpfull private/public statics
+	//helpfull public 
 	
 	
 	//direct Handles
 	
-	public static boolean skip(String playerName){
+	public boolean skip(String playerName){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.skipIntern(playerName);
+		return skipIntern(playerName);
 	}
 		
-	public static boolean start(String playerName){
+	public boolean start(String playerName){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.startIntern(playerName);
+		return startIntern(playerName);
 	}
 		
-	public static boolean stop(String playerName){
+	public boolean stop(String playerName){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.stopIntern(playerName);
+		return stopIntern(playerName);
 	}
 		
-	public static boolean reset(String playerName){
+	public boolean reset(String playerName){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.resetIntern(playerName);
+		return resetIntern(playerName);
 	}
 	
-	public static boolean repost(String playerName){
+	public boolean repost(String playerName){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.repostIntern(playerName);
+		return repostIntern(playerName);
 	}
 	
-	public static boolean setState(String playerName, String state){
+	public boolean setState(String playerName, String state){
 		if(!isActive())
 			return false;
 		
-		return tutorialManager.setStateIntern(playerName, state);
+		return setStateIntern(playerName, state);
 	}
 	
 	
-	//Other direkt addresses
-	public static boolean init(){
-		if(tutorialManager != null){
-				enable();
-			return false;
-		}
-			
-		tutorialManager = new TutorialManager();
-		return true;
+	public void disable(){
+		enabled = false;
 	}
 	
-	public static void disable(){
-		tutorialManager.enabled = false;
+	public void enable(){
+		enabled = true;
 	}
 	
-	public static void enable(){
-		tutorialManager.enabled = true;
-	}
-	
-	public static void shutDown(){
-		tutorialManager.save();
-		tutorialManager.tutorialStates.clear();
+	public void shutDown(){
+		save();
+		tutorialStates.clear();
 		disable();
 	}
 	
-	public static boolean isActive(){
-		if(tutorialManager == null)
-			return false;
-		
-		if(tutorialManager.enabled == false)
+	public boolean isActive(){		
+		if(enabled == false)
 			return false;
 			
 		return true;
 	}
 	
 	//writeback
-	public static void unregister(String playerName){
+	public void unregister(String playerName){
 		if(!isActive())
 			return;
 		
-		synchronized(tutorialManager.tutorialStates){
-			tutorialManager.tutorialStates.remove(playerName);
+		synchronized(tutorialStates){
+			tutorialStates.remove(playerName);
 		}
 	}
 	
 	//add Observer
-	public static void registerObserver(Observable observable){
+	public void registerObserver(Observable observable){
 		if(!isActive())
 			return;
 		
-		observable.addObserver(TutorialManager.tutorialManager);
+		observable.addObserver(this);
 	}
 	
 	//For debugging only
-	public static TutorialStepContainer getCurrentState(String playerName){
+	public TutorialStepContainer getCurrentState(String playerName){
 		if(!isActive())
 			return null;
 		
-		return tutorialManager.getCurrentStateIntern(playerName);
+		return getCurrentStateIntern(playerName);
 	}
 }

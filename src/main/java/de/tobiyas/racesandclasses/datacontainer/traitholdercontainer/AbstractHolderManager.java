@@ -17,7 +17,6 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -142,9 +141,14 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		memberList.put(player, container);
 		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), container.getName());
-		HealthManager.getHealthManager().checkPlayer(player);
+		plugin.getHealthManager().checkPlayer(player);
 		
 		memberConfig.save();
+
+		
+		//setting permission group afterwards
+		String groupName = container.getPermissions().getGroupIdentificationName();
+		PermissionRegisterer.addPlayer(player, groupName);
 		
 		return true;
 	}
@@ -186,6 +190,9 @@ public abstract class AbstractHolderManager extends Observable{
 	 */
 	public boolean changePlayerHolder(String player, String newHolderName){
 		if(getHolderByName(newHolderName) == null) return false;
+		
+		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
+		
 		memberList.remove(player);
 		
 		memberConfig.load();
@@ -243,14 +250,14 @@ public abstract class AbstractHolderManager extends Observable{
 	/**
 	 * Returns all players of a holder
 	 * 
-	 * if null is passed, null is returned.
+	 * if null is passed, an empty list is returnemd is returned.
 	 * 
 	 * @param holderName
 	 * @return
 	 */
 	public List<String> getAllPlayersOfHolder(AbstractTraitHolder holder) {
 		if(holder == null){
-			return null;
+			return new LinkedList<String>();
 		}
 
 		List<String> holderMemberList = new LinkedList<String>();
@@ -269,7 +276,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> listAllVisibleHolders() {
+	public List<String> listAllVisibleHolders() {
 		ArrayList<String> holderList = new ArrayList<String>();
 
 		for (AbstractTraitHolder container : traitHolderList) {
@@ -300,7 +307,8 @@ public abstract class AbstractHolderManager extends Observable{
 	}
 	
 	/**
-	 * Returns the Type of the Container as Name
+	 * Returns the Type of the Container as Name.
+	 * This is mostly the word: 'race' or 'class'.
 	 */
 	public abstract String getContainerTypeAsString();
 }

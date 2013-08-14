@@ -26,8 +26,8 @@ public class MemberConfigTest {
 	
 	@Before
 	public void init(){
-		GenerateRaces.generateRaces();
 		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
 
 		playerName = StringGenerator.nextRandomString(12);
 		sut = MemberConfig.createMemberConfig(playerName);

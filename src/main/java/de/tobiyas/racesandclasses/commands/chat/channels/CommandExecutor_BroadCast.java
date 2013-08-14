@@ -6,7 +6,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class CommandExecutor_BroadCast implements CommandExecutor{
@@ -30,6 +29,7 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 			sender.sendMessage(ChatColor.RED + "Channels are disabled.");
 			return true;
 		}
+		
 		if(args.length == 0){
 			sender.sendMessage(ChatColor.RED + "No message given.");
 			return true;
@@ -40,7 +40,7 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 			message += arg + " ";
 		}
 		
-		ChannelManager.GetInstance().broadcastMessageToChannel("Global", null, message);
+		plugin.getChannelManager().broadcastMessageToChannel("Global", sender, message);
 		return true;
 	}
 

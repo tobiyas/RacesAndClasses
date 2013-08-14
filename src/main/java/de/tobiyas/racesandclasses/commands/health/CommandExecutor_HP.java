@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 
 public class CommandExecutor_HP implements CommandExecutor {
 
@@ -30,7 +29,7 @@ public class CommandExecutor_HP implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if(!HealthManager.getHealthManager().displayHealth(player.getName()))
+		if(!plugin.getHealthManager().displayHealth(player.getName()))
 			player.sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");
 		return true;
 	}
