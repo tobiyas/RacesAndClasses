@@ -38,6 +38,7 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Only players can use this on themselves!");
 				return true;
 			}
+			
 			target = (Player) sender;
 		}
 		
@@ -53,9 +54,10 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 		
 		if(plugin.getHealthManager().switchGod(target.getName())){
 			sender.sendMessage(ChatColor.GREEN + "Success.");
-		}else
+		}else{
 			sender.sendMessage(ChatColor.RED + "failed.");
-		
+		}
+			
 		return true;
 	}
 

@@ -35,7 +35,7 @@ public class Consts {
 	public static int secondsPlayerHit = 5;
 	
 	//Version
-	public static String currentDevStage = "A D";
+	public static String currentDevStage = "B E";
 	
 	//Enchants
 	public static int maxLevel = 5;

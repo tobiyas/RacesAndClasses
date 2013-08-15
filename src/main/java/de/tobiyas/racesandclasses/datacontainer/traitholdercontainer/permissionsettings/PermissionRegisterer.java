@@ -7,9 +7,9 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class PermissionRegisterer implements Runnable{
@@ -29,10 +29,12 @@ public class PermissionRegisterer implements Runnable{
 	 */
 	private final String typeName;
 	
+	
 	/**
-	 * Vaults' Permissions to interact with
+	 * The Vault Permission Object
 	 */
 	private Permission vaultPermissions;
+	
 	
 	
 	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<String, AbstractTraitHolder> memberList, String typeName){
@@ -44,8 +46,10 @@ public class PermissionRegisterer implements Runnable{
 	
 	@Override
 	public void run() {
+		if(!isVaultActive()) return;
+		
 		vaultPermissions = checkVault();
-		if(traitHolderList.size() <= 0) return;
+		if(traitHolderList == null || traitHolderList.size() <= 0) return;
 		if(vaultPermissions == null) return;
 		if(!vaultPermissions.hasGroupSupport()) return;
 		
@@ -54,6 +58,7 @@ public class PermissionRegisterer implements Runnable{
 		registerTraitHolders();
 		giveMembersAccessToGroups();
 	}
+	
 	
 	/**
 	 * Removes all old groups
@@ -70,7 +75,7 @@ public class PermissionRegisterer implements Runnable{
 				}
 				
 				//remove the group from the list TODO
-				vaultPermissions.groupRemove((World)null, groupName, "*");
+				//vaultPermissions.groupRemove((World)null, groupName, "*");
 			}
 		}
 	}
@@ -79,6 +84,8 @@ public class PermissionRegisterer implements Runnable{
 	 * Registers the TraitHolders as Group when supported
 	 */
 	private void registerTraitHolders() {
+		if(traitHolderList == null || traitHolderList.isEmpty()) return;
+		
 		for(AbstractTraitHolder holder : traitHolderList){
 			HolderPermissions permissions = holder.getPermissions();
 			if(permissions == null || permissions.getPermissions().size() ==0){
@@ -98,6 +105,8 @@ public class PermissionRegisterer implements Runnable{
 	 * Adds the people to the corresponding groups
 	 */
 	private void giveMembersAccessToGroups() {
+		if(memberList == null || memberList.isEmpty()) return;
+		
 		for(String member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
 			if(holder == null) continue;
@@ -115,6 +124,14 @@ public class PermissionRegisterer implements Runnable{
 		}
 	}
 
+	/**
+	 * Checks if Vault is active.
+	 * @return
+	 */
+	private static boolean isVaultActive(){
+		return RacesAndClasses.getPlugin().getServer().getPluginManager().isPluginEnabled("Vault");
+	}
+	
 
 	/**
 	 * Gets the service for Vault
@@ -122,6 +139,8 @@ public class PermissionRegisterer implements Runnable{
 	 * WARNING: Returns null if the Groups are not supported!!!
 	 */
 	private static Permission checkVault(){
+		if(!isVaultActive()) return null;
+		
         RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         Permission perms = rsp.getProvider();
         
@@ -135,6 +154,8 @@ public class PermissionRegisterer implements Runnable{
 	 * This only works if Vault is active.
 	 */
 	public static void removePlayer(String player, String prefix) {
+		if(!isVaultActive()) return;
+		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
 			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player);
@@ -152,6 +173,8 @@ public class PermissionRegisterer implements Runnable{
 	 * This only works if Vault is active.
 	 */
 	public static void addPlayer(String player, String groupName) {
+		if(!isVaultActive()) return;
+		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
 			vaultPermissions.playerAddGroup((String) null, player, groupName);

@@ -63,19 +63,20 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			}
 			
 			boolean worked = config.changeAttribute(attribute, value);
-			if(worked)
+			if(worked){
 				player.sendMessage(ChatColor.GREEN + "The Attribute " + ChatColor.LIGHT_PURPLE + attribute + ChatColor.GREEN +
 									" has been changed to: " + ChatColor.LIGHT_PURPLE + value);
-			else
-				player.sendMessage(ChatColor.GREEN + "The Attribute " + ChatColor.LIGHT_PURPLE + attribute + ChatColor.GREEN +
+			}else{
+				player.sendMessage(ChatColor.RED + "The Attribute " + ChatColor.LIGHT_PURPLE + attribute + ChatColor.RED +
 						" could not be found.");
-	
+			}
 			
 			return true;
 		}
 		
 		
-		player.sendMessage(ChatColor.RED + "Wrong usage. Use: /raceconfig <attribute> <value>");
+		player.sendMessage(ChatColor.RED + "Wrong usage. Use:" + ChatColor.LIGHT_PURPLE + " /raceconfig <attribute> <value>  or");
+		player.sendMessage(ChatColor.LIGHT_PURPLE + "/raceconfig <attribute> <value>  to list yout config");
 		return true;
 	}
 

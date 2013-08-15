@@ -30,39 +30,33 @@ public class CommandExecutor_RacesVersion implements CommandExecutor{
 		if(Consts.currentDevStage.contains("A")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.RED + "ALPHA" + ChatColor.YELLOW + 
 								" stage. Not all Featurs are yet implemented.");
-			return true;
 		}
 		
 			
 		if(Consts.currentDevStage.contains("B")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.DARK_PURPLE + "BETA" + ChatColor.YELLOW + 
 								" stage. Main Featurs are all running. Bugs are possible");
-			return true;
 		}
 			
 		if(Consts.currentDevStage.contains("R")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.GREEN + "RELEASE" + ChatColor.YELLOW + 
 								" stage. All Features should work without Errors.");
-			return true;
 		}
 		
 			
 		if(Consts.currentDevStage.contains("D")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.AQUA + "DEVELOPEMENT" + 
 								ChatColor.YELLOW + " stage. Some Features are not completed and will be completed soon.");
-			return true;
 		}
 			
 		if(Consts.currentDevStage.contains("E")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.LIGHT_PURPLE + "EXPERIMENTAL" + ChatColor.YELLOW + 
 								" stage. Changes can be rejected and will not be stable.");
-			return true;
 		}
 			
 		if(Consts.currentDevStage.contains("S")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.GREEN + "STABLE" + ChatColor.YELLOW + 
 								" stage. All Features should work without Errors.");
-			return true;
 		}
 			
 		return true;

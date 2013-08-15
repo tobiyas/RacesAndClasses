@@ -24,13 +24,17 @@ public class CommandExecutor_HP implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
+		
 		if(!(sender instanceof Player)){
 			sender.sendMessage(ChatColor.RED + "Only Players can use this command.");
 			return true;
 		}
+		
 		Player player = (Player) sender;
-		if(!plugin.getHealthManager().displayHealth(player.getName()))
+		if(!plugin.getHealthManager().displayHealth(player.getName())){
 			player.sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");
+		}
+		
 		return true;
 	}
 

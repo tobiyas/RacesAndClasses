@@ -116,7 +116,7 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected void readArmor(){
 		armorUsage = new boolean[]{false, false, false, false, false};
-		String armorString = config.getString(holderName + ".config.armor", "").toLowerCase();
+		String armorString = config.getString(holderName + ".config.armor", "all").toLowerCase();
 		if(armorString.contains("leather"))
 			armorUsage[0] = true;
 		
