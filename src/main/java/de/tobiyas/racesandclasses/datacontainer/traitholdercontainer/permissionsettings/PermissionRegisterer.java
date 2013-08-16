@@ -114,6 +114,8 @@ public class PermissionRegisterer implements Runnable{
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			
 			String[] groups = vaultPermissions.getPlayerGroups((String)null, member);
+			if(groups == null || groups.length == 0) continue;
+			
 			for(String group : groups){
 				if(group.startsWith(typeName)){
 					vaultPermissions.playerRemoveGroup((String) null, member, group);
