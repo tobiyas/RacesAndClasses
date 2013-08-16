@@ -9,6 +9,7 @@ import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerResp
 import de.tobiyas.racesandclasses.listeners.holderchangegui.ClassChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.RaceChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.racechangelistener.RaceChangeSelectionListener;
+import de.tobiyas.racesandclasses.listeners.traitgui.TraitGuiListener;
 
 public class RaCListenerRegister {
 
@@ -23,6 +24,8 @@ public class RaCListenerRegister {
 		
 		new ClassChangeListenerGui();
 		new RaceChangeListenerGui();
+		
+		new TraitGuiListener();
 	}
 	
 	

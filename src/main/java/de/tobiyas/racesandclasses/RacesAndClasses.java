@@ -31,6 +31,7 @@ import de.tobiyas.racesandclasses.commands.general.CommandExecutor_RacesReload;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_HP;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceGod;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceHeal;
+import de.tobiyas.racesandclasses.commands.health.CommandExecutor_ShowTraits;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RaceHelp;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
@@ -187,6 +188,8 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 
 	private void initManagers(){
+		long currentTime = System.currentTimeMillis();
+		
 		DebugTask.initDebugger();
 		setupConfiguration();
 		
@@ -207,7 +210,10 @@ public class RacesAndClasses extends JavaPlugin{
 		
 		cooldownManager = new CooldownManager();
 		
-		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Create all Managers! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
 		
 		//init of Managers
 		//Tutorials
@@ -216,22 +222,52 @@ public class RacesAndClasses extends JavaPlugin{
 			tutorialManager.disable();
 		}
 		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init TutorialManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
+		
 		//Cooldown Manager
 		cooldownManager.init();
+		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init CooldownManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
 
 		//Trait Event Manager
 		traitEventManager.init();
 		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init TraitEventManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
+		
 		//Race Manager
 		raceManager.init();
+		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init RaceManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
 		
 		//Class Manager
 		if(configManager.getGeneralConfig().isConfig_classes_enable()){
 			classManager.init();
 		}
 		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init ClassManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
+		
 		//Health Manager
 		healthManager.init();
+		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init HealthManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
+		currentTime = System.currentTimeMillis();
 		
 		//Channel Manager
 		if(configManager.getGeneralConfig().isConfig_channels_enable()){
@@ -240,6 +276,8 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	
 	private void registerCommands(){
+		long currentTime = System.currentTimeMillis();
+		
 		new CommandExecutor_Race();
 		new CommandExecutor_Racechat();
 		new CommandExecutor_RaceHelp();
@@ -260,6 +298,11 @@ public class RacesAndClasses extends JavaPlugin{
 		new CommandExecutor_RacesReload();
 		new CommandExecutor_RacesVersion();
 		new CommandExecutor_Statistics();
+		new CommandExecutor_ShowTraits();
+		
+		if(System.currentTimeMillis() - currentTime > 1000){
+			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+		}
 	}
 	
 	private void initMetrics(){

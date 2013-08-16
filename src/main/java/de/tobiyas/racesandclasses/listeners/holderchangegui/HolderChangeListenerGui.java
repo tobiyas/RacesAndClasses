@@ -56,20 +56,16 @@ public abstract class HolderChangeListenerGui implements Listener {
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null) return;
 		
-		boolean hasToRefresh = false;
 		//iterate through all items
 		for(ItemStack item : player.getInventory()){
 			
 			//lets see if any item is equals to a holder tag.
 			if(isHolderItem(item)){
 				player.getInventory().remove(item);
-				hasToRefresh = true;
 			}
 		}
 		
-		if(hasToRefresh){
-			InventoryResync.resync(player);
-		}
+		InventoryResync.resync(player);
 	}
 	
 	

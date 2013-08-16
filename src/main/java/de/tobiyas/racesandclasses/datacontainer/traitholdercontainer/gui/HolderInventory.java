@@ -128,11 +128,7 @@ public class HolderInventory extends InventoryView{
 	 * @param manager the manager of the holder to check
 	 * @return true if the player has access, false otherwise.
 	 */
-	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {
-		/*String holderPermission = PermissionNode.prePlugin + manager.getContainerTypeAsString() + "s." + holder.getName();
-		return plugin.getPermissionManager().checkPermissionsSilent(player, holderPermission);
-		*/
-		
+	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {		
 		HolderSelectEvent event = null;
 		if(manager == plugin.getClassManager()){
 			event = new ClassSelectEvent(player, (ClassContainer) holder);
@@ -156,7 +152,7 @@ public class HolderInventory extends InventoryView{
 
 	@Override
 	public Inventory getBottomInventory() {
-		return player.getInventory();
+		return Bukkit.createInventory(player, 36);
 	}
 
 	@Override

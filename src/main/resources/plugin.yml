@@ -102,4 +102,9 @@ commands:
     description: displays statistics
     aliases: [racs]
     usage: |
-           /racstatistics <trait name> 
+           /racstatistics <trait name>
+  showtraits:
+    description: displays the Traits of a player
+    aliases: [rst]
+    usage: |
+           /showtraits [playername]
