@@ -52,7 +52,7 @@ public class Listener_Player implements Listener {
 			}
 		}
 		
-		plugin.getHealthManager().checkPlayer(player.getName());
+		plugin.getPlayerManager().checkPlayer(player.getName());
 		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLogin(player);

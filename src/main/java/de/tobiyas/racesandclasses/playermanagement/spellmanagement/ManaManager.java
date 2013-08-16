@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.spellmanagement;
+package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;

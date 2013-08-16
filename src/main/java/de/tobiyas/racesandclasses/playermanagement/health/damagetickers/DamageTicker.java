@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.healthmanagement.damagetickers;
+package de.tobiyas.racesandclasses.playermanagement.health.damagetickers;
 
 import java.util.HashSet;
 

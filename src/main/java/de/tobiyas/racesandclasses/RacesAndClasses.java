@@ -43,8 +43,8 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
+import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
@@ -85,9 +85,9 @@ public class RacesAndClasses extends JavaPlugin{
 	protected ConfigManager configManager;
 	
 	/**
-	 * The Health Manager of the Plugin
+	 * The Player Manager of the Plugin
 	 */
-	protected HealthManager healthManager;
+	protected PlayerManager playerManager;
 	
 	/**
 	 * The CooldownManager of the Plugin
@@ -204,7 +204,7 @@ public class RacesAndClasses extends JavaPlugin{
 		tutorialManager = new TutorialManager();
 		raceManager = new RaceManager();
 		classManager = new ClassManager();
-		healthManager = new HealthManager();
+		playerManager = new PlayerManager();
 		channelManager = new ChannelManager();
 		permManager = new PermissionManager(this);
 		
@@ -261,11 +261,11 @@ public class RacesAndClasses extends JavaPlugin{
 		}
 		currentTime = System.currentTimeMillis();
 		
-		//Health Manager
-		healthManager.init();
+		//Player Manager
+		playerManager.init();
 		
 		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init HealthManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
+			log("Took too long to Init PlayerManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
 		}
 		currentTime = System.currentTimeMillis();
 		
@@ -415,7 +415,7 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	
 	private void shutDownSequenz(boolean useGC){
-		healthManager.saveHealthContainer();
+		playerManager.savePlayerContainer();
 		debugLogger.shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
@@ -488,10 +488,10 @@ public class RacesAndClasses extends JavaPlugin{
 
 
 	/**
-	 * @return the healthManager
+	 * @return the playerManager
 	 */
-	public HealthManager getHealthManager() {
-		return healthManager;
+	public PlayerManager getPlayerManager() {
+		return playerManager;
 	}
 
 

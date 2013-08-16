@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.healthmanagement;
+package de.tobiyas.racesandclasses.playermanagement;
 
 import java.io.File;
 
@@ -12,12 +12,13 @@ import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.spellmanagement.PlayerSpellManager;
+import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class HealthContainer {
+public class PlayerContainer {
 	
 	/**
 	 * The plugin to get the managers from.
@@ -65,6 +66,7 @@ public class HealthContainer {
 	private final PlayerSpellManager spellManager;
 	
 	
+	
 	/**
 	 * Creates the new Health container of a player.
 	 * 
@@ -74,7 +76,7 @@ public class HealthContainer {
 	 * @param player to create to.
 	 * @param maxHealth to create with.
 	 */
-	public HealthContainer(String player, double maxHealth){
+	public PlayerContainer(String player, double maxHealth){
 		this.hasGod = false;
 		this.playerName = player;
 		this.maxHealth = maxHealth;
@@ -138,7 +140,7 @@ public class HealthContainer {
 	 * @param player to load
 	 * @return the container corresponding to the palyer.
 	 */
-	public static HealthContainer constructContainerFromYML(String player){
+	public static PlayerContainer constructContainerFromYML(String player){
 		YAMLConfigExtended config = new YAMLConfigExtended(RacesAndClasses.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
 		config.load();
 		
@@ -156,7 +158,7 @@ public class HealthContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
-		HealthContainer container = new HealthContainer(player, maxHealth);
+		PlayerContainer container = new PlayerContainer(player, maxHealth);
 		if(hasGod){
 			container.switchGod();
 		}
@@ -264,6 +266,16 @@ public class HealthContainer {
 	 */
 	public boolean isGod() {
 		return this.hasGod;
+	}
+
+
+	/**
+	 * Returns the Spell Manager of the Player.
+	 * 
+	 * @return
+	 */
+	public PlayerSpellManager getSpellManager() {
+		return this.spellManager;
 	}
 	
 

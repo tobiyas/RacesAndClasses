@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.spellmanagement;
+package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import java.util.Iterator;
 import java.util.LinkedList;

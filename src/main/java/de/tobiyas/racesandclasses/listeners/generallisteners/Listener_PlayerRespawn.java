@@ -16,6 +16,6 @@ public class Listener_PlayerRespawn implements Listener{
 	
 	@EventHandler
 	public void resetPlayerMaxHealthAfterDeath(PlayerRespawnEvent event){
-		plugin.getHealthManager().checkPlayer(event.getPlayer().getName());
+		plugin.getPlayerManager().checkPlayer(event.getPlayer().getName());
 	}
 }

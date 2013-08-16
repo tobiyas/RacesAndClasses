@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.healthmanagement;
+package de.tobiyas.racesandclasses.playermanagement;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,15 +11,16 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class HealthManager{
+public class PlayerManager{
 	
 	/**
 	 * This is the map of each player's health container
 	 */
-	private HashMap<String, HealthContainer> playerHealth;
+	private HashMap<String, PlayerContainer> playerHealth;
 	
 	/**
 	 * The plugin to access other parts of the Plugin.
@@ -27,10 +28,10 @@ public class HealthManager{
 	private RacesAndClasses plugin;
 	
 	/**
-	 * Creates a new HealthManager and resets all values
+	 * Creates a new PlayerManager and resets all values
 	 */
-	public HealthManager(){
-		playerHealth = new HashMap<String, HealthContainer>();
+	public PlayerManager(){
+		playerHealth = new HashMap<String, PlayerContainer>();
 		plugin = RacesAndClasses.getPlugin();
 	}
 	
@@ -38,16 +39,16 @@ public class HealthManager{
 	 * Loads the health manager from the playerdata.yml
 	 */
 	public void init(){
-		loadHealthContainer();
+		loadPlayerContainer();
 	}
 	
 	/**
-	 * Stores the data in the HealthManager in the playerData.yml.
+	 * Stores the data in the PlayerManager in the playerData.yml.
 	 */
-	public void saveHealthContainer(){
+	public void savePlayerContainer(){
 		checkFileExist();
 		for(String player : playerHealth.keySet()){
-			HealthContainer container = playerHealth.get(player);
+			PlayerContainer container = playerHealth.get(player);
 			container.save();
 		}
 	}
@@ -55,13 +56,13 @@ public class HealthManager{
 	/**
 	 * loads the health manager internally
 	 */
-	private void loadHealthContainer(){
+	private void loadPlayerContainer(){
 		checkFileExist();
 		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML).load();
 		
 		Set<String> players = config.getChildren("playerdata");
 		for(String player : players){
-			HealthContainer container = HealthContainer.constructContainerFromYML(player);
+			PlayerContainer container = PlayerContainer.constructContainerFromYML(player);
 			if(container != null){
 				playerHealth.put(player, container);
 			}
@@ -88,7 +89,7 @@ public class HealthManager{
 	}
 	
 	/**
-	 * Gives the player a new HealthContainer.
+	 * Gives the player a new PlayerContainer.
 	 * It scans the player's data from the Race and Class container and
 	 * calculates the needed values.
 	 * 
@@ -103,7 +104,7 @@ public class HealthManager{
 		else
 			maxHealth = container.getRaceMaxHealth();
 		
-		playerHealth.put(player, new HealthContainer(player, maxHealth));
+		playerHealth.put(player, new PlayerContainer(player, maxHealth));
 	}
 	
 	/**
@@ -114,18 +115,18 @@ public class HealthManager{
 	 * @return
 	 */
 	public double getHealthOfPlayer(String playerName){
-		HealthContainer container = getCreate(playerName, true);
+		PlayerContainer container = getCreate(playerName, true);
 		if(container == null) return -1;
 		return container.getCurrentHealth();
 	}
 	
 	/**
-	 * Rescans the player and creates a new {@link HealthContainer} if he has none.
+	 * Rescans the player and creates a new {@link PlayerContainer} if he has none.
 	 *  
 	 * @param player to check
 	 */
 	public void checkPlayer(String player){
-		HealthContainer hContainer = playerHealth.get(player);
+		PlayerContainer hContainer = playerHealth.get(player);
 		if(hContainer == null){
 			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 			double maxHealth;
@@ -136,7 +137,7 @@ public class HealthManager{
 				maxHealth = container.getRaceMaxHealth();
 			}
 			
-			HealthContainer healthContainer = new HealthContainer(player, maxHealth);
+			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth);
 			healthContainer.checkStats();
 			playerHealth.put(player, healthContainer);
 		}else{
@@ -173,7 +174,7 @@ public class HealthManager{
 	 * @return true, if it worked.
 	 */
 	public boolean displayHealth(String playerName) {
-		HealthContainer container = getCreate(playerName, true);
+		PlayerContainer container = getCreate(playerName, true);
 		if(container == null) return false; //this should not happen...
 		container.forceHPOut();
 		return true;
@@ -186,7 +187,7 @@ public class HealthManager{
 	 * @return true if worked, false if player not found.
 	 */
 	public boolean switchGod(String name) {
-		HealthContainer container = playerHealth.get(name);
+		PlayerContainer container = playerHealth.get(name);
 		if(container != null){
 			container.switchGod();
 			return true;
@@ -202,24 +203,24 @@ public class HealthManager{
 	 * @return the max health of a player.
 	 */
 	public double getMaxHealthOfPlayer(String playerName) {
-		HealthContainer container = getCreate(playerName, true);
+		PlayerContainer container = getCreate(playerName, true);
 		if(container == null) return -1;
 		return container.getMaxHealth();
 	}
 	
 	/**
-	 * Gets the current HealthContainer of the Player.
+	 * Gets the current PlayerContainer of the Player.
 	 * If not found, a new one is created. 
 	 * 
 	 * @param playerName to check
 	 * @return the found or new created container.
 	 */
-	private HealthContainer getCreate(String playerName){
+	private PlayerContainer getCreate(String playerName){
 		return getCreate(playerName, true);
 	}
 	
 	/**
-	 * Gets the HealthContainer of a Player.
+	 * Gets the PlayerContainer of a Player.
 	 * If the container is not found, a new one is created 
 	 * if the flag (create) is set to true.
 	 * 
@@ -227,8 +228,8 @@ public class HealthManager{
 	 * @param create
 	 * @return
 	 */
-	private HealthContainer getCreate(String playerName, boolean create){
-		HealthContainer container = playerHealth.get(playerName);
+	private PlayerContainer getCreate(String playerName, boolean create){
+		PlayerContainer container = playerHealth.get(playerName);
 		if(container == null && create){
 			checkPlayer(playerName);
 			container = playerHealth.get(playerName);
@@ -244,8 +245,19 @@ public class HealthManager{
 	 * @return true if has god on
 	 */
 	public boolean isGod(String playerName) {
-		HealthContainer containerOfPlayer = getCreate(playerName);
+		PlayerContainer containerOfPlayer = getCreate(playerName);
 		return containerOfPlayer.isGod();
+	}
+	
+	
+	/**
+	 * Gets the SpellManager of a player.
+	 * @param playerName to get
+	 * @return the SpellManager of the Player.
+	 */
+	public PlayerSpellManager getSpellManagerOfPlayer(String playerName){
+		PlayerContainer containerOfPlayer = getCreate(playerName);
+		return containerOfPlayer.getSpellManager();
 	}
 
 }

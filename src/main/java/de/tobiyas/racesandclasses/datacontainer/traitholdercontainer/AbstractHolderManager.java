@@ -141,7 +141,7 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		memberList.put(player, container);
 		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), container.getName());
-		plugin.getHealthManager().checkPlayer(player);
+		plugin.getPlayerManager().checkPlayer(player);
 		
 		memberConfig.save();
 

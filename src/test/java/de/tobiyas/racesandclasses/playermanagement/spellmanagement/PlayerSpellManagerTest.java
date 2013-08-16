@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.spellmanagement;
+package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import org.junit.After;
 import org.junit.Before;

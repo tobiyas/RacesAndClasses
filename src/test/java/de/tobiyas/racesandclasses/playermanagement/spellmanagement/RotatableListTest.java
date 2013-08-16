@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.spellmanagement;
+package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

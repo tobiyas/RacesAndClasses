@@ -28,7 +28,7 @@ public class Listener_GodModeDamagePrevent implements Listener{
 		
 		//safe cast because of check before
 		Player player = (Player) event.getEntity();
-		if(plugin.getHealthManager().isGod(player.getName())){
+		if(plugin.getPlayerManager().isGod(player.getName())){
 			event.setCancelled(true);
 		}
 	}
@@ -41,7 +41,7 @@ public class Listener_GodModeDamagePrevent implements Listener{
 		
 		//safe cast because of check before
 		Player player = (Player) event.getEntity();
-		if(plugin.getHealthManager().isGod(player.getName())){
+		if(plugin.getPlayerManager().isGod(player.getName())){
 			player.sendMessage(ChatColor.GREEN + "Sorry, even " + ChatColor.GOLD + "GOD"
 				+ ChatColor.GREEN + " could not prevent your death.  " + ChatColor.BLUE + ":(");
 		}

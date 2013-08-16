@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.healthmanagement.display;
+package de.tobiyas.racesandclasses.playermanagement.health.display;
 
 
 public interface HealthDisplay {

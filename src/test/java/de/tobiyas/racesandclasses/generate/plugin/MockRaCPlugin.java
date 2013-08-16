@@ -20,7 +20,7 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
-import de.tobiyas.racesandclasses.healthmanagement.HealthManager;
+import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
@@ -55,7 +55,7 @@ public class MockRaCPlugin extends RacesAndClasses {
 		
 		this.errored = false;
 		
-		this.healthManager = mock(HealthManager.class, RETURNS_DEEP_STUBS);
+		this.playerManager = mock(PlayerManager.class, RETURNS_DEEP_STUBS);
 		
 		this.permManager = mock(PermissionManager.class, RETURNS_DEEP_STUBS);
 		
@@ -162,8 +162,8 @@ public class MockRaCPlugin extends RacesAndClasses {
 	}
 	
 	
-	public void setHealthManager(HealthManager healthManager){
-		this.healthManager = healthManager;
+	public void setHealthManager(PlayerManager healthManager){
+		this.playerManager = healthManager;
 	}
 	
 	

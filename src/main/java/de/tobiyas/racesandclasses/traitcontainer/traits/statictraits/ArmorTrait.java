@@ -64,7 +64,7 @@ public class ArmorTrait implements Trait {
 		ItemStack armorItem = playerEquipEvent.getArmorItem();
 		if(armorItem == null) return false;
 		
-		if(!plugin.getHealthManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(armorItem)){ 
+		if(!plugin.getPlayerManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(armorItem)){ 
 			player.sendMessage(ChatColor.RED + "You are not allowed to use " 
 					+ ChatColor.LIGHT_PURPLE + getMaterialName(armorItem.getType()) + ChatColor.RED + ".");
 			playerEquipEvent.setCancelled(true);

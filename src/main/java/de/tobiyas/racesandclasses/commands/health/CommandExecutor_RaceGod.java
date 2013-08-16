@@ -52,7 +52,7 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 			return true;
 		}
 		
-		if(plugin.getHealthManager().switchGod(target.getName())){
+		if(plugin.getPlayerManager().switchGod(target.getName())){
 			sender.sendMessage(ChatColor.GREEN + "Success.");
 		}else{
 			sender.sendMessage(ChatColor.RED + "failed.");

@@ -84,7 +84,7 @@ public class CommandExecutor_HPTest {
 	
 	@Test
 	public void health_displaying_works(){
-		when(RacesAndClasses.getPlugin().getHealthManager().displayHealth(playerName)).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getPlayerManager().displayHealth(playerName)).thenReturn(true);
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender, never()).sendMessage(anyString());
@@ -92,7 +92,7 @@ public class CommandExecutor_HPTest {
 
 	@Test
 	public void health_displaying_fails_when_display_errors(){
-		when(RacesAndClasses.getPlugin().getHealthManager().displayHealth(playerName)).thenReturn(false);
+		when(RacesAndClasses.getPlugin().getPlayerManager().displayHealth(playerName)).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender).sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");

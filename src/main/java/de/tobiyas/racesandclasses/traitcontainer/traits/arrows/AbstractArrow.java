@@ -80,7 +80,7 @@ public abstract class AbstractArrow implements TraitWithUplink, Trait{
 			Player player = (Player) Eevent.getEntity();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
-			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
 			if(arrow == null || arrow != this) return false;
 			
@@ -99,7 +99,7 @@ public abstract class AbstractArrow implements TraitWithUplink, Trait{
 			Player player = (Player) arrow.getShooter();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			
-			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow currentArrow = arrowManager.getCurrentArrow();
 			if(currentArrow == null) return false;
 			
@@ -124,7 +124,7 @@ public abstract class AbstractArrow implements TraitWithUplink, Trait{
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 
-			ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
+			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
 			AbstractArrow arrow = arrowManager.getCurrentArrow();
 			if(arrow == null || arrow != this) return false;
 
@@ -143,7 +143,7 @@ public abstract class AbstractArrow implements TraitWithUplink, Trait{
 	 * @return
 	 */
 	private boolean changeArrowType(Player player){
-		ArrowManager arrowManager = plugin.getHealthManager().getArrowManagerOfPlayer(player.getName());
+		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return false;
 		

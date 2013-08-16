@@ -46,7 +46,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 	@Test
 	public void changing_god_with_player_on_self_works(){
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(sender, PermissionNode.god)).thenReturn(true);
-		when(RacesAndClasses.getPlugin().getHealthManager().switchGod(playerName)).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getPlayerManager().switchGod(playerName)).thenReturn(true);
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender).sendMessage(ChatColor.GREEN + "Success.");
@@ -55,7 +55,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 	@Test
 	public void changing_god_with_player_on_self_fails_when_healthmanager_fails(){
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(sender, PermissionNode.god)).thenReturn(true);
-		when(RacesAndClasses.getPlugin().getHealthManager().switchGod(playerName)).thenReturn(false);
+		when(RacesAndClasses.getPlugin().getPlayerManager().switchGod(playerName)).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender).sendMessage(ChatColor.RED + "failed.");

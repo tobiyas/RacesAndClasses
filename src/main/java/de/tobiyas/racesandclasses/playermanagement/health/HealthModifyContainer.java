@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.healthmanagement;
+package de.tobiyas.racesandclasses.playermanagement.health;
 
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 

@@ -1,19 +1,20 @@
-package de.tobiyas.racesandclasses.healthmanagement;
+package de.tobiyas.racesandclasses.playermanagement.health;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
-import de.tobiyas.racesandclasses.healthmanagement.display.ChatHealthBar;
-import de.tobiyas.racesandclasses.healthmanagement.display.HealthDisplay;
-import de.tobiyas.racesandclasses.healthmanagement.display.HealthDisplay.DisplayType;
-import de.tobiyas.racesandclasses.healthmanagement.display.ScoreBoardHealthBar;
+import de.tobiyas.racesandclasses.playermanagement.PlayerContainer;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ChatHealthBar;
+import de.tobiyas.racesandclasses.playermanagement.health.display.HealthDisplay;
+import de.tobiyas.racesandclasses.playermanagement.health.display.HealthDisplay.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardHealthBar;
 
 public class HealthDisplayRunner implements Runnable {
 	
 	private MemberConfig config;
-	private HealthContainer healthContainer;
+	private PlayerContainer healthContainer;
 	private double oldValue;
 	private int oldInterval;
 	
@@ -27,7 +28,7 @@ public class HealthDisplayRunner implements Runnable {
 	 * @param config to load options from
 	 * @param healthContainer to contact with.
 	 */
-	public HealthDisplayRunner(MemberConfig config, HealthContainer healthContainer){
+	public HealthDisplayRunner(MemberConfig config, PlayerContainer healthContainer){
 		if(config == null) return;
 		this.config = config;
 		this.healthContainer = healthContainer;
