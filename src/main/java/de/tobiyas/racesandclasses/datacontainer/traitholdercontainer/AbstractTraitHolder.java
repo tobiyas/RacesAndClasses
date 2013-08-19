@@ -8,8 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
@@ -20,18 +18,14 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractTraitHolder {
 	
 	/**
-	 * The plugin to call stuff on
-	 */
-	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
-	/**
 	 * The config of the holder to store / load stuff
 	 */
-	protected final YamlConfiguration config;
+	protected final YAMLConfigExtended config;
 	
 	/**
 	 * The name of the holder
@@ -76,10 +70,13 @@ public abstract class AbstractTraitHolder {
 	 * @param config to load from
 	 * @param name of the holder
 	 */
-	protected AbstractTraitHolder(YamlConfiguration config, String name) {
+	protected AbstractTraitHolder(YAMLConfigExtended config, String name) {
 		this.config = config;
 		this.holderName = name;
 		this.parsingExceptionsHappened = new LinkedList<HolderTraitParseException>();
+		this.armorUsage = new boolean[]{false, false, false, false, false};
+		this.traits = new HashSet<Trait>();
+		this.holderTag = "[" + name + "]";
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
 		this.manaBonus = 0;
@@ -150,6 +147,7 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected void readTraitSection(){
 		traits = new HashSet<Trait>();
+		addSTDTraits();
 		
 		if(!config.isConfigurationSection(holderName + ".traits")){
 			return; //trait section is not necessary
@@ -171,12 +169,11 @@ public abstract class AbstractTraitHolder {
 				}
 			}catch(TraitConfigurationFailedException exp){
 				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
-				plugin.log("Error on parsing: '" + getName() + "' Problem was: '" + exp.getMessage() 
+				RacesAndClasses.getPlugin().log("Error on parsing: '" + getName() + "' Problem was: '" + exp.getMessage() 
 						+ "' On Trait: '" + traitName + "'.");
 			}
 		}
 		
-		addSTDTraits();
 		this.parsingExceptionsHappened.addAll(exceptionList);
 	}
 	

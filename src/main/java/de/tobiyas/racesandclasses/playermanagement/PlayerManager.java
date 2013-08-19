@@ -11,6 +11,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -129,11 +130,9 @@ public class PlayerManager{
 		PlayerContainer hContainer = playerHealth.get(player);
 		if(hContainer == null){
 			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
-			double maxHealth;
-			if(container == null){
-				//this should actually not happen, since there is a default Race.
-				maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-			}else{
+			
+			double maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
+			if(container != null){
 				maxHealth = container.getRaceMaxHealth();
 			}
 			
@@ -258,6 +257,12 @@ public class PlayerManager{
 	public PlayerSpellManager getSpellManagerOfPlayer(String playerName){
 		PlayerContainer containerOfPlayer = getCreate(playerName);
 		return containerOfPlayer.getSpellManager();
+	}
+	
+	
+	public PlayerLevelManager getPlayerLevelManager(String playerName){
+		PlayerContainer containerOfPlayer = getCreate(playerName);
+		return containerOfPlayer.getPlayerLevelManager();
 	}
 
 }

@@ -11,12 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.LinkedList;
 import java.util.List;
 
-
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PlugincommandFactory;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,6 +23,7 @@ import org.junit.Test;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
+import de.tobiyas.racesandclasses.generate.PluginCommandFactory;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.generate.plugin.MockRaCPlugin;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
@@ -72,7 +70,7 @@ public class CommandExecutor_ChannelTest {
 	public void registering_with_correct_executer_works(){
 		String commandName = "channel";
 		
-		PluginCommand command = PlugincommandFactory.create(commandName, RacesAndClasses.getPlugin());
+		PluginCommand command = PluginCommandFactory.create(commandName, RacesAndClasses.getPlugin());
 		when(RacesAndClasses.getPlugin().getCommand(commandName)).thenReturn(command);
 		
 		sut = new CommandExecutor_Channel();

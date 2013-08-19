@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.StatisticAPI;
+import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class CommandExecutor_Statistics implements CommandExecutor {
@@ -18,7 +19,7 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 		try{
 			plugin.getCommand("racstatistics").setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /race.");
+			plugin.log("ERROR: Could not register command /racestatistics.");
 		}
 	}
 	
@@ -54,6 +55,11 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 			return;
 		}
 		
+		if(traitName.equalsIgnoreCase("startup")){
+			showStartupStatistics(sender);
+			return;
+		}
+		
 		sender.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.AQUA + "Statistics to: " + ChatColor.LIGHT_PURPLE 
 				+ traitName + ChatColor.YELLOW + " ====");
 		
@@ -69,6 +75,15 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 		double eventsPerMin = StatisticAPI.getTotalTriggersOfTraitPerMinute(traitName);
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Events / Minute on Trait " + ChatColor.DARK_PURPLE + traitName 
 				+ ChatColor.LIGHT_PURPLE + ": " + ChatColor.AQUA + eventsPerMin);
+	}
+
+
+	private void showStartupStatistics(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "===== STARTUP =====");
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Timings are in: " + ChatColor.LIGHT_PURPLE + "Millisecond");
+		for(StartupStatisticCategory category : StartupStatisticCategory.values()){
+			sender.sendMessage(ChatColor.GREEN + category.name() + ": " + ChatColor.LIGHT_PURPLE + category.timeInMiliSeconds);
+		}
 	}
 
 
@@ -89,6 +104,10 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 	private void sendHelp(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "[RaC]" + ChatColor.RED + " Use this command as following: " 
 				+ ChatColor.LIGHT_PURPLE + "/racstatistics <traitname>");
+		sender.sendMessage(ChatColor.YELLOW + "[RAC]" + ChatColor.RED + " Use " + ChatColor.LIGHT_PURPLE + "/racestatistics total" 
+				+ ChatColor.RED + " to see the total statistics.");
+		sender.sendMessage(ChatColor.YELLOW + "[RAC]" + ChatColor.RED + " Use " + ChatColor.LIGHT_PURPLE + "/racestatistics startup" 
+				+ ChatColor.RED + " to see startup statistics.");
 	}
 
 }

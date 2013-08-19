@@ -109,7 +109,13 @@ public class HolderInventory extends InventoryView{
 			//add trait text as lore
 			for(Trait trait: holder.getVisibleTraits()){
 				lore.add(ChatColor.DARK_AQUA + trait.getName() + ": " );
-				lore.add("  " + ChatColor.YELLOW + trait.getPrettyConfiguration());
+				String traitConfig = "  " + ChatColor.YELLOW + trait.getPrettyConfiguration();
+				if(traitConfig.length() > 32){
+					lore.add(traitConfig.substring(0, 31));
+					lore.add(traitConfig.substring(32, traitConfig.length() - 1));
+				}else{
+					lore.add(traitConfig);
+				}
 			}
 			
 			meta.setLore(lore);

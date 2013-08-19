@@ -1,11 +1,16 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PlugincommandFactory;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Assert;
@@ -14,6 +19,7 @@ import org.junit.Test;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
+import de.tobiyas.racesandclasses.generate.PluginCommandFactory;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.generate.plugin.MockRaCPlugin;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -54,7 +60,7 @@ public class CommandExecutor_BroadCastTest {
 	public void command_registration_works(){
 		String commandName = "globalbroadcast";
 		
-		PluginCommand command = PlugincommandFactory.create(commandName, RacesAndClasses.getPlugin());
+		PluginCommand command = PluginCommandFactory.create(commandName, RacesAndClasses.getPlugin());
 		when(RacesAndClasses.getPlugin().getCommand(commandName)).thenReturn(command);
 		
 		sut = new CommandExecutor_BroadCast();

@@ -3,6 +3,7 @@ package de.tobiyas.racesandclasses.racbuilder.container;
 import java.util.List;
 import java.util.Set;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
@@ -25,8 +26,8 @@ public class BuilderRaceContainer extends RaceContainer {
 		this.raceMaxHealth = raceMaxHealth;
 		this.traits = traits;
 		
-		this.raceChatColor = plugin.getConfigManager().getChannelConfig().getConfig_racechat_default_color();
-		this.raceChatFormat = plugin.getConfigManager().getChannelConfig().getConfig_racechat_default_format();
+		this.raceChatColor = RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color();
+		this.raceChatFormat = RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format();
 	}
 	
 	

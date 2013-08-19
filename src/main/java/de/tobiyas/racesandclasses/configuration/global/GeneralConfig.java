@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 
  
  public class GeneralConfig{
@@ -23,7 +24,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 	private boolean config_racechat_encrypt;
 	
-	private int config_defaultHealth;
+	private double config_defaultHealth;
 
 	
 	private boolean config_adaptListName;
@@ -76,6 +77,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	private String config_defaultRaceTag;
 	
 	private int config_itemForMagic;
+	
+	private String config_mapExpPerLevelCalculationString;
 	
 	
 	/**
@@ -136,6 +139,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		
 		config.addDefault("magic.wandId", Material.STICK.getId());
 		
+		config.addDefault("leve.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -155,7 +160,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		
 		config_whisper_enable = config.getBoolean("chat.channelwhisper.enable", true);
 		
-		config_defaultHealth = config.getInt("health.defaultHealth", 20);
+		config_defaultHealth = config.getDouble("health.defaultHealth", 20d);
 		
 		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", true);
 		config_enableErrorUpload = config.getBoolean("debug.outputs.errorUpload", true);
@@ -194,6 +199,12 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		
 		config_itemForMagic = config.getInt("magic.wandId", Material.STICK.getId());
 		
+		config_mapExpPerLevelCalculationString = config.getString("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
+			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
+			config_mapExpPerLevelCalculationString = "{level} * {level} * {level} * 1000";
+		}
+		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
 		
 		//be sure to have lower case to not be case sensitive
@@ -208,7 +219,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		return config_racechat_encrypt;
 	}
 
-	public int getConfig_defaultHealth() {
+	public double getConfig_defaultHealth() {
 		return config_defaultHealth;
 	}
 
@@ -320,6 +331,13 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	 */
 	public int getConfig_itemForMagic() {
 		return config_itemForMagic;
+	}
+
+	/**
+	 * @return the config_mapExpPerLevelCalculationString
+	 */
+	public String getConfig_mapExpPerLevelCalculationString() {
+		return config_mapExpPerLevelCalculationString;
 	}
 
 }

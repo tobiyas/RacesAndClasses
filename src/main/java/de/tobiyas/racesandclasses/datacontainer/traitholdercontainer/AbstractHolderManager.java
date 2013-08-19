@@ -11,6 +11,7 @@ import java.util.Observable;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
@@ -150,7 +151,23 @@ public abstract class AbstractHolderManager extends Observable{
 		String groupName = container.getPermissions().getGroupIdentificationName();
 		PermissionRegisterer.addPlayer(player, groupName);
 		
+		resetPlayerMovementSpeed(player);
+		
 		return true;
+	}
+	
+	
+	/**
+	 * Resets the movement speed of a Player.
+	 * The Player is identified by the name.
+	 * 
+	 * @param playerName to set the speed
+	 */
+	private void resetPlayerMovementSpeed(String playerName){
+		Player player = Bukkit.getPlayer(playerName);
+		if(player != null && player.isOnline()){
+			player.setWalkSpeed(0.2f);
+		}
 	}
 	
 	

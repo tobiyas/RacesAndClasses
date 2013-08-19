@@ -13,6 +13,7 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -45,6 +46,7 @@ public class PlayerContainer {
 	 */
 	private String playerName;
 	
+	
 	/**
 	 * The maximal Health of the player.
 	 * 
@@ -64,6 +66,12 @@ public class PlayerContainer {
 	 * The Spell Manager managing the Spells of the Player.
 	 */
 	private final PlayerSpellManager spellManager;
+	
+	
+	/**
+	 * The Level Manager of the Player.
+	 */
+	private final PlayerLevelManager levelManager;
 	
 	
 	
@@ -92,6 +100,8 @@ public class PlayerContainer {
 		
 		arrowManager = new ArrowManager(player);
 		armorToolManager = new ArmorToolManager(player);
+		levelManager = new PlayerLevelManager(playerName);
+		
 		checkStats();
 	}
 	
@@ -128,6 +138,8 @@ public class PlayerContainer {
 		if(!config.isConfigurationSection("playerdata." + playerName))
 			config.createSection("playerdata." + playerName);
 		config.set("playerdata." + playerName + ".hasGod", hasGod);
+		
+		levelManager.save();
 		
 		return config.save();
 	}
@@ -199,6 +211,7 @@ public class PlayerContainer {
 		}
 		
 		spellManager.rescan();
+		levelManager.checkLevelChanged();
 	}
 	
 	/**
@@ -276,6 +289,16 @@ public class PlayerContainer {
 	 */
 	public PlayerSpellManager getSpellManager() {
 		return this.spellManager;
+	}
+
+
+	/**
+	 * Returns the LevelManager of the Player.
+	 * 
+	 * @return
+	 */
+	public PlayerLevelManager getPlayerLevelManager() {
+		return this.levelManager;
 	}
 	
 

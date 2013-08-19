@@ -16,6 +16,8 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.*;
+
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
@@ -193,11 +195,17 @@ public class RacesAndClasses extends JavaPlugin{
 		DebugTask.initDebugger();
 		setupConfiguration();
 		
+		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
+		currentTime = System.currentTimeMillis();
+		
 		//copy default traits if non existent and enabled
 		if(configManager.getGeneralConfig().isConfig_copyDefaultTraitsOnStartup()){
 			DefaultTraitCopy.copyDefaultTraits();
 		}
 
+		TraitCopy.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
+		currentTime = System.currentTimeMillis();
+		
 		//Create all Managers
 		TraitEventManager traitEventManager = new TraitEventManager();
 		
@@ -210,9 +218,7 @@ public class RacesAndClasses extends JavaPlugin{
 		
 		cooldownManager = new CooldownManager();
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Create all Managers! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//init of Managers
@@ -222,33 +228,25 @@ public class RacesAndClasses extends JavaPlugin{
 			tutorialManager.disable();
 		}
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init TutorialManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		TutorialManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//Cooldown Manager
 		cooldownManager.init();
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init CooldownManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		CooldownManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 
 		//Trait Event Manager
 		traitEventManager.init();
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init TraitEventManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		TraitManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//Race Manager
 		raceManager.init();
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init RaceManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		RaceManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//Class Manager
@@ -256,23 +254,21 @@ public class RacesAndClasses extends JavaPlugin{
 			classManager.init();
 		}
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init ClassManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		ClassManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//Player Manager
 		playerManager.init();
 		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init PlayerManager! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		PlayerManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//Channel Manager
 		if(configManager.getGeneralConfig().isConfig_channels_enable()){
 			channelManager.init();
 		}
+		
+		ChannelManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 	}
 	
 	private void registerCommands(){

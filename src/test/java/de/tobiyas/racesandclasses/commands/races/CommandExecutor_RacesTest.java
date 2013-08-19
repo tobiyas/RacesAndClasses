@@ -14,7 +14,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PlugincommandFactory;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Assert;
@@ -25,6 +24,7 @@ import org.mockito.Mockito;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.generate.PluginCommandFactory;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
@@ -66,7 +66,7 @@ public class CommandExecutor_RacesTest {
 	public void registering_command_works(){
 		String commandName = "race";
 		
-		PluginCommand command = PlugincommandFactory.create(commandName, RacesAndClasses.getPlugin());
+		PluginCommand command = PluginCommandFactory.create(commandName, RacesAndClasses.getPlugin());
 		when(RacesAndClasses.getPlugin().getCommand(commandName)).thenReturn(command);
 		
 		sut = new CommandExecutor_Race();

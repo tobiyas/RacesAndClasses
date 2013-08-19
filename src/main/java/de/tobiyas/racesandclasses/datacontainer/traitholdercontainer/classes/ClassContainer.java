@@ -1,7 +1,6 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
@@ -12,7 +11,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class ClassContainer extends AbstractTraitHolder{
 	
 	protected String classHealthModify;
-	private double classHealthModValue;
+	protected double classHealthModValue;
 	
 	
 	/**
@@ -20,9 +19,8 @@ public class ClassContainer extends AbstractTraitHolder{
 	 * 
 	 * @param config
 	 * @param name
-	 * @throws HolderParsingException
 	 */
-	private ClassContainer(YamlConfiguration config, String name) throws HolderParsingException{
+	protected ClassContainer(YAMLConfigExtended config, String name){
 		super(config, name);
 	}
 	
@@ -40,12 +38,8 @@ public class ClassContainer extends AbstractTraitHolder{
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
-			if(!config.isConfigurationSection(holderName + ".config")){
-				throw new Exception();
-			}
-			
 			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
-			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag"));
+			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag", "[" + holderName + "]"));
 			this.classHealthModValue = evaluateValue(config.getString(holderName + ".config.health", "+0"));
 			
 			readArmor();
@@ -68,12 +62,18 @@ public class ClassContainer extends AbstractTraitHolder{
 		if(firstChar == '-')
 			classHealthModify = "-";
 		
-		if(classHealthModify == "")
+		if(classHealthModify == ""){
 			classHealthModify = "*";
-		else
+		}else{
 			val = val.substring(1, val.length());
+		}
 
-		return Double.valueOf(val);
+		double value = 1;
+		try{
+			value = Double.valueOf(val);			
+		}catch(Exception exp){}
+		
+		return value;
 	}
 	
 	
@@ -90,7 +90,7 @@ public class ClassContainer extends AbstractTraitHolder{
 	 * @return the container
 	 * @throws HolderParsingException 
 	 */
-	public static AbstractTraitHolder loadClass(YamlConfiguration config, String name) throws HolderParsingException{
+	public static AbstractTraitHolder loadClass(YAMLConfigExtended config, String name) throws HolderParsingException{
 		ClassContainer container = new ClassContainer(config, name);
 		return (ClassContainer) container.load();
 	}
@@ -98,14 +98,16 @@ public class ClassContainer extends AbstractTraitHolder{
 	
 	@Override
 	public boolean containsPlayer(String player){
-		AbstractTraitHolder container = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder container = RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);
 	}
 	
+	
 	public double modifyToClass(double maxHealth){
 		return evaluateClassMod(maxHealth);
 	}
+	
 	
 	private double evaluateClassMod(double maxHealth){
 		char firstChar = classHealthModify.charAt(0);

@@ -57,7 +57,7 @@ public class ChannelContainer extends Observable{
 		rescanPartitions(null);
 		
 		ChannelTicker.registerChannel(this);
-		if(channelName.equalsIgnoreCase("Tutorial")){
+		if("Tutorial".equalsIgnoreCase(channelName)){
 			registerTutorial();
 		}
 		
@@ -296,7 +296,7 @@ public class ChannelContainer extends Observable{
 		participants.remove(playerName);
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel){
 			if(participants.size() == 0){
-				plugin.getChannelManager().removeChannel(this);
+				plugin.getChannelManager().removeChannel(this.channelName);
 				return;
 			}else{
 				if(playerName.equalsIgnoreCase(channelAdmin)){
@@ -341,8 +341,9 @@ public class ChannelContainer extends Observable{
 		
 		for(String playerName : participants){
 			Player player = Bukkit.getPlayer(playerName);
-			if(player != null)
+			if(player != null){
 				player.sendMessage(modifiedMessage);
+			}
 		}
 	}
 	
@@ -461,15 +462,18 @@ public class ChannelContainer extends Observable{
 		}	
 		
 		for(String member : participants){
-			if(Bukkit.getPlayer(member) == null)
+			Player playerMember = Bukkit.getPlayer(member);
+			if(playerMember == null || !playerMember.isOnline()){
 				memberString += ChatColor.RED + member + " (offline), ";
-			else
+			}else{
 				memberString += ChatColor.GREEN + member + ", ";
+			}
 		}
-		if(memberString.length() > 0)
+		if(memberString.length() > 0){
 			sender.sendMessage(memberString.substring(0, memberString.length() - 2));
-		else
+		}else{
 			sender.sendMessage(ChatColor.RED + "This channel has currently no Members.");
+		}
 		
 		this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 3));
 		this.setChanged();

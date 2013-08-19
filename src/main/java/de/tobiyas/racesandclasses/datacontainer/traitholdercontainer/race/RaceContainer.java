@@ -3,7 +3,6 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -24,7 +23,13 @@ public class RaceContainer extends AbstractTraitHolder{
 	protected String raceChatFormat;
 	
 	
-	private RaceContainer(YamlConfiguration config, String name){
+	/**
+	 * Creates a Race Container with the passed Config and the passed name.
+	 * 
+	 * @param config to create with
+	 * @param name to create with
+	 */
+	protected RaceContainer(YAMLConfigExtended config, String name){
 		super(config, name);
 	}
 	
@@ -41,13 +46,9 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
-			if(!config.isConfigurationSection(holderName + ".config")){
-				return;
-			}
-			
 			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
 			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.racetag", "[" + holderName + "]"));
-			this.raceMaxHealth = config.getInt(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
+			this.raceMaxHealth = config.getDouble(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
 			this.raceChatColor = config.getString(holderName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
 			this.raceChatFormat = config.getString(holderName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
 			
@@ -71,15 +72,14 @@ public class RaceContainer extends AbstractTraitHolder{
 	 * @param name
 	 * @return the container
 	 */
-	public static RaceContainer loadRace(YamlConfiguration config, String name) throws HolderParsingException{
+	public static RaceContainer loadRace(YAMLConfigExtended config, String name) throws HolderParsingException{
 		RaceContainer container = new RaceContainer(config, name);
-		
 		return (RaceContainer) container.load();
 	}
 	
 	@Override
 	public boolean containsPlayer(String player){
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder container = RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);
 	}

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PlugincommandFactory;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Assert;
@@ -16,6 +15,7 @@ import org.junit.Test;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
+import de.tobiyas.racesandclasses.generate.PluginCommandFactory;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.generate.plugin.MockRaCPlugin;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
@@ -49,7 +49,7 @@ public abstract class AbstractChatCommandTest {
 			sut = sutClass.getConstructor().newInstance();
 		}catch(Exception exp){ Assert.fail(); }
 			
-		sender = mock(Player.class, RETURNS_DEEP_STUBS);
+		sender = mock(Player.class);
 		when(sender.getName()).thenReturn(playerName);
 	}
 	
@@ -63,7 +63,7 @@ public abstract class AbstractChatCommandTest {
 	
 	@Test
 	public void command_registration_works(){
-		PluginCommand command = PlugincommandFactory.create(commandName, RacesAndClasses.getPlugin());
+		PluginCommand command = PluginCommandFactory.create(commandName, RacesAndClasses.getPlugin());
 		when(RacesAndClasses.getPlugin().getCommand(commandName)).thenReturn(command);
 		
 		try{

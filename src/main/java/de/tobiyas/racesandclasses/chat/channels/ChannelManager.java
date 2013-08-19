@@ -39,6 +39,19 @@ public class ChannelManager {
 	 */
 	private YAMLConfigExtended config;
 
+	
+	/**
+	 * This constructor is for Testing
+	 * 
+	 * @param config to load from and save to
+	 */
+	protected ChannelManager(YAMLConfigExtended config){
+		this.config = config;
+		this.plugin = RacesAndClasses.getPlugin();
+		this.channels = new HashMap<String, ChannelContainer>();
+	}
+	
+	
 	/**
 	 * Creates the ChannelManager
 	 */
@@ -67,8 +80,9 @@ public class ChannelManager {
 		registerChannel(ChannelLevel.LocalChannel, "Local");
 		registerChannel(ChannelLevel.GlobalChannel, "Tutorial");
 		
-		for(World world : Bukkit.getWorlds())
+		for(World world : Bukkit.getWorlds()){
 			registerChannel(ChannelLevel.WorldChannel, world.getName());
+		}
 		
 		for(String race : plugin.getRaceManager().listAllVisibleHolders()){
 			if(race.equalsIgnoreCase(Consts.defaultRace)) continue;
@@ -90,7 +104,8 @@ public class ChannelManager {
 		}
 		
 		try{
-			channels.put(channelName, new ChannelContainer(channelName, level));
+			container = new ChannelContainer(channelName, level);
+			channels.put(channelName, container);
 			return container;
 		}catch(ChannelInvalidException exp){
 			//tried to do a RaceChannel that did not work...
@@ -114,11 +129,11 @@ public class ChannelManager {
 			if(player != null){
 				player.sendMessage(ChatColor.RED + "Channel: " + ChatColor.AQUA + channelName + ChatColor.RED + " already exists.");
 			}
+			
 			return false;
 		}
 		
 		container.addPlayerToChannel(player.getName(), "", true);
-		channels.put(channelName, container);
 		return true;
 	}
 	
@@ -131,7 +146,7 @@ public class ChannelManager {
 	 * @param channelPassword
 	 * @param player
 	 */
-	public void registerChannel(ChannelLevel channelLevel, String channelName, String channelPassword, Player player) {
+	public boolean registerChannel(ChannelLevel channelLevel, String channelName, String channelPassword, Player player) {
 		boolean worked = registerChannel(channelLevel, channelName, player);
 		if(worked){
 			ChannelContainer container = getContainer(channelName);
@@ -140,13 +155,15 @@ public class ChannelManager {
 			player.sendMessage(ChatColor.GREEN + "The channel " + ChatColor.AQUA + channelName + 
 								ChatColor.GREEN + " has been created successfully");
 		}
+		
+		return worked;
 	}
 	
 	/**
 	 * Creates an empty Channel file if none exists
 	 */
 	private void createStructure(){
-		File file = new File(Consts.channelsYML);
+		File file = config.getFileLoadFrom();
 		if(!file.exists()){
 			try {
 				file.createNewFile();
@@ -156,17 +173,21 @@ public class ChannelManager {
 			}
 			config = new YAMLConfigExtended(Consts.channelsYML).load();
 			
-			if(!config.contains("channel"))
+			if(!config.contains("channel")){
 				config.createSection("channel");
+			}
 			
-			if(!config.contains("channel." + ChannelLevel.PasswordChannel.name()))
+			if(!config.contains("channel." + ChannelLevel.PasswordChannel.name())){
 				config.createSection("channel." + ChannelLevel.PasswordChannel.name());
+			}
 			
-			if(!config.contains("channel." + ChannelLevel.PrivateChannel.name()))
+			if(!config.contains("channel." + ChannelLevel.PrivateChannel.name())){
 				config.createSection("channel." + ChannelLevel.PrivateChannel.name());
+			}
 			
-			if(!config.contains("channel." + ChannelLevel.PublicChannel.name()))
+			if(!config.contains("channel." + ChannelLevel.PublicChannel.name())){
 				config.createSection("channel." + ChannelLevel.PublicChannel.name());
+			}
 			
 			config.save();
 		}
@@ -218,8 +239,9 @@ public class ChannelManager {
 		
 		ChannelContainer container = getContainer(channel);
 		if(container == null){
-			if(sender != null)
+			if(sender != null){
 				sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
+			}
 			return false;
 		}
 		
@@ -234,8 +256,9 @@ public class ChannelManager {
 	 */
 	public List<String> listAllChannels(){
 		ArrayList<String> channelList = new ArrayList<String>();
-		for(String channel : channels.keySet())
+		for(String channel : channels.keySet()){
 			channelList.add(channel);
+		}
 		return channelList;
 	}
 	
@@ -249,8 +272,9 @@ public class ChannelManager {
 		for(String channel : channels.keySet()){
 			ChannelContainer container = getContainer(channel);
 			ChannelLevel level = container.getChannelLevel();
-			if(level == ChannelLevel.PasswordChannel || level == ChannelLevel.PrivateChannel)
+			if(level == ChannelLevel.PasswordChannel || level == ChannelLevel.PrivateChannel){
 				continue;
+			}
 			
 			channelList.add(channel);
 		}
@@ -281,10 +305,15 @@ public class ChannelManager {
 	 * @return
 	 */
 	public ChannelLevel getChannelLevel(String channel){
+		if(channel == null) return ChannelLevel.NONE;
+		
 		for(String containerName : channels.keySet()){
+			if(containerName == null) continue;
+			
 			ChannelContainer container = getContainer(containerName);
-			if(container.getChannelName().equalsIgnoreCase(channel))
+			if(container.getChannelName().equalsIgnoreCase(channel)){
 				return container.getChannelLevel();
+			}
 		}
 		
 		return ChannelLevel.NONE;
@@ -316,9 +345,13 @@ public class ChannelManager {
 	 * @return
 	 */
 	private ChannelContainer getContainer(String channelName){
-		for(String name : channels.keySet())
-			if(name.equalsIgnoreCase(channelName))
+		if(channelName == null) return null;
+		
+		for(String name : channels.keySet()){
+			if(channelName.equalsIgnoreCase(name)){
 				return channels.get(name);
+			}
+		}
 		return null;
 	}
 	
@@ -333,8 +366,12 @@ public class ChannelManager {
 	 */
 	public void leaveChannel(Player player, String channelName, boolean notify) {
 		ChannelContainer container = getContainer(channelName);
-		if(container == null)
+		if(container == null){
+			if(notify){
+				player.sendMessage(ChatColor.RED + "The Channel: " + channelName + " does not exist.");
+			}
 			return;
+		}
 		
 		container.removePlayerFromChannel(player.getName(), notify);
 	}
@@ -348,11 +385,13 @@ public class ChannelManager {
 	 */
 	public boolean isMember(String playerName, String channelName) {
 		ChannelContainer container = getContainer(channelName);
-		if(container == null)
+		if(container == null){
 			return false;
+		}
 		
-		if(container.getChannelLevel() == ChannelLevel.LocalChannel)
+		if(container.getChannelLevel() == ChannelLevel.LocalChannel){
 			return true;
+		}
 		
 		return container.isMember(playerName);
 	}
@@ -498,23 +537,29 @@ public class ChannelManager {
 							" got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
 		
 		Player player = Bukkit.getPlayer(unbanName);
-		if(player != null)
+		if(player != null){
 			player.sendMessage(ChatColor.GREEN + "You got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
+		}
 	}
 	
 	/**
 	 * Removes a channel from the Channel list.
 	 * 
-	 * @param channelContainer
+	 * @param channelName2
 	 */
-	public void removeChannel(ChannelContainer channelContainer) {
-		ChannelTicker.unregisterChannel(channelContainer);
-		String channelName = channelContainer.getChannelName();
+	public void removeChannel(String channelName) {
+		ChannelContainer container = getContainer(channelName);
+		if(container == null){
+			return;
+		}
+		
+		ChannelTicker.unregisterChannel(container);
 		
 		config.load();
-		config.set("channel." + channelContainer.getChannelLevel() + "." + channelName, 1);
-		config.set("channel." + channelContainer.getChannelLevel() + "." + channelName, null);
+		config.set("channel." + container.getChannelLevel() + "." + channelName, 1);
+		config.set("channel." + container.getChannelLevel() + "." + channelName, null);
 		config.save();
+		
 		channels.remove(channelName);
 	}
 	

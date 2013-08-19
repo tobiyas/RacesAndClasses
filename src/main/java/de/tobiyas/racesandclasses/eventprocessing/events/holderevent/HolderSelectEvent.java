@@ -3,11 +3,15 @@ package de.tobiyas.racesandclasses.eventprocessing.events.holderevent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public abstract class HolderSelectEvent extends Event implements Cancellable{
 
+	private static HandlerList handlers = new HandlerList();
+	
+	
 	/**
 	 * The player selecting the class
 	 */
@@ -83,5 +87,20 @@ public abstract class HolderSelectEvent extends Event implements Cancellable{
 
 	public String getCancelMessage() {
 		return cancelMessage;
+	}
+	
+	
+	/**
+	 * needed for Bukkit to get the list of Handlers interested
+	 * @return
+	 */
+	public static HandlerList getHandlerList() {
+        return handlers;
+    }
+	
+	
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 }
