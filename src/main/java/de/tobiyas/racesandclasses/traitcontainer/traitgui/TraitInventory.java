@@ -32,7 +32,7 @@ public class TraitInventory extends InventoryView {
 	
 	
 	/**
-	 * This is an Inventory generated to show ALL Visable Traits of a player
+	 * This is an Inventory generated to show ALL visible Traits of a player
 	 * in one inventory.
 	 * 
 	 * @param player to show.
@@ -55,7 +55,7 @@ public class TraitInventory extends InventoryView {
 	/**
 	 * Fills the Inventory with infos to all Traits.
 	 * 
-	 * @param traits
+	 * @param traits to fill with
 	 */
 	private void fillInventory(Set<Trait> traits) {
 		for(Trait trait : traits){
@@ -65,7 +65,14 @@ public class TraitInventory extends InventoryView {
 			
 			meta.setDisplayName(ChatColor.LIGHT_PURPLE + trait.getName());
 			
-			lore.add(trait.getPrettyConfiguration());			
+			String traitConfigText = trait.getPrettyConfiguration();
+			if(traitConfigText.length() > 32){
+				lore.add(traitConfigText.substring(0,31));
+				lore.add(" -" + traitConfigText.substring(32, traitConfigText.length() - 1));
+			}else{
+				lore.add(trait.getPrettyConfiguration());			
+			}
+			
 			meta.setLore(lore);
 			
 			traitStack.setItemMeta(meta);

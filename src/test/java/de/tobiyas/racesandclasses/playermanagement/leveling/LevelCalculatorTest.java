@@ -1,15 +1,17 @@
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class LevelCalculatorTest {
 
