@@ -144,7 +144,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return true;
 		}
 				
-		//Change races (only if has already a class)
+		//Change class (only if has already a class)
 		if(potentialCommand.equalsIgnoreCase("change")){
 			if(!checkPlayer(sender)) return true;
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.changeClass)) return true;
@@ -190,7 +190,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			change(player, potentialClass);
 			return true;
 		}
-			
+		
 		postHelp(sender);
 		return true;
 	}

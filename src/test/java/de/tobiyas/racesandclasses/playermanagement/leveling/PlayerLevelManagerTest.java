@@ -189,7 +189,7 @@ public class PlayerLevelManagerTest {
 		sut.save();
 		
 		sut = new PlayerLevelManager(playerName);
-		sut.reload();
+		sut.reloadFromYaml();
 		
 		assertEquals(expAdding, sut.getCurrentExpOfLevel());
 		assertEquals(4, sut.getCurrentLevel());

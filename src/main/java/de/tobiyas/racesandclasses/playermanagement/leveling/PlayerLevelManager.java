@@ -6,7 +6,8 @@ import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerLevelManager {
@@ -14,12 +15,12 @@ public class PlayerLevelManager {
 	/**
 	 * The Path to the current Level of the Player
 	 */
-	private static String CURRENT_PLAYER_LEVEL_PATH =".level.currentLevel";
+	public static final String CURRENT_PLAYER_LEVEL_PATH =".level.currentLevel";
 	
 	/**
 	 * The Path to the current EXP of the Level of the Player
 	 */
-	private static String CURRENT_PLAYER_LEVEL_EXP_PATH =".level.currentLevelEXP";
+	public static final String CURRENT_PLAYER_LEVEL_EXP_PATH =".level.currentLevelEXP";
 	
 	
 	/**
@@ -54,16 +55,27 @@ public class PlayerLevelManager {
 	
 	
 	/**
-	 * Reloads the Data from the Player Data file.
+	 * Reloads the Data from the Player Data file or DB.
 	 */
-	public void reload(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML).load();
+	public void reloadFromYaml(){
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
 		if(!config.getValidLoad()){
 			return;
 		}
 		
-		currentLevel = config.getInt(playerName + CURRENT_PLAYER_LEVEL_PATH, 1);
-		currentExpOfLevel = config.getInt(playerName + CURRENT_PLAYER_LEVEL_EXP_PATH, 1);
+		currentLevel = config.getInt("playerdata." + playerName + CURRENT_PLAYER_LEVEL_PATH, 1);
+		currentExpOfLevel = config.getInt("playerdata." + playerName + CURRENT_PLAYER_LEVEL_EXP_PATH, 1);
+	}
+	
+	
+	/**
+	 * Reloads the Data from the passed container.
+	 * 
+	 * @param container to load from
+	 */
+	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container){
+		this.currentLevel = container.getPlayerLevel();
+		this.currentExpOfLevel = container.getPlayerLevelExp();
 	}
 	
 	
@@ -235,15 +247,26 @@ public class PlayerLevelManager {
 	 * Saves the Container to the playerData File.
 	 */
 	public void save() {
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML).load();
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
 		if(!config.getValidLoad()){
 			return;
 		}
 	
-		config.set(playerName + CURRENT_PLAYER_LEVEL_PATH, currentLevel);
-		config.set(playerName + CURRENT_PLAYER_LEVEL_EXP_PATH, currentExpOfLevel);
+		config.set("playerdata." + playerName + CURRENT_PLAYER_LEVEL_PATH, currentLevel);
+		config.set("playerdata." + playerName + CURRENT_PLAYER_LEVEL_EXP_PATH, currentExpOfLevel);
 		
 		config.save();
+	}
+
+
+	/**
+	 * Saves the current values to the passed container.
+	 * 
+	 * @param container
+	 */
+	public void saveTo(PlayerSavingContainer container) {
+		container.setPlayerLevel(currentLevel);
+		container.setPlayerLevelExp(currentExpOfLevel);
 	}
 
 	

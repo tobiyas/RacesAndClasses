@@ -15,7 +15,6 @@ public class TraitConfigParser {
 		Map<String, String> configurationMap = new HashMap<String, String>();
 		
 		try{
-		
 			ConfigurationSection traitConfig = config.getConfigurationSection(traitPath);
 			for(String pathEntry : traitConfig.getKeys(true)){
 				String value = traitConfig.getString(pathEntry);
@@ -46,6 +45,11 @@ public class TraitConfigParser {
 			throw new TraitConfigurationFailedException("No Annotation found in Trait: " + trait.getName());
 		} catch (NoSuchMethodException e) {
 			throw new TraitConfigurationFailedException("No Annotation found in Trait: " + trait.getName());
+		}catch(NumberFormatException exp){
+			throw new TraitConfigurationFailedException("A number could not be read correct at: " + trait.getName());
+		}catch(Exception exp){
+			throw new TraitConfigurationFailedException("An unknown Exception has occured at Trait: " + trait.getName() 
+					+ ". Exception: " + exp.getLocalizedMessage());
 		}
 	}
 }

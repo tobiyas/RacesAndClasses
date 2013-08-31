@@ -2,12 +2,14 @@ package de.tobiyas.racesandclasses.playermanagement;
 
 import java.io.File;
 
+import javax.persistence.PersistenceException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -74,6 +76,27 @@ public class PlayerContainer {
 	private final PlayerLevelManager levelManager;
 	
 	
+	/**
+	 * This constructor only sets the most important stuff.
+	 * It is thought for converting and restoring from DB.
+	 * 
+	 * THIS DOES NO RESCANNING!!! All is set to default! No extra stuff.
+	 * 
+	 * @param player
+	 */
+	public PlayerContainer(String player){
+		this.playerName = player;
+		this.armorToolManager = new ArmorToolManager(player);
+		this.arrowManager = new ArrowManager(player);
+		
+		this.hasGod = false;
+		
+		this.levelManager = new PlayerLevelManager(player);
+		this.spellManager = new PlayerSpellManager(player);
+		
+		this.maxHealth = 20;
+	}
+	
 	
 	/**
 	 * Creates the new Health container of a player.
@@ -101,8 +124,6 @@ public class PlayerContainer {
 		arrowManager = new ArrowManager(player);
 		armorToolManager = new ArmorToolManager(player);
 		levelManager = new PlayerLevelManager(playerName);
-		
-		checkStats();
 	}
 	
 	
@@ -130,18 +151,84 @@ public class PlayerContainer {
 	/**
 	 * Saves the current state of the Container to the player data yml file
 	 * 
+	 * @param saveToDB if true it is saved to the Database. false to PlayerData yml file.
 	 * @return true if worked, false if not
 	 */
-	public boolean save(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
-		config.load();
-		if(!config.isConfigurationSection("playerdata." + playerName))
-			config.createSection("playerdata." + playerName);
-		config.set("playerdata." + playerName + ".hasGod", hasGod);
+	public boolean save(boolean saveToDB){
+		if(saveToDB){
+			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(playerName);
+			
+			container.setHasGod(hasGod);
+			levelManager.saveTo(container);
+			
+			try{
+				plugin.getDatabase().save(container);
+				return true;
+			}catch(PersistenceException exp){
+				return false;
+			}catch(Exception exp){
+				plugin.getDebugLogger().logStackTrace(exp);
+				return false;
+			}
+		}else{
+			YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
+			config.load();
+			if(!config.isConfigurationSection("playerdata." + playerName))
+				config.createSection("playerdata." + playerName);
+			config.set("playerdata." + playerName + ".hasGod", hasGod);
+			
+			levelManager.save();
+			
+			return config.save();			
+		}
 		
-		levelManager.save();
 		
-		return config.save();
+	}
+	
+	
+	/**
+	 * Constructs a {@link PlayerContainer} from the DB.
+	 * If no entry in the DB is found, a new one is created.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public static PlayerContainer constructFromDB(String player){		
+		try{
+			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerName", player).findUnique();
+			if(container == null) throw new PersistenceException("Not found.");
+			
+			PlayerContainer playerContainer = new PlayerContainer(player, 20).checkStats();
+			
+			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
+			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
+			
+			if(container.isHasGod()){
+				playerContainer.hasGod = true;
+			}
+			
+			return playerContainer.checkStats();
+		}catch(PersistenceException exp){
+			PlayerContainer playerContainer = new PlayerContainer(player, 20);
+			playerContainer.checkStats();
+			return playerContainer;
+		}
+	}
+	
+	
+	/**
+	 * Loads the PlayerData from the passed source (db or yml file).
+	 * 
+	 * @param player to load
+	 * @param fromDB true if to load from DB.
+	 * @return the loaded PlayerContainer.
+	 */
+	public static PlayerContainer loadPlayerContainer(String player ,boolean fromDB){
+		if(fromDB){
+			return constructFromDB(player);
+		}else{
+			return constructContainerFromYML(player);
+		}
 	}
 	
 	
@@ -150,7 +237,7 @@ public class PlayerContainer {
 	 * The player passed will be unfold and load.
 	 * 
 	 * @param player to load
-	 * @return the container corresponding to the palyer.
+	 * @return the container corresponding to the player.
 	 */
 	public static PlayerContainer constructContainerFromYML(String player){
 		YAMLConfigExtended config = new YAMLConfigExtended(RacesAndClasses.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
@@ -170,7 +257,7 @@ public class PlayerContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
-		PlayerContainer container = new PlayerContainer(player, maxHealth);
+		PlayerContainer container = new PlayerContainer(player, maxHealth).checkStats();
 		if(hasGod){
 			container.switchGod();
 		}
@@ -180,7 +267,7 @@ public class PlayerContainer {
 	/**
 	 * Checks the Player if he has any Wrong set values and resets the MaxHealth if needed.
 	 */
-	public void checkStats() {
+	public PlayerContainer checkStats() {
 		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerName);
 		
@@ -188,7 +275,7 @@ public class PlayerContainer {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
 		}else{
 			double tempMaxHealth = raceContainer.getRaceMaxHealth();
-			if(tempMaxHealth <= 0) return;
+			if(tempMaxHealth <= 0) return this;
 			maxHealth = tempMaxHealth;
 		}
 		
@@ -212,6 +299,8 @@ public class PlayerContainer {
 		
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
+		
+		return this;
 	}
 	
 	/**
@@ -220,7 +309,7 @@ public class PlayerContainer {
 	public void switchGod(){
 		hasGod = !hasGod;
 		Player player = Bukkit.getPlayer(this.playerName);
-		if(player != null){
+		if(player != null && player.isOnline()){
 			if(hasGod){
 				player.sendMessage(ChatColor.GREEN + "God mode toggled.");
 			}else{

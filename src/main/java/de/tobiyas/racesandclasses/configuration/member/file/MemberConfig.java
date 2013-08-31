@@ -1,15 +1,17 @@
-package de.tobiyas.racesandclasses.configuration.member;
+package de.tobiyas.racesandclasses.configuration.member.file;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
 import de.tobiyas.racesandclasses.util.chat.WordParsing;
-import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MemberConfig {
@@ -26,28 +28,41 @@ public class MemberConfig {
 	/**
 	 * The player this config belongs
 	 */
-	private String player;
+	protected String player;
 	
 	/**
 	 * The Configuration of the player as List
 	 */
-	private MemberConfigList configList;
+	protected MemberConfigList<ConfigOption> configList;
 	
 	/**
 	 * The global Player Data file to save the config to
 	 */
-	private static YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
+	private static YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(false);
 	
 	/**
 	 * The Plugin to call misc stuff upon
 	 */
-	private static RacesAndClasses plugin;
+	protected static RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	/**
 	 * The prefix for the config
 	 */
-	private final String configPre;
+	protected final String configPre;
 	
+	
+	
+	/**
+	 * This constructor does nothing. No saving. No loading.
+	 * It is just for inheritence.
+	 * 
+	 * @param player
+	 * @param configPre
+	 */
+	protected MemberConfig(String player, String configPre){
+		this.configPre = configPre;
+		this.player = player;
+	}
 	
 	/**
 	 * Constructs a new Member Config for a player.
@@ -56,27 +71,22 @@ public class MemberConfig {
 	 * @param player to create
 	 */
 	protected MemberConfig(String player){
-		plugin = RacesAndClasses.getPlugin();
-		
 		config.load();
 		this.player = player;
-		configList = new MemberConfigList();
-		configPre = "playerdata." + player + ".config.";
+		configList = new MemberConfigList<ConfigOption>();
+		configPre = "playerdata." + player + ".config";
 		
 		boolean defaultEnableHealthBar = plugin.getConfigManager().getGeneralConfig().isConfig_enable_healthbar_in_chat();
 
+		
 		//first load the default values we know already
-		ConfigOption lifeDisplayEnable = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "lifeDisplay.enable", MemberConfig.lifeDisplayEnable, defaultEnableHealthBar, true);
+		ConfigOption lifeDisplayEnable = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "lifeDisplayEnable", MemberConfig.lifeDisplayEnable, defaultEnableHealthBar, true);
 		
-		ConfigOption lifeDisplayInterval = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "lifeDisplay.interval", MemberConfig.displayInterval, 60, true);
+		ConfigOption lifeDisplayInterval = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "lifeDisplayInterval", MemberConfig.displayInterval, 60, true);
 		
-		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "channels.current", MemberConfig.chatChannel, "Global", true);
+		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "channelsCurrent", MemberConfig.chatChannel, "Global", true);
 		
-		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(config, 
-				configPre, "cooldown.inform", MemberConfig.cooldownInformation, true, true);
+		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "cooldownInform", MemberConfig.cooldownInformation, true, true);
 		
 		configList.add(lifeDisplayEnable);
 		configList.add(lifeDisplayInterval);
@@ -88,21 +98,20 @@ public class MemberConfig {
 		for(String value : config.getChildren(configPre)){
 			if(configList.containsPathName(value)) continue;
 			
-			if(ConfigOption.isInValidFormat(config, configPre, value)){
+			if(ConfigOption.isInValidFormat(configPre, player, value)){
 				try{
-					ConfigOption option = ConfigOption.loadFromPath(config, configPre, value);
+					ConfigOption option = ConfigOption.loadFromPath(configPre, player, value);
 					configList.add(option);
 				}catch(IOException exp){}
 			}
 		}
 		
-		save();
+		config.save();
 	}
 	
 
 	/**
 	 * Creates a new Member config.
-	 * This should not be used!
 	 * 
 	 * @param player
 	 * @return
@@ -112,19 +121,27 @@ public class MemberConfig {
 	}
 	
 	
-	
+	/**
+	 * Returns the Name of the Player of this Config.
+	 * 
+	 * @return holder of Configuration.
+	 */
 	public String getName(){
 		return player;
 	}
 
-	public void save(){
-		config.load();
-		
+	/**
+	 * Saves the current configuration.
+	 * 
+	 * WARNING: heavy saving actions here.
+	 * @return 
+	 */
+	public MemberConfig save(){
 		for(ConfigOption option : configList){
-			option.saveToYaml(config, configPre);
+			option.save(configPre);
 		}
 		
-		config.save();
+		return this;
 	}
 
 
@@ -145,8 +162,8 @@ public class MemberConfig {
 		SaveFormat format = option.getFormat();
 		
 		Object convertedValue = WordParsing.parseToSaveFormat(value, format);
-		boolean returnValue = option.setValue(convertedValue);
-		option.saveToYaml(config, configPre);
+		boolean returnValue = option.setObjectValue(convertedValue);
+		option.save(configPre);
 		
 		return returnValue;
 	}
@@ -317,7 +334,7 @@ public class MemberConfig {
 			return false;
 		}
 		
-		return option.setValue(newValue);
+		return option.setObjectValue(newValue);
 	}
 	
 	
@@ -347,7 +364,7 @@ public class MemberConfig {
 			return false;
 		}
 		
-		option = new ConfigOption(path, displayName, value, defaultValue, visible);
+		option = new ConfigOption(path, player, displayName, value, defaultValue, visible);
 		if(option.getFormat() == SaveFormat.UNKNOWN){
 			return false;
 		}
@@ -366,5 +383,25 @@ public class MemberConfig {
 	 */
 	public boolean containsValue(String identifier) {
 		return configList.contains(identifier);
+	}
+	
+	
+	/**
+	 * Returns all Config entries.
+	 * This list is a copied list -> Changes will not affect the MemberConfig.
+	 * -> read only.
+	 * 
+	 * WARNING! This is only for copiing from.
+	 * 
+	 * @return
+	 */
+	public List<ConfigOption> getAllConfigs(){
+		List<ConfigOption> configList = new LinkedList<ConfigOption>();
+		
+		for(ConfigOption config : this.configList){
+			configList.add(config.createCopy());
+		}
+		
+		return configList;
 	}
 }

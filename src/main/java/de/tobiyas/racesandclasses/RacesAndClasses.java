@@ -8,8 +8,12 @@
 package de.tobiyas.racesandclasses;
 
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+
+import javax.persistence.PersistenceException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -17,7 +21,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.*;
-
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
@@ -34,6 +37,7 @@ import de.tobiyas.racesandclasses.commands.health.CommandExecutor_HP;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceGod;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceHeal;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_ShowTraits;
+import de.tobiyas.racesandclasses.commands.help.CommandExecutor_PermissionCheck;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RaceHelp;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
@@ -41,18 +45,22 @@ import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
+import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.persistence.DBConverter;
 import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.debug.logger.DebugLogger;
@@ -132,7 +140,6 @@ public class RacesAndClasses extends JavaPlugin{
 	 */
 	protected ChannelManager channelManager;
 	
-	
 	/**
 	 * The Tutorial Manager to start / step the tutorial on.
 	 */
@@ -153,7 +160,7 @@ public class RacesAndClasses extends JavaPlugin{
 			plugin = this;
 			
 			description = getDescription();
-			prefix = "["+description.getName()+"] ";
+			prefix = "[" + description.getName() + "] ";
 			
 			//temporary debug logger
 			debugLogger = new DebugLogger(this);
@@ -170,7 +177,7 @@ public class RacesAndClasses extends JavaPlugin{
 			loadingDoneMessage();
 			
 		}catch(Exception e){
-			log("An Error has accured during startup sequence: " + e.getLocalizedMessage());
+			log("An Error has occured during startup sequence: " + e.getLocalizedMessage());
 			debugLogger.logStackTrace(e);
 			
 			errored = true;
@@ -193,6 +200,7 @@ public class RacesAndClasses extends JavaPlugin{
 		long currentTime = System.currentTimeMillis();
 		
 		DebugTask.initDebugger();
+		checkForDBTransfer();
 		setupConfiguration();
 		
 		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
@@ -271,6 +279,14 @@ public class RacesAndClasses extends JavaPlugin{
 		ChannelManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 	}
 	
+	/**
+	 * Converts the PlayerData YML file to DB
+	 */
+	private void checkForDBTransfer() {
+		DBConverter.convertAll();
+	}
+
+
 	private void registerCommands(){
 		long currentTime = System.currentTimeMillis();
 		
@@ -290,6 +306,7 @@ public class RacesAndClasses extends JavaPlugin{
 		new CommandExecutor_LocalChat();
 		new CommandExecutor_PlayerInfo();
 		new CommandExecutor_RacesTutorial();
+		new CommandExecutor_PermissionCheck();
 		
 		new CommandExecutor_RacesReload();
 		new CommandExecutor_RacesVersion();
@@ -318,9 +335,9 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	public void log(String message){
 		if(debugLogger == null){
-			this.getLogger().log(Level.INFO ,prefix + message);
+			this.getLogger().log(Level.INFO , prefix + message);
 		}else{
-			debugLogger.log(prefix + message);
+			debugLogger.log(message);
 		}
 	}
 	
@@ -358,6 +375,13 @@ public class RacesAndClasses extends JavaPlugin{
 
 	private void setupConfiguration(){
 		configManager = new ConfigManager();
+		
+		//We pre reload this to have global vars ready.
+		configManager.getGeneralConfig().reload();
+		if(configManager.getGeneralConfig().isConfig_savePlayerDataToDB()){
+			this.checkForDBTransfer();
+		}
+		
 		configManager.reload();
 		setupDebugLogger();
 	}
@@ -405,7 +429,8 @@ public class RacesAndClasses extends JavaPlugin{
 		if(shutDownBefore){
 			shutDownSequenz(useGC);
 		}
-			
+		
+		checkDBAccess();
 		initManagers();
 		return System.currentTimeMillis() - time;
 	}
@@ -421,6 +446,28 @@ public class RacesAndClasses extends JavaPlugin{
 		if(useGC){
 			System.gc();
 		}
+	}
+	
+	
+	/**
+	 * Checks if the DB has already created all important ORMs or not.
+	 * If not it generates everything.
+	 */
+	private void checkDBAccess(){
+		try {
+			if(getDatabase() == null){
+				installDDL();
+				return;
+			}
+			
+			for(Class<?> dbClasses : getDatabaseClasses()){
+				getDatabase().find(dbClasses).findRowCount();			
+			}
+			
+        } catch (PersistenceException ex) {
+            log("Installing database for " + getDescription().getName() + " due to first time usage");
+            installDDL();
+        }
 	}
 	
 	
@@ -498,4 +545,15 @@ public class RacesAndClasses extends JavaPlugin{
 		return tutorialManager;
 	}
 	
+	
+	 @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new LinkedList<Class<?>>();
+        list.add(DBConfigOption.class);
+        list.add(PlayerSavingContainer.class);
+        list.add(PlayerHolderAssociation.class);
+        //TODO add all DB classes here.
+        
+        return list;
+    }
 }

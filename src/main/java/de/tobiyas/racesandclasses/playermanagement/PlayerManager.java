@@ -3,8 +3,10 @@ package de.tobiyas.racesandclasses.playermanagement;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -13,7 +15,7 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
-import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerManager{
@@ -21,7 +23,7 @@ public class PlayerManager{
 	/**
 	 * This is the map of each player's health container
 	 */
-	private HashMap<String, PlayerContainer> playerHealth;
+	private HashMap<String, PlayerContainer> playerData;
 	
 	/**
 	 * The plugin to access other parts of the Plugin.
@@ -32,7 +34,7 @@ public class PlayerManager{
 	 * Creates a new PlayerManager and resets all values
 	 */
 	public PlayerManager(){
-		playerHealth = new HashMap<String, PlayerContainer>();
+		playerData = new HashMap<String, PlayerContainer>();
 		plugin = RacesAndClasses.getPlugin();
 	}
 	
@@ -48,9 +50,10 @@ public class PlayerManager{
 	 */
 	public void savePlayerContainer(){
 		checkFileExist();
-		for(String player : playerHealth.keySet()){
-			PlayerContainer container = playerHealth.get(player);
-			container.save();
+		
+		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
+		for(PlayerContainer container: playerData.values()){
+			container.save(useDB);
 		}
 	}
 	
@@ -59,13 +62,22 @@ public class PlayerManager{
 	 */
 	private void loadPlayerContainer(){
 		checkFileExist();
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML).load();
+		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
+
+		Set<String> players = new HashSet<String>();
+		if(useDB){
+			for(Player player : Bukkit.getOnlinePlayers()){
+				players.add(player.getName());
+			}
+		}else{
+			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+			players = config.getChildren("playerdata");
+		}
 		
-		Set<String> players = config.getChildren("playerdata");
 		for(String player : players){
-			PlayerContainer container = PlayerContainer.constructContainerFromYML(player);
+			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
 			if(container != null){
-				playerHealth.put(player, container);
+				playerData.put(player, container);
 			}
 		}
 	}
@@ -100,12 +112,13 @@ public class PlayerManager{
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		double maxHealth = 1;
 		
-		if(container == null)
+		if(container == null){
 			maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-		else
+		}else{
 			maxHealth = container.getRaceMaxHealth();
-		
-		playerHealth.put(player, new PlayerContainer(player, maxHealth));
+		}
+			
+		playerData.put(player, new PlayerContainer(player, maxHealth).checkStats());
 	}
 	
 	/**
@@ -127,7 +140,7 @@ public class PlayerManager{
 	 * @param player to check
 	 */
 	public void checkPlayer(String player){
-		PlayerContainer hContainer = playerHealth.get(player);
+		PlayerContainer hContainer = playerData.get(player);
 		if(hContainer == null){
 			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 			
@@ -136,9 +149,9 @@ public class PlayerManager{
 				maxHealth = container.getRaceMaxHealth();
 			}
 			
-			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth);
+			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth).checkStats();
 			healthContainer.checkStats();
-			playerHealth.put(player, healthContainer);
+			playerData.put(player, healthContainer);
 		}else{
 			hContainer.checkStats();
 		}
@@ -186,7 +199,7 @@ public class PlayerManager{
 	 * @return true if worked, false if player not found.
 	 */
 	public boolean switchGod(String name) {
-		PlayerContainer container = playerHealth.get(name);
+		PlayerContainer container = playerData.get(name);
 		if(container != null){
 			container.switchGod();
 			return true;
@@ -228,10 +241,10 @@ public class PlayerManager{
 	 * @return
 	 */
 	private PlayerContainer getCreate(String playerName, boolean create){
-		PlayerContainer container = playerHealth.get(playerName);
+		PlayerContainer container = playerData.get(playerName);
 		if(container == null && create){
 			checkPlayer(playerName);
-			container = playerHealth.get(playerName);
+			container = playerData.get(playerName);
 		}
 		
 		return container;

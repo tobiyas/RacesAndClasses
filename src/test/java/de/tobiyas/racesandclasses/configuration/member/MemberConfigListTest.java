@@ -3,6 +3,7 @@ package de.tobiyas.racesandclasses.configuration.member;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import static org.junit.Assert.*;
 
 
@@ -12,6 +13,7 @@ public class MemberConfigListTest {
 	
 	private final String path = "path";
 	private final String displayName = "displayName";
+	private final String playerName = "player";
 	
 	private final String invisiblePath = "path2";
 	private final String invisibleDisplayName = "displayName2";
@@ -19,8 +21,8 @@ public class MemberConfigListTest {
 	@Before
 	public void setup(){
 		sut = new MemberConfigList();
-		sut.add(new ConfigOption("path", "displayName", "value", "defaultValue", true));
-		sut.add(new ConfigOption(invisiblePath, invisibleDisplayName, "value2", "defaultValue2", false));
+		sut.add(new ConfigOption("path", playerName, "displayName", "value", "defaultValue", true));
+		sut.add(new ConfigOption(invisiblePath, playerName, invisibleDisplayName, "value2", "defaultValue2", false));
 	}
 	
 	

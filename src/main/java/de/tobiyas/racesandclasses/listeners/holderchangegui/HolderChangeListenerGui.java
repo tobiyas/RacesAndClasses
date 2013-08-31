@@ -26,7 +26,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	protected static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	/**
-	 * The holder manager cotrolling the holders
+	 * The holder manager cotroling the holders
 	 */
 	protected final AbstractHolderManager manager;
 	
@@ -80,9 +80,44 @@ public abstract class HolderChangeListenerGui implements Listener {
 	
 		String playerName = event.getView().getPlayer().getName();
 		AbstractTraitHolder holder = manager.getHolderOfPlayer(playerName);
-		if(holder == manager.getDefaultHolder()){
+		
+		boolean forceReopen = false;
+		if(manager == plugin.getClassManager()){
+			forceReopen = plugin.getConfigManager().getGeneralConfig().isConfig_cancleGUIExitWhenNoClassPresent();
+		}
+		
+		if(manager == plugin.getRaceManager()){
+			forceReopen = plugin.getConfigManager().getGeneralConfig().isConfig_cancleGUIExitWhenNoRacePresent();
+		}
+		
+		
+		if(holder == manager.getDefaultHolder() && forceReopen){
 			rescheduleOpening(playerName, 1);
-			//TODO feedback!
+			return;
+		}
+		
+		if(manager == plugin.getRaceManager()){
+			boolean openClassSelectionAfterwards = plugin.getConfigManager().getGeneralConfig().isConfig_openClassSelectionAfterRaceSelectionWhenNoClass();
+			if(openClassSelectionAfterwards){
+				final Player player = (Player) event.getView().getPlayer();
+				
+				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(playerName) == plugin.getClassManager().getDefaultHolder();
+				if(hasDefaultClass){
+					final HolderInventory classSelectInventory = new HolderInventory(player, plugin.getClassManager());
+					if(classSelectInventory.getNumberOfHolder() > 0){
+						
+						//schedule opening of Class selection.
+						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+							
+							@Override
+							public void run() {
+								player.openInventory(classSelectInventory);
+							}
+						}, 4);
+					}
+				}
+			}
+			
 		}
 	}
 	

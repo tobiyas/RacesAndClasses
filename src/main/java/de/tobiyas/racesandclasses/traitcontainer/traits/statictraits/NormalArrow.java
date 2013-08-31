@@ -29,7 +29,7 @@ public class NormalArrow extends AbstractArrow {
 
 	@Override
 	public String getPrettyConfiguration() {
-		return null;
+		return "Just a normal Arrow";
 	}
 
 	@TraitConfigurationNeeded

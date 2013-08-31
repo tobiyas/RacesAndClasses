@@ -2,7 +2,9 @@ package de.tobiyas.racesandclasses.configuration.member;
 
 import java.util.LinkedList;
 
-public class MemberConfigList extends LinkedList<ConfigOption> {
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
+
+public class MemberConfigList <T extends ConfigOption> extends LinkedList<T> {
 	private static final long serialVersionUID = 3484898002881544703L;
 
 	
@@ -38,8 +40,10 @@ public class MemberConfigList extends LinkedList<ConfigOption> {
 	 * @return the searched config or NULL
 	 */
 	public ConfigOption getConfigOptionByDisplayName(String displayName) {
-		for(ConfigOption option : this){
-			if(option.getDisplayName().equalsIgnoreCase(displayName)){
+		if(displayName == null) return null;
+		
+		for(T option : this){
+			if(displayName.equalsIgnoreCase(option.getDisplayName())){
 				return option;
 			}
 		}
@@ -57,8 +61,10 @@ public class MemberConfigList extends LinkedList<ConfigOption> {
 	 * @return the searched config or NULL
 	 */
 	public ConfigOption getConfigOptionByPath(String pathName) {
+		if(pathName == null) return null;
+		
 		for(ConfigOption option : this){
-			if(option.getPath().equalsIgnoreCase(pathName)){
+			if(pathName.equalsIgnoreCase(option.getPath())){
 				return option;
 			}
 		}

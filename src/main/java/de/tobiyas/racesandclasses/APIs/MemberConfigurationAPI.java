@@ -1,7 +1,7 @@
 package de.tobiyas.racesandclasses.APIs;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 
 public class MemberConfigurationAPI {
 

@@ -2,38 +2,110 @@ package de.tobiyas.racesandclasses.util.consts;
 
 public class PermissionNode {
 
+	/**
+	 * The Prefix of the Plugin which all nodes extend.
+	 */
 	public static final String prePlugin = "RaC.";
 
-	public static final String changeRace = prePlugin + "race.change"; 
+	/**
+	 * The Permission to change your race.
+	 */
+	public static final String changeRace = prePlugin + "race.change";
+	
+	/**
+	 * The Permission to select your Race
+	 */
 	public static final String selectRace = prePlugin + "race.select"; 
 	
+	/**
+	 * The Permissions to change your Class
+	 */
 	public static final String changeClass = prePlugin + "class.change"; 
+	
+	/**
+	 * The Permission to select your Class
+	 */
 	public static final String selectClass = prePlugin + "class.select"; 
 	
+	/**
+	 * The Permission to create a private channel
+	 */
 	public static final String channelCreatePrivate = prePlugin + "channel.create.private";
+	
+	/**
+	 * The Permission to create a public channel.
+	 */
 	public static final String channelCreatePublic = prePlugin + "channel.create.public";
+	
+	/**
+	 * The Permission to create a password protected channel
+	 */
 	public static final String channelCreatePassword = prePlugin + "channel.create.password";
 	
+	/**
+	 * The Power to ban People in the Global channel
+	 */
 	public static final String channelGlobalBanPower = prePlugin + "chanel.global.banpower";
+	
+	/**
+	 * The Power to unban People in the Global channel
+	 */
 	public static final String channelGlobalUnbanPower = prePlugin + "chanel.global.unbanpower";
 	
+	/**
+	 * The Power to mute people in the Global channel
+	 */
 	public static final String channelGlobalMutePower = prePlugin + "chanel.global.mutepower";
+	
+	/**
+	 * The Power to unmute people in the Global channel
+	 */
 	public static final String channelGlobalUnmutePower = prePlugin + "chanel.global.unmutepower";
 	
+	/**
+	 * The Permission to edit a channel without beeing Admin of this channel.
+	 */
 	public static final String channelEdit = prePlugin + "channel.edit";
 	
+	/**
+	 * The Permission to whisper someone
+	 */
 	public static final String whisper = prePlugin + "whisper";
+	
+	/**
+	 * The Permission for the /raceHeal command
+	 */
 	public static final String healSelf = prePlugin + "heal.self";
+	
+	/**
+	 * The Permission for the /raceHeal <otherplayer Name> command
+	 */
 	public static final String healOther = prePlugin + "heal.other";
+	
+	/**
+	 * The Permission to change god mode for Players.
+	 */
 	public static final String god = prePlugin + "god";
 	
-	public static final String raceInfo = prePlugin + "raceinfo.display";
-	
+	/**
+	 * The Permissions to use the '/racesdebug [subcommand]' command.
+	 */
 	public static final String debug = prePlugin + "debug";
 	
+	/**
+	 * The Permissions to use the '/racesreload' command
+	 */
 	public static final String reload = prePlugin + "reload";
 
+	/**
+	 * The Permission to Broadcast something to a channel.
+	 * 
+	 * WARNING: This Permission allows broadcasting in channels you are not in.
+	 */
 	public static final String broadcast = prePlugin + "channel.broadcast";
 	
+	/**
+	 * The Permissions to use the '/racstatistics [plugin / subcommand]' command.
+	 */
 	public static final String statistics = prePlugin + "statistics";
 }

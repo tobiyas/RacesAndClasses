@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.DefaultContainer;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder.RaceReminder;
@@ -126,6 +127,23 @@ public class RaceManager extends AbstractHolderManager {
 	@Override
 	public String getContainerTypeAsString() {
 		return "race";
+	}
+
+	@Override
+	protected String getCorrectFieldFromDBHolder(
+			PlayerHolderAssociation container) {
+		return container.getRaceName();
+	}
+
+	@Override
+	protected String getDBFieldName() {
+		return "raceName";
+	}
+
+	@Override
+	protected void saveContainerToDBField(PlayerHolderAssociation container,
+			String name) {
+		container.setRaceName(name);
 	}
 
 }

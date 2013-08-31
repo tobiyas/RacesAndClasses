@@ -112,17 +112,42 @@ public abstract class AbstractHolderManager extends Observable{
 			YAMLConfigExtended traitHolderConfig, String holderName) throws HolderParsingException;
 
 	
+	/**
+	 * Reads the Members from PlayerData or DB.
+	 */
 	protected void readMemberList(){
 		memberList = new HashMap<String, AbstractTraitHolder>();
-		
-		memberConfig = new YAMLConfigExtended(Consts.playerDataYML).load();
-		
-		for(String member : memberConfig.getChildren("playerdata")){
-			String raceName = memberConfig.getString("playerdata." + member + "." + getConfigPrefix(), Consts.defaultRace);
-			memberList.put(member, getHolderByName(raceName));
+
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
+			for(AbstractTraitHolder traitHolder : traitHolderList){
+				if(traitHolder == null) continue;
+				
+				List<PlayerHolderAssociation> holderList = plugin.getDatabase().find(PlayerHolderAssociation.class).where()
+						.ieq(getDBFieldName(), traitHolder.getName()).findList();
+				for(PlayerHolderAssociation holder : holderList){
+					memberList.put(holder.getPlayerName(), traitHolder);				
+				}
+			}
+			
+		}else{		
+			memberConfig = new YAMLConfigExtended(Consts.playerDataYML).load();
+			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
+			
+			for(String member : memberConfig.getChildren("playerdata")){
+				String raceName = memberConfig.getString("playerdata." + member + "." + getConfigPrefix(), defaultHolderName);
+				memberList.put(member, getHolderByName(raceName));
+			}
 		}
 				
 	}
+	
+	/**
+	 * Returns the name of the correct Holder.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	protected abstract String getCorrectFieldFromDBHolder(PlayerHolderAssociation container);
 	
 	
 	/**
@@ -138,14 +163,9 @@ public abstract class AbstractHolderManager extends Observable{
 	public boolean addPlayerToHolder(String player, String potentialHolder){
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
-		memberConfig.load();
 		
+		saveNewHolderToDB(player, container);
 		memberList.put(player, container);
-		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), container.getName());
-		plugin.getPlayerManager().checkPlayer(player);
-		
-		memberConfig.save();
-
 		
 		//setting permission group afterwards
 		String groupName = container.getPermissions().getGroupIdentificationName();
@@ -156,6 +176,58 @@ public abstract class AbstractHolderManager extends Observable{
 		return true;
 	}
 	
+	
+	/**
+	 * Saves the new Holder to the DB or YAML
+	 * 
+	 * @param player
+	 * @param newHolder
+	 */
+	private void saveNewHolderToDB(String player, AbstractTraitHolder newHolder){
+		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
+		String newHolderName = newHolder.getName();
+		
+		if(useDB){
+			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerName", player).findUnique();
+			if(container == null){
+				container = new PlayerHolderAssociation();
+				container.setPlayerName(player);
+				container.setClassName(null);
+				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getName());
+			}
+			
+			saveContainerToDBField(container, newHolderName);
+			
+			try{
+				plugin.getDatabase().save(container);
+			}catch(Exception exp){
+				plugin.getDebugLogger().logStackTrace(exp);
+			}
+		}else{
+			memberConfig.load();
+			
+			memberConfig.set("playerdata." + player + "." + getConfigPrefix(), newHolderName);
+			plugin.getPlayerManager().checkPlayer(player);
+			
+			memberConfig.save();
+		}		
+	}
+	
+	
+	/**
+	 * Returns the fieldName of the HolderType
+	 * @return
+	 */
+	protected abstract String getDBFieldName();
+	
+	
+	/**
+	 * Saves the Holder name to the correct field.
+	 * 
+	 * @param container
+	 * @param name
+	 */
+	protected abstract void saveContainerToDBField(PlayerHolderAssociation container, String name);
 	
 	/**
 	 * Resets the movement speed of a Player.
@@ -212,9 +284,11 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		memberList.remove(player);
 		
-		memberConfig.load();
-		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
-		memberConfig.save();
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
+			memberConfig.load();
+			memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
+			memberConfig.save();
+		}
 		
 		return addPlayerToHolder(player, newHolderName);
 	}

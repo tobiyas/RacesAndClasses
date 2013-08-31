@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.configuration.member;
+package de.tobiyas.racesandclasses.configuration.member.file;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
@@ -102,7 +103,7 @@ public class MemberConfigTest {
 	@Test
 	public void getValue_works(){
 		assertEquals(sut.getCurrentChannel(), sut.getValueDisplayName(MemberConfig.chatChannel));
-		assertEquals(sut.getCurrentChannel(), sut.getValueOfPath("channels.current"));
+		assertEquals(sut.getCurrentChannel(), sut.getValueOfPath("channelsCurrent"));
 	}
 	
 	
@@ -168,7 +169,7 @@ public class MemberConfigTest {
 		boolean visible = false;
 		
 		//path already exists
-		assertFalse(sut.addOption("channels.current", displayName, value, defaultValue, visible));
+		assertFalse(sut.addOption("channelsCurrent", displayName, value, defaultValue, visible));
 		
 		//displayName already exists
 		assertFalse(sut.addOption(path, MemberConfig.chatChannel, value, defaultValue, visible));
@@ -204,8 +205,8 @@ public class MemberConfigTest {
 	
 	@Test
 	public void loading_works_with_custom_operations(){
-		String path = "path";
-		String displayName = "displayName";
+		String path = "path" + StringGenerator.nextRandomString(5);
+		String displayName = "displayName" + StringGenerator.nextRandomString(5);
 		
 		Object value = true;
 		Object defaultValue = false;
@@ -215,6 +216,7 @@ public class MemberConfigTest {
 		sut.save();
 		
 		sut = new MemberConfig(playerName);
+		assertTrue(sut.containsValue(displayName));
 		assertEquals(value, sut.getValueDisplayName(displayName));
 	} 
 	

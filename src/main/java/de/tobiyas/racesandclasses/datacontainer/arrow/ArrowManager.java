@@ -20,8 +20,6 @@ public class ArrowManager {
 		arrows = new ArrayList<AbstractArrow>();
 		currentPointer = 0;
 		eventTime = 0;
-		
-		rescanClass();
 	}
 	
 	public void rescanClass(){

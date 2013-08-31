@@ -51,7 +51,7 @@ public class RaceChangeSelectionListener implements Listener {
 			Player player = event.getPlayer();
 			String raceName = event.getRaceToSelect().getName();
 			
-			String permissionNode = PermissionNode.prePlugin + "races." + raceName.toLowerCase();
+			String permissionNode = PermissionNode.prePlugin + "races." + raceName;
 			if(!plugin.getPermissionManager().checkPermissionsSilent(player, permissionNode)){
 				event.setCancelled("You do not have the Permission to select the Race" + raceName);
 			}

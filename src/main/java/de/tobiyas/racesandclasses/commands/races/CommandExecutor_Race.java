@@ -145,7 +145,6 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		
 		//Info to a race
 		if(raceCommand.equalsIgnoreCase("info")){
-			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
 			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(sender.getName()).getName();
 			
 			if(args.length > 1){

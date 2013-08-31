@@ -73,12 +73,20 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private boolean config_useClassGUIToSelect;
 	private boolean config_useRaceGUIToSelect;
 	
+	private boolean config_openRaceSelectionOnJoinWhenNoRace;
+	private boolean config_openClassSelectionAfterRaceSelectionWhenNoClass;
+	
+	private boolean config_cancleGUIExitWhenNoRacePresent;
+	private boolean config_cancleGUIExitWhenNoClassPresent;
+
 	private String config_defaultRaceName;
 	private String config_defaultRaceTag;
 	
 	private int config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
+	
+	private boolean config_savePlayerDataToDB;
 	
 	
 	/**
@@ -121,10 +129,16 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		config.addDefault("races.change.uplinkInSeconds", 0);
 		config.addDefault("races.defaultrace.name", "DefaultRace");
 		config.addDefault("races.defaultrace.tag", "[NoRace]");
-
+		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace", true);
+		config.addDefault("races.cancleGUIExitWhenNoRacePresent", true);
+		
+		
 		config.addDefault("classes.permissions.usePermissionsForEachClasses", false);
 		config.addDefault("classes.useRaceClassSelectionMatrix", false);
 		config.addDefault("classes.change.uplinkInSeconds", 0);
+		config.addDefault("classes.openClassSelectionAfterRaceSelectionWhenNoClass", true);
+		config.addDefault("classes.cancleGUIExitWhenNoClassPresent", true);
+
 		
 		config.addDefault("tutorials.enable", true);
 		
@@ -133,6 +147,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		config.addDefault("worlds.disableOn", Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		
 		config.addDefault("general.copyDefaultTraitsOnStartup", true);
+		config.addDefault("general.saving.savePlayerDataToDB", true);
 		
 		config.addDefault("races.gui.enable", true);
 		config.addDefault("classes.gui.enable", true);
@@ -199,6 +214,13 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		
 		config_itemForMagic = config.getInt("magic.wandId", Material.STICK.getId());
 		
+		
+		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean("classes.openClassSelectionAfterRaceSelectionWhenNoClass", true);
+		config_cancleGUIExitWhenNoClassPresent = config.getBoolean("classes.cancleGUIExitWhenNoClassPresent", true);
+		config_openRaceSelectionOnJoinWhenNoRace = config.getBoolean("races.openRaceSelectionOnJoinWhenNoRace", true);
+		config_cancleGUIExitWhenNoRacePresent = config.getBoolean("races.cancleGUIExitWhenNoRacePresent", true);
+		
+		config_savePlayerDataToDB = config.getBoolean("general.saving.savePlayerDataToDB", true);
 		config_mapExpPerLevelCalculationString = config.getString("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
 		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
@@ -206,6 +228,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		}
 		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
+		
 		
 		//be sure to have lower case to not be case sensitive
 		config_worldsDisabled = new LinkedList<String>();
@@ -338,6 +361,38 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	 */
 	public String getConfig_mapExpPerLevelCalculationString() {
 		return config_mapExpPerLevelCalculationString;
+	}
+
+	/**
+	 * @return the config_openRaceSelectionOnJoinWhenNoRace
+	 */
+	public boolean isConfig_openRaceSelectionOnJoinWhenNoRace() {
+		return config_openRaceSelectionOnJoinWhenNoRace;
+	}
+
+	/**
+	 * @return the config_openClassSelectionAfterRaceSelectionWhenNoClass
+	 */
+	public boolean isConfig_openClassSelectionAfterRaceSelectionWhenNoClass() {
+		return config_openClassSelectionAfterRaceSelectionWhenNoClass;
+	}
+
+	/**
+	 * @return the config_cancleGUIExitWhenNoRacePresent
+	 */
+	public boolean isConfig_cancleGUIExitWhenNoRacePresent() {
+		return config_cancleGUIExitWhenNoRacePresent;
+	}
+
+	/**
+	 * @return the config_cancleGUIExitWhenNoClassPresent
+	 */
+	public boolean isConfig_cancleGUIExitWhenNoClassPresent() {
+		return config_cancleGUIExitWhenNoClassPresent;
+	}
+
+	public boolean isConfig_savePlayerDataToDB() {
+		return config_savePlayerDataToDB;
 	}
 
 }

@@ -65,13 +65,28 @@ public class TraitInventory extends InventoryView {
 			
 			meta.setDisplayName(ChatColor.LIGHT_PURPLE + trait.getName());
 			
-			String traitConfigText = trait.getPrettyConfiguration();
-			if(traitConfigText.length() > 32){
-				lore.add(traitConfigText.substring(0,31));
-				lore.add(" -" + traitConfigText.substring(32, traitConfigText.length() - 1));
-			}else{
-				lore.add(trait.getPrettyConfiguration());			
+			String traitConfig = trait.getPrettyConfiguration();
+			
+			String[] words = {"No", "Config", "Present."};
+			if(traitConfig != null){
+				words = traitConfig.split(" ");				
 			}
+			
+			String currentLine = "- " + words[0];
+			for(int i = 1; i < words.length; i++){
+				String currentWord = words[i];
+				
+				if(currentLine.length() + words.length + 1 > 31){
+					lore.add(currentLine);
+					currentLine = currentWord;
+				}else{
+					currentLine += " " + currentWord;
+				}
+			}
+			if(currentLine.length() > 0){
+				lore.add(currentLine);
+			}
+			
 			
 			meta.setLore(lore);
 			

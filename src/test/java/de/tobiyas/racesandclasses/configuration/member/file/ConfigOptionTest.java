@@ -1,17 +1,37 @@
-package de.tobiyas.racesandclasses.configuration.member;
+package de.tobiyas.racesandclasses.configuration.member.file;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.tobiyas.racesandclasses.configuration.member.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProviderSetter;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 import static org.junit.Assert.*;
 
 public class ConfigOptionTest {
 
+	private String playerName = "player";
+	
+	@Before
+	public void setup(){
+		GenerateBukkitServer.generateServer();
+		GenerateRaces.generateRaces();
+	}
+	
+	@After
+	public void teardown(){
+		GenerateBukkitServer.dropServer();
+		GenerateRaces.dropMock();
+	}
+	
 	@Test
 	public void test_all_formats(){
 		String stringValue = "test1";
@@ -36,7 +56,7 @@ public class ConfigOptionTest {
 		String value = "test1";
 		String path = "hallo";
 		
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		//lets check if the values are correct set
 		assertEquals(path, sut.getPath());
@@ -59,7 +79,7 @@ public class ConfigOptionTest {
 		String path = "path";
 		
 		
-		ConfigOption sut = new ConfigOption(path, displayName, value, defaultValue);
+		ConfigOption sut = new ConfigOption(path, playerName, displayName, value, defaultValue);
 		
 		//lets check if the values are correct set
 		assertEquals(path, sut.getPath());
@@ -77,13 +97,14 @@ public class ConfigOptionTest {
 	public void constructor_visible_false_test(){
 		String value = "value";
 		String defaultValue = "default";
+		String playerName = "useless";
 		
 		String displayName = "displayName";
 		String path = "path";
 		boolean visiblity = false;
 		
 		
-		ConfigOption sut = new ConfigOption(path, displayName, value, defaultValue, visiblity);
+		ConfigOption sut = new ConfigOption(path, playerName, displayName, value, defaultValue, visiblity);
 		
 		//lets check if the values are correct set
 		assertEquals(path, sut.getPath());
@@ -102,10 +123,10 @@ public class ConfigOptionTest {
 		String value = "test1";
 		String path = "hallo";
 		
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		//lets check if the values are correct set
-		assertTrue(sut.setValue("test2"));		
+		assertTrue(sut.setObjectValue("test2"));		
 	}
 	
 	@Test
@@ -113,10 +134,10 @@ public class ConfigOptionTest {
 		String value = "test1";
 		String path = "hallo";
 		
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		//lets check if the values are correct set
-		assertFalse(sut.setValue(42));		
+		assertFalse(sut.setObjectValue(42));		
 	}
 	
 	
@@ -131,22 +152,20 @@ public class ConfigOptionTest {
 		String path = "path";
 		String value = "value";
 		
-		ConfigOption sut = new ConfigOption(path, value);
-		
-		
-		File tempFile = null;
 
 		try{
-			tempFile = File.createTempFile("test1", ".yml");
-			YAMLConfigExtended config = new YAMLConfigExtended(tempFile);
-			String pre = "pre";
-			
+			YAMLConfigExtended config = YAMLPersistenceProviderSetter.getLoadedPlayerFile(true);
+			String pre = "prefixforsavings";
 			config.createSection(pre);
-			sut.saveToYaml(config, pre);
+			config.save();
+			
+			ConfigOption sut = new ConfigOption(path, playerName, value);
+			sut.save(pre);
 
 			
 			String loadedValue = config.getString(pre + "." + path + "." + ConfigOption.DEFAULT_VALUE_PATH);
 			String loadedDefaultValue = config.getString(pre + "." + path + "." + ConfigOption.DEFAULT_DEFAULTVALUE_PATH);
+			
 			assertEquals(sut.getValue(), loadedValue);
 			assertEquals(sut.getDefaultValue(), loadedDefaultValue);
 
@@ -160,10 +179,6 @@ public class ConfigOptionTest {
 			
 		}catch(Exception exp){
 			fail(exp.getLocalizedMessage());
-		}finally{
-			if(tempFile != null){
-				tempFile.delete();
-			}
 		}
 		
 	}
@@ -174,7 +189,7 @@ public class ConfigOptionTest {
 		String path = "path";
 		String value = "value";
 		
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		
 		File tempFile = null;
@@ -185,9 +200,11 @@ public class ConfigOptionTest {
 			String pre = "pre";
 			
 			config.createSection(pre);
-			sut.saveToYaml(config, pre);
+			YAMLPersistenceProviderSetter.setPlayerYAML(config);
 			
-			assertTrue(ConfigOption.isInValidFormat(config, pre, path));			
+			sut.save(pre);
+			
+			assertTrue(ConfigOption.isInValidFormat(pre, playerName, path));			
 		}catch(Exception exp){
 			fail(exp.getLocalizedMessage());
 		}finally{
@@ -202,7 +219,7 @@ public class ConfigOptionTest {
 		String path = "path";
 		String value = "value";
 		
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		
 		File tempFile = null;
@@ -213,10 +230,13 @@ public class ConfigOptionTest {
 			String pre = "pre";
 			
 			config.createSection(pre);
-			sut.saveToYaml(config, pre);
+			YAMLPersistenceProviderSetter.setPlayerYAML(config);
 			
-			assertFalse(ConfigOption.isInValidFormat(config, pre  + "banane", path));
+			sut.save(pre);
+			
+			assertFalse(ConfigOption.isInValidFormat(pre  + "banane234", playerName, path));
 		}catch(Exception exp){
+			exp.printStackTrace();
 			fail(exp.getLocalizedMessage());
 		}finally{
 			if(tempFile != null){
@@ -230,7 +250,7 @@ public class ConfigOptionTest {
 	public void loading_default_works_when_present(){
 		String path = "path";
 		String value = "value";
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		File tempFile = null;
 
@@ -240,9 +260,11 @@ public class ConfigOptionTest {
 			String pre = "pre";
 			
 			config.createSection(pre);
-			sut.saveToYaml(config, pre);
+			YAMLPersistenceProviderSetter.setPlayerYAML(config);
 			
-			ConfigOption loadedOption = ConfigOption.loadFromPathOrCreateDefault(config, pre, path, "2", "1", false);
+			sut.save(pre);
+			
+			ConfigOption loadedOption = ConfigOption.loadFromPathOrCreateDefault(pre, playerName, path, "2", "1", false);
 			assertEquals(sut, loadedOption);
 		}catch(Exception exp){
 			fail(exp.getLocalizedMessage());
@@ -257,7 +279,7 @@ public class ConfigOptionTest {
 	public void loading_default_works_when_not_present(){
 		String path = "path";
 		String value = "value";
-		ConfigOption sut = new ConfigOption(path, value);
+		ConfigOption sut = new ConfigOption(path, playerName, value);
 		
 		File tempFile = null;
 
@@ -267,9 +289,11 @@ public class ConfigOptionTest {
 			String pre = "pre";
 			
 			config.createSection(pre);
-			sut.saveToYaml(config, pre);
+			YAMLPersistenceProviderSetter.setPlayerYAML(config);
 			
-			ConfigOption loadedOption = ConfigOption.loadFromPathOrCreateDefault(config, pre + "banane", path, path, value, true);
+			sut.save(pre);
+			
+			ConfigOption loadedOption = ConfigOption.loadFromPathOrCreateDefault(pre + "banane", playerName, path, path, value, true);
 			assertEquals(sut, loadedOption);
 		}catch(Exception exp){
 			fail(exp.getLocalizedMessage());
@@ -285,8 +309,8 @@ public class ConfigOptionTest {
 	public void cover_hashcode_and_equals(){
 		String path = "path";
 		String value = "value";
-		ConfigOption sut1 = new ConfigOption(path, value);
-		ConfigOption sut2 = new ConfigOption(path, value);
+		ConfigOption sut1 = new ConfigOption(path, playerName, value);
+		ConfigOption sut2 = new ConfigOption(path, playerName, value);
 		
 		
 		int hashCode1 = sut1.hashCode();

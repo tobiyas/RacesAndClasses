@@ -1,9 +1,20 @@
-package de.tobiyas.racesandclasses.configuration.member;
+package de.tobiyas.racesandclasses.configuration.member.file;
 
 import java.io.IOException;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import com.avaje.ebean.validation.NotEmpty;
+import com.avaje.ebean.validation.NotNull;
+
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
+@Entity
 public class ConfigOption {
 
 	/**
@@ -11,34 +22,80 @@ public class ConfigOption {
 	 * 
 	 * @author Tobiyas
 	 */
+	@Embeddable
 	public enum SaveFormat{
-		INT,
-		DOUBLE,
-		STRING,
-		BOOLEAN,
+		INT("000"),
+		DOUBLE("001"),
+		STRING("002"),
+		BOOLEAN("003"),
 		
-		UNKNOWN;
+		UNKNOWN("999");
+		
+		/**
+		 * An Id for parsing later
+		 */
+		public final String id;
+		
+		/**
+		 * Creates the enum with the passed id
+		 * @param id
+		 */
+		private SaveFormat(String id) {
+			this.id = id;
+		}
+		
+		/**
+		 * Parses the format with the given ID.
+		 * If no ID fits, {@link #UNKNOWN} is returned.
+		 * This id is trimmed to the first 3 characters.
+		 * 
+		 * @param id the id to search for
+		 * @return the resolved {@link SaveFormat} or {@link #UNKNOWN}.
+		 */
+		public static SaveFormat parseFromId(String id){
+			if(id.length() < 3) return UNKNOWN;
+			
+			id = id.substring(0,3);
+			
+			for(SaveFormat format : values()){
+				if(id.equalsIgnoreCase(format.id)){
+					return format;
+				}
+			}
+			
+			return UNKNOWN;
+		}
 	}
+	
 	
 	/**
 	 * The path to the player invisible part
 	 */
+	@Transient
 	protected final static String DEFAULT_VISIBLE_PATH = "visible";
+	
 	/**
 	 * The path to the value
 	 */
+	@Transient
 	protected final static String DEFAULT_VALUE_PATH = "val";
+	
 	/**
 	 * The path to the value
 	 */
+	@Transient
 	protected final static String DEFAULT_DEFAULTVALUE_PATH = "defval";
+	
 	/**
 	 * The path to the value
 	 */
+	@Transient
 	protected final static String DEFAULT_FORMAT_PATH = "format";
+	
 	/**
 	 * path to nice human readable name
 	 */
+	@Transient
 	protected final static String DEFAULT_DISPLAY_NAME_PATH = "name";
 	
 	
@@ -46,33 +103,40 @@ public class ConfigOption {
 	/**
 	 * The path to the config option
 	 */
-	private final String path;
+	@Id
+	@NotEmpty
+	protected String path;
 	
 	/**
 	 * The value placed in the option
 	 */
-	private Object value;
+	@Transient
+	protected Object value;
 	
 	
 	/**
 	 * If there is an default value.
 	 */
-	private final Object defaultValue;
+	@Transient
+	protected Object defaultValue;
 	
 	/**
 	 * if the player can see this value
 	 */
-	private final boolean visible;
+	@NotNull
+	protected boolean visible;
 	
 	/**
 	 * The format the value is saved as
 	 */
-	private final SaveFormat format;
+	@Embedded
+	protected SaveFormat format;
 	
 	/**
 	 * The display name of the option
 	 */
-	private final String displayName;
+	@NotEmpty
+	protected String displayName;
 	
 	
 	/**
@@ -87,8 +151,8 @@ public class ConfigOption {
 	 * @param path to the config
 	 * @param value the value to store
 	 */
-	public ConfigOption(String path, Object value) {
-		this(path, path, value, value, true);
+	public ConfigOption(String path, String playerName, Object value) {
+		this(path, playerName, path, value, value, true);
 	}
 	
 	/**
@@ -104,8 +168,8 @@ public class ConfigOption {
 	 * @param value the value to store
 	 * @param defaultValue the default value when no other value given
 	 */
-	public ConfigOption(String path, String displayName, Object value, Object defaultValue){
-		this(path, displayName, value, defaultValue, true);
+	public ConfigOption(String path, String playerName, String displayName, Object value, Object defaultValue){
+		this(path, playerName, displayName, value, defaultValue, true);
 	}
 	
 	
@@ -121,7 +185,7 @@ public class ConfigOption {
 	 * @param value the value to store
 	 * @param visible if it is visible to the player
 	 */
-	public ConfigOption(String path, String displayName, Object value, Object defaultValue, boolean visible) {
+	public ConfigOption(String path, String playerName, String displayName, Object value, Object defaultValue, boolean visible) {
 		this.path = path;
 		this.value = value;
 		this.visible = visible;
@@ -129,6 +193,28 @@ public class ConfigOption {
 		this.defaultValue = defaultValue;
 		this.displayName = displayName;
 		this.format = identifyFormat(value);
+	}
+	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param option
+	 */
+	protected ConfigOption(ConfigOption option) {
+		this.path = option.path;
+		this.value = option.value;
+		this.visible = option.visible;
+		
+		this.defaultValue = option.defaultValue;
+		this.displayName = option.displayName;
+		this.format = option.format;
+	}
+	
+	
+	/**
+	 * ONLY FOR DB ACCESS!!!!
+	 */
+	public ConfigOption(){
 	}
 
 	
@@ -139,6 +225,8 @@ public class ConfigOption {
 		return value;
 	}
 
+	
+	
 	/**
 	 * Tries to set the new value.
 	 * Returns true if worked,
@@ -148,7 +236,7 @@ public class ConfigOption {
 	 * 
 	 * @return true if worked, false otherwise
 	 */
-	public boolean setValue(Object value) {
+	public boolean setObjectValue(Object value) {
 		SaveFormat newValueFormat = identifyFormat(value);
 		if(newValueFormat == SaveFormat.UNKNOWN || newValueFormat != format){
 			return false;
@@ -201,8 +289,8 @@ public class ConfigOption {
 	 * @param config to save to
 	 * @param pre to save to
 	 */
-	public void saveToYaml(YAMLConfigExtended config, String pre){
-		config.load();
+	public void save(String pre){
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
 		
 		config.set(pre + "." + path + "." + DEFAULT_FORMAT_PATH, format.name());
 		config.set(pre + "." + path + "." + DEFAULT_VALUE_PATH, value);
@@ -217,7 +305,6 @@ public class ConfigOption {
 	/**
 	 * Builds a Option from a path, a prefix and a configuration file.
 	 * 
-	 * @param config to build from
 	 * @param pre to search
 	 * @param path to use
 	 * 
@@ -225,8 +312,8 @@ public class ConfigOption {
 	 * 
 	 * @throws IOException when the Option could not be build.
 	 */
-	public static ConfigOption loadFromPath(YAMLConfigExtended config, String pre, String path) throws IOException{
-		config.load();
+	public static ConfigOption loadFromPath(String pre, String playerName, String path) throws IOException{
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
 		
 		boolean visible = config.getBoolean(pre + "." + path + "." + DEFAULT_VISIBLE_PATH, true);
 		Object defaultValue = config.get(pre + "." + path + "." + DEFAULT_DEFAULTVALUE_PATH, null);
@@ -234,11 +321,11 @@ public class ConfigOption {
 		
 		String displayName = config.getString(pre + "." + path + "." + DEFAULT_DISPLAY_NAME_PATH, path);
 		
-		if(identifyFormat(value) == SaveFormat.UNKNOWN){
+		if(value == null || identifyFormat(value) == SaveFormat.UNKNOWN){
 			throw new IOException("Could not determin Type of '" + path + "' was: " + value);
 		}
 		
-		return new ConfigOption(path, displayName, value, defaultValue, visible);
+		return new ConfigOption(path, playerName, displayName, value, defaultValue, visible);
 	}
 	
 	
@@ -256,14 +343,14 @@ public class ConfigOption {
 	 * @param defaultVisiblity if reading did not work
 	 * @return
 	 */
-	public static ConfigOption loadFromPathOrCreateDefault(YAMLConfigExtended config, String pre, 
+	public static ConfigOption loadFromPathOrCreateDefault(String pre, String playerName,
 			String path, String defaultDisplayName, Object defaultValue, boolean defaultVisiblity){
 		
 		try{
-			return loadFromPath(config, pre, path);
+			return loadFromPath(pre, playerName, path);
 		}catch(IOException exp){
-			ConfigOption option = new ConfigOption(path, defaultDisplayName, defaultValue, defaultValue, defaultVisiblity);
-			option.saveToYaml(config, pre);
+			ConfigOption option = new ConfigOption(path, playerName, defaultDisplayName, defaultValue, defaultValue, defaultVisiblity);
+			option.save(pre);
 			return option;
 		}
 	}
@@ -276,10 +363,9 @@ public class ConfigOption {
 	 * @param path to check
 	 * @return true if it is valid, false otherwise
 	 */
-	public static boolean isInValidFormat(YAMLConfigExtended config,
-			String pre, String path) {
+	public static boolean isInValidFormat(String pre, String playerName, String path) {
 		try{
-			loadFromPath(config, pre, path);
+			loadFromPath(pre, playerName, path);
 			return true;
 		}catch(IOException exp){
 			return false;
@@ -369,4 +455,36 @@ public class ConfigOption {
 			return false;
 		return true;
 	}
+
+	
+	/**
+	 * Creates a copy of the current option.
+	 * 
+	 * @return
+	 */
+	public ConfigOption createCopy() {
+		return new ConfigOption(this);
+	}
+
+	
+	////////////////////////////
+	//Setters for DB Building.//
+	////////////////////////////
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public void setFormat(SaveFormat format) {
+		this.format = format;
+	}
+
 }

@@ -131,7 +131,19 @@ public class PermissionRegisterer implements Runnable{
 	 * @return
 	 */
 	private static boolean isVaultActive(){
-		return RacesAndClasses.getPlugin().getServer().getPluginManager().isPluginEnabled("Vault");
+		try{
+			boolean isPresent = RacesAndClasses.getPlugin().getServer().getPluginManager().isPluginEnabled("Vault");
+			if(!isPresent) return false;
+			
+			RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+	        Permission perms = rsp.getProvider();
+	        
+	        return perms.hasGroupSupport();
+		}catch(NoSuchMethodError exp){
+			return false;
+		}catch(Exception exp){
+			return false;
+		}
 	}
 	
 
@@ -141,12 +153,18 @@ public class PermissionRegisterer implements Runnable{
 	 * WARNING: Returns null if the Groups are not supported!!!
 	 */
 	private static Permission checkVault(){
-		if(!isVaultActive()) return null;
-		
-        RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        Permission perms = rsp.getProvider();
-        
-        return perms.hasGroupSupport() ? perms : null;
+		try{
+			if(!isVaultActive()) return null;
+			
+	        RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+	        Permission perms = rsp.getProvider();
+	        
+	        return perms.hasGroupSupport() ? perms : null;
+		}catch(NoSuchMethodError exp){
+			return null;
+		}catch(Exception exp){
+			return null;
+		}
 	}
 
 

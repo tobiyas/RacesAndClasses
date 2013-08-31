@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.util.chat;
 
-import de.tobiyas.racesandclasses.configuration.member.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
 
 public class WordParsing {
 

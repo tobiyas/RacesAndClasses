@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.generate.PluginCommandFactory;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.generate.plugin.MockRaCPlugin;

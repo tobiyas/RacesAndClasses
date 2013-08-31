@@ -20,7 +20,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfig;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
@@ -43,7 +44,7 @@ public class Listener_Player implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event){
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		if(container == null || container == plugin.getRaceManager().getDefaultHolder()){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
@@ -59,6 +60,21 @@ public class Listener_Player implements Listener {
 		}
 		
 		container.editTABListEntry(player.getName());
+		
+		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
+		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()) == plugin.getRaceManager().getDefaultHolder();
+		if(playerHasNoRace && forceSelectOfRace){
+			final HolderInventory raceInv = new HolderInventory(player, plugin.getRaceManager());
+			if(raceInv.getNumberOfHolder() > 0){
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					
+					@Override
+					public void run() {
+						player.openInventory(raceInv);						
+					}
+				}, 20);
+			}
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)

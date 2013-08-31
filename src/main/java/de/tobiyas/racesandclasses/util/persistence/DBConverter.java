@@ -1,0 +1,174 @@
+package de.tobiyas.racesandclasses.util.persistence;
+
+import java.util.Set;
+
+import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
+import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.util.config.YAMLConfigExtended;
+
+public class DBConverter {
+
+	/**
+	 * The Plugin to call Config stuff on.
+	 */
+	private static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
+	
+	/**
+	 * Converts everything in the PlayerData YML file.
+	 */
+	public static void convertAll(){
+		convertHolderAssociated();
+		convertGeneralData();
+		convertMemberConfig();
+	}
+	
+	
+	/**
+	 * Converts the Player to classes / races Association to the DB.
+	 */
+	public static void convertHolderAssociated(){
+		YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		Set<String> playerList = playerData.getChildren("playerdata");
+		
+		if(playerList.size() <= 0){
+			return;
+		}
+		
+		plugin.log("Starting to Transfer Player Holder Data to DB: " + playerList.size() + " entries.");
+		int i = 0;
+		int times = 1;
+		
+		int fourthPercentValue = playerList.size() / 4;
+		
+		String defaultRaceName = plugin.getConfigManager().getGeneralConfig().getConfig_defaultRaceName();
+		String defaultClassName = null;
+		
+		for(String player : playerList){
+			String pre = "playerdata." + player;
+			
+			if(!playerData.contains(pre + ".race") && !playerData.contains(pre + ".class")) continue;
+			
+			String raceName = playerData.getString(pre + ".race", defaultRaceName);
+			String className = playerData.getString(pre + ".class", defaultClassName);
+			
+			PlayerHolderAssociation container = new PlayerHolderAssociation();
+			container.setClassName(className);
+			container.setRaceName(raceName);
+			container.setPlayerName(player);
+			
+			try{
+				plugin.getDatabase().save(container);
+			}catch(Exception exp){
+				plugin.getDebugLogger().logStackTrace(exp);
+			}
+			
+			i++;			
+			if(fourthPercentValue == i){
+				plugin.log("Still copying... Done: " + (times * 25) + "% that's: " + (times * fourthPercentValue) + " / " + playerList.size());
+				times ++;
+				i = 0;
+			}
+		}
+		
+		plugin.log("Copying done. Have fun with the DB. :)");
+	}
+	
+	/**
+	 * Converts the General Data of Players.
+	 */
+	public static void convertGeneralData(){
+		YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		Set<String> playerList = playerData.getChildren("playerdata");
+		
+		if(playerList.size() <= 0){
+			return;
+		}
+		
+		plugin.log("Starting to Transfer Player General Data to DB: " + playerList.size() + " entries.");
+		int i = 0;
+		int times = 1;
+		
+		int fourthPercentValue = playerList.size() / 4;
+		
+		for(String player : playerList){
+			String pre = "playerdata." + player;
+			
+			if(!playerData.contains(pre + ".hasGod") 
+					&& !playerData.contains(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH)
+					&& !playerData.contains(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH)) continue;
+			
+			boolean hasGod = playerData.getBoolean(pre + ".hasGod", false);			
+			int level = playerData.getInt(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1);
+			int levelExp = playerData.getInt(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 0);
+			
+			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(player);
+			container.setHasGod(hasGod);
+			container.setPlayerLevel(level);
+			container.setPlayerLevelExp(levelExp);
+			
+			try{
+				plugin.getDatabase().save(container);
+			}catch(Exception exp){
+				plugin.getDebugLogger().logStackTrace(exp);
+			}
+			
+			i++;			
+			if(fourthPercentValue == i){
+				plugin.log("Still copying... Done: " + (times * 25) + "% that's: " + (times * fourthPercentValue) + " / " + playerList.size());
+				times ++;
+				i = 0;
+			}
+		}
+		
+		plugin.log("Copying done. Have fun with the DB. :)");
+	}
+	
+	
+	/**
+	 * tries to convert the MemberConfig of the Plugin.
+	 */
+	public static void convertMemberConfig(){
+		YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		
+		Set<String> playerList = playerData.getChildren("playerdata");
+		
+		if(playerList.size() <= 0){
+			return;
+		}
+		
+		plugin.log("Starting to Transfer PlayerData to DB. This may take some time. Entries: " + playerList.size());
+		int i = 0;
+		int times = 1;
+		
+		int fourthPercentValue = playerList.size() / 4;
+		
+		for(String player : playerList){
+			if(playerData.getCharacterList("playerdata." + player + ".config").size() <= 0) continue;
+			
+			MemberConfig config = MemberConfig.createMemberConfig(player);
+			
+			DBMemberConfig dbConfig = DBMemberConfig.copyFrom(config);
+			dbConfig.save();
+			
+			i++;
+			
+			if(fourthPercentValue == i){
+				plugin.log("Still copying... Done: " + (times * 25) + "% that's: " + (times * fourthPercentValue) + " / " + playerList.size());
+				times ++;
+				i = 0;
+			}
+			
+			playerData.set("playerdata." + player + ".config", null);
+			playerData.save();
+		}
+		
+		
+		
+		plugin.log("Copying done. Have fun with the Database. :)");
+	}
+}
