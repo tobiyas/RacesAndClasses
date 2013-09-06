@@ -3,11 +3,12 @@ package de.tobiyas.racesandclasses.util.persistence;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DBConverter {
@@ -21,13 +22,48 @@ public class DBConverter {
 	/**
 	 * Converts everything in the PlayerData YML file.
 	 */
-	public static void convertAll(){
+	public static void convertAll(){		
+		deleteOldPlayerData(false);
 		convertHolderAssociated();
 		convertGeneralData();
 		convertMemberConfig();
+		deleteOldPlayerData(true);
 	}
 	
 	
+	/**
+	 * Removes all Player Entries that are empty.
+	 */
+	private static void deleteOldPlayerData(boolean broadcastSomething) {
+		YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		Set<String> playerList = playerData.getChildren("playerdata");
+		
+		if(playerList.size() <= 0){
+			return;
+		}
+		
+		int removed = 0;
+		if(broadcastSomething){
+			plugin.log("Performing some cleanup...");
+		}
+			
+		for(String playerName : playerList){
+			if(playerData.getChildren("playerdata." + playerName).size() == 0){
+				playerData.set("playerdata." + playerName, null);
+				removed ++;
+			}
+		}
+
+		if(removed > 0){
+			playerData.save();
+		}
+		
+		if(broadcastSomething){
+			plugin.log("Cleanup done. Removed " + removed + " old entries.");
+		}
+	}
+
+
 	/**
 	 * Converts the Player to classes / races Association to the DB.
 	 */
@@ -45,7 +81,7 @@ public class DBConverter {
 		
 		int fourthPercentValue = playerList.size() / 4;
 		
-		String defaultRaceName = plugin.getConfigManager().getGeneralConfig().getConfig_defaultRaceName();
+		String defaultRaceName = getGeneralConfig().getConfig_defaultRaceName();
 		String defaultClassName = null;
 		
 		for(String player : playerList){
@@ -62,7 +98,18 @@ public class DBConverter {
 			container.setPlayerName(player);
 			
 			try{
-				plugin.getDatabase().save(container);
+				//look if already present.
+				PlayerHolderAssociation presentHolder = plugin.getDatabase().find(PlayerHolderAssociation.class)
+						.where().ieq("playerName", player).findUnique();
+				
+				if(presentHolder == null){
+					plugin.getDatabase().save(container);
+				}
+
+				playerData.set(pre + ".race", null);
+				playerData.set(pre + ".class", null);
+				
+				playerData.save();
 			}catch(Exception exp){
 				plugin.getDebugLogger().logStackTrace(exp);
 			}
@@ -73,6 +120,7 @@ public class DBConverter {
 				times ++;
 				i = 0;
 			}
+			
 		}
 		
 		plugin.log("Copying done. Have fun with the DB. :)");
@@ -99,12 +147,12 @@ public class DBConverter {
 			String pre = "playerdata." + player;
 			
 			if(!playerData.contains(pre + ".hasGod") 
-					&& !playerData.contains(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH)
-					&& !playerData.contains(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH)) continue;
+					&& !playerData.contains(pre + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH)
+					&& !playerData.contains(pre + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH)) continue;
 			
 			boolean hasGod = playerData.getBoolean(pre + ".hasGod", false);			
-			int level = playerData.getInt(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1);
-			int levelExp = playerData.getInt(pre + PlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 0);
+			int level = playerData.getInt(pre + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1);
+			int levelExp = playerData.getInt(pre + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 0);
 			
 			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(player);
 			container.setHasGod(hasGod);
@@ -112,7 +160,17 @@ public class DBConverter {
 			container.setPlayerLevelExp(levelExp);
 			
 			try{
-				plugin.getDatabase().save(container);
+				PlayerSavingContainer alreadyPlayerContainer = plugin.getDatabase().find(PlayerSavingContainer.class)
+						.where().ieq("playerName", player).findUnique();
+				
+				if(alreadyPlayerContainer == null){
+					plugin.getDatabase().save(container);
+				}
+				
+				playerData.set(pre + ".hasGod", null);
+				playerData.set(pre + ".currentHealth", null);
+				
+				playerData.save();
 			}catch(Exception exp){
 				plugin.getDebugLogger().logStackTrace(exp);
 			}
@@ -148,7 +206,7 @@ public class DBConverter {
 		int fourthPercentValue = playerList.size() / 4;
 		
 		for(String player : playerList){
-			if(playerData.getCharacterList("playerdata." + player + ".config").size() <= 0) continue;
+			if(playerData.getChildren("playerdata." + player + ".config").size() <= 0) continue;
 			
 			MemberConfig config = MemberConfig.createMemberConfig(player);
 			
@@ -170,5 +228,20 @@ public class DBConverter {
 		
 		
 		plugin.log("Copying done. Have fun with the Database. :)");
+	}
+	
+	
+	/**
+	 * Returns the General Config.
+	 * If not load yet, it builds it temporarly.
+	 * 
+	 * @return
+	 */
+	public static GeneralConfig getGeneralConfig(){
+		if(plugin.getConfigManager() == null){
+			return new GeneralConfig().reload();
+		}else{
+			return plugin.getConfigManager().getGeneralConfig();
+		}
 	}
 }

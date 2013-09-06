@@ -273,6 +273,12 @@ public class PlayerManager{
 	}
 	
 	
+	/**
+	 * Returns the PlayerLevelManager of the Player.
+	 * 
+	 * @param playerName
+	 * @return
+	 */
 	public PlayerLevelManager getPlayerLevelManager(String playerName){
 		PlayerContainer containerOfPlayer = getCreate(playerName);
 		return containerOfPlayer.getPlayerLevelManager();

@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
 import java.util.Map;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -60,7 +61,18 @@ public interface Trait{
 	 * @return
 	 */
 	public boolean modify(Event event);
-
+	
+	/**
+	 * Extracts the relevant player from the Event
+	 * and returns it.
+	 * 
+	 * If not interested, return null;
+	 * 
+	 * @param event
+	 * @return
+	 */
+	public Player getReleventPlayer(Event event);
+	
 	
 	/**
 	 * Indecates if the same trait, but with different config is better.
@@ -85,5 +97,6 @@ public interface Trait{
 	 * @return
 	 */
 	public AbstractTraitHolder getTraitHolder();
+	
 	
 }

@@ -11,12 +11,14 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 
-public class ArmorTrait implements Trait {
+public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
@@ -99,7 +101,6 @@ public class ArmorTrait implements Trait {
 	@Override
 	public void importTrait() {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

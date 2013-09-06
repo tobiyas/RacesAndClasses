@@ -12,6 +12,7 @@ public class EntityKnockbackEvent extends EntityEvent implements Cancellable {
 	private Vector knockbackVector;
 	private boolean isCancled;
 	
+	
 	public EntityKnockbackEvent(Entity target, Entity source) {
 		super(target);
 		this.knockbackVector = calcVector(target, source);

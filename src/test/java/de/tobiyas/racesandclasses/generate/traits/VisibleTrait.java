@@ -4,16 +4,14 @@ import java.util.Map;
 
 import org.bukkit.event.Event;
 
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 
-public class VisibleTrait implements Trait{
+public class VisibleTrait extends AbstractBasicTrait{
 
-	private AbstractTraitHolder holder;
-	
 
 	@TraitInfos(category = "test", traitName = "VisibleTrait", visible = true)
 	@Override
@@ -50,16 +48,6 @@ public class VisibleTrait implements Trait{
 	@Override
 	public boolean isBetterThan(Trait trait) {
 		return false;
-	}
-
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
-		this.holder = abstractTraitHolder;
-	}
-
-	@Override
-	public AbstractTraitHolder getTraitHolder() {
-		return holder;
 	}
 
 }

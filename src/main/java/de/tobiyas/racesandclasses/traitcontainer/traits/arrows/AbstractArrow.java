@@ -17,31 +17,19 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 
 
-public abstract class AbstractArrow implements TraitWithUplink, Trait{
+public abstract class AbstractArrow extends AbstractBasicTrait implements TraitWithUplink{
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
-	protected AbstractTraitHolder traitHolder;
 	
 	protected int duration;
 	protected double totalDamage;
 	
-	
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder){
-		this.traitHolder = abstractTraitHolder;
-	}
-	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
 	
 	@Override
 	public abstract String getName();

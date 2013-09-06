@@ -6,7 +6,7 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
  * 
  * @author Tobiyas
  */
-public interface MagicSpellTrait {	
+public interface MagicSpellTrait {
 	
 	/**
 	 * Returns the cost of the Spell.
@@ -47,6 +47,17 @@ public interface MagicSpellTrait {
 		 * An specific Item is used to cast this spell.
 		 */
 		ITEM;
+		
+		
+		
+		@Override
+		public String toString(){
+			String name = this.name();
+			String pre = name.substring(0, 1).toUpperCase();
+			String rest = name.substring(1, name.length() - 1).toLowerCase();
+			
+			return pre + rest;
+		}
 	}
 	
 }

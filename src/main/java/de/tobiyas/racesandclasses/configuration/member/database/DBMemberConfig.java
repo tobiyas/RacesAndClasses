@@ -72,6 +72,7 @@ public class DBMemberConfig extends MemberConfig {
 	@Override
 	public DBMemberConfig save(){
 		EbeanServer eBeanServer = plugin.getDatabase();
+		
 		for(int i = 0; i < this.configList.size(); i++){
 			ConfigOption option = configList.get(i);
 			if(option != null && option instanceof DBConfigOption){

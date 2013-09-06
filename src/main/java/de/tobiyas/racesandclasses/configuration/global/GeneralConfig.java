@@ -85,6 +85,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private int config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
+	private boolean config_useRaCInbuildLevelSystem;
 	
 	private boolean config_savePlayerDataToDB;
 	
@@ -154,7 +155,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		
 		config.addDefault("magic.wandId", Material.STICK.getId());
 		
-		config.addDefault("leve.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		config.addDefault("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		config.addDefault("level.useRaCInbuildLevelSystem", true);
 		
 		
 		config.options().copyDefaults(true);
@@ -166,7 +168,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	/**
 	 * reloads the Configuration of the plugin
 	 */
-	public void reload(){
+	public GeneralConfig reload(){
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 
@@ -222,6 +224,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		
 		config_savePlayerDataToDB = config.getBoolean("general.saving.savePlayerDataToDB", true);
 		config_mapExpPerLevelCalculationString = config.getString("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		config_useRaCInbuildLevelSystem = config.getBoolean("level.useRaCInbuildLevelSystem", true);
+		
 		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
 			config_mapExpPerLevelCalculationString = "{level} * {level} * {level} * 1000";
@@ -235,6 +239,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		for(String tempName : temp_config_worldsDisabled){
 			config_worldsDisabled.add(tempName.toLowerCase());
 		}
+		
+		return this;
 	}
 	
 
@@ -393,6 +399,10 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 
 	public boolean isConfig_savePlayerDataToDB() {
 		return config_savePlayerDataToDB;
+	}
+
+	public boolean isConfig_useRaCInbuildLevelSystem() {
+		return config_useRaCInbuildLevelSystem;
 	}
 
 }

@@ -161,8 +161,8 @@ public class CooldownManagerTest {
 		sut.setCooldown(playerName, commandName, time);
 		
 		long timeNeeded = System.currentTimeMillis() - timeBefore;
-		Assert.assertTrue("Synchronized Block is not blocking.", timeNeeded >= timeToLock - (timeToLock / 5)); 
-		//20% time lost due to java Threads being pretty unreliable
+		Assert.assertTrue("Synchronized Block is not blocking.", timeNeeded >= timeToLock - (timeToLock / 3)); 
+		//33% time lost due to java Threads being pretty unreliable
 	}
 
 	
@@ -182,7 +182,7 @@ public class CooldownManagerTest {
 		sut.stillHasCooldown(playerName, commandName);
 		
 		long timeNeeded = System.currentTimeMillis() - timeBefore;
-		Assert.assertTrue("Synchronized Block is not blocking.", timeNeeded >= timeToLock - (timeToLock / 5)); 
+		Assert.assertTrue("Synchronized Block is not blocking.", timeNeeded >= timeToLock - (timeToLock / 3)); 
 		//20% time lost due to java Threads being pretty unreliable
 	}
 	

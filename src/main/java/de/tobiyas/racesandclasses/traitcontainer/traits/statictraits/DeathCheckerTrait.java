@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
@@ -22,7 +24,7 @@ import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.items.CreateDropContainer;
 import de.tobiyas.racesandclasses.util.items.DropContainer;
 
-public class DeathCheckerTrait implements Trait {
+public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait{
 	
 	private AbstractTraitHolder traitHolder;
 	

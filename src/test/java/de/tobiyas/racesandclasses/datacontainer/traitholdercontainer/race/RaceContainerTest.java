@@ -37,7 +37,7 @@ public class RaceContainerTest extends AbstractTraitHolderTest{
 
 	
 	public RaceContainerTest() throws IOException {
-		super("test", "[test]", new RaceContainer(new YAMLConfigExtended(File.createTempFile("race", ",yml")), "test"));
+		super("test", "[test]", new RaceContainer(new YAMLConfigExtended(File.createTempFile("race", ".yml")), "test"));
 	}
 	
 
@@ -132,7 +132,7 @@ public class RaceContainerTest extends AbstractTraitHolderTest{
 		try{
 			sut.load();
 			
-			RaceContainer sut2 = RaceContainer.loadRace( new YAMLConfigExtended(File.createTempFile("race", ",yml")), holderName);
+			RaceContainer sut2 = RaceContainer.loadRace( new YAMLConfigExtended(File.createTempFile("race", ".yml")), holderName);
 			RaceContainer container = (RaceContainer) sut;
 			
 			assertEquals(sut2.getManaBonus(), container.getManaBonus(), 0.001);
@@ -210,7 +210,7 @@ public class RaceContainerTest extends AbstractTraitHolderTest{
 		GenerateBukkitServer.generatePlayerOnServer(playerName);
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_adaptListName()).thenReturn(true);
 		
-		RaceContainer sut = new RaceContainer( new YAMLConfigExtended(File.createTempFile("race", ",yml")), longHolderName);
+		RaceContainer sut = new RaceContainer( new YAMLConfigExtended(File.createTempFile("race", ".yml")), longHolderName);
 		((RaceContainer)sut ).editTABListEntry(playerName);
 		
 		

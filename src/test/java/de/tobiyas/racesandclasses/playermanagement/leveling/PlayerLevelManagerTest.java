@@ -20,14 +20,14 @@ import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 public class PlayerLevelManagerTest {
 
 	private String playerName = "player";
-	private PlayerLevelManager sut;
+	private CustomPlayerLevelManager sut;
 	
 	@Before
 	public void init(){
 		GenerateBukkitServer.generateServer();
 		GenerateRaces.generateRaces();
 		
-		sut = new PlayerLevelManager(playerName);
+		sut = new CustomPlayerLevelManager(playerName);
 	}
 	
 	
@@ -188,7 +188,7 @@ public class PlayerLevelManagerTest {
 		sut.addExp(expLevelUp + expAdding);
 		sut.save();
 		
-		sut = new PlayerLevelManager(playerName);
+		sut = new CustomPlayerLevelManager(playerName);
 		sut.reloadFromYaml();
 		
 		assertEquals(expAdding, sut.getCurrentExpOfLevel());

@@ -13,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProviderSetter;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -93,16 +94,56 @@ public class GenerateRaces {
 	}
 	
 	private static void deleteTemps(){
-		boolean classesDeleted = YAMLPersistenceProviderSetter.getLoadedClassesFile(false).getFileLoadFrom().delete();
-		boolean racesDeleted = YAMLPersistenceProviderSetter.getLoadedRacesFile(false).getFileLoadFrom().delete();
-		boolean playerDataDeleted = YAMLPersistenceProviderSetter.getLoadedPlayerFile(false).getFileLoadFrom().delete();		
-		
-		YAMLPersistenceProviderSetter.setClassesYAML(null);
-		YAMLPersistenceProviderSetter.setRacesYAML(null);
-		YAMLPersistenceProviderSetter.setPlayerYAML(null);
-		
-		if(!classesDeleted || !racesDeleted || !playerDataDeleted){
-			Assert.fail("Could not delete: " + (classesDeleted ? "" : "classes.yml ") + (playerDataDeleted ? "" : "player.yml ") + (racesDeleted ? "" : "races.yml ") );
+		try{
+			boolean classesDeleted = false;
+			for(int i = 0; i < 5; i++){
+				File file = YAMLPersistenceProvider.getLoadedClassesFile(false).getFileLoadFrom();
+				if(!file.exists()){
+					classesDeleted = true;
+					break;
+				}
+				
+				classesDeleted = file.delete();
+				if(classesDeleted) break;
+				Thread.sleep(100);
+			}
+			
+			boolean racesDeleted = false;
+			for(int i = 0; i < 5; i++){
+				File file = YAMLPersistenceProvider.getLoadedRacesFile(false).getFileLoadFrom();
+				if(!file.exists()){
+					racesDeleted = true;
+					break;
+				}
+				
+				racesDeleted = file.delete();
+				if(racesDeleted) break;
+				Thread.sleep(100);
+			}
+			
+			boolean playerDataDeleted = false;
+			for(int i = 0; i < 5; i++){
+				File file = YAMLPersistenceProvider.getLoadedPlayerFile(false).getFileLoadFrom();
+				if(!file.exists()){
+					playerDataDeleted = true;
+					break;
+				}
+				
+				playerDataDeleted = file.delete();
+				if(playerDataDeleted) break;
+				Thread.sleep(100);
+			}
+			
+			YAMLPersistenceProviderSetter.setClassesYAML(null);
+			YAMLPersistenceProviderSetter.setRacesYAML(null);
+			YAMLPersistenceProviderSetter.setPlayerYAML(null);
+			
+			if(!classesDeleted || !racesDeleted || !playerDataDeleted){
+				Assert.fail("Could not delete:" + (classesDeleted ? "" : " classes.yml ") + (playerDataDeleted ? "" : " player.yml ") + (racesDeleted ? "" : " races.yml ") );
+			}
+		}catch(InterruptedException exp){
+			exp.printStackTrace();
+			Assert.fail("thread interupted!");
 		}
 	}
 	

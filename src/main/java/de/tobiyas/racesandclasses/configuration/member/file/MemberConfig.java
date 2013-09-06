@@ -11,6 +11,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
 import de.tobiyas.racesandclasses.util.chat.WordParsing;
+import de.tobiyas.racesandclasses.util.persistence.DBConverter;
 import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -34,11 +35,6 @@ public class MemberConfig {
 	 * The Configuration of the player as List
 	 */
 	protected MemberConfigList<ConfigOption> configList;
-	
-	/**
-	 * The global Player Data file to save the config to
-	 */
-	private static YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(false);
 	
 	/**
 	 * The Plugin to call misc stuff upon
@@ -71,12 +67,12 @@ public class MemberConfig {
 	 * @param player to create
 	 */
 	protected MemberConfig(String player){
-		config.load();
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
 		this.player = player;
 		configList = new MemberConfigList<ConfigOption>();
 		configPre = "playerdata." + player + ".config";
 		
-		boolean defaultEnableHealthBar = plugin.getConfigManager().getGeneralConfig().isConfig_enable_healthbar_in_chat();
+		boolean defaultEnableHealthBar = DBConverter.getGeneralConfig().isConfig_enable_healthbar_in_chat();
 
 		
 		//first load the default values we know already

@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
@@ -30,7 +29,7 @@ public class MemberConfigTest {
 		GenerateBukkitServer.generateServer();
 		GenerateRaces.generateRaces();
 
-		playerName = StringGenerator.nextRandomString(12);
+		playerName = StringGenerator.nextRandomString(120);
 		sut = MemberConfig.createMemberConfig(playerName);
 	}
 	
@@ -204,10 +203,10 @@ public class MemberConfigTest {
 	
 	
 	@Test
-	public void loading_works_with_custom_operations(){
-		String path = "path" + StringGenerator.nextRandomString(5);
-		String displayName = "displayName" + StringGenerator.nextRandomString(5);
-		
+	public void loading_works_with_custom_operations() throws InterruptedException{
+		String path = "pathabcde";
+		String displayName = "displayNameabcde";
+			
 		Object value = true;
 		Object defaultValue = false;
 		boolean visible = true;
@@ -215,7 +214,10 @@ public class MemberConfigTest {
 		sut.addOption(path, displayName, value, defaultValue, visible);
 		sut.save();
 		
-		sut = new MemberConfig(playerName);
+		Thread.sleep(20);
+		
+		sut = MemberConfig.createMemberConfig(playerName);
+		
 		assertTrue(sut.containsValue(displayName));
 		assertEquals(value, sut.getValueDisplayName(displayName));
 	} 
@@ -226,6 +228,13 @@ public class MemberConfigTest {
 
 	  private static SecureRandom random = new SecureRandom();
 
+	  /**
+	   * Generates a new String with a genetorLength = length.
+	   * WARING: length != String length.
+	   * 
+	   * @param length
+	   * @return
+	   */
 	  public static String nextRandomString(int length){
 	    return new BigInteger(length, random).toString(32);
 	  }

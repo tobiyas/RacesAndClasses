@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-
-public interface ResistanceInterface extends Trait{
+public interface ResistanceInterface{
 	
+	/**
+	 * The Resistences the Trait is modifying
+	 * @return
+	 */
 	public List<DamageCause> getResistanceTypes();
 }

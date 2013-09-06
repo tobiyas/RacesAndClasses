@@ -84,4 +84,16 @@ public class PlayerSpellManager {
 	public ManaManager getManaManager(){
 		return manaManager;
 	}
+
+
+	/**
+	 * Returns the current Spell.
+	 * 
+	 * If no spells are present, null is returned.
+	 * 
+	 * @return
+	 */
+	public MagicSpellTrait getCurrentSpell() {
+		return spellList.currentEntry();
+	}
 }

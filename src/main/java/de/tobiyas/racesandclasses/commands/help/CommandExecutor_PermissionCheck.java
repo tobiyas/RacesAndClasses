@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.commands.help;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,9 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	 */
 	private RacesAndClasses plugin;
 	
+	/**
+	 * Creates a CommandExecutor to call when command should be executed.
+	 */
 	public CommandExecutor_PermissionCheck() {
 		plugin = RacesAndClasses.getPlugin();
 		try{
@@ -48,10 +53,16 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	}
 	
 	
+	/**
+	 * Checks Permissions for specific Race.
+	 * 
+	 * @param sender
+	 */
 	private void listRacePermissions(CommandSender sender){
 		sender.sendMessage(ChatColor.RED + "=====" + ChatColor.YELLOW + " Race Permissions: " + ChatColor.RED + "=====");
 		
-		for(String holderName : plugin.getRaceManager().listAllVisibleHolders()){
+		List<String> holders = plugin.getRaceManager().listAllVisibleHolders();
+		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getRaceManager().getHolderByName(holderName);
 			
 			boolean senderContained = holder.containsPlayer(sender.getName());
@@ -60,13 +71,23 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
+		
+		if(holders.isEmpty()){
+			sender.sendMessage(ChatColor.RED + "You have access to no Race.");
+		}
 	}
 	
 	
+	/**
+	 * Checks Permissions for Specific Classes.
+	 * 
+	 * @param sender
+	 */
 	private void listClassPermissions(CommandSender sender){
 		sender.sendMessage(ChatColor.RED + "=====" + ChatColor.YELLOW + " Class Permissions: " + ChatColor.RED + "=====");
 		
-		for(String holderName : plugin.getRaceManager().listAllVisibleHolders()){
+		List<String> holders = plugin.getClassManager().listAllVisibleHolders();
+		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderByName(holderName);
 			
 			boolean senderContained = holder.containsPlayer(sender.getName());
@@ -75,9 +96,18 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
+		
+		if(holders.isEmpty()){
+			sender.sendMessage(ChatColor.RED + "You have access to no Class.");
+		}
 	}
 	
 	
+	/**
+	 * Lists permissions to all commands.
+	 * 
+	 * @param sender
+	 */
 	private void listCommandPermissions(CommandSender sender){
 		sender.sendMessage(ChatColor.RED + "=====" + ChatColor.YELLOW + " Command Permissions: " + ChatColor.RED + "=====");
 		

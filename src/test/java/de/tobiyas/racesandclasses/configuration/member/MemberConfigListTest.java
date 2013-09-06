@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class MemberConfigListTest {
 
-	private MemberConfigList sut;
+	private MemberConfigList<ConfigOption> sut;
 	
 	private final String path = "path";
 	private final String displayName = "displayName";
@@ -20,7 +20,7 @@ public class MemberConfigListTest {
 	
 	@Before
 	public void setup(){
-		sut = new MemberConfigList();
+		sut = new MemberConfigList<ConfigOption>();
 		sut.add(new ConfigOption("path", playerName, "displayName", "value", "defaultValue", true));
 		sut.add(new ConfigOption(invisiblePath, playerName, invisibleDisplayName, "value2", "defaultValue2", false));
 	}

@@ -5,15 +5,19 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithRestrictions;
 
 
 public class TraitEventManager{
@@ -83,6 +87,16 @@ public class TraitEventManager{
 		
 		for(Trait trait: traitsToCheck){
 			try{
+				Player player = trait.getReleventPlayer(event);
+				if(!(trait instanceof StaticTrait) && (player == null ||
+						!TraitHolderCombinder.getReducedTraitsOfPlayer(player.getName()).contains(trait) ) ){
+					continue;
+				}
+				
+				if(player != null && trait instanceof TraitWithRestrictions){
+					if(!((TraitWithRestrictions) trait).checkRestrictions(player)) continue;
+				}
+				
 				plugin.getStatistics().traitTriggered(trait); //Statistic gathering
 				if(trait.modify(event)){
 					changedSomething = true;
@@ -99,7 +113,7 @@ public class TraitEventManager{
 		plugin.getStatistics().eventTriggered();
 		return changedSomething;
 	}
-	
+
 	/**
 	 * Checks if the world is on the disabled list.
 	 * 

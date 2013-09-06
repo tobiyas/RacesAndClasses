@@ -15,6 +15,8 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
+import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
@@ -91,7 +93,14 @@ public class PlayerContainer {
 		
 		this.hasGod = false;
 		
-		this.levelManager = new PlayerLevelManager(player);
+		
+		//choose level manager.
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaCInbuildLevelSystem()){
+			this.levelManager = new CustomPlayerLevelManager(player);			
+		}else{
+			this.levelManager = new MCPlayerLevelManager(player);
+		}
+		
 		this.spellManager = new PlayerSpellManager(player);
 		
 		this.maxHealth = 20;
@@ -123,7 +132,7 @@ public class PlayerContainer {
 		
 		arrowManager = new ArrowManager(player);
 		armorToolManager = new ArmorToolManager(player);
-		levelManager = new PlayerLevelManager(playerName);
+		levelManager = new CustomPlayerLevelManager(playerName);
 	}
 	
 	

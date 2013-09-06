@@ -4,14 +4,11 @@ import java.util.Map;
 
 import org.bukkit.event.Event;
 
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 
-public class TraitWithNoAnnotations implements Trait {
+public class TraitWithNoAnnotations extends AbstractBasicTrait {
 
-	private AbstractTraitHolder holder;
-
-	
 	@Override
 	public void importTrait() {
 	}
@@ -42,16 +39,6 @@ public class TraitWithNoAnnotations implements Trait {
 	@Override
 	public boolean isBetterThan(Trait trait) {
 		return false;
-	}
-
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
-		this.holder = abstractTraitHolder;
-	}
-
-	@Override
-	public AbstractTraitHolder getTraitHolder() {
-		return holder;
 	}
 
 }

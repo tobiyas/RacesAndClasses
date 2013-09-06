@@ -5,10 +5,11 @@ import java.util.Map;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
 
-public abstract class AbstractPassiveTrait implements Trait {
+public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
 
 	protected AbstractTraitHolder traitHolder;
 	
