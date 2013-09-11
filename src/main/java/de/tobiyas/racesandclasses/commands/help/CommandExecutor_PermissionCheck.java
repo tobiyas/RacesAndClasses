@@ -66,7 +66,7 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 			AbstractTraitHolder holder = plugin.getRaceManager().getHolderByName(holderName);
 			
 			boolean senderContained = holder.containsPlayer(sender.getName());
-			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.prePlugin + "races." + holderName);
+			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.racePermPre + holderName);
 			
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
@@ -91,7 +91,7 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderByName(holderName);
 			
 			boolean senderContained = holder.containsPlayer(sender.getName());
-			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.prePlugin + "classes." + holderName);
+			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.classPermPre + holderName);
 			
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));

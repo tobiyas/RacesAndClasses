@@ -1,7 +1,7 @@
 package de.tobiyas.racesandclasses.configuration.traits;
 
-import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class TraitConfig {
 

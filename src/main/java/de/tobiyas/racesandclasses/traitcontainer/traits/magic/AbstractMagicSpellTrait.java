@@ -31,6 +31,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	/**
 	 * The Material ID for casting with {@link CostType#ITEM}
 	 */
+	@SuppressWarnings("deprecation")
 	protected int materialForCasting = Material.FEATHER.getId();
 	
 	/**

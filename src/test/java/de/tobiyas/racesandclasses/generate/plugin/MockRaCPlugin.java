@@ -1,5 +1,11 @@
 package de.tobiyas.racesandclasses.generate.plugin;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.RETURNS_SMART_NULLS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -26,7 +32,6 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.permissions.PermissionManager;
-import static org.mockito.Mockito.*;
 
 public class MockRaCPlugin extends RacesAndClasses {
 

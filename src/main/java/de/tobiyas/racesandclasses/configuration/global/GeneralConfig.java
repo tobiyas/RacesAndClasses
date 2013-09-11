@@ -89,6 +89,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	
 	private boolean config_savePlayerDataToDB;
 	
+	private int config_debugTimeAfterLoginOpening;
+	
 	
 	/**
 	 * Inits the Config system.
@@ -130,15 +132,16 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		config.addDefault("races.change.uplinkInSeconds", 0);
 		config.addDefault("races.defaultrace.name", "DefaultRace");
 		config.addDefault("races.defaultrace.tag", "[NoRace]");
-		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace", true);
-		config.addDefault("races.cancleGUIExitWhenNoRacePresent", true);
+		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace.enable", true);
+		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace.timeToOpenAfterLoginInSeconds", 2);
+		config.addDefault("races.cancleGUIExitWhenNoRacePresent.enable", true);
 		
 		
 		config.addDefault("classes.permissions.usePermissionsForEachClasses", false);
 		config.addDefault("classes.useRaceClassSelectionMatrix", false);
 		config.addDefault("classes.change.uplinkInSeconds", 0);
-		config.addDefault("classes.openClassSelectionAfterRaceSelectionWhenNoClass", true);
-		config.addDefault("classes.cancleGUIExitWhenNoClassPresent", true);
+		config.addDefault("classes.openClassSelectionAfterRaceSelectionWhenNoClass.enable", true);
+		config.addDefault("classes.cancleGUIExitWhenNoClassPresent.enable", true);
 
 		
 		config.addDefault("tutorials.enable", true);
@@ -217,10 +220,11 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		config_itemForMagic = config.getInt("magic.wandId", Material.STICK.getId());
 		
 		
-		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean("classes.openClassSelectionAfterRaceSelectionWhenNoClass", true);
-		config_cancleGUIExitWhenNoClassPresent = config.getBoolean("classes.cancleGUIExitWhenNoClassPresent", true);
-		config_openRaceSelectionOnJoinWhenNoRace = config.getBoolean("races.openRaceSelectionOnJoinWhenNoRace", true);
-		config_cancleGUIExitWhenNoRacePresent = config.getBoolean("races.cancleGUIExitWhenNoRacePresent", true);
+		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean("classes.openClassSelectionAfterRaceSelectionWhenNoClass.enable", true);
+		config_cancleGUIExitWhenNoClassPresent = config.getBoolean("classes.cancleGUIExitWhenNoClassPresent.enable", true);
+		config_openRaceSelectionOnJoinWhenNoRace = config.getBoolean("races.openRaceSelectionOnJoinWhenNoRace.enable", true);
+		config_cancleGUIExitWhenNoRacePresent = config.getBoolean("races.cancleGUIExitWhenNoRacePresent.enable", true);
+		config_debugTimeAfterLoginOpening = config.getInt("races.openRaceSelectionOnJoinWhenNoRace.timeToOpenAfterLoginInSeconds", 2);
 		
 		config_savePlayerDataToDB = config.getBoolean("general.saving.savePlayerDataToDB", true);
 		config_mapExpPerLevelCalculationString = config.getString("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
@@ -403,6 +407,10 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 
 	public boolean isConfig_useRaCInbuildLevelSystem() {
 		return config_useRaCInbuildLevelSystem;
+	}
+
+	public int getConfig_debugTimeAfterLoginOpening() {
+		return config_debugTimeAfterLoginOpening;
 	}
 
 }

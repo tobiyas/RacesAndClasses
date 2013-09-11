@@ -20,9 +20,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 
 
 public class TraitStore {
@@ -69,7 +69,7 @@ public class TraitStore {
 	 * @throws Exception
 	 */
 	private static Trait buildTrait(String traitName, AbstractTraitHolder holder) throws Exception{
-		Class<?> clazz = TraitsList.getClassOfTrait(traitName);
+		Class<? extends Trait> clazz = TraitsList.getClassOfTrait(traitName);
 		Trait trait = (Trait) clazz.getConstructor().newInstance();
 		if(trait == null){
 			throw new TraitNotFoundException(traitName);
@@ -87,7 +87,6 @@ public class TraitStore {
 	 * @return
 	 * @throws AnnotationFormatError
 	 */
-	@SuppressWarnings("unchecked") //This is sage because of checking before
 	private static boolean registerTrait(Trait trait) throws AnnotationFormatError{
 		try{
 			TraitEventsUsed annotation = trait.getClass().getMethod("generalInit").getAnnotation(TraitEventsUsed.class);
@@ -95,11 +94,11 @@ public class TraitStore {
 				throw new AnnotationFormatError("No Annotation found");
 			
 			int traitPrio = annotation.traitPriority();
-			Class<?>[] traitRegistration = annotation.registerdClasses();
+			Class<? extends Event>[] traitRegistration = annotation.registerdClasses();
 			trait.generalInit();
 			
 			HashSet<Class<? extends Event>> registeredClasses = new HashSet<Class<? extends Event>>();
-			for(Class<?> clazz : traitRegistration){
+			for(Class<? extends Event> clazz : traitRegistration){
 				if(Event.class.isAssignableFrom(clazz)){
 					registeredClasses.add((Class<? extends Event>) clazz);
 				}

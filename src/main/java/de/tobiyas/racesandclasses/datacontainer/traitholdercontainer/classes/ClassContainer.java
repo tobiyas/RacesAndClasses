@@ -128,5 +128,24 @@ public class ClassContainer extends AbstractTraitHolder{
 	protected String getContainerTypeAsString() {
 		return "class";
 	}
+
+
+	/**
+	 * Returns the Class Health modifier
+	 * @return
+	 */
+	public String getClassHealthModify() {
+		return classHealthModify;
+	}
+
+
+	/**
+	 * Returns the Class Health modification value
+	 * @return
+	 */
+	public double getClassHealthModValue() {
+		return classHealthModValue;
+	}
+	
 	
 }

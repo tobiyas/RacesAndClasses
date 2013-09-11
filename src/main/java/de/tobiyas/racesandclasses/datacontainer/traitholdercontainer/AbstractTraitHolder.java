@@ -278,7 +278,7 @@ public abstract class AbstractTraitHolder {
 	 * @return
 	 */
 	public String getArmorString(){
-		HashSet<ItemQuality> qualities = getArmorPerms();
+		Set<ItemQuality> qualities = getArmorPerms();
 		String armorString = "";
 		for(ItemQuality quality : qualities)
 			armorString += quality.name() + " ";
@@ -290,7 +290,7 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * Returns a List of {@link ItemQuality} what this Holder can wear
 	 */
-	public HashSet<ItemQuality> getArmorPerms(){
+	public Set<ItemQuality> getArmorPerms(){
 		HashSet<ItemQuality> perms = new HashSet<ItemQuality>();
 		if(armorUsage[0])
 			perms.add(ItemQuality.Leather);
@@ -332,5 +332,13 @@ public abstract class AbstractTraitHolder {
 	 */
 	public double getManaBonus() {
 		return manaBonus;
+	}
+
+	/**
+	 * Returns the Armor perms as loaded naturaly
+	 * @return
+	 */
+	public boolean[] getArmorPermsAsBoolArray() {
+		return armorUsage;
 	}
 }

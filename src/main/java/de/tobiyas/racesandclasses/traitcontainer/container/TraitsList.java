@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.ArmorTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.DeathCheckerTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.NormalArrow;
@@ -59,17 +60,17 @@ public class TraitsList{
 		TraitStore.importFromFileSystem();
 	}
 	
-	public static void addTraitToList(String trait, Class<?> traitClass, String category){
+	public static void addTraitToList(String trait, Class<? extends Trait> traitClass, String category){
 		addTraitToList(trait, traitClass, category, true);
 	}
 	
-	public static void addTraitToList(String trait, Class<?> traitClass, String category, boolean visible){
+	public static void addTraitToList(String trait, Class<? extends Trait> traitClass, String category, boolean visible){
 		traits.add(new TraitInfoContainer(trait, traitClass, category, visible));
 		if(!categorys.contains(category))
 			categorys.add(category);
 	}
 	
-	public static Class<?> getClassOfTrait(String name){
+	public static Class<? extends Trait> getClassOfTrait(String name){
 		for(TraitInfoContainer container : traits)
 			if(container.getName().equalsIgnoreCase(name))
 				return container.getClazz();

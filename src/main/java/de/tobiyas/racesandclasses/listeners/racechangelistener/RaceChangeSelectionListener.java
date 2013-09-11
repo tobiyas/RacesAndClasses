@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -43,7 +44,7 @@ public class RaceChangeSelectionListener implements Listener {
 	}
 	
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerhasPermissionToRace(RaceSelectEvent event){
 		if(event.getRaceToSelect() == plugin.getRaceManager().getDefaultHolder()) return;
 		
@@ -51,14 +52,14 @@ public class RaceChangeSelectionListener implements Listener {
 			Player player = event.getPlayer();
 			String raceName = event.getRaceToSelect().getName();
 			
-			String permissionNode = PermissionNode.prePlugin + "races." + raceName;
+			String permissionNode = PermissionNode.racePermPre + raceName;
 			if(!plugin.getPermissionManager().checkPermissionsSilent(player, permissionNode)){
 				event.setCancelled("You do not have the Permission to select the Race" + raceName);
 			}
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(ClassSelectEvent event){
 		String playerName = event.getPlayer().getName();
 		String commandName = "racechange";
@@ -72,5 +73,14 @@ public class RaceChangeSelectionListener implements Listener {
 			int time = plugin.getConfigManager().getGeneralConfig().getConfig_classChangeCommandUplink();
 			cooldownManager.setCooldown(playerName, commandName, time);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void rescanHP(ClassSelectEvent selectEvent){
+		if(selectEvent.isCancelled()) return;
+		if(selectEvent.getPlayer() == null) return;
+		if(selectEvent.getPlayer().getName() == null) return;
+		
+		plugin.getPlayerManager().displayHealth(selectEvent.getPlayer().getName());
 	}
 }

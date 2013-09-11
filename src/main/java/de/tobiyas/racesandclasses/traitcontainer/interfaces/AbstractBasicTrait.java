@@ -2,6 +2,8 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,6 +67,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected AbstractTraitHolder holder;
 	
 	
+	/**
+	 * The Config of the Trait
+	 */
+	protected Map<String, String> currentConfig;
+	
+	
 	
 	@Override
 	public int getMinimumLevel() {
@@ -93,6 +101,7 @@ public abstract class AbstractBasicTrait implements Trait,
 
 	@Override
 	public void setConfiguration(Map<String, String> configMap) {
+		this.currentConfig = configMap;
 		
 		//Reads the min level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MIN_LEVEL_PATH)){
@@ -122,9 +131,59 @@ public abstract class AbstractBasicTrait implements Trait,
 			}catch(Exception exp){}
 		}
 	}
+	
 
 	@Override
+	public Map<String, String> getCurrentconfig(){
+		return currentConfig;
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * <br>
+	 * <br>To override, use {@link #getAdditionalOptionalConfigFields()}.
+	 * <br>This adds the optional Fields to the one added here.
+	 */
+	@Override
+	public final List<String> getOptionalConfigFields(){
+		List<String> optionalFields = new LinkedList<String>();
+		optionalFields.add(TraitWithRestrictions.BIOME_PATH);
+		optionalFields.add(TraitWithRestrictions.MAX_LEVEL_PATH);
+		optionalFields.add(TraitWithRestrictions.MIN_LEVEL_PATH);
+		
+		List<String> additionalOptionalFields = getAdditionalOptionalConfigFields();
+		if(additionalOptionalFields != null && !additionalOptionalFields.isEmpty()){
+			optionalFields.addAll(additionalOptionalFields);			
+		}
+		
+		return optionalFields;
+	}
+
+	/**
+	 * Adds the Fields passed here to: {@link #getOptionalConfigFields()}.
+	 * 
+	 * @return the list to add
+	 */
+	protected List<String> getAdditionalOptionalConfigFields() {
+		return new LinkedList<String>();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * <br>
+	 * <br>To override, use {@link #getReleventPlayerBefore(Event)}.
+	 * <br>This is preProcessed before the default Events are done.
+	 */
+	@Override
 	public final Player getReleventPlayer(Event event) {
+		Player preProcessedPlayer = getReleventPlayerBefore(event);
+		if(preProcessedPlayer != null){
+			return preProcessedPlayer;
+		}
+		
 		if(event instanceof BlockEvent){
 			if(event instanceof BlockPlaceEvent){
 				return ((BlockPlaceEvent) event).getPlayer();
@@ -219,7 +278,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 	
 	/**
-	 * This method can be overriden when specific identifying
+	 * This method can be Overriden when specific identifying
 	 * of a player has to be done.
 	 * 
 	 * This method is called BEFORE checking the events in {@link #getReleventPlayer(Event)}.

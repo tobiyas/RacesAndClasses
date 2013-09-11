@@ -88,14 +88,20 @@ public class TraitEventManager{
 		for(Trait trait: traitsToCheck){
 			try{
 				Player player = trait.getReleventPlayer(event);
+				
+				//Check if Static Trait -> Always interested!
+				//Check if Player has Trait.
 				if(!(trait instanceof StaticTrait) && (player == null ||
 						!TraitHolderCombinder.getReducedTraitsOfPlayer(player.getName()).contains(trait) ) ){
 					continue;
 				}
 				
+				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions){
 					if(!((TraitWithRestrictions) trait).checkRestrictions(player)) continue;
 				}
+				
+				//TODO check uplink?
 				
 				plugin.getStatistics().traitTriggered(trait); //Statistic gathering
 				if(trait.modify(event)){

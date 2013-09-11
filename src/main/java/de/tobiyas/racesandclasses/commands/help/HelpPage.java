@@ -212,7 +212,7 @@ public class HelpPage {
 			returnList.add(ChatColor.GREEN + "/raceheal [playername]" + ChatColor.YELLOW + "heals the given player fully.");
 		
 		if(RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.reload))
-			returnList.add(ChatColor.GREEN + "/racereload [gc] " + ChatColor.YELLOW + "Fully reloads the plugin. (gc means with garbage collection)");
+			returnList.add(ChatColor.GREEN + "/racesreload [gc] " + ChatColor.YELLOW + "Fully reloads the plugin. (gc means with garbage collection)");
 
 		return returnList;
 	}

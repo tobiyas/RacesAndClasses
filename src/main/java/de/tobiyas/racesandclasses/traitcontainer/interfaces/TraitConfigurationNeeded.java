@@ -20,4 +20,5 @@ public @interface TraitConfigurationNeeded{
 	 * @return
 	 */
 	String[] neededFields() default {};
+	String[] optionalFields() default {};
 }

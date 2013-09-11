@@ -22,7 +22,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ChannelContainer extends Observable{
 
-	private RacesAndClasses plugin;
+	private final RacesAndClasses plugin;
 	
 	private String channelName;
 	private ChatFormatter channelFormat;

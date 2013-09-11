@@ -2,16 +2,12 @@ package de.tobiyas.racesandclasses.racbuilder;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.racbuilder.container.BuilderRaceContainer;
+import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 
 public class RaceBuilder extends AbstractHolderBuilder{
 
-	/**
-	 * The max Health of the Race
-	 */
-	protected double raceMaxHealth;
-	
-	
 	/**
 	 * Generates a Builder for a Race
 	 * 
@@ -20,19 +16,21 @@ public class RaceBuilder extends AbstractHolderBuilder{
 	public RaceBuilder(String name) {
 		super(name);
 		
-		raceMaxHealth = 20;
+		health = 20;
 	}
 	
 	
 	/**
-	 * Sets the max health of the Race.
+	 * Generates a builder from a existing race
 	 * 
-	 * @param raceMaxHealth of the race.
+	 * @param raceContainer
 	 */
-	public void setRaceMaxHealth(double raceMaxHealth){
-		this.raceMaxHealth = raceMaxHealth;
+	public RaceBuilder(RaceContainer raceContainer){
+		super(raceContainer);
+		
+		health = raceContainer.getRaceMaxHealth();
 	}
-
+	
 	
 	/**
 	 * Builds the {@link RaceContainer} from the given values.
@@ -40,6 +38,18 @@ public class RaceBuilder extends AbstractHolderBuilder{
 	 * @return the build RaceContainer.
 	 */
 	public RaceContainer build(){
-		return new BuilderRaceContainer(this.name, this.holderTag, this.armorPermission, this.traitSet, this.permissionList, this.raceMaxHealth);
+		return new BuilderRaceContainer(this.name, this.holderTag, this.armorPermission, this.traitSet, this.permissionList, this.health);
+	}
+	
+	@Override
+	protected YAMLConfigExtended getHolderYAMLFile() {
+		return YAMLPersistenceProvider.getLoadedRacesFile(true);
+	}
+
+
+	@Override
+	protected void saveFurtherToFile(YAMLConfigExtended config) {
+		config.set(name + ".config.raceMaxHealth", health);
+		config.set(name + ".config.raceTag", holderTag);
 	}
 }

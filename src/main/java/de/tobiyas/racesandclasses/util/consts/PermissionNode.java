@@ -108,4 +108,20 @@ public class PermissionNode {
 	 * The Permissions to use the '/racstatistics [plugin / subcommand]' command.
 	 */
 	public static final String statistics = prePlugin + "statistics";
+	
+	/**
+	 * The Permission to Add / Remove / Edit Races.
+	 */
+	public static final String racEdit = prePlugin + "racedit";
+	
+	
+	/**
+	 * The Prefix for Race permissions
+	 */
+	public static final String racePermPre = prePlugin + "races.";
+
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String classPermPre = prePlugin + "classes.";
 }

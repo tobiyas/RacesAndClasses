@@ -266,8 +266,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void raceInfo(CommandSender sender, String inspectedRace){
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(inspectedRace);
-		AbstractTraitHolder containerOfPlayer = plugin.getRaceManager().getHolderOfPlayer(sender.getName());
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
+		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(sender.getName());
 		if(container == null){
 			sender.sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + inspectedRace + ChatColor.RED + " found.");
 			return;
@@ -286,6 +286,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 			
 		
+		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getRaceMaxHealth());
 		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getName());
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());

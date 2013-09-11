@@ -20,5 +20,5 @@ public @interface TraitEventsUsed{
 	 * {@link Trait#modify(Event)} with.
 	 * @return
 	 */
-	Class<?>[] registerdClasses() default {};
+	Class<? extends Event>[] registerdClasses() default {};
 };

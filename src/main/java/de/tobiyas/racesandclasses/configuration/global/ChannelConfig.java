@@ -87,19 +87,19 @@ public class ChannelConfig {
 		config.load();
 		
 		config_channel_default_color = config.getString("chat.channel.default.color", "&2");
-		config_channel_default_format = config.getString("chat.channel.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_channel_default_format = config.getString("chat.channel.default.format", "{color}[{nick}] &f{prefix}{race}{sender}{suffix}{color}: {msg}");
 		
 		config_racechat_default_color = config.getString("chat.channel.race.default.color", "&3");
-		config_racechat_default_format = config.getString("chat.channel.race.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_racechat_default_format = config.getString("chat.channel.race.default.format", "{color}[{nick}] &f{prefix}{race}{sender}{suffix}{color}: {msg}");
 		
 		config_worldchat_default_color = config.getString("chat.channel.world.default.color", "&4");
-		config_worldchat_default_format = config.getString("chat.channel.world.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_worldchat_default_format = config.getString("chat.channel.world.default.format", "{color}[{nick}] &f{prefix}{race}{sender}{suffix}{color}: {msg}");
 		
 		config_globalchat_default_color = config.getString("chat.channel.global.default.color", "&5");
-		config_globalchat_default_format = config.getString("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_globalchat_default_format = config.getString("chat.channel.global.default.format", "{color}[{nick}] &f{prefix}{race}{sender}{suffix}{color}: {msg}");
 		
 		config_localchat_default_color = config.getString("chat.channel.local.default.color", "&f");
-		config_localchat_default_format = config.getString("chat.channel.local.default.format", "{color}[Local] &f{prefix}{sender}{suffix}{color}: {msg}");
+		config_localchat_default_format = config.getString("chat.channel.local.default.format", "{color}[Local] &f{prefix}{race}{sender}{suffix}{color}: {msg}");
 		config_localchat_range = config.getInt("chat.channel.local.range", 100);
 		
 		config_playerJoinMessage = config.getString("chat.channel.format.join", "{color}[{nick}] Player: [{sender}] {color} has joined the Channel.");

@@ -63,6 +63,8 @@ public class Listener_Player implements Listener {
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
 		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()) == plugin.getRaceManager().getDefaultHolder();
+		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
+		
 		if(playerHasNoRace && forceSelectOfRace){
 			final HolderInventory raceInv = new HolderInventory(player, plugin.getRaceManager());
 			if(raceInv.getNumberOfHolder() > 0){
@@ -70,9 +72,9 @@ public class Listener_Player implements Listener {
 					
 					@Override
 					public void run() {
-						player.openInventory(raceInv);						
+						player.openInventory(raceInv);
 					}
-				}, 20);
+				}, scheduledTimeToOpen * 20);
 			}
 		}
 	}

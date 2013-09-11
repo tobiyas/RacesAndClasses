@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -47,7 +48,7 @@ public class ClassChangeSelectionListener implements Listener {
 	}
 	
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void checkRaceHasPermissionForClass(ClassSelectEvent event){
 		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
@@ -74,7 +75,7 @@ public class ClassChangeSelectionListener implements Listener {
 	}
 	
 		
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerhasPermissionToClass(ClassSelectEvent event){
 		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
@@ -82,14 +83,14 @@ public class ClassChangeSelectionListener implements Listener {
 			Player player = event.getPlayer();
 			String className = event.getClassToSelect().getName();
 			
-			String permissionNode = PermissionNode.prePlugin + "classes." + className.toLowerCase();
+			String permissionNode = PermissionNode.classPermPre + className;
 			if(!plugin.getPermissionManager().checkPermissionsSilent(player, permissionNode)){
 				event.setCancelled("You do not have the Permission to select the Class " + className);
 			}
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(ClassSelectEvent event){
 		String playerName = event.getPlayer().getName();
 		String commandName = "classchange";
@@ -103,5 +104,13 @@ public class ClassChangeSelectionListener implements Listener {
 			int time = plugin.getConfigManager().getGeneralConfig().getConfig_classChangeCommandUplink();
 			cooldownManager.setCooldown(playerName, commandName, time);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void rescanHP(ClassSelectEvent selectEvent){
+		if(selectEvent.getPlayer() == null) return;
+		if(selectEvent.getPlayer().getName() == null) return;
+		
+		plugin.getPlayerManager().displayHealth(selectEvent.getPlayer().getName());
 	}
 }

@@ -58,6 +58,11 @@ public class CommandExecutor_RacesVersion implements CommandExecutor{
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.GREEN + "STABLE" + ChatColor.YELLOW + 
 								" stage. All Features should work without Errors.");
 		}
+		
+		if(Consts.currentDevStage.contains("T")){
+			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.YELLOW + "TESTING" + ChatColor.YELLOW + 
+					" stage. All features are there. Bugs will probably occure. No Garantee.");
+		}
 			
 		return true;
 	}

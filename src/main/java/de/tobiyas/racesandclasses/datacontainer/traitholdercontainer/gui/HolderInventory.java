@@ -66,6 +66,7 @@ public class HolderInventory extends InventoryView{
 		}
 		
 		String inventoryName = "Select your " + holderManager.getContainerTypeAsString() + ", " + player.getName();
+		if(inventoryName.length() > 32) inventoryName = inventoryName.substring(0, 32);
 		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, inventoryName);
 		
 		fillWithHolders(holderManager);
@@ -95,6 +96,12 @@ public class HolderInventory extends InventoryView{
 			meta.setDisplayName(isEmptyTag ? "[" + holder.getName() + "]" : holder.getTag());
 			
 			List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
+			
+			String healthString = getHealthString(holder);
+			if(healthString != null){
+				lore.add(ChatColor.AQUA + "Health: ");
+				lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
+			}
 			
 			//add armor as lore
 			lore.add(ChatColor.AQUA + "armor:");
@@ -126,7 +133,7 @@ public class HolderInventory extends InventoryView{
 				if(currentLine.length() > 0){
 					lore.add(currentLine);
 				}
-			}			
+			}
 			
 			meta.setLore(lore);
 			item.setItemMeta(meta);
@@ -137,6 +144,27 @@ public class HolderInventory extends InventoryView{
 	}
 
 	
+	/**
+	 * Returns a health String depending on the ContainerType
+	 * 
+	 * @param holder
+	 * @return
+	 */
+	private String getHealthString(AbstractTraitHolder holder) {
+		if(holder instanceof ClassContainer){
+			ClassContainer container = (ClassContainer) holder;
+			return container.getClassHealthModify();
+		}
+		
+		if(holder instanceof RaceContainer){
+			RaceContainer container = (RaceContainer) holder;
+			return String.valueOf(container.getRaceMaxHealth());
+		}
+		
+		return null;
+	}
+
+
 	/**
 	 * Checks if a player has the Permission for a holder
 	 * 

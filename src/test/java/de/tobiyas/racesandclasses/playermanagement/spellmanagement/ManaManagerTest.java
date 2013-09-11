@@ -14,7 +14,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
-import de.tobiyas.racesandclasses.playermanagement.spellmanagement.ManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;

@@ -1,12 +1,18 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
 import de.tobiyas.racesandclasses.commands.AbstractChatCommandTest;
 import de.tobiyas.racesandclasses.traitcontainer.traitgui.TraitInventory;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;

@@ -1,10 +1,12 @@
 package de.tobiyas.racesandclasses.configuration.member;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
-import static org.junit.Assert.*;
 
 
 public class MemberConfigListTest {

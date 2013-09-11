@@ -1,6 +1,10 @@
 package de.tobiyas.racesandclasses.commands.health;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

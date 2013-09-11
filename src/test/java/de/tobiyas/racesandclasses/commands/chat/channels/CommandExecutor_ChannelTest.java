@@ -537,9 +537,10 @@ public class CommandExecutor_ChannelTest {
 	@Test
 	public void edit_channel_fails_for_wrong_args(){
 		sut.onCommand(sender, null, "", new String[]{"edit", "arg2", "arg3"});
-		sut.onCommand(sender, null, "", new String[]{"edit", "arg2", "arg3", "arg4", "arg5"});
+		sut.onCommand(sender, null, "", new String[]{"edit", "arg2"});
+		sut.onCommand(sender, null, "", new String[]{"edit"});
 		
-		verify(sender, times(2)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
+		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
 	}
 	
 	@Test

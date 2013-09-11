@@ -1,12 +1,7 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.passive;
 
-import java.util.Map;
-
-import org.bukkit.event.Event;
-
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
 
 public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
@@ -28,27 +23,6 @@ public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
 		return traitHolder;
 	}
 	
-	@Override
-	public abstract void generalInit();
-
-	@Override
-	public abstract String getName();
-
-
-	@Override
-	public abstract String getPrettyConfiguration();
-
-	
-	@Override
-	public abstract void setConfiguration(Map<String, String> configMap);
-	
-
-	@Override
-	public abstract boolean modify(Event event);
-
-	
-	@Override
-	public abstract boolean isBetterThan(Trait otherTrait);
 
 	
 	/**

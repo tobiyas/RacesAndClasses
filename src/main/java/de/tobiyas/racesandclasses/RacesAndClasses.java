@@ -8,6 +8,17 @@
 package de.tobiyas.racesandclasses;
 
 
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ChannelManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ClassManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Config;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.CooldownManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ManagerConstructor;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.PlayerManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.RaceManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitCopy;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TutorialManager;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -20,8 +31,8 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.*;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
+import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCast;
@@ -29,6 +40,7 @@ import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Channel
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Racechat;
 import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_RaceConfig;
+import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_PlayerInfo;
@@ -49,6 +61,7 @@ import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
@@ -312,6 +325,7 @@ public class RacesAndClasses extends JavaPlugin{
 		new CommandExecutor_RacesVersion();
 		new CommandExecutor_Statistics();
 		new CommandExecutor_ShowTraits();
+		new CommandExecutor_Edit();
 		
 		if(System.currentTimeMillis() - currentTime > 1000){
 			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
@@ -353,6 +367,11 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	
 	private void loadingDoneMessage(){
+		if(TraitHolderLoadingErrorHandler.evalAndSave()){
+			log("There where errors in the races.yml or classes.yml. Look into 'HolderStartupErrors.log' for more infos.");
+		}
+
+		
 		String traits = TraitsList.getAllVisibleTraits().size() + " traits";
 		String races = ", " + plugin.getRaceManager().listAllVisibleHolders().size() + " races";
 		
@@ -369,7 +388,9 @@ public class RacesAndClasses extends JavaPlugin{
 		String events = ", hooked " + TraitEventManager.getInstance().getRegisteredEventsAsName().size() + " Events";
 		
 		log("loaded: " + traits + races + classes + channels + events);
-		log(description.getFullName() + " fully loaded with Permissions: " + permManager.getPermissionsName());
+		log(description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
+				+ permManager.getPermissionsName());
+		
 	}
 
 
@@ -552,6 +573,7 @@ public class RacesAndClasses extends JavaPlugin{
         list.add(DBConfigOption.class);
         list.add(PlayerSavingContainer.class);
         list.add(PlayerHolderAssociation.class);
+        list.add(ChannelSaveContainer.class);
         //TODO add all DB classes here.
         
         return list;

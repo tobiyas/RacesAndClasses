@@ -10,7 +10,7 @@
 	<!-- Props -->
 	<properties>
 		<powermock.version>1.4.12</powermock.version>
-		<utilsVersion>1.0.8</utilsVersion>
+		<utilsVersion>1.0.9</utilsVersion>
 	</properties>
 
 	<!-- Repos -->
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.6.2-R0.2-SNAPSHOT</version>
+			<version>1.6.2-R1.1-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -57,7 +57,9 @@
 			<artifactId>vault</artifactId>
 			<version>1.2.27</version>
 		</dependency>
+		
 
+		
 		<!-- Local depends -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -78,6 +80,15 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.anjocaido</groupId>
+			<artifactId>groupmanager</artifactId>
+			<scope>system</scope>
+			<version>1.9.60</version>
+			<systemPath>D:\Dropbox\Workspace\Workspace-Minecraft\Libaries\Permissions\EssentialsGroupManager.jar</systemPath>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

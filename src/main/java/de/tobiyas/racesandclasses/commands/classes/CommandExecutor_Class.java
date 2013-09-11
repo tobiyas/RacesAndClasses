@@ -218,18 +218,21 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	}
 	
 	private void info(CommandSender player, AbstractTraitHolder holder){
+		ClassContainer classContainer = (ClassContainer) holder;
+		
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "ClassInfo" + ChatColor.YELLOW + " =====");
 		
-		if(holder == null){
+		if(classContainer == null){
 			player.sendMessage(ChatColor.RED + "You have no class selected.");
 			return;
 		}
 		
-		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + holder.getName());
-		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + holder.getTag());
+		player.sendMessage(ChatColor.YELLOW + "ClassHealthMod: " + ChatColor.LIGHT_PURPLE + classContainer.getClassHealthModify());
+		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getName());
+		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
 		player.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.RED + "Class Traits" + ChatColor.YELLOW +" =====");
 		
-		for(Trait trait : holder.getVisibleTraits()){
+		for(Trait trait : classContainer.getVisibleTraits()){
 			player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getPrettyConfiguration());
 		}
 	}

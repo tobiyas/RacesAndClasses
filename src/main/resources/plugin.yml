@@ -113,3 +113,8 @@ commands:
     aliases: [racp]
     usage: |
            /racpermcheck [subcommand]
+  racedit:
+    description: opens the RaC Edit menu
+    aliases: [racedit]
+    usage: |
+           /racedit

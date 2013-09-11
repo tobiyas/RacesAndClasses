@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.commands.help;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,6 +10,7 @@ import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 
 public class CommandExecutor_RaceHelp implements CommandExecutor {
 	
@@ -67,7 +70,7 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 	}
 	
 	private void outTraitHelp(CommandSender sender, String trait){		
-		Class<?> clazz = TraitsList.getClassOfTrait(trait);
+		Class<? extends Trait> clazz = TraitsList.getClassOfTrait(trait);
 		if(clazz == null){
 			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " not found.");
 			return;
@@ -75,7 +78,12 @@ public class CommandExecutor_RaceHelp implements CommandExecutor {
 		
 		try{
 			sender.sendMessage(ChatColor.YELLOW + "===Trait: " + ChatColor.YELLOW + trait + ChatColor.YELLOW + "===");
-			clazz.getMethod("pasteHelpForTrait", CommandSender.class).invoke(clazz, sender);
+			@SuppressWarnings("unchecked")
+			List<String> helpList = (List<String>) clazz.getMethod("getHelpForTrait").invoke(clazz);
+			
+			for(String line : helpList){
+				sender.sendMessage(line);
+			}
 		}catch(Exception e){
 			sender.sendMessage(ChatColor.RED + "Trait: " + ChatColor.LIGHT_PURPLE + trait + ChatColor.RED + " has no Help");
 			return;

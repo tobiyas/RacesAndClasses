@@ -48,10 +48,10 @@ public class RaceReminder implements Runnable {
 	private boolean hasAnyRacePermission(Player player) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()) return true;
 		
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.prePlugin + "races.*")) return true;
+		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.racePermPre + "*")) return true;
 		
 		for(String raceName : plugin.getRaceManager().listAllVisibleHolders()){
-			if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.prePlugin + "races." + raceName)){
+			if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.racePermPre + raceName)){
 				return true;
 			}
 		}

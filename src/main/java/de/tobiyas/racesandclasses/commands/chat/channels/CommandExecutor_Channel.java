@@ -185,14 +185,21 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 		
 		if(channelCommand.equalsIgnoreCase("edit")){
-			if(args.length != 4){
+			if(args.length < 4){
 				player.sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
 				return true;
 			}
 			
 			String channel = args[1];
 			String property = args[2];
-			String newValue = args[3];
+			
+			String newValue = "";
+			for(int i = 3; i < args.length; i++){
+				newValue += args[i];
+				if(i != args.length - 1){
+					newValue += " ";
+				}
+			}
 			
 			channelEdit(player, channel, property, newValue);
 			return true;

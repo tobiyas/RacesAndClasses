@@ -3,10 +3,10 @@ package de.tobiyas.racesandclasses.configuration.traits;
 import java.io.File;
 import java.io.IOException;
 
-import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.items.CreateDropContainer;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DefaultTraitConfig {
 

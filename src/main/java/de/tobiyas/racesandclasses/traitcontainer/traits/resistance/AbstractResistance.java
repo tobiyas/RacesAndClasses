@@ -47,6 +47,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	@TraitConfigurationNeeded(neededFields = {"operation", "value"})
 	@Override
 	public void setConfiguration(Map<String, String> configMap) {
+		super.setConfiguration(configMap);
 		operation = configMap.get("operation");
 		value = Double.parseDouble(configMap.get("value"));
 	}

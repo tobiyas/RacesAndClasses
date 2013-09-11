@@ -12,4 +12,15 @@ public class ChatColorUtils {
 		if(message == null) return "";
 		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
+	
+	/**
+	 * Changes the chat coloring from Minecraft Colors to & colors
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String encodeColors(String message){
+		if(message == null) return "";
+		return message.replaceAll("(§([a-f0-9]))", "&$2");
+	}
 }

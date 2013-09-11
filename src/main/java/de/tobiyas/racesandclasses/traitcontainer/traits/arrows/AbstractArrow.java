@@ -1,7 +1,5 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.arrows;
 
-import java.util.Map;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -31,17 +29,6 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 	protected double totalDamage;
 	
 	
-	@Override
-	public abstract String getName();
-
-
-	@Override
-	public abstract String getPrettyConfiguration();
-	
-	
-	@Override
-	public abstract void setConfiguration(Map<String, String> configMap);
-
 	@Override	
 	public boolean modify(Event event) {
 		if(!(event instanceof PlayerInteractEvent || 

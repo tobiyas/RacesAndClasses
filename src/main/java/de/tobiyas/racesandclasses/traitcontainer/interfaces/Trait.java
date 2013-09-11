@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
@@ -53,6 +54,20 @@ public interface Trait{
 	 */
 	public void setConfiguration(Map<String, String> configMap);
 	
+	
+	/**
+	 * Returns a list of optional Config fields.
+	 * 
+	 * @return the List of optional Config Fields.
+	 */
+	public List<String> getOptionalConfigFields();
+	
+	/**
+	 * Returns the Config passed in {@link #setConfiguration(Map)}.
+	 * 
+	 * @return the map of the config already passed.
+	 */
+	public Map<String, String> getCurrentconfig();
 	
 	/**
 	 * The general modify that is called, when the event wanted triggered.

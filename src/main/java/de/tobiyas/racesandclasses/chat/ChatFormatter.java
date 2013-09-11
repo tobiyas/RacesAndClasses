@@ -71,8 +71,9 @@ public class ChatFormatter{
 			messageFormat = new String(forceFormat);
 			
 		String raceTag = "NONE";
-		if(container != null)
+		if(container != null){
 			raceTag = container.getTag();
+		}
 		
 		//default: {color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}
 		messageFormat = messageFormat.replaceAll(Pattern.quote("{color}"), color);

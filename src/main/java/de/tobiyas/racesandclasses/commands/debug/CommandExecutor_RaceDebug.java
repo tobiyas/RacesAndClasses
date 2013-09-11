@@ -15,7 +15,7 @@ import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 
 public class CommandExecutor_RaceDebug implements CommandExecutor {
 
-private RacesAndClasses plugin;
+	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RaceDebug(){
 		plugin = RacesAndClasses.getPlugin();

@@ -7,15 +7,18 @@ import java.util.Map;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractHolderBuilder {
 
 	/**
 	 * The name of the Holder
 	 */
-	protected final String name;
+	protected String name;
 	
 
 	/**
@@ -46,8 +49,18 @@ public abstract class AbstractHolderBuilder {
 	/**
 	 * The plugin to call stuff on
 	 */
-	protected final RacesAndClasses plugin;
+	protected final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 
+	
+	/**
+	 * tells if the Builder has been populated
+	 */
+	protected boolean readyForBuilding = false;
+	
+	/**
+	 * The Health the Builder has
+	 */
+	protected double health;
 	
 	
 	/**
@@ -57,16 +70,32 @@ public abstract class AbstractHolderBuilder {
 	 */
 	public AbstractHolderBuilder(String name) {
 		this.name = name;
-		this.holderTag = "[" + name + "]";
+		if(name != null){
+			this.holderTag = "[" + name + "]";
+		}
+		
 		this.armorPermission = new boolean[]{false, false, false, false, false};
 				
 		this.traitSet = new HashSet<Trait>();
 		this.permissionList = new LinkedList<String>();
-		
-		this.plugin = RacesAndClasses.getPlugin();
 	}
 
 	
+	/**
+	 * Reads the Values of the Holder passed and sets the values wanted.
+	 * 
+	 * @param holder
+	 */
+	public AbstractHolderBuilder(AbstractTraitHolder holder) {
+		this.name = holder.getName();
+		this.holderTag = ChatColorUtils.encodeColors(holder.getTag());
+		this.armorPermission = holder.getArmorPermsAsBoolArray();
+		
+		this.traitSet = holder.getVisibleTraits();
+		this.permissionList = new LinkedList<String>();
+	}
+
+
 	/**
 	 * Adds a Permission node to the Holder
 	 * 
@@ -100,7 +129,7 @@ public abstract class AbstractHolderBuilder {
 	/**
 	 * Builds a Trait and adds it to the Holder.
 	 * 
-	 * If the Trait is already added, false is returned.
+	 * If the Trait is already added, it is replaced.
 	 * If the Trait is not found, false is returned.
 	 * If the config does not satisfy the trait, false is returned. 
 	 * 
@@ -109,7 +138,7 @@ public abstract class AbstractHolderBuilder {
 	 * @return true if worked, false if not.
 	 */
 	public boolean addTrait(String traitName, Map<String, String> configuration){
-		if(containsTrait(traitName)) return false;
+		if(containsTrait(traitName)) removeTrait(traitName);
 		
 		try{
 			Trait trait = TraitStore.buildTraitWithoutHolderByName(traitName);
@@ -122,6 +151,7 @@ public abstract class AbstractHolderBuilder {
 			traitSet.add(trait);
 			return true;
 		}catch(Exception exp){
+			exp.printStackTrace();
 			return false;
 		}
 	}
@@ -244,6 +274,175 @@ public abstract class AbstractHolderBuilder {
 			armorPermission[4] = toSet;
 		}
 	}
+
+
+	/**
+	 * Tells if the TraitHolder is ready for building.
+	 */
+	public boolean isReadyForBuilding() {
+		return readyForBuilding;
+	}
+
+
+	/**
+	 * Sets the builder to say that it is ready.
+	 */
+	public void setReadyForBuilding(boolean ready) {
+		this.readyForBuilding = ready;
+	}
 	
+
+	/**
+	 * Builds the TraitHolder and returns it
+	 * 
+	 * @return
+	 */
+	public abstract AbstractTraitHolder build();
+
+
+	/**
+	 * Returns all traits registered
+	 * 
+	 * @return
+	 */
+	public Set<Trait> getTraits() {
+		return traitSet;
+	}
+	
+	
+	/**
+	 * Returns the name of the Holder of the Builder.
+	 * @return
+	 */
+	public String getName(){
+		return name;
+	}
+
+	/**
+	 * Gets the Tag of the Builder
+	 * @return
+	 */
+	public String getHolderTag() {
+		return holderTag;
+	}
+
+	/**
+	 * Sets the name of the Builder.
+	 * 
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
+		
+		if(this.holderTag == null && name != null){
+			holderTag = "[" + name + "]";
+		}
+	}
+
+	
+	/**
+	 * Returns the Health set
+	 * @return
+	 */
+	public double getHealth() {
+		return health;
+	}
+
+
+	/**
+	 * Sets the health to a new modificator.
+	 * 
+	 * @param health
+	 */
+	public void setHealth(double health) {
+		this.health = health;
+	}
+	
+	
+	public void saveToFile() {
+		if(!isReadyForBuilding()) return;
+		
+		YAMLConfigExtended holderConfig = getHolderYAMLFile();
+		if(!holderConfig.isConfigurationSection(name)){
+			holderConfig.createSection(name);
+		}
+		
+		if(!holderConfig.isConfigurationSection(name + ".config")){
+			holderConfig.createSection(name + ".config");
+		}
+		
+		if(traitSet.size() > 0 
+				&& !holderConfig.isConfigurationSection(name + ".traits")){
+			holderConfig.createSection(name + ".traits");
+		}
+		
+		for(Trait trait : traitSet){
+			holderConfig.createSection(name + ".traits." + trait.getName());
+			for(String key : trait.getCurrentconfig().keySet()){
+				String value = trait.getCurrentconfig().get(key);
+				
+				holderConfig.set(name + ".traits." + trait.getName() + "." + key, value);
+			}
+		}
+
+		String armorString = buildArmorString();
+		if(armorString.length() > 0){
+			holderConfig.set(name + ".config.armor", armorString);
+		}
+		
+		saveFurtherToFile(holderConfig);
+		holderConfig.save();
+	}
+	
+	/**
+	 * Builds the Armor String from the Armor Permissions
+	 * 
+	 * @return
+	 */
+	protected String buildArmorString(){
+		boolean hasAll = true;
+		for(boolean bool : armorPermission){
+			if(!bool) hasAll = false;
+		}
+		if(hasAll)	return "all";
+
+		
+		String armorString = "";
+		if(armorPermission[0]){
+			armorString += "leather";
+		}
+
+		if(armorPermission[1]){
+			armorString += "iron";
+		}
+		
+		if(armorPermission[2]){
+			armorString += "gold";
+		}
+		
+		if(armorPermission[3]){
+			armorString += "diamond";
+		}
+		
+		if(armorPermission[4]){
+			armorString += "chain";
+		}
+		
+		return armorString;
+	}
+	
+	
+	/**
+	 * Overwriting for further saving.
+	 * @param config
+	 */
+	protected abstract void saveFurtherToFile(YAMLConfigExtended config);
+
+
+	/**
+	 * Returns the Config of the holder type
+	 * @return
+	 */
+	protected abstract YAMLConfigExtended getHolderYAMLFile();
 	
 }
