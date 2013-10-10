@@ -19,9 +19,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHol
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 
 public class HolderInventory extends InventoryView{
@@ -173,13 +173,13 @@ public class HolderInventory extends InventoryView{
 	 * @return true if the player has access, false otherwise.
 	 */
 	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {		
-		HolderSelectEvent event = null;
+		HolderPreSelectEvent event = null;
 		if(manager == plugin.getClassManager()){
-			event = new ClassSelectEvent(player, (ClassContainer) holder);
+			event = new PreClassSelectEvent(player, (ClassContainer) holder);
 		}
 		
 		if(manager == plugin.getRaceManager()){
-			event = new RaceSelectEvent(player, (RaceContainer) holder);
+			event = new PreRaceSelectEvent(player, (RaceContainer) holder);
 		}
 		
 		if(event == null) return true;

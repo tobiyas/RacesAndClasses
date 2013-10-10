@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.json.simple.JSONArray;
@@ -22,14 +23,17 @@ import com.avaje.ebean.validation.NotNull;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 
 @Entity
-@Table
+@Table(name="_channel_settings")
 public class ChannelSaveContainer {
 
+	@Id
 	@NotEmpty
 	private String channelName;
 	
+	@NotNull
 	private String channelPassword;
 	
+	@NotNull
 	private String channelAdmin;
 	
 	@Embedded
@@ -46,9 +50,13 @@ public class ChannelSaveContainer {
 	
 	
 	//Channel Formatter
+	@NotEmpty
 	private String prefix;
+	@NotEmpty
 	private String suffix;
+	@NotEmpty
 	private String channelColor;
+	@NotEmpty
 	private String channelFormat;
 	
 	

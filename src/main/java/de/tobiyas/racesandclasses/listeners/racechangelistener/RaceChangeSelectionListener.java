@@ -9,12 +9,12 @@ import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 /**
- * This class listens to {@link RaceSelectEvent} + subclasses.
+ * This class listens to {@link AfterRaceSelectedEvent} + subclasses.
  * <br>It checks if the player has permission to this race (if active).
  * 
  * @author tobiyas
@@ -45,7 +45,7 @@ public class RaceChangeSelectionListener implements Listener {
 	
 	
 	@EventHandler(ignoreCancelled = true)
-	public void checkPlayerhasPermissionToRace(RaceSelectEvent event){
+	public void checkPlayerhasPermissionToRace(PreRaceSelectEvent event){
 		if(event.getRaceToSelect() == plugin.getRaceManager().getDefaultHolder()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()){
@@ -60,7 +60,7 @@ public class RaceChangeSelectionListener implements Listener {
 	}
 	
 	@EventHandler(ignoreCancelled = true)
-	public void checkPlayerHasUplinkOnChange(ClassSelectEvent event){
+	public void checkPlayerHasUplinkOnChange(PreRaceSelectEvent event){
 		String playerName = event.getPlayer().getName();
 		String commandName = "racechange";
 		
@@ -76,8 +76,7 @@ public class RaceChangeSelectionListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void rescanHP(ClassSelectEvent selectEvent){
-		if(selectEvent.isCancelled()) return;
+	public void rescanHP(AfterRaceSelectedEvent selectEvent){
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		

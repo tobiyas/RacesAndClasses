@@ -15,7 +15,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
 import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 
 public abstract class HolderChangeListenerGui implements Listener {
@@ -150,7 +150,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 		}
 		
 		AbstractTraitHolder holder = manager.getHolderOfPlayer(playerName);
-		HolderSelectEvent selectEvent = null;
+		HolderPreSelectEvent selectEvent = null;
 		
 		AbstractTraitHolder newHolder= getHolder(clickedItem);
 		
@@ -172,9 +172,9 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		boolean worked = true;
 		if(hasNoHolder){
-			worked = manager.addPlayerToHolder(playerName, newHolder.getName());
+			worked = manager.addPlayerToHolder(playerName, newHolder.getName(), true);
 		}else{
-			worked = manager.changePlayerHolder(playerName, newHolder.getName());
+			worked = manager.changePlayerHolder(playerName, newHolder.getName(), true);
 		}
 		
 		
@@ -199,7 +199,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	 * 
 	 * @return
 	 */
-	protected abstract HolderSelectEvent generateHolderSelectEvent(String playerName, AbstractTraitHolder newHolder);
+	protected abstract HolderPreSelectEvent generateHolderSelectEvent(String playerName, AbstractTraitHolder newHolder);
 
 	
 	/**
@@ -208,7 +208,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	 * 
 	 * @return
 	 */
-	protected abstract HolderSelectEvent generateHolderChangeEvent(String playerName, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
+	protected abstract HolderPreSelectEvent generateHolderChangeEvent(String playerName, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**

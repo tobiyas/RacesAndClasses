@@ -25,7 +25,12 @@ public class PermissionNode {
 	/**
 	 * The Permission to select your Class
 	 */
-	public static final String selectClass = prePlugin + "class.select"; 
+	public static final String selectClass = prePlugin + "class.select";
+	
+	/**
+	 * The Permission to use /racforce
+	 */
+	public static final String forceChange = prePlugin + "forcechange";
 	
 	/**
 	 * The Permission to create a private channel

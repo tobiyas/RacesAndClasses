@@ -11,7 +11,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelec
  * 
  * @author Tobiyas
  */
-public class ClassSelectEvent extends HolderSelectEvent{
+public class AfterClassSelectedEvent extends HolderSelectEvent{
 
 	/**
 	 * The static list of all handlers that are interested in this event
@@ -25,7 +25,7 @@ public class ClassSelectEvent extends HolderSelectEvent{
 	 * @param player that selected the class
 	 * @param classToSelect that was selected
 	 */
-	public ClassSelectEvent(Player player, ClassContainer classToSelect) {
+	public AfterClassSelectedEvent(Player player, ClassContainer classToSelect) {
 		super(player,  classToSelect);
 	}
 

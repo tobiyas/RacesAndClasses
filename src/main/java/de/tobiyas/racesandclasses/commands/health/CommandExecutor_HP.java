@@ -35,6 +35,7 @@ public class CommandExecutor_HP implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");
 		}
 		
+		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().outputManaToPlayer();		
 		return true;
 	}
 

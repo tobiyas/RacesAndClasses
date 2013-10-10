@@ -1,8 +1,14 @@
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ChatDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardDisplayBar;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
 
@@ -30,6 +36,11 @@ public class ManaManager {
 	 */
 	private double currentMana;
 	
+	/**
+	 * The Display displaying mana change to the Player
+	 */
+	private final Display manaDisplay;
+	
 	
 	
 	/**
@@ -41,6 +52,37 @@ public class ManaManager {
 		this.playerName = playerName;
 		this.maxMana = 0;
 		this.currentMana = 0;
+		
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerName);
+		Object healthDisplayTypeAsObject = config.getValueDisplayName("healthDisplayType");
+		String healthDisplayType = "score";
+		if(healthDisplayTypeAsObject != null && healthDisplayTypeAsObject instanceof String){
+			healthDisplayType = (String) healthDisplayTypeAsObject;
+		}
+		
+		DisplayType type = DisplayType.resolve(healthDisplayType);
+		
+		manaDisplay = generateFromType(type, config.getName());
+	}
+	
+	/**
+	 * Generates a Display from the type passed.
+	 * 
+	 * @param type
+	 * @param name
+	 * @return
+	 */
+	private Display generateFromType(DisplayType type, String name){
+		switch (type) {
+		case Chat:
+			return new ChatDisplayBar(name, DisplayInfos.MANA);
+		
+		case Scoreboard:
+			return new ScoreBoardDisplayBar(name, DisplayInfos.MANA);
+			
+		default:
+			return new ChatDisplayBar(name, DisplayInfos.MANA);
+		}
 	}
 	
 	
@@ -64,9 +106,27 @@ public class ManaManager {
 			currentMana = maxMana;
 		}
 		
-		//TODO output Mana
+		outputManaToPlayer();
 	}
 
+	
+	/**
+	 * Displays the Mana to the Player
+	 * 
+	 * This is only displayed if the Player HAS Mana.
+	 * This means his maxMana > 0.
+	 */
+	public void outputManaToPlayer(){
+		if(maxMana <= 0) return;
+		
+		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				manaDisplay.display(currentMana, maxMana);
+			}
+		}, 1);
+	}
 	
 	/**
 	 * A player tries to cast a spell.
@@ -82,6 +142,7 @@ public class ManaManager {
 		if(!hasEnoughMana(spellToCast)) return false;
 		
 		currentMana -= spellToCast.getCost();
+		outputManaToPlayer();
 		return true;
 	}
 	
@@ -116,6 +177,7 @@ public class ManaManager {
 			currentMana = maxMana;
 		}
 		
+		outputManaToPlayer();
 		return currentMana;
 	}
 	
@@ -135,6 +197,7 @@ public class ManaManager {
 			currentMana = 0;
 		}
 		
+		outputManaToPlayer();
 		return currentMana;
 	}
 
@@ -172,5 +235,15 @@ public class ManaManager {
 	 */
 	public String getPlayerName() {
 		return playerName;
+	}
+	
+	/**
+	 * Returns if the Mana of this player is
+	 * fully filled.
+	 * 
+	 * @return true if filled, false otherwise.
+	 */
+	public boolean isManaFull(){
+		return currentMana >= maxMana;
 	}
 }

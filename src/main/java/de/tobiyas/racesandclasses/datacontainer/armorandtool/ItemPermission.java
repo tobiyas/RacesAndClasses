@@ -33,5 +33,10 @@ public class ItemPermission implements AbstractItemPermission {
 	public boolean isAlreadyRegistered(ItemQuality quality) {
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return material.name();
+	}
 
 }

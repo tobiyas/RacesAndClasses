@@ -10,6 +10,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolde
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder.RaceReminder;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -49,7 +52,7 @@ public class RaceManager extends AbstractHolderManager {
 			String playerName = player.getName();
 			RaceContainer container = (RaceContainer) getHolderOfPlayer(playerName);
 			if (container == null) {
-				addPlayerToHolder(playerName, Consts.defaultRace);
+				addPlayerToHolder(playerName, Consts.defaultRace, false);
 				container = (RaceContainer) getHolderOfPlayer(playerName);
 			}
 
@@ -58,7 +61,7 @@ public class RaceManager extends AbstractHolderManager {
 
 		for (String playerName : memberList.keySet())
 			if (memberList.get(playerName) == null) {
-				addPlayerToHolder(playerName, Consts.defaultRace);
+				addPlayerToHolder(playerName, Consts.defaultRace, false);
 			}
 	}
 
@@ -87,7 +90,7 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean changePlayerHolder(String player, String newHolderName){
+	public boolean changePlayerHolder(String player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
 		String oldRace = getHolderOfPlayer(player).getName();
@@ -104,12 +107,12 @@ public class RaceManager extends AbstractHolderManager {
 			plugin.getChannelManager().playerLeaveRace(oldRace, Bukkit.getPlayer(player));
 		}
 		
-		return addPlayerToHolder(player, newHolderName);
+		return addPlayerToHolder(player, newHolderName, callEvent);
 	}
 	
 	@Override
-	public boolean addPlayerToHolder(String player, String newHolderName){		
-		boolean worked = super.addPlayerToHolder(player, newHolderName);
+	public boolean addPlayerToHolder(String player, String newHolderName, boolean callEvent){		
+		boolean worked = super.addPlayerToHolder(player, newHolderName, callEvent);
 		if(worked){
 			AbstractTraitHolder holder = getHolderOfPlayer(player);
 			if(holder instanceof RaceContainer){
@@ -144,6 +147,19 @@ public class RaceManager extends AbstractHolderManager {
 	protected void saveContainerToDBField(PlayerHolderAssociation container,
 			String name) {
 		container.setRaceName(name);
+	}
+	
+	@Override
+	protected HolderSelectEvent generateAfterSelectEvent(String player,
+			AbstractTraitHolder newHolder) {
+		return new AfterRaceSelectedEvent(Bukkit.getPlayer(player), (RaceContainer)newHolder);
+	}
+
+
+	@Override
+	protected HolderSelectEvent generateAfterChangeEvent(String player,
+			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
+		return new AfterRaceChangedEvent(Bukkit.getPlayer(player), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
 
 }

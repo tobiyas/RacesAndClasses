@@ -14,6 +14,7 @@ import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.eventprocessing.events.rescan.PlayerIsBeingRescannedEvent;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
 import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.MCPlayerLevelManager;
@@ -296,18 +297,31 @@ public class PlayerContainer {
 		armorToolManager.rescanPermission();
 		armorToolManager.checkArmorNotValidEquiped();
 		
-		Player player = Bukkit.getPlayer(playerName);
+		spellManager.rescan();
+		levelManager.checkLevelChanged();
+
+		final Player player = Bukkit.getPlayer(playerName);
 		if(player != null && player.isOnline()){
-			Player bukkitPlayer = Bukkit.getPlayer(playerName);
 			
+			Player bukkitPlayer = Bukkit.getPlayer(playerName);
+
 			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);
 			if(Math.abs(currentMaxHealth - maxHealth) > 0.5){
 				CompatibilityModifier.BukkitPlayer.safeSetMaxHealth(maxHealth, bukkitPlayer);
 			}
+			
+			//We got to schedule this. Otherwise we would produce an Infinite loop.
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					PlayerIsBeingRescannedEvent event = new PlayerIsBeingRescannedEvent(player);
+					plugin.fireEventToBukkit(event);
+				}
+			}, 1);
+			
+			
 		}
-		
-		spellManager.rescan();
-		levelManager.checkLevelChanged();
 		
 		return this;
 	}

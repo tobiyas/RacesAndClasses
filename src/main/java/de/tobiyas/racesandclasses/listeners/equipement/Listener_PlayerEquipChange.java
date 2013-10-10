@@ -58,7 +58,6 @@ public class Listener_PlayerEquipChange implements Listener {
 			
 			if(equipEvent.isCancelled()){
 				event.setCancelled(true);
-				
 				InventoryResync.resync(event.getPlayer());
 			}
 		}

@@ -80,6 +80,6 @@ public class RaceAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(playerName, raceName);
+		return manager.changePlayerHolder(playerName, raceName, true);
 	}
 }

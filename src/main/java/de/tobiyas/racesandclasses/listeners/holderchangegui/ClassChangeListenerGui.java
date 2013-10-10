@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 
 public class ClassChangeListenerGui extends HolderChangeListenerGui {
 
@@ -17,16 +17,16 @@ public class ClassChangeListenerGui extends HolderChangeListenerGui {
 
 	
 	@Override
-	protected HolderSelectEvent generateHolderSelectEvent(String playerName,
+	protected HolderPreSelectEvent generateHolderSelectEvent(String playerName,
 			AbstractTraitHolder newHolder) {
-		return new ClassSelectEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder);
+		return new PreClassSelectEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder);
 	}
 
 	
 	@Override
-	protected HolderSelectEvent generateHolderChangeEvent(String playerName,
+	protected HolderPreSelectEvent generateHolderChangeEvent(String playerName,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new ClassChangeEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder, (ClassContainer) oldHolder);
+		return new PreClassChangeEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}
 	
 }

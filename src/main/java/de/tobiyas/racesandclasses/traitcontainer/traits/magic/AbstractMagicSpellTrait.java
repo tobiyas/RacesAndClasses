@@ -1,7 +1,5 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
-import java.util.Map;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,13 +10,13 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
-public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
+public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait, TraitWithUplink {
 
 	/**
 	 * The Cost of the Spell.
@@ -29,10 +27,15 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	
 	
 	/**
-	 * The Material ID for casting with {@link CostType#ITEM}
+	 * The Uplink time of the spell
 	 */
-	@SuppressWarnings("deprecation")
-	protected int materialForCasting = Material.FEATHER.getId();
+	protected int uplinkTime = 0;
+	
+	
+	/**
+	 * The Material for casting with {@link CostType#ITEM}
+	 */
+	protected Material materialForCasting = Material.FEATHER;
 	
 	/**
 	 * The CostType of the Spell.
@@ -54,57 +57,105 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	
 
 	
-	@Override
-	public abstract void importTrait();
-
-	
 	@TraitEventsUsed(registerdClasses = {PlayerInteractEvent.class})
 	@Override
 	public void generalInit(){
 		//We need nothing to be inited here.
 	}
-	
-	
-	@Override
-	public abstract String getName();
 
 	
 	@Override
-	public abstract String getPrettyConfiguration();
+	public boolean canBeTriggered(Event event){
+		if(!(event instanceof PlayerInteractEvent)) return false;
+		
+		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
+		Player player = playerInteractEvent.getPlayer();
+		
+		Material wandMaterial = plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic();
+		ItemStack itemInHand = player.getItemInHand();
+		
+		//early out for not wand in hand.
+		if(itemInHand == null || itemInHand.getType() != wandMaterial) return false;
+		
+		//check if the Spell is the current selected Spell
+		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
+		
+		
+		return true;
+	}
 	
+	
+	
+	@Override
+	public String getUplinkIndicatorName() {
+		return "trait." + getName();
+	}
+
 
 	@Override
-	public abstract void setConfiguration(Map<String, String> configMap);
+	public int getMaxUplinkTime() {
+		return uplinkTime;
+	}
 
+
+	@Override
+	public boolean triggerButHasUplink(Event event) {
+		if(event instanceof PlayerInteractEvent){
+			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
+			Action action = playerInteractEvent.getAction();
+			Player player = playerInteractEvent.getPlayer();
+			
+			if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
+				changeMagicSpell(player);
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	
 	@Override
-	public boolean modify(Event event) {
+	public boolean triggerButDoesNotHaveEnoghCostType(Event event){
+		if(event instanceof PlayerInteractEvent){
+			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
+			Action action = playerInteractEvent.getAction();
+			Player player = playerInteractEvent.getPlayer();
+			
+			if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
+				changeMagicSpell(player);
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+
+	@Override
+	public boolean trigger(Event event) {
 		if(event instanceof PlayerInteractEvent){
 			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
 			Player player = playerInteractEvent.getPlayer();
 			
-			int wandId = plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic();
+			Material wandMaterial = plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic();
 			ItemStack itemInHand = player.getItemInHand();
 			
 			//early out for not wand in hand.
-			if(itemInHand == null || itemInHand.getTypeId() != wandId) return false;
-			
-			//this trait is not belonging to the Player.
-			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			if(itemInHand == null || itemInHand.getType() != wandMaterial) return false;
 			
 			//check if the Spell is the current selected Spell
 			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
 			
 			Action action = playerInteractEvent.getAction();
-			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
-				if(!checkCosts(player)){
-					player.sendMessage(ChatColor.RED + "You don't have enough " + ChatColor.LIGHT_PURPLE +  costType 
-							+ ChatColor.RED + " to cast this spell.");
-					return true;
+			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){				
+				boolean casted = magicSpellTriggered(player);
+				if(casted){
+					removeCost(player);
 				}
 				
-				boolean casted = magicSpellTriggered(player);
-				removeCost(player);
 				return casted;
 			}
 			
@@ -165,6 +216,11 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		
 		if(plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).getCurrentSpell() == null) return false;
 		
+		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() == 0){
+			player.sendMessage(ChatColor.GREEN + "You can not cast any spells.");
+			return true;
+		}
+
 		MagicSpellTrait currentSpell 
 			= plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).changeToNextSpell();
 		
@@ -173,7 +229,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 					+ ((Trait) currentSpell).getName() + ChatColor.GREEN + ".");
 			return true;
 		}else{
-			player.sendMessage(ChatColor.GREEN + "You can not cast any spells.");
+			//switching too fast.
 			return true;
 		}
 	}
@@ -187,10 +243,6 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if spell summoning worked, false if failed.
 	 */
 	protected abstract boolean magicSpellTriggered(Player player);
-
-	
-	@Override
-	public abstract boolean isBetterThan(Trait trait);
 
 	
 	@Override
@@ -214,6 +266,12 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	@Override
 	public CostType getCostType(){
 		return costType;
+	}
+
+
+	@Override
+	public Material getCastMaterialType() {
+		return materialForCasting;
 	}
 
 }

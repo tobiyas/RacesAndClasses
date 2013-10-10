@@ -19,20 +19,20 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Tra
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TutorialManager;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import javax.persistence.PersistenceException;
+import net.h31ix.updater.Updater;
+import net.h31ix.updater.Updater.UpdateType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.avaje.ebean.EbeanServer;
+
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
-import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCast;
@@ -42,6 +42,8 @@ import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
+import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceClass;
+import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceRace;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_PlayerInfo;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_RacesReload;
@@ -57,16 +59,13 @@ import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
-import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
@@ -74,6 +73,7 @@ import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.persistence.DBConverter;
+import de.tobiyas.racesandclasses.util.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.debug.logger.DebugLogger;
@@ -158,6 +158,11 @@ public class RacesAndClasses extends JavaPlugin{
 	 */
 	protected TutorialManager tutorialManager;
 
+	
+	/**
+	 * The alternative EBean Impl of the Bukkit Ebean Interface
+	 */
+	protected AlternateEbeanServerImpl alternateEbeanServer;
 	
 	
 	//Empty Constructor for Bukkit.
@@ -327,6 +332,9 @@ public class RacesAndClasses extends JavaPlugin{
 		new CommandExecutor_ShowTraits();
 		new CommandExecutor_Edit();
 		
+		new CommandExecutor_ForceRace();
+		new CommandExecutor_ForceClass();
+		
 		if(System.currentTimeMillis() - currentTime > 1000){
 			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
 		}
@@ -344,6 +352,7 @@ public class RacesAndClasses extends JavaPlugin{
 			shutDownSequenz(false);
 		}
 		
+		plugin = null;
 		log("disabled " + description.getFullName());
 
 	}
@@ -391,6 +400,13 @@ public class RacesAndClasses extends JavaPlugin{
 		log(description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
 				+ permManager.getPermissionsName());
 		
+		if(configManager.getGeneralConfig().isConfig_useAutoUpdater()){
+			checkForUpdates();
+		}
+	}
+	
+	private void checkForUpdates(){
+		new Updater(this, "racesandclasses", this.getFile(), UpdateType.DEFAULT, true);
 	}
 
 
@@ -475,6 +491,9 @@ public class RacesAndClasses extends JavaPlugin{
 	 * If not it generates everything.
 	 */
 	private void checkDBAccess(){
+		getDatabase();
+		
+		/*
 		try {
 			if(getDatabase() == null){
 				installDDL();
@@ -482,13 +501,13 @@ public class RacesAndClasses extends JavaPlugin{
 			}
 			
 			for(Class<?> dbClasses : getDatabaseClasses()){
-				getDatabase().find(dbClasses).findRowCount();			
+				getDatabase().find(dbClasses).findRowCount();
 			}
 			
         } catch (PersistenceException ex) {
             log("Installing database for " + getDescription().getName() + " due to first time usage");
             installDDL();
-        }
+        }*/
 	}
 	
 	
@@ -567,15 +586,41 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	
 	
-	 @Override
-    public List<Class<?>> getDatabaseClasses() {
-        List<Class<?>> list = new LinkedList<Class<?>>();
-        list.add(DBConfigOption.class);
-        list.add(PlayerSavingContainer.class);
-        list.add(PlayerHolderAssociation.class);
-        list.add(ChannelSaveContainer.class);
-        //TODO add all DB classes here.
-        
-        return list;
-    }
+	/*
+	@Override
+	public List<Class<?>> getDatabaseClasses() {
+	    List<Class<?>> list = new LinkedList<Class<?>>();
+	    
+	    list.add(DBConfigOption.class);
+	    list.add(PlayerSavingContainer.class);
+	    list.add(PlayerHolderAssociation.class);
+	    list.add(ChannelSaveContainer.class);
+	    //TODO add all DB classes here.
+	    
+	    return list;
+	}
+
+
+	@Override
+	//This is just to open it up for internal usage
+	public void installDDL() {
+		super.installDDL();
+	}
+	*/
+	
+	 
+	@Override
+	public EbeanServer getDatabase(){
+		if(alternateEbeanServer == null){
+			initEbeanServer();
+		}
+
+		return alternateEbeanServer.getDatabase();
+	}
+
+
+	private void initEbeanServer() {
+		alternateEbeanServer = new AlternateEbeanServerImpl(this);
+		alternateEbeanServer.initializeLocalSQLite();
+	}
 }

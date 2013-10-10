@@ -56,7 +56,7 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		if(!(event instanceof PlayerEquipsArmorEvent)) return false;
 		
 		PlayerEquipsArmorEvent playerEquipEvent = (PlayerEquipsArmorEvent) event;
@@ -100,7 +100,11 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 	@TraitInfos(category="static", traitName="AromrTrait", visible=false)
 	@Override
 	public void importTrait() {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean canBeTriggered(Event event) {
+		return true;
 	}
 
 }

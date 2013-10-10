@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.commands.classes;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -444,7 +445,7 @@ public class CommandExecutor_ClassTest {
 		when(RacesAndClasses.getPlugin().getClassManager().listAllVisibleHolders()).thenReturn(classList);
 		when(RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(playerName)).thenReturn(null);
 		
-		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
@@ -524,7 +525,7 @@ public class CommandExecutor_ClassTest {
 	@Test
 	public void test_player_changing_class_chat(){
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(any(CommandSender.class), anyString())).thenReturn(true);
-		when(RacesAndClasses.getPlugin().getClassManager().changePlayerHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getClassManager().changePlayerHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		String command = "change";
 		String className = "class1";
@@ -545,7 +546,7 @@ public class CommandExecutor_ClassTest {
 		when(RacesAndClasses.getPlugin().getClassManager().listAllVisibleHolders()).thenReturn(classList);
 		when(RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(playerName)).thenReturn(classContainerCurrent);
 		
-		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
@@ -555,7 +556,7 @@ public class CommandExecutor_ClassTest {
 	@Test
 	public void test_player_changing_class_chat_fails_internaly(){
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(any(CommandSender.class), anyString())).thenReturn(true);
-		when(RacesAndClasses.getPlugin().getClassManager().changePlayerHolder(anyString(), anyString())).thenReturn(false);
+		when(RacesAndClasses.getPlugin().getClassManager().changePlayerHolder(anyString(), anyString(), anyBoolean())).thenReturn(false);
 		
 		String command = "change";
 		String className = "class1";
@@ -576,7 +577,7 @@ public class CommandExecutor_ClassTest {
 		when(RacesAndClasses.getPlugin().getClassManager().listAllVisibleHolders()).thenReturn(classList);
 		when(RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(playerName)).thenReturn(classContainerCurrent);
 		
-		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
@@ -601,7 +602,7 @@ public class CommandExecutor_ClassTest {
 		when(RacesAndClasses.getPlugin().getClassManager().listAllVisibleHolders()).thenReturn(classList);
 		when(RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(playerName)).thenReturn(classContainer);
 		
-		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getClassManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		

@@ -75,7 +75,7 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		if(!(event instanceof EntityDamageByEntityEvent)) return false;
 		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 		
@@ -117,4 +117,9 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 	public void importTrait() {
 	}
 
+	@Override
+	public boolean canBeTriggered(Event event) {
+		return true;
+	}
+	
 }

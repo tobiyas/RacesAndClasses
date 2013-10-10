@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.commands.races;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -438,7 +439,7 @@ public class CommandExecutor_RacesTest {
 		when(RacesAndClasses.getPlugin().getRaceManager().getHolderByName(raceName)).thenReturn(raceContainer);
 		when(RacesAndClasses.getPlugin().getRaceManager().listAllVisibleHolders()).thenReturn(raceList);
 		
-		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
@@ -514,7 +515,7 @@ public class CommandExecutor_RacesTest {
 	@Test
 	public void test_player_changing_race_chat(){
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(any(CommandSender.class), anyString())).thenReturn(true);
-		when(RacesAndClasses.getPlugin().getRaceManager().changePlayerHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getRaceManager().changePlayerHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		String command = "change";
 		String raceName = "race1";
@@ -535,7 +536,7 @@ public class CommandExecutor_RacesTest {
 		when(RacesAndClasses.getPlugin().getRaceManager().listAllVisibleHolders()).thenReturn(raceList);
 		when(RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(playerName)).thenReturn(raceContainerCurrent);
 		
-		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
@@ -559,7 +560,7 @@ public class CommandExecutor_RacesTest {
 		when(RacesAndClasses.getPlugin().getRaceManager().listAllVisibleHolders()).thenReturn(raceList);
 		when(RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(playerName)).thenReturn(raceContainer);
 		
-		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString())).thenReturn(true);
+		when(RacesAndClasses.getPlugin().getRaceManager().addPlayerToHolder(anyString(), anyString(), anyBoolean())).thenReturn(true);
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		

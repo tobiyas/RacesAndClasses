@@ -60,6 +60,9 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
 				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
+				
+				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
+				
 				player.sendMessage(ChatColor.GREEN + "You have been healed.");
 			}else sender.sendMessage(ChatColor.RED + "You have to be a Player to use this command.");
 		}
@@ -80,6 +83,8 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				Player player = (Player) sender;
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
 				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
+				
+				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
 				
 				other.sendMessage(ChatColor.GREEN + "You have been healed from: " + ChatColor.LIGHT_PURPLE + player.getName());
 				player.sendMessage(ChatColor.GREEN + "You have healed: " + ChatColor.LIGHT_PURPLE +  other.getName());

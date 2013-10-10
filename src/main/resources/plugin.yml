@@ -3,7 +3,6 @@ main: de.tobiyas.racesandclasses.RacesAndClasses
 version: 1.0.2
 website: http://dev.bukkit.org/bukkit-mods/racesandclasses/
 author: tobiyas
-database: true
 softdepends: [Vault]
 description: >
              Races and Classes for Players
@@ -118,3 +117,11 @@ commands:
     aliases: [racedit]
     usage: |
            /racedit
+  racforcerace:
+    description: forces a player to take the race passed
+    usage: |
+           /racforcerace <player Name> <new Race>
+  racforceclass:
+    description: forces a player to take the class passed
+    usage: |
+           /racforceclass <player Name> <new Class>

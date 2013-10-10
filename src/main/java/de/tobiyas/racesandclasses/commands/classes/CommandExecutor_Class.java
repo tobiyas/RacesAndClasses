@@ -13,8 +13,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassChangeEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -96,7 +96,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		//Select class(only if has no class)
 		if(potentialCommand.equalsIgnoreCase("select")){
-			if(!checkPlayer(sender)) return true;
+			if(!checkIsPlayer(sender)) return true;
+			
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.selectClass)) return true;
 
 			Player player = (Player) sender;
@@ -111,7 +112,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 					return true;
 				}
 				
-				ClassSelectEvent ccEvent = new ClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
+				PreClassSelectEvent ccEvent = new PreClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
@@ -146,7 +147,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 		//Change class (only if has already a class)
 		if(potentialCommand.equalsIgnoreCase("change")){
-			if(!checkPlayer(sender)) return true;
+			if(!checkIsPlayer(sender)) return true;
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.changeClass)) return true;
 
 			Player player = (Player) sender;
@@ -161,7 +162,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 					return true;
 				}
 				
-				ClassSelectEvent ccEvent = new ClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
+				PreClassSelectEvent ccEvent = new PreClassSelectEvent(player, (ClassContainer) plugin.getClassManager().getDefaultHolder());
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
@@ -196,7 +197,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	}
 	
 	
-	private boolean checkPlayer(CommandSender sender) {
+	private boolean checkIsPlayer(CommandSender sender) {
 		if(sender instanceof Player){
 			return true;
 		}
@@ -268,7 +269,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return false;
 		}
 		
-		ClassSelectEvent event = new ClassSelectEvent(player, classContainer);
+		PreClassSelectEvent event = new PreClassSelectEvent(player, classContainer);
 		plugin.fireEventToBukkit(event);
 		if(event.isCancelled()){
 			player.sendMessage(ChatColor.RED + event.getCancelMessage());
@@ -278,7 +279,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
 		if(currentHolder == null){	
-			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass)){
+			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass, true)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
 				return true;
 			}
@@ -312,14 +313,14 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			}
 			
 			
-			ClassChangeEvent event = new ClassChangeEvent(player, oldClassContainer, newClassContainer);
+			PreClassChangeEvent event = new PreClassChangeEvent(player, oldClassContainer, newClassContainer);
 			plugin.fireEventToBukkit(event);
 			if(event.isCancelled()){
 				player.sendMessage(ChatColor.RED + event.getCancelMessage());
 				return;
 			}
 			
-			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass)){
+			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass, true)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
 			}else{
 				player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");

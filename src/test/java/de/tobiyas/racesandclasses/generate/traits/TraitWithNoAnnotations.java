@@ -32,7 +32,7 @@ public class TraitWithNoAnnotations extends AbstractBasicTrait {
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		return false;
 	}
 
@@ -41,4 +41,8 @@ public class TraitWithNoAnnotations extends AbstractBasicTrait {
 		return false;
 	}
 
+	@Override
+	public boolean canBeTriggered(Event event) {
+		return true;
+	}
 }

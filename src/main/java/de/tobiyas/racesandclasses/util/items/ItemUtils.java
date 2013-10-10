@@ -34,31 +34,31 @@ public class ItemUtils {
 	 * @return
 	 */
 	public static ItemQuality getItemValue(ItemStack stack){
-		switch(stack.getTypeId()){
-			case 298 :
-			case 299 :
-			case 300 :
-			case 301 : return ItemQuality.Leather;
+		switch(stack.getType()){
+			case LEATHER_HELMET :
+			case LEATHER_CHESTPLATE :
+			case LEATHER_LEGGINGS :
+			case LEATHER_BOOTS : return ItemQuality.Leather;
 			
-			case 302 :
-			case 303 :
-			case 304 :
-			case 305 : return ItemQuality.Chain;
+			case CHAINMAIL_HELMET :
+			case CHAINMAIL_CHESTPLATE :
+			case CHAINMAIL_LEGGINGS :
+			case CHAINMAIL_BOOTS : return ItemQuality.Chain;
 			
-			case 306 :
-			case 307 :
-			case 308 :
-			case 309 : return ItemQuality.Iron;
+			case IRON_HELMET :
+			case IRON_CHESTPLATE :
+			case IRON_LEGGINGS :
+			case IRON_BOOTS : return ItemQuality.Iron;
 			
-			case 310 :
-			case 311 :
-			case 312 :
-			case 313 : return ItemQuality.Diamond;
+			case DIAMOND_HELMET :
+			case DIAMOND_CHESTPLATE :
+			case DIAMOND_LEGGINGS :
+			case DIAMOND_BOOTS : return ItemQuality.Diamond;
 			
-			case 314 :
-			case 315 :
-			case 316 :
-			case 317 : return ItemQuality.Gold;
+			case GOLD_HELMET :
+			case GOLD_CHESTPLATE :
+			case GOLD_LEGGINGS :
+			case GOLD_BOOTS : return ItemQuality.Gold;
 		
 			default: return ItemQuality.None;
 		}

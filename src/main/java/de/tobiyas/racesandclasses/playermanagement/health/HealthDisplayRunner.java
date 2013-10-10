@@ -6,10 +6,11 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.playermanagement.PlayerContainer;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ChatHealthBar;
-import de.tobiyas.racesandclasses.playermanagement.health.display.HealthDisplay;
-import de.tobiyas.racesandclasses.playermanagement.health.display.HealthDisplay.DisplayType;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardHealthBar;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ChatDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardDisplayBar;
 
 public class HealthDisplayRunner implements Runnable {
 	
@@ -18,7 +19,7 @@ public class HealthDisplayRunner implements Runnable {
 	private double oldValue;
 	private int oldInterval;
 	
-	private HealthDisplay display;
+	private Display display;
 	
 	private int scedulerTask;
 	
@@ -49,19 +50,16 @@ public class HealthDisplayRunner implements Runnable {
 	}
 	
 	
-	private HealthDisplay generateFromType(DisplayType type, String name){
+	private Display generateFromType(DisplayType type, String name){
 		switch (type) {
 		case Chat:
-			return new ChatHealthBar(name);
+			return new ChatDisplayBar(name, DisplayInfos.HEALTH);
 		
 		case Scoreboard:
-			return new ScoreBoardHealthBar(name);
-
-		//case Spout: //TODO maybe add.
-			//return new SpoutHealthBar(name);
+			return new ScoreBoardDisplayBar(name, DisplayInfos.HEALTH);
 			
 		default:
-			return new ChatHealthBar(name);
+			return new ChatDisplayBar(name, DisplayInfos.HEALTH);
 		}
 	}
 

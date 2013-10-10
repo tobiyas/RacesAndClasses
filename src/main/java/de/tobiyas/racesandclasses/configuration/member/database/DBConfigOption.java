@@ -33,7 +33,7 @@ public class DBConfigOption extends ConfigOption {
 	 * The Plugin to call DB Operations on
 	 */
 	@Transient
-	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	private final RacesAndClasses plugin;
 	
 	
 	/**
@@ -41,6 +41,8 @@ public class DBConfigOption extends ConfigOption {
 	 */
 	public DBConfigOption(String path, String playerName, Object value) {
 		super(path, playerName, value);
+		
+		plugin = RacesAndClasses.getPlugin();
 		
 		this.stringValue = String.valueOf(value);
 		this.stringDefaultValue = String.valueOf(value);
@@ -53,6 +55,8 @@ public class DBConfigOption extends ConfigOption {
 	 */
 	public DBConfigOption(String path, String playerName, String displayName, Object value, Object defaultValue, boolean visible) {
 		super(path, playerName, displayName, value, defaultValue, visible);
+		
+		plugin = RacesAndClasses.getPlugin();
 		
 		this.stringValue = String.valueOf(value);
 		this.stringDefaultValue = String.valueOf(defaultValue);
@@ -67,6 +71,8 @@ public class DBConfigOption extends ConfigOption {
 	 */
 	public DBConfigOption(){
 		super();
+		
+		plugin = RacesAndClasses.getPlugin();
 	}
 	
 	
@@ -79,6 +85,7 @@ public class DBConfigOption extends ConfigOption {
 	protected DBConfigOption(ConfigOption option, String playerName){
 		super(option);
 		
+		plugin = RacesAndClasses.getPlugin();
 		this.playerName = playerName;
 	}
 	

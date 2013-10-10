@@ -89,7 +89,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_expDropBonus()) return false;
 		
 		if(!(event instanceof EntityDeathEvent)) return false;
@@ -130,8 +130,11 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	@TraitInfos(category="static", traitName="DropTrait", visible=false)
 	@Override
 	public void importTrait() {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public boolean canBeTriggered(Event event) {
+		return true;
 	}
 
 }

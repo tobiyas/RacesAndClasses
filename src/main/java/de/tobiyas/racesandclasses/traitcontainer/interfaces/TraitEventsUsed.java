@@ -17,7 +17,7 @@ public @interface TraitEventsUsed{
 	
 	/**
 	 * This are the registered events wanted to be used to call 
-	 * {@link Trait#modify(Event)} with.
+	 * {@link Trait#trigger(Event)} with.
 	 * @return
 	 */
 	Class<? extends Event>[] registerdClasses() default {};

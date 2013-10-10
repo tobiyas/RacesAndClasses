@@ -75,7 +75,7 @@ public interface Trait{
 	 * @param event
 	 * @return
 	 */
-	public boolean modify(Event event);
+	public boolean trigger(Event event);
 	
 	/**
 	 * Extracts the relevant player from the Event
@@ -112,6 +112,19 @@ public interface Trait{
 	 * @return
 	 */
 	public AbstractTraitHolder getTraitHolder();
+
+
+	/**
+	 * Checks if the Trait can be triggered.
+	 * <br>Already checked are: 
+	 * <br>* Trait belongs to the Player.
+	 * <br>* If Trait has any Uplink / Mana Restrictions
+	 * 
+	 * @param event that is to be triggered
+	 * 
+	 * @return true if all Trait preconditions are checked
+	 */
+	public boolean canBeTriggered(Event event);
 	
 	
 }

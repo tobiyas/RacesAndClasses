@@ -21,8 +21,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceChangeEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.RaceSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceChangeEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -69,7 +69,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 					return true;
 				}
 				
-				RaceSelectEvent ccEvent = new RaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
+				PreRaceSelectEvent ccEvent = new PreRaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
@@ -114,7 +114,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 					return true;
 				}
 				
-				RaceSelectEvent ccEvent = new RaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
+				PreRaceSelectEvent ccEvent = new PreRaceSelectEvent(player, (RaceContainer) plugin.getRaceManager().getDefaultHolder());
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
@@ -209,7 +209,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			RaceSelectEvent selectEvent = new RaceSelectEvent(player, raceContainer);
+			PreRaceSelectEvent selectEvent = new PreRaceSelectEvent(player, raceContainer);
 			plugin.fireEventToBukkit(selectEvent);
 			
 			if(selectEvent.isCancelled()){
@@ -217,7 +217,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName)){
+			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName, true)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRaceName);
 			}
 				
@@ -247,7 +247,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			RaceChangeEvent selectEvent = new RaceChangeEvent(player, (RaceContainer) oldContainer, (RaceContainer) newContainer);
+			PreRaceChangeEvent selectEvent = new PreRaceChangeEvent(player, (RaceContainer) oldContainer, (RaceContainer) newContainer);
 			plugin.fireEventToBukkit(selectEvent);
 			
 			if(selectEvent.isCancelled()){
@@ -255,7 +255,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace)){
+			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace, true)){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
 			}else{
 				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");

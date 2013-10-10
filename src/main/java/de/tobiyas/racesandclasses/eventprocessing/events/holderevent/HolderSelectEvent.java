@@ -1,13 +1,12 @@
 package de.tobiyas.racesandclasses.eventprocessing.events.holderevent;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
-public abstract class HolderSelectEvent extends Event implements Cancellable{
+public abstract class HolderSelectEvent extends Event{
 
 	private static HandlerList handlers = new HandlerList();
 	
@@ -25,19 +24,6 @@ public abstract class HolderSelectEvent extends Event implements Cancellable{
 	
 	
 	/**
-	 * Tells if the event is canceled or not
-	 */
-	protected boolean isCancelled;
-	
-	
-	/**
-	 * The message that is sent when canceling. 
-	 * <br>Needs to be set when canceled.
-	 */
-	protected String cancelMessage;
-	
-	
-	/**
 	 * A player has selected a holder.
 	 * 
 	 * @param player that selected the holder
@@ -46,36 +32,6 @@ public abstract class HolderSelectEvent extends Event implements Cancellable{
 	public HolderSelectEvent(Player player, AbstractTraitHolder holderToSelect) {
 		this.player = player;
 		this.holderToSelect = holderToSelect;
-		
-		this.isCancelled = false;
-		this.cancelMessage = "";
-	}
-	
-	
-	
-	@Override
-	public boolean isCancelled() {
-		return this.isCancelled;
-	}
-
-
-	/**
-	 * @deprecated use {@link #setCancelled(String)} instead.
-	 */
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.isCancelled = cancel;
-	}
-	
-	
-	/**
-	 * Cancels the Event + sets a message why it is cancelled.
-	 * 
-	 * @param message
-	 */
-	public void setCancelled(String message){
-		this.isCancelled = true;
-		this.cancelMessage = message;		
 	}
 	
 	
@@ -83,12 +39,6 @@ public abstract class HolderSelectEvent extends Event implements Cancellable{
 		return player;
 	}
 
-
-
-	public String getCancelMessage() {
-		return cancelMessage;
-	}
-	
 	
 	/**
 	 * needed for Bukkit to get the list of Handlers interested
@@ -102,5 +52,15 @@ public abstract class HolderSelectEvent extends Event implements Cancellable{
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;
+	}
+
+
+	/**
+	 * Returns the new Holder the player selects
+	 * 
+	 * @return
+	 */
+	public AbstractTraitHolder getHolderToSelect() {
+		return holderToSelect;
 	}
 }

@@ -18,6 +18,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -160,7 +161,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param potentialHolder to add the player to
 	 * @return if it worked
 	 */
-	public boolean addPlayerToHolder(String player, String potentialHolder){
+	public boolean addPlayerToHolder(String player, String potentialHolder, boolean callAfterEvent){
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
 		
@@ -172,9 +173,38 @@ public abstract class AbstractHolderManager extends Observable{
 		PermissionRegisterer.addPlayer(player, groupName);
 		
 		resetPlayerMovementSpeed(player);
+		plugin.getPlayerManager().checkPlayer(player);
+		
+		if(callAfterEvent){
+			HolderSelectEvent event = generateAfterSelectEvent(player, container);
+			plugin.fireEventToBukkit(event);
+		}
 		
 		return true;
 	}
+	
+	
+	/**
+	 * Generates an Event with the Player that Selected the New TraitHolder.
+	 * 
+	 * @param player that selected
+	 * @param newHolder that was selected
+	 * 
+	 * @return the Event
+	 */
+	protected abstract HolderSelectEvent generateAfterSelectEvent(String player, AbstractTraitHolder newHolder);
+
+	
+	/**
+	 * Generates an Event with the Player that changed from a TraitHolder to a new one.
+	 * 
+	 * @param player that selected
+	 * @param newHolder that was selected
+	 * @param oldHolder that was changed from
+	 * 
+	 * @return the Event
+	 */
+	protected abstract HolderSelectEvent generateAfterChangeEvent(String player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**
@@ -273,12 +303,16 @@ public abstract class AbstractHolderManager extends Observable{
 	 * Changes the Holder of a player
 	 * false is returned if the Holder does not exist.
 	 * 
-	 * @param player
-	 * @param potentialClass
-	 * @return
+	 * @param player to change
+	 * @param potentialClass to change to 
+	 * @param callEvent true if an Changed event chall be called afterwards.
+	 * 
+	 * @return true if worked, false otherwise
 	 */
-	public boolean changePlayerHolder(String player, String newHolderName){
+	public boolean changePlayerHolder(String player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
+		
+		AbstractTraitHolder oldHolder = getHolderOfPlayer(player);
 		
 		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
 		
@@ -290,7 +324,14 @@ public abstract class AbstractHolderManager extends Observable{
 			memberConfig.save();
 		}
 		
-		return addPlayerToHolder(player, newHolderName);
+		boolean worked = addPlayerToHolder(player, newHolderName, false);
+		if(callEvent){
+			AbstractTraitHolder newHolder = getHolderOfPlayer(player);
+			HolderSelectEvent event = generateAfterChangeEvent(player, newHolder, oldHolder);
+			plugin.fireEventToBukkit(event);
+		}
+		
+		return worked;
 	}
 	
 	

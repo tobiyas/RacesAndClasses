@@ -10,6 +10,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -18,6 +19,8 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -31,8 +34,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 
 public abstract class AbstractBasicTrait implements Trait,
 		TraitWithRestrictions {
@@ -198,6 +201,21 @@ public abstract class AbstractBasicTrait implements Trait,
 			}
 		}
 		
+		//Projectile events. 
+		//We need to get the shooter.
+		if(event instanceof ProjectileHitEvent){
+			ProjectileHitEvent launchEvent = (ProjectileHitEvent) event;
+			LivingEntity shooter = launchEvent.getEntity().getShooter();
+			if(shooter instanceof Player) return (Player) shooter;
+		}
+		
+		if(event instanceof ProjectileLaunchEvent){
+			ProjectileLaunchEvent launchEvent = (ProjectileLaunchEvent) event;
+			LivingEntity shooter = launchEvent.getEntity().getShooter();
+			if(shooter instanceof Player) return (Player) shooter;
+		}
+		
+		
 		if(event instanceof EntityEvent){
 			EntityEvent entityEvent = (EntityEvent) event;
 			if(entityEvent.getEntityType() == EntityType.PLAYER){
@@ -235,14 +253,6 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		
-		if(event instanceof LevelEvent){
-			return Bukkit.getPlayer(((LevelEvent) event).getPlayerName());
-		}
-		
-		if(event instanceof HolderSelectEvent){
-			return ((HolderSelectEvent) event).getPlayer();
-		}
-		
 		if(event instanceof PlayerSendChannelChatMessageEvent){
 			return ((PlayerSendChannelChatMessageEvent) event).getPlayer();
 		}
@@ -270,9 +280,25 @@ public abstract class AbstractBasicTrait implements Trait,
 			}
 		}
 		
-		if(event instanceof PlayerEquipsArmorEvent){
-			return ((PlayerEquipsArmorEvent) event).getPlayer();
+
+		//RaC-Plugin Events:		
+		if(event instanceof LevelEvent){
+			return Bukkit.getPlayer(((LevelEvent) event).getPlayerName());
 		}
+		
+		if(event instanceof HolderSelectEvent){
+			return ((HolderSelectEvent) event).getPlayer();
+		}
+		
+		if(event instanceof PlayerSendChannelChatMessageEvent){
+			return ((PlayerSendChannelChatMessageEvent)event).getPlayer();
+		}
+		
+		if(event instanceof TraitTriggerEvent){
+			return null; //This can not be interesting for a Trait.
+		}
+		
+		
 		
 		return null;
 	}

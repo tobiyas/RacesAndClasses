@@ -9,8 +9,10 @@ import static org.mockito.Mockito.when;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
@@ -29,6 +31,7 @@ public class ManaManagerTest {
 	private void mockRaceManaAddition(double value){
 		RaceContainer raceContainer = mock(RaceContainer.class);
 		when(raceContainer.getManaBonus()).thenReturn(value);
+		when(RacesAndClasses.getPlugin().getConfigManager()).thenReturn(mock(ConfigManager.class, Mockito.RETURNS_DEEP_STUBS));
 		
 		when(RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(playerName)).thenReturn(raceContainer);
 	}

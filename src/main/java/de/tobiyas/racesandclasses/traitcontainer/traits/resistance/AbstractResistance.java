@@ -53,7 +53,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		if(!(event instanceof EntityDamageEvent)) return false;
 		EntityDamageEvent Eevent = (EntityDamageEvent) event;
 		
@@ -86,4 +86,23 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		
 		return value >= otherTrait.value;
 	}
+
+	@Override
+	public boolean canBeTriggered(Event event) {
+		if(!(event instanceof EntityDamageEvent)) return false;
+		EntityDamageEvent Eevent = (EntityDamageEvent) event;
+		
+		Entity entity = Eevent.getEntity();
+		if(!(entity instanceof Player)) return false;
+		Player player = (Player) entity;
+		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
+			if(getResistanceTypes().contains(Eevent.getCause())){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
 }

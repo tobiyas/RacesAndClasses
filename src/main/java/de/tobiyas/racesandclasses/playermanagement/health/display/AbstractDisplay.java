@@ -2,17 +2,54 @@ package de.tobiyas.racesandclasses.playermanagement.health.display;
 
 import org.bukkit.ChatColor;
 
-public abstract class AbstractHealthDisplay implements HealthDisplay{
+public abstract class AbstractDisplay implements Display{
 
+	/**
+	 * The player that this display belongs to
+	 */
 	protected String playerName;
+	
+	/**
+	 * The Color indicating a HIGH amount of left Resource
+	 */
+	protected ChatColor colorHigh = ChatColor.GREEN;
+
+	/**
+	 * The Color indicating a MEDIUM amount of left Resource
+	 */
+	protected ChatColor colorMedium = ChatColor.YELLOW;
+	
+	/**
+	 * The Color indicating a LOW amount of left Resource
+	 */
+	protected ChatColor colorLow = ChatColor.RED;
+	
+	/**
+	 * The Type of Displaying.
+	 */
+	protected final DisplayInfos displayInfo;
+	
+	
 	
 	/**
 	 * Inits with a player
 	 * 
 	 * @param player to display to
 	 */
-	public AbstractHealthDisplay(String playerName) {
+	public AbstractDisplay(String playerName, DisplayInfos displayInfo) {
 		this.playerName = playerName;
+		this.displayInfo = displayInfo;
+		
+		changeColorsToInfo();
+	}
+	
+	/**
+	 * Changes the color according to the Infos passed
+	 */
+	private void changeColorsToInfo(){
+		this.colorLow = displayInfo.getLowValueColor();
+		this.colorMedium = displayInfo.getMidValueColor();
+		this.colorHigh = displayInfo.getHighValueColor();
 	}
 	
 	
@@ -33,9 +70,9 @@ public abstract class AbstractHealthDisplay implements HealthDisplay{
 	protected ChatColor getColorOfPercent(double currentHealth, double maxHealth){
 		double percentage = currentHealth / maxHealth;
 		
-		if(percentage > 0.6) return ChatColor.GREEN;
-		if(percentage >= 0.3) return ChatColor.YELLOW;
-		if(percentage < 0.3) return ChatColor.RED;
+		if(percentage > 0.6) return colorHigh;
+		if(percentage >= 0.3) return colorMedium;
+		if(percentage < 0.3) return colorLow;
 		
 		return ChatColor.LIGHT_PURPLE;
 	}
@@ -54,21 +91,21 @@ public abstract class AbstractHealthDisplay implements HealthDisplay{
 		if(healthPresentBarLength < 0) healthPresentBarLength = 0;
 		if(healthPresentBarLength > healthBarLength) healthPresentBarLength = healthBarLength;
 		
-		String healthLeft = ChatColor.GREEN + "";
+		String healthLeft = colorHigh + "";
 		for(int i = 0; i < healthPresentBarLength; i++){
 			healthLeft += "|";
 			healthBarLength --;
 		}
 		
-		String healthRest = ChatColor.RED + "";
+		String healthRest = colorLow + "";
 		for(; healthBarLength > 0; healthBarLength--){
 			healthRest += "|";
 		}
 		
 		if(currentHealth == maxHealth){
-			healthRest += ChatColor.GREEN + "|";
+			healthRest += colorHigh + "|";
 		}else{
-			healthRest += ChatColor.RED + "|";
+			healthRest += colorLow + "|";
 		}
 		
 		

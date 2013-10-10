@@ -4,7 +4,7 @@ import org.bukkit.event.HandlerList;
 
 public class LevelDownEvent extends LevelEvent {
 
-private final static HandlerList handlers = new HandlerList();
+	private final static HandlerList handlers = new HandlerList();
 	
 	
 	/**

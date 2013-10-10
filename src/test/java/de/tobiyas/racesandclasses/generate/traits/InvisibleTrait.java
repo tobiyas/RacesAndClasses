@@ -42,13 +42,18 @@ public class InvisibleTrait extends AbstractBasicTrait{
 	}
 
 	@Override
-	public boolean modify(Event event) {
+	public boolean trigger(Event event) {
 		return false;
 	}
 
 	@Override
 	public boolean isBetterThan(Trait trait) {
 		return false;
+	}
+
+	@Override
+	public boolean canBeTriggered(Event event) {
+		return true;
 	}
 
 }

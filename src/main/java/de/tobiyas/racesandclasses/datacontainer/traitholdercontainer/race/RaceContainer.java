@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
@@ -138,5 +139,11 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	protected String getContainerTypeAsString() {
 		return "race";
+	}
+
+
+	@Override
+	public AbstractHolderManager getHolderManager() {
+		return RacesAndClasses.getPlugin().getRaceManager();
 	}
 }

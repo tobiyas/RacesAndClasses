@@ -23,7 +23,7 @@ public class Consts {
 	public static final String tutorialYML = tutorialPath + "states.yml";
 	
 	//Health
-	public static final int healthBarLength = 20;
+	public static final int displayBarLength = 20;
 	
 	//Debugging
 	public static final int timingLength = 10;
@@ -37,6 +37,7 @@ public class Consts {
 	//Version
 	public static String currentDevStage = "B T";
 	public static String detailedVersionString = "1.0.2 BETA 5 - RC 2";
+	public static final String configVersion = "1.0";
 	
 	
 	//Enchants

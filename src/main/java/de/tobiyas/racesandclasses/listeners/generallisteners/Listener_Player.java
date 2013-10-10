@@ -49,7 +49,7 @@ public class Listener_Player implements Listener {
 		if(container == null || container == plugin.getRaceManager().getDefaultHolder()){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
 			if(container == null){
-				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace);
+				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace, true);
 			}
 		}
 		

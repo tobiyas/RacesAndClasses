@@ -1,5 +1,8 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
+import org.bukkit.Material;
+import org.bukkit.event.Event;
+
 /**
  * This interface indicates that the Trait is a magic Spell.
  * It indicates that it needs magic points to cast.
@@ -27,6 +30,24 @@ public interface MagicSpellTrait {
 	 */
 	public CostType getCostType();
 	
+	
+	/**
+	 * returns the Material Type of CostType.
+	 * <br> Returns null if no Material costType is needed
+	 * 
+	 * @return
+	 */
+	public Material getCastMaterialType();
+	
+	
+	/**
+	 * triggered when the spell should be triggered, but no CostType is present.
+	 * 
+	 * @param event that triggered
+	 * 
+	 * @return true if no message should be sent
+	 */
+	public boolean triggerButDoesNotHaveEnoghCostType(Event event);
 	
 	
 	/**

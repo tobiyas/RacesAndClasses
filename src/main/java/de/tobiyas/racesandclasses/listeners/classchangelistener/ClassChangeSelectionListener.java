@@ -13,11 +13,12 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundException;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.ClassSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 /**
- * This class listens to {@link ClassSelectEvent} + subclasses.
+ * This class listens to {@link AfterClassSelectedEvent} + subclasses.
  * <br>It checks if the selecting player has the Race - selection - possibility to do so (if active).
  * <br>It also checks if the player has permission to this class (if active).
  * 
@@ -49,7 +50,7 @@ public class ClassChangeSelectionListener implements Listener {
 	
 	
 	@EventHandler(ignoreCancelled = true)
-	public void checkRaceHasPermissionForClass(ClassSelectEvent event){
+	public void checkRaceHasPermissionForClass(PreClassSelectEvent event){
 		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaceClassSelectionMatrix()){
@@ -76,7 +77,7 @@ public class ClassChangeSelectionListener implements Listener {
 	
 		
 	@EventHandler(ignoreCancelled = true)
-	public void checkPlayerhasPermissionToClass(ClassSelectEvent event){
+	public void checkPlayerhasPermissionToClass(PreClassSelectEvent event){
 		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForClasses()){
@@ -91,7 +92,7 @@ public class ClassChangeSelectionListener implements Listener {
 	}
 	
 	@EventHandler(ignoreCancelled = true)
-	public void checkPlayerHasUplinkOnChange(ClassSelectEvent event){
+	public void checkPlayerHasUplinkOnChange(PreClassSelectEvent event){
 		String playerName = event.getPlayer().getName();
 		String commandName = "classchange";
 		
@@ -106,8 +107,8 @@ public class ClassChangeSelectionListener implements Listener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void rescanHP(ClassSelectEvent selectEvent){
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void rescanHP(AfterClassSelectedEvent selectEvent){
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		

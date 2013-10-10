@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 
  
@@ -82,7 +83,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private String config_defaultRaceName;
 	private String config_defaultRaceTag;
 	
-	private int config_itemForMagic;
+	private Material config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
 	private boolean config_useRaCInbuildLevelSystem;
@@ -90,6 +91,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private boolean config_savePlayerDataToDB;
 	
 	private int config_debugTimeAfterLoginOpening;
+	private boolean config_useAutoUpdater;
 	
 	
 	/**
@@ -99,6 +101,12 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	public GeneralConfig(){
 		this.plugin = RacesAndClasses.getPlugin();
 		setupConfiguration();
+		reload();
+		
+		ConfigTemplate template = new ConfigTemplate();
+		if(template.isOldConfigVersion()){
+			template.writeTemplate();
+		}
 	}
 
 	/**
@@ -109,62 +117,61 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private void setupConfiguration(){
 		FileConfiguration config = plugin.getConfig();
 
-		config.addDefault("chat.whisper.enable", true);
-		config.addDefault("chat.race.encryptForOthers", false);
-		config.addDefault("chat.channel.enable", true);
+		config.addDefault("chat_whisper_enable", true);
+		config.addDefault("chat_race_encryptForOthers", false);
+		config.addDefault("chat_channel_enable", true);
 		
-		config.addDefault("health.defaultHealth", 20);
-		config.addDefault("health.bar.inChat.enable", true);
+		config.addDefault("health_defaultHealth", 20);
+		config.addDefault("health_bar_inChat_enable", true);
 		
-		config.addDefault("debug.outputs.enable", true);
-		config.addDefault("debug.outputs.errorUpload", true);
+		config.addDefault("debug_outputs_enable", true);
+		config.addDefault("debug_outputs_errorUpload", true);
 		
-		config.addDefault("classes.enable", true);
+		config.addDefault("classes_enable", true);
 		
-		config.addDefault("metrics.enable", true);
+		config.addDefault("metrics_enable", true);
 		
-		config.addDefault("races.remindDefaultRace.enable", true);
-		config.addDefault("races.remindDefaultRace.interval", 10);
-		config.addDefault("races.display.adaptListName", true);
+		config.addDefault("updater_enableAutoUpdates", false);
 		
-		config.addDefault("races.drops.enable", true);
-		config.addDefault("races.permissions.usePermissionsForEachRace", false);
-		config.addDefault("races.change.uplinkInSeconds", 0);
-		config.addDefault("races.defaultrace.name", "DefaultRace");
-		config.addDefault("races.defaultrace.tag", "[NoRace]");
-		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace.enable", true);
-		config.addDefault("races.openRaceSelectionOnJoinWhenNoRace.timeToOpenAfterLoginInSeconds", 2);
-		config.addDefault("races.cancleGUIExitWhenNoRacePresent.enable", true);
+		config.addDefault("races_remindDefaultRace_enable", true);
+		config.addDefault("races_remindDefaultRace_interval", 10);
+		config.addDefault("races_display_adaptListName", true);
+		
+		config.addDefault("races_drops.enable", true);
+		config.addDefault("races_permissions_usePermissionsForEachRace", false);
+		config.addDefault("races_change_uplinkInSeconds", 0);
+		config.addDefault("races_defaultrace_name", "DefaultRace");
+		config.addDefault("races_defaultrace_tag", "[NoRace]");
+		config.addDefault("races_openRaceSelectionOnJoinWhenNoRace_enable", true);
+		config.addDefault("races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds", 2);
+		config.addDefault("races_cancleGUIExitWhenNoRacePresent_enable", true);
 		
 		
-		config.addDefault("classes.permissions.usePermissionsForEachClasses", false);
-		config.addDefault("classes.useRaceClassSelectionMatrix", false);
-		config.addDefault("classes.change.uplinkInSeconds", 0);
-		config.addDefault("classes.openClassSelectionAfterRaceSelectionWhenNoClass.enable", true);
-		config.addDefault("classes.cancleGUIExitWhenNoClassPresent.enable", true);
-
+		config.addDefault("classes_permissions_usePermissionsForEachClasses", false);
+		config.addDefault("classes_useRaceClassSelectionMatrix", false);
+		config.addDefault("classes_change_uplinkInSeconds", 0);
+		config.addDefault("classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable", true);
+		config.addDefault("classes_cancleGUIExitWhenNoClassPresent_enable", true);
 		
-		config.addDefault("tutorials.enable", true);
+		config.addDefault("tutorials_enable", true);
 		
-		config.addDefault("language.used", "en");
+		config.addDefault("language_used", "en");
 		
-		config.addDefault("worlds.disableOn", Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
+		config.addDefault("worlds_disableOn", Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		
-		config.addDefault("general.copyDefaultTraitsOnStartup", true);
-		config.addDefault("general.saving.savePlayerDataToDB", true);
+		config.addDefault("general_copyDefaultTraitsOnStartup", true);
+		config.addDefault("general_saving.savePlayerDataToDB", true);
 		
-		config.addDefault("races.gui.enable", true);
-		config.addDefault("classes.gui.enable", true);
+		config.addDefault("races_gui_enable", true);
+		config.addDefault("classes_gui_enable", true);
 		
-		config.addDefault("magic.wandId", Material.STICK.getId());
+		config.addDefault("magic_wandId", Material.STICK.name());
 		
-		config.addDefault("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
-		config.addDefault("level.useRaCInbuildLevelSystem", true);
+		config.addDefault("level_mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		config.addDefault("level_useRaCInbuildLevelSystem", true);
 		
 		
 		config.options().copyDefaults(true);
-		plugin.saveConfig();
-
 	}
 	
 	
@@ -175,67 +182,78 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 
-		config_channels_enable = config.getBoolean("chat.channel.enable", true);
-		config_racechat_encrypt = config.getBoolean("chat.race.encryptForOthers", false);		
+		config_channels_enable = config.getBoolean("chat_channel_enable", true);
+		config_racechat_encrypt = config.getBoolean("chat_race_encryptForOthers", false);		
 		
-		config_whisper_enable = config.getBoolean("chat.channelwhisper.enable", true);
+		config_whisper_enable = config.getBoolean("chat_channelwhisper_enable", true);
 		
-		config_defaultHealth = config.getDouble("health.defaultHealth", 20d);
+		config_defaultHealth = config.getDouble("health_defaultHealth", 20d);
 		
-		config_enableDebugOutputs = config.getBoolean("debug.outputs.enable", true);
-		config_enableErrorUpload = config.getBoolean("debug.outputs.errorUpload", true);
+		config_enableDebugOutputs = config.getBoolean("debug_outputs_enable", true);
+		config_enableErrorUpload = config.getBoolean("debug_outputs_errorUpload", true);
 		
-		config_classes_enable = config.getBoolean("classes.enable", true);
-		config_metrics_enabled = config.getBoolean("metrics.enable", true);
+		config_classes_enable = config.getBoolean("classes_enable", true);
+		config_metrics_enabled = config.getBoolean("metrics_enable", true);
 		
-		config_activate_reminder = config.getBoolean("races.remindDefaultRace.enable", true);
-		config_reminder_interval = config.getInt("races.remindDefaultRace.interval", 10);
-		config_adaptListName = config.getBoolean("races.display.adaptListName", true);
+		config_activate_reminder = config.getBoolean("races_remindDefaultRace_enable", true);
+		config_reminder_interval = config.getInt("races_remindDefaultRace_interval", 10);
+		config_adaptListName = config.getBoolean("races_display_adaptListName", true);
 		
-		config_enable_expDropBonus = config.getBoolean("races.drops.enable", true);
+		config_enable_expDropBonus = config.getBoolean("races_drops_enable", true);
 		
-		config_tutorials_enable = config.getBoolean("tutorials.enable", true);
+		config_tutorials_enable = config.getBoolean("tutorials_enable", true);
 		
-		config_usedLanguage = config.getString("language.used", "en");
+		config_usedLanguage = config.getString("language_used", "en");
 		
-		config_enable_healthbar_in_chat = config.getBoolean("health.bar.inChat.enable", true);
+		config_enable_healthbar_in_chat = config.getBoolean("health_bar_inChat_enable", true);
 		
-		config_usePermissionsForRaces = config.getBoolean("races.permissions.usePermissionsForEachRace", false);
-		config_usePermissionsForClasses = config.getBoolean("classes.permissions.usePermissionsForEachClasses", false);
+		config_usePermissionsForRaces = config.getBoolean("races_permissions_usePermissionsForEachRace", false);
+		config_usePermissionsForClasses = config.getBoolean("classes_permissions_usePermissionsForEachClasses", false);
 		
-		config_copyDefaultTraitsOnStartup = config.getBoolean("general.copyDefaultTraitsOnStartup", true);
+		config_copyDefaultTraitsOnStartup = config.getBoolean("general_copyDefaultTraitsOnStartup", true);
 		
-		config_useRaceClassSelectionMatrix = config.getBoolean("classes.useRaceClassSelectionMatrix", false);
+		config_useRaceClassSelectionMatrix = config.getBoolean("classes_useRaceClassSelectionMatrix", false);
 		
-		config_classChangeCommandUplink = config.getInt("classes.change.uplinkInSeconds", 0);
+		config_classChangeCommandUplink = config.getInt("classes_change_uplinkInSeconds", 0);
 		
-		config_raceChangeCommandUplink = config.getInt("races.change.uplinkInSeconds", 0);
+		config_raceChangeCommandUplink = config.getInt("races_change_uplinkInSeconds", 0);
 		
-		config_useRaceGUIToSelect = config.getBoolean("races.gui.enable", true);
-		config_useClassGUIToSelect = config.getBoolean("classes.gui.enable", true);
+		config_useRaceGUIToSelect = config.getBoolean("races_gui_enable", true);
+		config_useClassGUIToSelect = config.getBoolean("classes_gui_enable", true);
 		
-		config_defaultRaceName = config.getString("races.defaultrace.name", "DefaultRace");
-		config_defaultRaceTag = config.getString("races.defaultrace.tag", "[NoRace]");
+		config_defaultRaceName = config.getString("races_defaultrace_name", "DefaultRace");
+		config_defaultRaceTag = config.getString("races_defaultrace_tag", "[NoRace]");
 		
-		config_itemForMagic = config.getInt("magic.wandId", Material.STICK.getId());
+		if(config.isString("magic_wandId")){
+			String itemName = config.getString("magic_wandId", "STICK");
+			config_itemForMagic = Material.getMaterial(itemName.toUpperCase());
+			if(config_itemForMagic == null){
+				config_itemForMagic = Material.STICK;
+			}
+		}else{
+			int itemId = config.getInt("magic_wandId", 280);
+			config_itemForMagic = Material.getMaterial(itemId);
+		}
 		
 		
-		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean("classes.openClassSelectionAfterRaceSelectionWhenNoClass.enable", true);
-		config_cancleGUIExitWhenNoClassPresent = config.getBoolean("classes.cancleGUIExitWhenNoClassPresent.enable", true);
-		config_openRaceSelectionOnJoinWhenNoRace = config.getBoolean("races.openRaceSelectionOnJoinWhenNoRace.enable", true);
-		config_cancleGUIExitWhenNoRacePresent = config.getBoolean("races.cancleGUIExitWhenNoRacePresent.enable", true);
-		config_debugTimeAfterLoginOpening = config.getInt("races.openRaceSelectionOnJoinWhenNoRace.timeToOpenAfterLoginInSeconds", 2);
+		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean("classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable", true);
+		config_cancleGUIExitWhenNoClassPresent = config.getBoolean("classes_cancleGUIExitWhenNoClassPresent_enable", true);
+		config_openRaceSelectionOnJoinWhenNoRace = config.getBoolean("races_openRaceSelectionOnJoinWhenNoRace_enable", true);
+		config_cancleGUIExitWhenNoRacePresent = config.getBoolean("races_cancleGUIExitWhenNoRacePresent_enable", true);
+		config_debugTimeAfterLoginOpening = config.getInt("races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds", 2);
 		
-		config_savePlayerDataToDB = config.getBoolean("general.saving.savePlayerDataToDB", true);
-		config_mapExpPerLevelCalculationString = config.getString("level.mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
-		config_useRaCInbuildLevelSystem = config.getBoolean("level.useRaCInbuildLevelSystem", true);
+		config_savePlayerDataToDB = config.getBoolean("general_saving_savePlayerDataToDB", true);
+		config_mapExpPerLevelCalculationString = config.getString("level_mapExpPerLevelCalculationString", "{level} * {level} * {level} * 1000");
+		config_useRaCInbuildLevelSystem = config.getBoolean("level_useRaCInbuildLevelSystem", true);
+		
+		config_useAutoUpdater = config.getBoolean("updater_enableAutoUpdates", false);
 		
 		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
 			config_mapExpPerLevelCalculationString = "{level} * {level} * {level} * 1000";
 		}
 		
-		List<String> temp_config_worldsDisabled = config.getStringList("worlds.disableOn");
+		List<String> temp_config_worldsDisabled = config.getStringList("worlds_disableOn");
 		
 		
 		//be sure to have lower case to not be case sensitive
@@ -362,7 +380,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	/**
 	 * @return the config_itemForMagic
 	 */
-	public int getConfig_itemForMagic() {
+	public Material getConfig_itemForMagic() {
 		return config_itemForMagic;
 	}
 
@@ -407,6 +425,10 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 
 	public boolean isConfig_useRaCInbuildLevelSystem() {
 		return config_useRaCInbuildLevelSystem;
+	}
+
+	public boolean isConfig_useAutoUpdater() {
+		return config_useAutoUpdater;
 	}
 
 	public int getConfig_debugTimeAfterLoginOpening() {

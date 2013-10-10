@@ -80,6 +80,6 @@ public class ClassAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(playerName, className);
+		return manager.changePlayerHolder(playerName, className, true);
 	}
 }

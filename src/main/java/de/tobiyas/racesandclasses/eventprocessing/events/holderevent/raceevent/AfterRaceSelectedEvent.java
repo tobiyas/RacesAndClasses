@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 
-public class RaceSelectEvent extends HolderSelectEvent{
+public class AfterRaceSelectedEvent extends HolderSelectEvent{
 
 	/**
 	 * The static list of all handlers that are interested in this event
@@ -20,7 +20,7 @@ public class RaceSelectEvent extends HolderSelectEvent{
 	 * @param player that selected the class
 	 * @param raceToSelect that was selected
 	 */
-	public RaceSelectEvent(Player player, RaceContainer raceToSelect) {
+	public AfterRaceSelectedEvent(Player player, RaceContainer raceToSelect) {
 		super(player, raceToSelect);
 	}
 	

@@ -2,8 +2,8 @@ package de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -11,17 +11,12 @@ import org.bukkit.inventory.ItemStack;
  * 
  * @author Tobiyas
  */
-public class PlayerEquipsArmorEvent extends Event implements Cancellable{
+public class PlayerEquipsArmorEvent extends PlayerEvent implements Cancellable{
 	
 	/**
 	 * Some strange list. Whatever it tells...
 	 */
 	private static final HandlerList handlers = new HandlerList();
-	
-	/**
-	 * The player equipping the armor
-	 */
-	private final Player player;
 	
 	
 	/**
@@ -39,21 +34,11 @@ public class PlayerEquipsArmorEvent extends Event implements Cancellable{
 	 * @param armor
 	 */
 	public PlayerEquipsArmorEvent(Player player, ItemStack armorItem) {
-		super(false);
+		super(player);
 		
-		this.player = player;
 		this.armorItem = armorItem;
 		
 	}
-
-	
-	
-	
-    public Player getPlayer() {
-		return player;
-	}
-
-
 
 
 	public ItemStack getArmorItem() {

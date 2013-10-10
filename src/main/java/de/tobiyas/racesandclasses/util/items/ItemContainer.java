@@ -2,12 +2,13 @@ package de.tobiyas.racesandclasses.util.items;
 
 import java.util.Random;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemContainer {
 
-	private int itemID;
+	private Material itemMaterial;
 	private int damageValue;
 	private int minAmount;
 	private int maxAmount;
@@ -17,18 +18,11 @@ public class ItemContainer {
 	private Random rand;
 	
 	public ItemContainer(int itemID, int damageValue, int minAmount, int maxAmount, double probability){
-		this.itemID = itemID;
-		this.damageValue = damageValue;
-		this.minAmount = minAmount;
-		this.maxAmount = maxAmount;
-		this.probability = probability;
-		this.randomEnchants = 0;
-		
-		this.rand = new Random();
+		this(itemID, damageValue, minAmount, maxAmount, probability, 0);
 	}
 	
 	public ItemContainer(int itemID, int damageValue, int minAmount, int maxAmount, double probability, int randomEnchants){
-		this.itemID = itemID;
+		this.itemMaterial = Material.getMaterial(itemID);
 		this.damageValue = damageValue;
 		this.minAmount = minAmount;
 		this.maxAmount = maxAmount;
@@ -63,9 +57,9 @@ public class ItemContainer {
 	private ItemStack generateItem(int amount){
 		ItemStack item = null;
 		if(damageValue == -1)
-			item = new ItemStack(itemID, amount);
+			item = new ItemStack(itemMaterial, amount);
 		else	
-			item = new ItemStack(itemID, amount, (short) damageValue);
+			item = new ItemStack(itemMaterial, amount, (short) damageValue);
 		
 		if(randomEnchants != 0)
 			enchantItem(item);

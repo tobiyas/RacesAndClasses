@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
@@ -147,5 +148,8 @@ public class ClassContainer extends AbstractTraitHolder{
 		return classHealthModValue;
 	}
 	
-	
+	@Override
+	public AbstractHolderManager getHolderManager() {
+		return RacesAndClasses.getPlugin().getClassManager();
+	}
 }

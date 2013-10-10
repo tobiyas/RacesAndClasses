@@ -236,7 +236,6 @@ public class TraitStore {
 			Trait trait = buildTrait(traitName, null);
 			
 			registerTrait(trait);
-			trait.generalInit();
 			return trait;
 			
 		}catch(TraitNotFoundException e){

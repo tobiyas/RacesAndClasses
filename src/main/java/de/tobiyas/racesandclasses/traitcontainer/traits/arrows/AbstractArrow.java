@@ -28,13 +28,15 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 	protected int duration;
 	protected double totalDamage;
 	
+	protected int uplinkTime = 0;
 	
-	@Override	
-	public boolean modify(Event event) {
+	
+	@Override
+	public boolean canBeTriggered(Event event){
 		if(!(event instanceof PlayerInteractEvent || 
-			event instanceof EntityShootBowEvent || 
-			event instanceof ProjectileHitEvent ||
-			event instanceof EntityDamageByEntityEvent)) return false;
+				event instanceof EntityShootBowEvent || 
+				event instanceof ProjectileHitEvent ||
+				event instanceof EntityDamageByEntityEvent)) return false;
 		
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){
@@ -42,10 +44,12 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 			if(!(Eevent.getAction() == Action.LEFT_CLICK_AIR || Eevent.getAction() == Action.LEFT_CLICK_BLOCK)) return false;
 
 			Player player = Eevent.getPlayer();
+			if(!isThisArrow(player)) return false;
+			
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 			if(player.getItemInHand().getType() != Material.BOW) return false;
 	
-			if(changeArrowType(player)) return true;
+			return true;
 		}
 			
 		//Projectile launch
@@ -54,12 +58,9 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
 			Player player = (Player) Eevent.getEntity();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			if(!isThisArrow(player)) return false;
 			
-			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
-			AbstractArrow arrow = arrowManager.getCurrentArrow();
-			if(arrow == null || arrow != this) return false;
-			
-			return onShoot(Eevent);
+			return true;
 		}
 		
 		//Arrow Hit Location
@@ -73,13 +74,9 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 			
 			Player player = (Player) arrow.getShooter();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			if(!isThisArrow(player)) return false;
 			
-			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
-			AbstractArrow currentArrow = arrowManager.getCurrentArrow();
-			if(currentArrow == null) return false;
-			
-			boolean change = onHitLocation(Eevent);
-			return change;
+			return true;
 		}
 		
 		//Arrow Hits target
@@ -98,11 +95,52 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			if(!isThisArrow(player)) return false;
 
-			ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
-			AbstractArrow arrow = arrowManager.getCurrentArrow();
-			if(arrow == null || arrow != this) return false;
-
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Checks if the Arrow is active at the moment from the passed player
+	 * 
+	 * @param player to check
+	 * @return true if active, false if not.
+	 */
+	private boolean isThisArrow(Player player){
+		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
+		AbstractArrow arrow = arrowManager.getCurrentArrow();
+		if(arrow == null || arrow != this) return false;
+		return true;
+	}
+	
+	@Override	
+	public boolean trigger(Event event) {
+		//Change ArrowType
+		if(event instanceof PlayerInteractEvent){
+			PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
+			changeArrowType(Eevent.getPlayer());
+			return false;
+		}
+			
+		//Projectile launch
+		if(event instanceof EntityShootBowEvent){
+			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;			
+			return onShoot(Eevent);
+		}
+		
+		//Arrow Hit Location
+		if(event instanceof ProjectileHitEvent){
+			ProjectileHitEvent Eevent = (ProjectileHitEvent) event;
+			boolean change = onHitLocation(Eevent);
+			return change;
+		}
+		
+		//Arrow Hits target
+		if(event instanceof EntityDamageByEntityEvent){
+			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 			boolean change = onHitEntity(Eevent);
 			Eevent.getDamager().remove();
 			return change;
@@ -113,29 +151,48 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 	
 	/**
 	 * Changes to the next arrow.
-	 * 
-	 * 
-	 * @return
 	 */
-	private boolean changeArrowType(Player player){
+	protected void changeArrowType(Player player){
 		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName());
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
-		if(arrow == null || arrow != this) return false;
+		if(arrow == null || arrow != this) return;
 		
 		AbstractArrow newArrow = arrowManager.nextArrow();
 		if(newArrow != null && newArrow != arrow){
 			player.sendMessage(ChatColor.GREEN + "Switched arrows to: " + ChatColor.LIGHT_PURPLE + newArrow.getArrowName());
 		}
 		
-		return true;
 	}
 	
+	/**
+	 * This is called when a Player shoots an Arrow with this ArrowTrait present
+	 * 
+	 * @param event that was triggered
+	 * @return true if a cooldown should be triggered
+	 */
 	protected abstract boolean onShoot(EntityShootBowEvent event);
 	
+	/**
+	 * This is triggered when the Player Hits an Entity with it's arrow
+	 * 
+	 * @param event that triggered the event
+	 * @return true if an Cooldown should be triggered
+	 */
 	protected abstract boolean onHitEntity(EntityDamageByEntityEvent event);
 	
+	/**
+	 * This is triggered when the Player hits an Location
+	 * 
+	 * @param event that triggered the event
+	 * @return true if an Cooldown should be triggered
+	 */
 	protected abstract boolean onHitLocation(ProjectileHitEvent event);
 	
+	/**
+	 * Returns the name of the Arrow type
+	 * 
+	 * @return
+	 */
 	protected abstract String getArrowName();
 	
 	
@@ -156,4 +213,28 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 	public String toString(){
 		return getName();
 	}
+
+	@Override
+	public int getMaxUplinkTime() {
+		return uplinkTime;
+	}
+
+	@Override
+	public boolean triggerButHasUplink(Event event) {
+		if(event instanceof PlayerInteractEvent){
+			changeArrowType(((PlayerInteractEvent) event).getPlayer());
+			return true;
+		}
+		
+		if(event instanceof ProjectileHitEvent){
+			return true;
+		}
+		
+		if(event instanceof EntityDamageByEntityEvent){
+			return true;
+		}
+		
+		return false;
+	}
+	
 }

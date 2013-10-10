@@ -81,5 +81,17 @@ public class RotatableList<T> {
 	public List<T> getAllEntries(){
 		return entries;
 	}
+
+	
+	/**
+	 * Returns the size of the list
+	 * 
+	 * @return size of list
+	 */
+	public int size() {
+		return entries != null ? entries.size() : 0;
+	}
+	
+	
 	
 }
