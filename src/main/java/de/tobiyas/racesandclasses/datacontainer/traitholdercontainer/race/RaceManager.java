@@ -162,4 +162,16 @@ public class RaceManager extends AbstractHolderManager {
 		return new AfterRaceChangedEvent(Bukkit.getPlayer(player), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
 
+	@Override
+	protected AbstractTraitHolder getStartingHolder() {
+		String race = plugin.getConfigManager().getGeneralConfig().getConfig_takeRaceWhenNoRace();
+		if(race == null || "".equals(race)){
+			return getDefaultHolder();
+		}
+		
+		AbstractTraitHolder holder = getHolderByName(race);
+		
+		return holder != null ? holder : getDefaultHolder();
+	}
+
 }

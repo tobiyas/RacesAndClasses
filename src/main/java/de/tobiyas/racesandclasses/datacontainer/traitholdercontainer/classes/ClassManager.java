@@ -89,4 +89,16 @@ public class ClassManager extends AbstractHolderManager{
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
 		return new AfterClassChangedEvent(Bukkit.getPlayer(player), (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}
+	
+	@Override
+	protected AbstractTraitHolder getStartingHolder() {
+		String className = plugin.getConfigManager().getGeneralConfig().getConfig_takeClassWhenNoClass();
+		if(className == null || "".equals(className)){
+			return getDefaultHolder();
+		}
+		
+		AbstractTraitHolder holder = getHolderByName(className);
+		
+		return holder != null ? holder : getDefaultHolder();
+	}
 }

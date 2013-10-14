@@ -349,12 +349,21 @@ public abstract class AbstractHolderManager extends Observable{
 	public AbstractTraitHolder getHolderOfPlayer(String playerName){
 		AbstractTraitHolder holder = memberList.get(playerName);
 		if(holder == null){
-			holder = getDefaultHolder();
+			holder = getStartingHolder();
 			memberList.put(playerName, holder);
 		}
 		
 		return holder;
 	}
+	
+	
+	/**
+	 * This method gets starting Holder.
+	 * <br>This is the one specified in the Config or the Default TraitHolder.
+	 * 
+	 * @return The holder put into (can be null)
+	 */
+	protected abstract AbstractTraitHolder getStartingHolder();
 	
 	
 	/**
