@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -36,6 +39,8 @@ import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendCha
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractBasicTrait implements Trait,
 		TraitWithRestrictions {
@@ -65,6 +70,17 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	
 	/**
+	 * Tells if the Trait only works in the water
+	 */
+	protected boolean onlyInWater = false;
+	
+	/**
+	 * Tells if the Trait only works on land
+	 */
+	protected boolean onlyOnLand = false;
+	
+	
+	/**
 	 * The holder of the Trait.
 	 */
 	protected AbstractTraitHolder holder;
@@ -73,7 +89,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The Config of the Trait
 	 */
-	protected Map<String, String> currentConfig;
+	protected Map<String, Object> currentConfig;
 	
 	
 	
@@ -102,42 +118,59 @@ public abstract class AbstractBasicTrait implements Trait,
 		return holder;
 	}
 
+	
+	@TraitConfigurationNeeded(fields = {
+		@TraitConfigurationField(fieldName = MIN_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
+		@TraitConfigurationField(fieldName = MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
+		@TraitConfigurationField(fieldName = BIOME_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_IN_WATER_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_ON_LAND_PATH, classToExpect = Boolean.class, optional = true)
+	})
+	
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
 		
 		//Reads the min level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MIN_LEVEL_PATH)){
 			try{
-				this.minimumLevel = Integer.parseInt(configMap.get(TraitWithRestrictions.MIN_LEVEL_PATH));
+				this.minimumLevel = (Integer) configMap.get(TraitWithRestrictions.MIN_LEVEL_PATH);
 			}catch(Exception exp){}
 		}
 
 		//Reads the max level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MAX_LEVEL_PATH)){
 			try{
-				this.maximumLevel = Integer.parseInt(configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH));
+				this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
 			}catch(Exception exp){}
 		}
 		
 		//Reads the biomes for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.BIOME_PATH)){
 			try{
-				String stringBiomes = configMap.get(TraitWithRestrictions.BIOME_PATH).toLowerCase();
+				@SuppressWarnings("unchecked")
+				List<String> stringBiomes = (List<String>) configMap.get(TraitWithRestrictions.BIOME_PATH);
 				this.biomes.clear();
 				
-				for(Biome biome : Biome.values()){
-					if(stringBiomes.contains(biome.name().toLowerCase())){
-						this.biomes.add(biome);
+				for(String biome : stringBiomes){
+					biome = biome.toUpperCase();
+					Biome biom = Biome.valueOf(biome);
+					
+					if(biom != null){
+						biomes.add(biom);
 					}
 				}
 			}catch(Exception exp){}
+		}
+		
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_WATER_PATH)){
+			
 		}
 	}
 	
 
 	@Override
-	public Map<String, String> getCurrentconfig(){
+	public Map<String, Object> getCurrentconfig(){
 		return currentConfig;
 	}
 	
@@ -248,8 +281,10 @@ public abstract class AbstractBasicTrait implements Trait,
 			return ((PlayerEvent) event).getPlayer();
 		}
 		
-		if(event instanceof PlayerLeashEntityEvent){
-			return ((PlayerLeashEntityEvent) event).getPlayer();
+		if(CertainVersionChecker.isAbove1_6()){
+			if(event instanceof PlayerLeashEntityEvent){
+				return ((PlayerLeashEntityEvent) event).getPlayer();
+			}
 		}
 		
 		
@@ -330,7 +365,34 @@ public abstract class AbstractBasicTrait implements Trait,
 		Biome currentBiome = player.getLocation().getBlock().getBiome();
 		if(!biomes.contains(currentBiome)) return false;
 		
+		if(onlyInWater){
+			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
+			
+			if(feetblock.getType() != Material.WATER && feetblock.getType() != Material.STATIONARY_WATER){
+				return false;
+			}
+		}
+
+		if(onlyOnLand){
+			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
+			if(feetblock.getType() == Material.WATER || feetblock.getType() == Material.STATIONARY_WATER){
+				return false;
+			}
+		}
+		
 		return true;
 	}
+
+	@Override
+	public boolean isOnlyInWater() {
+		return onlyInWater;
+	}
+
+	@Override
+	public boolean isOnlyOnLand() {
+		return onlyOnLand;
+	}
+	
+	
 	
 }

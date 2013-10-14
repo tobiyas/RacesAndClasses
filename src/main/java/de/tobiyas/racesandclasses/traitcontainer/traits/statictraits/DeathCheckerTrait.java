@@ -85,7 +85,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
 	@Override

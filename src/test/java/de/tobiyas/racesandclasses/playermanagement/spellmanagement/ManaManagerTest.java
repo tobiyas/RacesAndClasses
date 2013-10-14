@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
+import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
@@ -24,14 +24,13 @@ import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 public class ManaManagerTest {
 
 	private ManaManager sut;
-	private String playerName;
+	private String playerName = "player";
 	
 	
 	
 	private void mockRaceManaAddition(double value){
 		RaceContainer raceContainer = mock(RaceContainer.class);
 		when(raceContainer.getManaBonus()).thenReturn(value);
-		when(RacesAndClasses.getPlugin().getConfigManager()).thenReturn(mock(ConfigManager.class, Mockito.RETURNS_DEEP_STUBS));
 		
 		when(RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(playerName)).thenReturn(raceContainer);
 	}
@@ -49,6 +48,10 @@ public class ManaManagerTest {
 	public void setupSut(){
 		GenerateBukkitServer.generateServer();
 		GenerateRaces.generateRaces();
+		
+		when(RacesAndClasses.getPlugin().getConfigManager().getMemberConfigManager()).thenReturn(mock(MemberConfigManager.class, Mockito.RETURNS_DEEP_STUBS));
+		when(RacesAndClasses.getPlugin().getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerName)
+				.getValueDisplayName("healthDisplayType")).thenReturn("score");
 		
 		sut = new ManaManager(playerName);
 	}

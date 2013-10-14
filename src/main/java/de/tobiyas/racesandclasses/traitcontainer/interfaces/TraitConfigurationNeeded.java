@@ -12,13 +12,13 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TraitConfigurationNeeded{
 	/**
-	 * This is a String Array consisting of the String values
+	 * This is a {@link TraitConfigurationField} Array consisting of the String values and the association classes
 	 * wanted for the Configuration.
 	 * 
 	 * The Values are passed after construction with a
 	 * Map<String, String>. ConfigField -> value (as String).
-	 * @return
+	 * 
+	 * @return the Fields the Trait wants
 	 */
-	String[] neededFields() default {};
-	String[] optionalFields() default {};
+	TraitConfigurationField[] fields() default {};
 }

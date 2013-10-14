@@ -71,7 +71,7 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
 	@Override

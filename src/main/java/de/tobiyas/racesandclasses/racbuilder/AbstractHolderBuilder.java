@@ -137,7 +137,7 @@ public abstract class AbstractHolderBuilder {
 	 * @param configuration that satisfied the configuration of the Trait.
 	 * @return true if worked, false if not.
 	 */
-	public boolean addTrait(String traitName, Map<String, String> configuration){
+	public boolean addTrait(String traitName, Map<String, Object> configuration){
 		if(containsTrait(traitName)) removeTrait(traitName);
 		
 		try{
@@ -379,7 +379,7 @@ public abstract class AbstractHolderBuilder {
 		for(Trait trait : traitSet){
 			holderConfig.createSection(name + ".traits." + trait.getName());
 			for(String key : trait.getCurrentconfig().keySet()){
-				String value = trait.getCurrentconfig().get(key);
+				Object value = trait.getCurrentconfig().get(key);
 				
 				holderConfig.set(name + ".traits." + trait.getName() + "." + key, value);
 			}

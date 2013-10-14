@@ -21,6 +21,16 @@ public interface TraitWithRestrictions {
 	 * The Biomes to use.
 	 */
 	public static final String BIOME_PATH = "biomes";
+
+	/**
+	 * Trait works only in water
+	 */
+	public static final String ONLY_IN_WATER_PATH = "onlyInWater";
+
+	/**
+	 * Trait works only on Land
+	 */
+	public static final String ONLY_ON_LAND_PATH = "onlyOnLand";
 	
 	
 	
@@ -49,11 +59,28 @@ public interface TraitWithRestrictions {
 
 
 	/**
+	 * Returns if the Trait only triggers in the water
+	 * 
+	 * @return true if works only in water
+	 */
+	public boolean isOnlyInWater();
+
+	
+	/**
+	 * Returns if the Trait only triggers on land
+	 * 
+	 * @return true if works only on land
+	 */
+	public boolean isOnlyOnLand();
+
+	/**
 	 * Checks the Restrictions of the Trait
 	 * for a player passed.
 	 * 
 	 * @param player
 	 * @return
 	 */
-	public boolean checkRestrictions(Player player);	
+	public boolean checkRestrictions(Player player);
+	
+	
 }

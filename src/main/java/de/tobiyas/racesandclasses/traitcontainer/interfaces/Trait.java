@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public interface Trait{
 	
@@ -48,11 +49,13 @@ public interface Trait{
 	 * Sets the Configuration of the Trait
 	 * 
 	 * <br>IMPORTATNT: This method has to be annotated with {@link TraitConfigurationNeeded}
-	 * <br>For Example: @TraitConfigurationNeeded(neededFields = {"operation", "value"})
+	 * <br>For Example: @TraitConfigurationNeeded({ @TraitConfigurationField("value", "Integer.class") })
 	 * 
 	 * @param map to set the config with.
+	 * 
+	 * @throws throws an Config Exception if something gone wrong with configuring.
 	 */
-	public void setConfiguration(Map<String, String> configMap);
+	public void setConfiguration(Map<String, Object> configurationMap) throws TraitConfigurationFailedException;
 	
 	
 	/**
@@ -67,7 +70,7 @@ public interface Trait{
 	 * 
 	 * @return the map of the config already passed.
 	 */
-	public Map<String, String> getCurrentconfig();
+	public Map<String, Object> getCurrentconfig();
 	
 	/**
 	 * The general modify that is called, when the event wanted triggered.

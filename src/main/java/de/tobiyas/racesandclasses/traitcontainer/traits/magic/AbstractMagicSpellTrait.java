@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
+import java.util.Map;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,9 +14,12 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait, TraitWithUplink {
 
@@ -245,18 +250,45 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	protected abstract boolean magicSpellTriggered(Player player);
 
 	
+	
+	
+	//This is just for Mana + CostType
+	@TraitConfigurationNeeded( fields = {
+			@TraitConfigurationField(fieldName = "mana", classToExpect = Double.class),
+			@TraitConfigurationField(fieldName = "costType", classToExpect = String.class, optional = true),
+			@TraitConfigurationField(fieldName = "item", classToExpect = String.class, optional = true)
+		})
 	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
-		this.traitHolder = abstractTraitHolder;
+	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+		super.setConfiguration(configMap);
+		
+		cost = (Double) configMap.get("mana");
+		
+		if(configMap.containsKey(costType)){
+			String costTypeName = (String) configMap.get("costType");
+			costType = CostType.tryParse(costTypeName);
+			if(costType == null){
+				throw new TraitConfigurationFailedException(getName() + " is incorrect configured. costType could not be read.");
+			}
+			
+			if(costType == CostType.ITEM){
+				if(!configMap.containsKey("item")){
+					throw new TraitConfigurationFailedException(getName() + " is incorrect configured. 'costType' was ITEM but no Item is specified at 'item'.");
+				}
+				
+				String material = (String) configMap.get("item");
+				materialForCasting = Material.valueOf(material);
+				if(materialForCasting == null){
+					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
+							+ " 'costType' was ITEM but the item read is not an Item. Items are CAPITAL. "
+							+ "See 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' for all Materials");
+				}
+			}
+			
+		}
 	}
 
-	
-	@Override
-	public AbstractTraitHolder getTraitHolder() {
-		return traitHolder;
-	}
 
-	
 	@Override
 	public double getCost(){
 		return cost;

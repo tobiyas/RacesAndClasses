@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.commands.statistics;
 
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -75,6 +77,14 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 		double eventsPerMin = StatisticAPI.getTotalTriggersOfTraitPerMinute(traitName);
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Events / Minute on Trait " + ChatColor.DARK_PURPLE + traitName 
 				+ ChatColor.LIGHT_PURPLE + ": " + ChatColor.AQUA + eventsPerMin);
+		
+		long timeUsedForTrait = StatisticAPI.getTraitsUsedTime(traitName);
+		String formated = String.format("%d min, %d sec", 
+			    TimeUnit.MILLISECONDS.toMinutes(timeUsedForTrait),
+			    TimeUnit.MILLISECONDS.toSeconds(timeUsedForTrait) - 
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeUsedForTrait))
+			);
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Time used for Trait: " + ChatColor.AQUA + formated);
 	}
 
 
@@ -97,6 +107,14 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 		
 		double eventsPerMin = StatisticAPI.getEventsTotalPerMinute();
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Events / Minute: " + ChatColor.AQUA + eventsPerMin);
+		
+		long totalTimeUsed = StatisticAPI.getTotalTraitsUsedTime();
+		String formated = String.format("%d min, %d sec", 
+			    TimeUnit.MILLISECONDS.toMinutes(totalTimeUsed),
+			    TimeUnit.MILLISECONDS.toSeconds(totalTimeUsed) - 
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalTimeUsed))
+			);
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Time used in Total: " + ChatColor.AQUA + formated);
 		
 	}
 

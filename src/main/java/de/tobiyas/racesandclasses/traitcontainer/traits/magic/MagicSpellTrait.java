@@ -79,6 +79,28 @@ public interface MagicSpellTrait {
 			
 			return pre + rest;
 		}
+		
+		
+		/**
+		 * Tries to parse the CostType by name.
+		 * Returns null if not parsable.
+		 * 
+		 * @param costTypeName to parse
+		 * @return CostType parsed
+		 */
+		public static CostType tryParse(String costTypeName){
+			for(CostType type : values()){
+				if(type.name().equalsIgnoreCase(costTypeName)){
+					return type;
+				}
+			}
+			
+			if(costTypeName.equalsIgnoreCase("leben")){
+				return HEALTH;
+			}
+			
+			return null;
+		}
 	}
 	
 }

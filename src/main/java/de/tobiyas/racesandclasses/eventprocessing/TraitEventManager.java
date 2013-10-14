@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class TraitEventManager{
 	private static long calls = 0;
 	
 	private static TraitEventManager manager;
-	private HashMap<Class<?>, HashSet<Trait>> traitList;
+	private HashMap<Class<?>, Set<Trait>> traitList;
 	private HashMap<Integer, Long> eventIDs;
 	
 	private List<String> registeredEventsAsName = new LinkedList<String>();
@@ -43,7 +44,7 @@ public class TraitEventManager{
 		plugin = RacesAndClasses.getPlugin();
 		TraitsList.initTraits();
 		manager = this;
-		traitList = new HashMap<Class<?>, HashSet<Trait>>();
+		traitList = new HashMap<Class<?>, Set<Trait>>();
 		eventIDs = new HashMap<Integer, Long>();
 		new DoubleEventRemover(this);
 	}
@@ -90,6 +91,7 @@ public class TraitEventManager{
 		
 		
 		for(Trait trait: traitsToCheck){
+			long timeBefore = System.currentTimeMillis();
 			try{
 				Player player = trait.getReleventPlayer(event);
 				
@@ -166,6 +168,8 @@ public class TraitEventManager{
 				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of holder: " + 
 						holderName + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());
 				plugin.getDebugLogger().logStackTrace(e);
+			}finally{
+				plugin.getStatistics().eventTime(trait.getName(), System.currentTimeMillis() - timeBefore);
 			}
 		}
 		
@@ -212,10 +216,10 @@ public class TraitEventManager{
 	}
 	
 	
-	private void registerTraitIntern(Trait trait, HashSet<Class<? extends Event>> events, int priority){
+	private void registerTraitIntern(Trait trait, Set<Class<? extends Event>> events, int priority){
 		//TODO register priority
 		for(Class<? extends Event> clazz : events){
-			HashSet<Trait> traits = traitList.get(clazz);
+			Set<Trait> traits = traitList.get(clazz);
 			if(traits == null){
 				traits = new HashSet<Trait>();
 				traitList.put(clazz, traits);
@@ -275,7 +279,7 @@ public class TraitEventManager{
 	}
 	
 	
-	public static void registerTrait(Trait trait, HashSet<Class<? extends Event>> events, int priority){
+	public static void registerTrait(Trait trait, Set<Class<? extends Event>> events, int priority){
 		getInstance().registerTraitIntern(trait, events, priority);
 	}
 	

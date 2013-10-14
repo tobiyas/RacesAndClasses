@@ -197,15 +197,15 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 		
 		if(!(trait instanceof AbstractBasicTrait) ) return configOptions;
 		
-		Map<String, String> traitconfigMap = trait.getCurrentconfig();
+		Map<String, Object> traitconfigMap = trait.getCurrentconfig();
 		if(traitconfigMap == null) return configOptions;
 		
 		for(String key : traitconfigMap.keySet()){
-			String value = traitconfigMap.get(key);
+			Object value = traitconfigMap.get(key);
 			
-			ItemStack item = generateItem(Material.ANVIL, key, value);
+			ItemStack item = generateItem(Material.ANVIL, key, value.toString());
 			
-			TraitConfigOptionContainer newOptions = new TraitConfigOptionContainer(key, StatType.STRING, item);
+			TraitConfigOptionContainer newOptions = new TraitConfigOptionContainer(key, StatType.getTypeFromClass(value.getClass()), item);
 			newOptions.setValue(value);
 			
 			configOptions.add(newOptions);
@@ -234,13 +234,13 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 	protected void notifyReopened() {
 		super.notifyReopened();
 		
-		Map<String, String> configMap = new HashMap<String, String>();
+		Map<String, Object> configMap = new HashMap<String, Object>();
 		for(TraitConfigOptionContainer container : currentTraitEditingList){
 			if(!container.isValueSet()){
 				return;
 			}
 			
-			configMap.put(container.getName(), String.valueOf(container.getValue()));
+			configMap.put(container.getName(), container.getValue());
 		}
 		
 		builder.addTrait(currentTraitName, configMap);

@@ -15,7 +15,9 @@ import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatType;
 import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatsSelectionInterfaceFactory;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
+import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 
 public class TraitBuilderInterface extends BasicSelectionInterface {
 
@@ -43,22 +45,26 @@ public class TraitBuilderInterface extends BasicSelectionInterface {
 		
 		try{
 			Class<? extends Trait> traitClass = TraitsList.getClassOfTrait(traitName);
-			TraitConfigurationNeeded neededConfig = traitClass.getMethod("setConfiguration", Map.class)
-					.getAnnotation(TraitConfigurationNeeded.class);
 			
-			for(String neededField : neededConfig.neededFields()){
+			List<TraitConfigurationField> config = TraitConfigParser.getAllTraitConfigFieldsOfTrait(traitClass);
+			for(TraitConfigurationField field : config){
 				
 				boolean skip = false;
 				for(TraitConfigOptionContainer container : this.configList){
-					if(container.getName().equalsIgnoreCase(neededField)) {
+					if(container.getName().equalsIgnoreCase(field.fieldName())) {
 						skip = true;
 					}
 				}
 				
 				if(skip) continue;
 				
-				ItemStack item = generateItem(Material.ANVIL, ChatColor.RED + neededField, new LinkedList<String>());
-				TraitConfigOptionContainer newContainer = new TraitConfigOptionContainer(neededField, StatType.STRING, item);
+				ItemStack item = generateItem(Material.ANVIL, ChatColor.RED + field.fieldName(), new LinkedList<String>());
+				if(field.optional()){
+					ItemMetaUtils.addStringToLore(item, ChatColor.YELLOW + "is optional.");
+				}
+				
+				TraitConfigOptionContainer newContainer = new TraitConfigOptionContainer(field.fieldName(), 
+						StatType.getTypeFromClass(field.classToExpect()), item);
 				this.configList.add(newContainer);
 			}			
 		}catch(Exception exp){}

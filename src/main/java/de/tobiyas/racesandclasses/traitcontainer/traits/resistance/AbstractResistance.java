@@ -13,8 +13,10 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
 
 public abstract class AbstractResistance extends AbstractBasicTrait implements ResistanceInterface {
@@ -44,12 +46,15 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		return operation + " " + value;
 	}
 
-	@TraitConfigurationNeeded(neededFields = {"operation", "value"})
+	@TraitConfigurationNeeded(fields = {
+		@TraitConfigurationField(fieldName = "operation", classToExpect = String.class), 
+		@TraitConfigurationField(fieldName = "value", classToExpect = Double.class)
+	})
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
-		operation = configMap.get("operation");
-		value = Double.parseDouble(configMap.get("value"));
+		operation = (String) configMap.get("operation");
+		value = (Double) configMap.get("value");
 	}
 
 	@Override

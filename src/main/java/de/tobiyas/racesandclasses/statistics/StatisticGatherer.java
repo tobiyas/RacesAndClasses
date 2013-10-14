@@ -17,6 +17,8 @@ public class StatisticGatherer {
 	
 	private Map<String, Long> traitsTriggersTotal = new HashMap<String, Long>();
 	
+	private Map<String, Long> traitTimeNeeded = new HashMap<String, Long>();
+	
 	
 	public StatisticGatherer(long timeStarted) {
 		this.timeStarted = timeStarted;
@@ -99,5 +101,29 @@ public class StatisticGatherer {
 		}
 	}
 
+
+	/**
+	 * Registers the time needed for this trait
+	 * 
+	 * @param name of the Trait
+	 * @param timeNeeded time needed
+	 */
+	public void eventTime(String name, long timeNeeded) {
+		if(traitTimeNeeded.containsKey(name)){
+			timeNeeded += traitTimeNeeded.get(name);
+		}
+		
+		traitTimeNeeded.put(name, timeNeeded);
+	}
+
+	
+	/**
+	 * Returns the times the Traits needed in total
+	 * 
+	 * @return the time traits needed
+	 */
+	public Map<String, Long> getTimeNeededTotal(){
+		return traitTimeNeeded;
+	}
 
 }

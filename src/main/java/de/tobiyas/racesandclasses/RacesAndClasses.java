@@ -67,6 +67,7 @@ import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
+import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
@@ -480,6 +481,7 @@ public class RacesAndClasses extends JavaPlugin{
 		channelManager.saveChannels();
 		tutorialManager.shutDown();
 		Bukkit.getScheduler().cancelTasks(this);
+		TraitStore.destroyClassLoaders();
 		if(useGC){
 			System.gc();
 		}

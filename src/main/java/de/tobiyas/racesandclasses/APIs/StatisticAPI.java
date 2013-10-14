@@ -84,4 +84,46 @@ public class StatisticAPI {
 		double eventsPerM = (double)numberOfEvents / (double)timeTotal;
 		return eventsPerM;
 	}
+	
+	
+	/**
+	 * Returns the Time ALL Traits needed together
+	 * 
+	 * @return the time ALL traits needed
+	 */
+	public static long getTotalTraitsUsedTime(){
+		Map<String, Long> timeMap = plugin.getStatistics().getTimeNeededTotal();
+		
+		long time = 0;
+		for(long timePerTrait : timeMap.values()){
+			time += timePerTrait;
+		}
+		
+		return time;
+	}
+	
+	/**
+	 * Returns the Time the Trait passed needed together.
+	 * Returning -1 means that the Trait does not exist or did not use any time yet.
+	 * 
+	 * @param traitName the Trait name
+	 * 
+	 * @return the time the trait needed
+	 */
+	public static long getTraitsUsedTime(String traitName){
+		Map<String, Long> timeMap = plugin.getStatistics().getTimeNeededTotal();
+		
+		String realTraitName = null;
+		for(String rTraitName : timeMap.keySet()){
+			if(rTraitName.equalsIgnoreCase(traitName)){
+				realTraitName = rTraitName;
+			}
+		}
+		
+		if(realTraitName == null){
+			return -1;
+		}else{
+			return timeMap.get(realTraitName);
+		}
+	}
 }

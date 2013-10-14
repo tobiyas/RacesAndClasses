@@ -3,8 +3,10 @@ package de.tobiyas.racesandclasses.traitcontainer;
 import java.io.File;
 import java.lang.annotation.AnnotationFormatError;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -20,12 +22,32 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.NeedMC1_6;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 
 
 public class TraitStore {
+	
+	
+	/**
+	 * All Classloaders loaded.
+	 */
+	private static Set<ClassLoader> classLoaders = new HashSet<ClassLoader>();
+
+	
+	/**
+	 * Clears all Classloaders linked
+	 */
+	public static void destroyClassLoaders(){
+		for(ClassLoader loader : classLoaders){
+			loader.clearAssertionStatus(); //TODO remove classloader somehow
+		}
+		
+		classLoaders.clear();
+	}
 	
 	
 	/**
@@ -89,22 +111,35 @@ public class TraitStore {
 	 */
 	private static boolean registerTrait(Trait trait) throws AnnotationFormatError{
 		try{
-			TraitEventsUsed annotation = trait.getClass().getMethod("generalInit").getAnnotation(TraitEventsUsed.class);
-			if(annotation == null)
-				throw new AnnotationFormatError("No Annotation found");
+			Set<Class<? extends Event>> wantedEvents = new HashSet<Class<? extends Event>>();
+			int traitPriority = -1;
 			
-			int traitPrio = annotation.traitPriority();
-			Class<? extends Event>[] traitRegistration = annotation.registerdClasses();
-			trait.generalInit();
-			
-			HashSet<Class<? extends Event>> registeredClasses = new HashSet<Class<? extends Event>>();
-			for(Class<? extends Event> clazz : traitRegistration){
-				if(Event.class.isAssignableFrom(clazz)){
-					registeredClasses.add((Class<? extends Event>) clazz);
+			Class<? extends Object> toInspect = trait.getClass();
+			while(toInspect != null && toInspect != Object.class){
+				try{
+					Method method = toInspect.getMethod("generalInit");
+					TraitEventsUsed annotation = method.getAnnotation(TraitEventsUsed.class);
+					if(annotation != null){
+						if(annotation.traitPriority() > traitPriority){
+							traitPriority = annotation.traitPriority();
+						}
+						
+						Collections.addAll(wantedEvents, annotation.registerdClasses());
+					}
+				}catch(Exception exp){
+					continue;
+				}finally{
+					toInspect = toInspect.getSuperclass();
 				}
 			}
 			
-			TraitEventManager.registerTrait(trait, registeredClasses, traitPrio);
+			if(wantedEvents.isEmpty()){
+				throw new AnnotationFormatError("No Events wanted -> somethign is wrong");
+			}
+				
+			trait.generalInit();
+			
+			TraitEventManager.registerTrait(trait, wantedEvents, traitPriority);
 			return true;
 		}catch(AnnotationFormatError e){
 			throw e;
@@ -165,7 +200,9 @@ public class TraitStore {
 	@SuppressWarnings("unchecked")
 	private static void loadExternalTrait(File file){
 		try{
-			URLClassLoader clazzLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, RacesAndClasses.getPlugin().getClass().getClassLoader());			
+			URLClassLoader clazzLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, RacesAndClasses.getPlugin().getClass().getClassLoader());
+			
+			classLoaders.add(clazzLoader);
 			 
 	        JarFile jarFile = new JarFile(file);
 	        Enumeration<JarEntry> entries = jarFile.entries();
@@ -178,8 +215,17 @@ public class TraitStore {
 	                try {
 	                    Class<?> clazz = clazzLoader.loadClass(element.getName().replaceAll(".class", "").replaceAll("/", "."));
 	                    if(clazz != null){
-	                    	if(Trait.class.isAssignableFrom(clazz))
+	                    	if(Trait.class.isAssignableFrom(clazz)){
+	                    		
+	                    		if(clazz.isAnnotationPresent(NeedMC1_6.class)){
+	                    			if(!CertainVersionChecker.isAbove1_6()){
+	                    				//We need MC > 1.6 But do not have it.
+	                    				continue;	                    				
+	                    			}
+	                    		}
+	                    		
 	                    		clazzArray.add((Class<Trait>) clazz);
+	                    	}
 	                    }
 	                } catch (Exception e) {
 	                	continue;

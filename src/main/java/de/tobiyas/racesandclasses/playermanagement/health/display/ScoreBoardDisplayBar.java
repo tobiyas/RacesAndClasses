@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.playermanagement.health.display;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -10,6 +11,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreBoardDisplayBar extends AbstractDisplay{
 
+	private static final String SCOREBOARD_OBJECTIVE_NAME = "RaC";
+	
 	private String oldScoreName = "";
 	
 	private boolean firstStart = true;
@@ -26,7 +29,7 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 
 	@Override
 	public void display(double currentHealth, double maxHealth) {
-		String healthBarString = calcForHealth(currentHealth, maxHealth, 7);
+		String barString = calcForHealth(currentHealth, maxHealth, 7);
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null || !player.isOnline()){
 			return;
@@ -39,7 +42,7 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 			firstStart = false;
 		}
 		
-		String objectiveName = displayInfo.getMidValueColor() + displayInfo.getName();
+		String objectiveName = ChatColor.YELLOW + SCOREBOARD_OBJECTIVE_NAME;
 		Objective objective = bordOfPlayer.getObjective(objectiveName);
 		
 		if(objective == null){
@@ -47,12 +50,12 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 		}
 		
 		bordOfPlayer.resetScores(Bukkit.getOfflinePlayer(oldScoreName));
-		oldScoreName = healthBarString;
+		oldScoreName = barString;
 		
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		objective.setDisplayName(objectiveName);
 		
-		Score score = objective.getScore(Bukkit.getOfflinePlayer(healthBarString));
+		Score score = objective.getScore(Bukkit.getOfflinePlayer(barString));
 		score.setScore((int) Math.ceil(currentHealth));
 	}
 

@@ -34,7 +34,7 @@ public class NormalArrow extends AbstractArrow {
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
 	@Override

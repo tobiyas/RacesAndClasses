@@ -35,9 +35,9 @@ public class VisibleTrait extends AbstractBasicTrait{
 		return "Nothing";
 	}
 
-	@TraitConfigurationNeeded(neededFields = {})
+	@TraitConfigurationNeeded()
 	@Override
-	public void setConfiguration(Map<String, String> configMap) {
+	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
 	@Override
