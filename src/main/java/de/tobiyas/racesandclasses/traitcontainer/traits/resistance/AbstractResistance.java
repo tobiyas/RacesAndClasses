@@ -109,5 +109,4 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		return false;
 	}
 	
-	
 }

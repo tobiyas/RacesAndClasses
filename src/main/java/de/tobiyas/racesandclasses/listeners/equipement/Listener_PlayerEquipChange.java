@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -66,9 +68,15 @@ public class Listener_PlayerEquipChange implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void saveOldArmors(InventoryClickEvent inventEvent){
-		if(!inventEvent.getViewers().iterator().hasNext()) return; //empty player is possible
+		InventoryHolder invHolder = inventEvent.getInventory().getHolder();
+		if(invHolder == null || !(invHolder instanceof HumanEntity)){
+			//empty player is possible
+			return;
+		}
 		
-		String name = inventEvent.getViewers().iterator().next().getName();
+		HumanEntity holder = (HumanEntity) invHolder;
+		String name = holder.getName();
+		
 		Player player = plugin.getServer().getPlayer(name);
 		if(player == null){
 			return;

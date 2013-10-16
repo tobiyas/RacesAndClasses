@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 public interface TraitWithRestrictions {
 
@@ -31,6 +32,16 @@ public interface TraitWithRestrictions {
 	 * Trait works only on Land
 	 */
 	public static final String ONLY_ON_LAND_PATH = "onlyOnLand";
+
+	/**
+	 * Trait works only in Lava
+	 */
+	public static final String ONLY_IN_LAVA_PATH = "onlyInLava";
+	
+	/**
+	 * Trait has a Cooldown
+	 */
+	public static final String COOLDOWN_TIME_PATH = "cooldown";
 	
 	
 	
@@ -77,10 +88,29 @@ public interface TraitWithRestrictions {
 	 * Checks the Restrictions of the Trait
 	 * for a player passed.
 	 * 
-	 * @param player
-	 * @return
+	 * @param player to check
+	 * @param event that called the trigger
+	 * 
+	 * @return true if restrictions met, false otherwise
 	 */
-	public boolean checkRestrictions(Player player);
+	public boolean checkRestrictions(Player player, Event event);
 	
+	/**
+	 * Returns the total uplink time in seconds
+	 * 
+	 * @return the time in seconds
+	 */
+	public int getMaxUplinkTime();
+	
+	
+	/**
+	 * This is triggered when the User has uplink on the Skill,
+	 * But would be triggered.
+	 * <br> Returning TRUE does NOT paste the Uplink message!
+	 * 
+	 * @param event the event that would be triggered
+	 * @return true to NOT display uplink message!
+	 */
+	public boolean triggerButHasUplink(Event event);
 	
 }

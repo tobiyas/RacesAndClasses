@@ -122,4 +122,8 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 		return true;
 	}
 	
+	@Override
+	public boolean isStackable(){
+		return false;
+	}
 }

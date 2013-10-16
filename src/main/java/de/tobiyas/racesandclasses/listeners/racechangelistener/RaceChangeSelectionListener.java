@@ -80,6 +80,9 @@ public class RaceChangeSelectionListener implements Listener {
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		
-		plugin.getPlayerManager().displayHealth(selectEvent.getPlayer().getName());
+		String playerName = selectEvent.getPlayer().getName();
+		
+		plugin.getPlayerManager().checkPlayer(playerName);
+		plugin.getPlayerManager().displayHealth(playerName);
 	}
 }

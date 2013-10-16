@@ -132,6 +132,11 @@ public class TraitHolderCombinder {
 	private static Set<Trait> filterForDoubles(Set<Trait> traits){
 		Set<Trait> filtered = new HashSet<Trait>();
 		for(Trait trait : traits){
+			if(trait.isStackable()){
+				filtered.add(trait);
+				continue;
+			}
+			
 			Trait doubled = containsTrait(filtered, trait);
 			if(doubled == null)
 				filtered.add(trait);

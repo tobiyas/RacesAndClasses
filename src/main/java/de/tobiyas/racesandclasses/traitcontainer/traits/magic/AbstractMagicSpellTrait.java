@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -17,25 +18,29 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
-public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait, TraitWithUplink {
+public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
 
+	//static naming for YML elements
+	public static final String COST_TYPE_PATH= "costType";
+	public static final String COST_PATH= "cost";
+	public static final String ITEM_TYPE_PATH= "item";
+	
+	
+	/**
+	 * This map is to prevent instant retriggers!
+	 */
+	private static final Map<String, Long> lastCastMap = new HashMap<String, Long>(); 
+	
+	
 	/**
 	 * The Cost of the Spell.
 	 * 
 	 * It has the default Cost of 0.
 	 */
 	protected double cost = 0;
-	
-	
-	/**
-	 * The Uplink time of the spell
-	 */
-	protected int uplinkTime = 0;
-	
 	
 	/**
 	 * The Material for casting with {@link CostType#ITEM}
@@ -71,6 +76,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	
 	@Override
 	public boolean canBeTriggered(Event event){
+		if(canOtherEventBeTriggered(event)) return true;
+		
 		if(!(event instanceof PlayerInteractEvent)) return false;
 		
 		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
@@ -89,17 +96,16 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		return true;
 	}
 	
-	
-	
-	@Override
-	public String getUplinkIndicatorName() {
-		return "trait." + getName();
-	}
-
-
-	@Override
-	public int getMaxUplinkTime() {
-		return uplinkTime;
+	/**
+	 * This is a pre-call to {@link #canBeTriggered(Event)}.
+	 * When returning true, true will be passed.
+	 * 
+	 * @param event that wants to be triggered
+	 * 
+	 * @return true if interested, false if not.
+	 */
+	protected boolean canOtherEventBeTriggered(Event event){
+		return false;
 	}
 
 
@@ -155,7 +161,20 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
 			
 			Action action = playerInteractEvent.getAction();
-			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){				
+			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
+				String playerName = player.getName();
+				if(lastCastMap.containsKey(playerName)){
+					if(System.currentTimeMillis() - lastCastMap.get(playerName) < 100){
+						//2 casts directly after each other.
+						return false;
+					}else{
+						lastCastMap.remove(playerName);
+					}
+					
+				}
+				
+				lastCastMap.put(player.getName(), System.currentTimeMillis());
+				
 				boolean casted = magicSpellTriggered(player);
 				if(casted){
 					removeCost(player);
@@ -169,6 +188,17 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			}
 		}
 		
+		return otherEventTriggered(event);
+	}
+	
+	
+	/**
+	 * This triggers when NO {@link PlayerInteractEvent} is triggered.
+	 * 
+	 * @param event that triggered
+	 * @return true if triggering worked and Mana should be drained.
+	 */
+	protected boolean otherEventTriggered(Event event){
 		return false;
 	}
 	
@@ -248,35 +278,33 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if spell summoning worked, false if failed.
 	 */
 	protected abstract boolean magicSpellTriggered(Player player);
-
-	
 	
 	
 	//This is just for Mana + CostType
 	@TraitConfigurationNeeded( fields = {
-			@TraitConfigurationField(fieldName = "mana", classToExpect = Double.class),
-			@TraitConfigurationField(fieldName = "costType", classToExpect = String.class, optional = true),
-			@TraitConfigurationField(fieldName = "item", classToExpect = String.class, optional = true)
+			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class),
+			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
+			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = String.class, optional = true)
 		})
 	@Override
 	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		cost = (Double) configMap.get("mana");
+		cost = (Double) configMap.get(COST_PATH);
 		
-		if(configMap.containsKey(costType)){
-			String costTypeName = (String) configMap.get("costType");
+		if(configMap.containsKey(COST_TYPE_PATH)){
+			String costTypeName = (String) configMap.get(COST_TYPE_PATH);
 			costType = CostType.tryParse(costTypeName);
 			if(costType == null){
 				throw new TraitConfigurationFailedException(getName() + " is incorrect configured. costType could not be read.");
 			}
 			
 			if(costType == CostType.ITEM){
-				if(!configMap.containsKey("item")){
+				if(!configMap.containsKey(ITEM_TYPE_PATH)){
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured. 'costType' was ITEM but no Item is specified at 'item'.");
 				}
 				
-				String material = (String) configMap.get("item");
+				String material = (String) configMap.get(ITEM_TYPE_PATH);
 				materialForCasting = Material.valueOf(material);
 				if(materialForCasting == null){
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
@@ -306,4 +334,13 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		return materialForCasting;
 	}
 
+	@Override
+	public boolean isStackable(){
+		return false;
+	}
+	
+	@Override
+	public boolean needsCostCheck(Event event){
+		return event instanceof PlayerInteractEvent;
+	}
 }

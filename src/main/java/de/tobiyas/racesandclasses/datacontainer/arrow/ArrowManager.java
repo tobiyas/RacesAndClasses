@@ -54,4 +54,15 @@ public class ArrowManager {
 		AbstractArrow arrow = arrows.get(currentPointer);
 		return arrow;
 	}
+	
+	
+	/**
+	 * Returns the amounts of Arrows Types the Player has.
+	 * <br>This EXCLUDES the NormalArrow!
+	 * 
+	 * @return number of different arrow types
+	 */
+	public int getNumberOfArrowTypes(){
+		return arrows.size() - 1;
+	}
 }

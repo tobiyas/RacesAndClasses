@@ -18,10 +18,10 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 
 
-public abstract class AbstractArrow extends AbstractBasicTrait implements TraitWithUplink{
+public abstract class AbstractArrow extends AbstractBasicTrait {
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
@@ -197,11 +197,6 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 	
 	
 	@Override
-	public final String getUplinkIndicatorName(){
-		return "trait." + getName();
-	}
-	
-	@Override
 	public boolean isBetterThan(Trait trait){
 		if(trait.getClass() != this.getClass()) return false;
 		
@@ -236,5 +231,22 @@ public abstract class AbstractArrow extends AbstractBasicTrait implements TraitW
 		
 		return false;
 	}
+	
+	@Override
+	public boolean isStackable(){
+		return false;
+	}
+
+	@TraitEventsUsed(registerdClasses = {
+			EntityDamageByEntityEvent.class, 
+			PlayerInteractEvent.class, 
+			EntityShootBowEvent.class,
+			ProjectileHitEvent.class
+		})
+	@Override
+	public void generalInit() {
+	}
+	
+	
 	
 }

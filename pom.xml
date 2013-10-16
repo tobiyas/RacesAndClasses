@@ -58,7 +58,7 @@
 			<artifactId>vault</artifactId>
 			<version>1.2.27</version>
 		</dependency>
-		
+
 		<!-- Local depends -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -149,7 +149,7 @@
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 
 		<!-- Resources to add -->
@@ -171,5 +171,23 @@
 				</includes>
 			</resource>
 		</resources>
+
+		<!-- Pushing to Maven -->
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-alpha-6</version>
+			</extension>
+		</extensions>
+
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>tobiyas-maven</id>
+			<url>file:///D:/Dropbox/Öffentlich/maven</url>
+		</repository>
+	</distributionManagement>
+
 </project>

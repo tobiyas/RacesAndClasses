@@ -103,4 +103,14 @@ public interface MagicSpellTrait {
 		}
 	}
 	
+	
+	/**
+	 * Returns true if a CostCheck is needed for this event.
+	 * 
+	 * @param event the Event to check
+	 * 
+	 * @return true if costCheck needed, false otherwise.
+	 */
+	public boolean needsCostCheck(Event event);
+	
 }

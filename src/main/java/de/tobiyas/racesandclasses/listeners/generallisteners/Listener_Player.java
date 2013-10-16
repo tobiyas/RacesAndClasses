@@ -9,6 +9,7 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,8 +17,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -110,6 +113,42 @@ public class Listener_Player implements Listener {
 		}
 
 		plugin.getChannelManager().broadcastMessageToChannel(channel, player, orgMsg);
+	}
+	
+	
+	@EventHandler
+	public void onPlayerChangeItemInhands(PlayerItemHeldEvent event){
+		World world = event.getPlayer().getWorld();
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_worldsDisabled().contains(world.getName())){
+			return;
+		}
+		
+		Player player = event.getPlayer();
+		ItemStack item = player.getInventory().getItem(event.getNewSlot());
+		if(item != null){
+			Material mat = item.getType();
+			if(mat == plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic()){
+				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() > 0){
+					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell().toString();
+					player.sendMessage(ChatColor.GREEN + "[RaC] You have a " + ChatColor.LIGHT_PURPLE 
+							+"WAND" + ChatColor.GREEN +" in your hand. Use " 
+							+ ChatColor.LIGHT_PURPLE + "LEFT" + ChatColor.GREEN + " Click to cast and " 
+							+ ChatColor.LIGHT_PURPLE + "RIGHT" + ChatColor.GREEN + " Click to switch spells." 
+							+ "Current spell: " + ChatColor.LIGHT_PURPLE + currentActiveSpell + ChatColor.GREEN + "." );
+				}
+			}
+			
+			if(mat == Material.BOW){
+				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getNumberOfArrowTypes() > 0){
+					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getCurrentArrow().getName();
+					player.sendMessage(ChatColor.GREEN + "[RaC] You have a " + ChatColor.LIGHT_PURPLE 
+							+"BOW" + ChatColor.GREEN +" in your hand. Use " 
+							+ ChatColor.LIGHT_PURPLE + "LEFT" + ChatColor.GREEN + " Click to change through your arrows. "
+							+ "Current arrow: " + ChatColor.LIGHT_PURPLE + currentArrow + ChatColor.GREEN + "." );
+				}
+			}
+			
+		}
 	}
 	
 }

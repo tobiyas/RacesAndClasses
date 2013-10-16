@@ -27,6 +27,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 
 public class TraitStore {
@@ -75,8 +76,12 @@ public class TraitStore {
 			RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
 		}catch(AnnotationFormatError e){
 			RacesAndClasses.getPlugin().log("Could not find Annotation for: " + traitName);
+		}catch(TraitConfigurationFailedException exp){
+			RacesAndClasses.getPlugin().log("Coild not Construct trait: " + traitName + ". Problem was: " 
+					+ exp.getLocalizedMessage());
 		}catch(Exception e){
 			RacesAndClasses.getPlugin().log("Could not Construct trait: " + traitName);
+			RacesAndClasses.getPlugin().getDebugLogger().logStackTrace(e);
 		}
 		
 		return null;
@@ -92,6 +97,10 @@ public class TraitStore {
 	 */
 	private static Trait buildTrait(String traitName, AbstractTraitHolder holder) throws Exception{
 		Class<? extends Trait> clazz = TraitsList.getClassOfTrait(traitName);
+		if(clazz == null){
+			throw new TraitNotFoundException(traitName);
+		}
+		
 		Trait trait = (Trait) clazz.getConstructor().newInstance();
 		if(trait == null){
 			throw new TraitNotFoundException(traitName);

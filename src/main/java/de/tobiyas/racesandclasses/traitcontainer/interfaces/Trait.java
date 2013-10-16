@@ -130,4 +130,13 @@ public interface Trait{
 	public boolean canBeTriggered(Event event);
 	
 	
+	/**
+	 * Returns if the Trait is Stackable.
+	 * 
+	 * This means a player can have this Trait more that 1 time.
+	 * 
+	 * @return true if stackable, false if not.
+	 */
+	public boolean isStackable();
+	
 }

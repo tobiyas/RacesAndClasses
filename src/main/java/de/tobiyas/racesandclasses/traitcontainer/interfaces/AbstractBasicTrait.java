@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -78,6 +79,16 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * Tells if the Trait only works on land
 	 */
 	protected boolean onlyOnLand = false;
+
+	/**
+	 * Tells if the Trait only works in lava
+	 */
+	protected boolean onlyInLava = false;
+	
+	/**
+	 * The Time the Trait has cooldown. (in Seconds)
+	 */
+	protected int cooldownTime = 0;
 	
 	
 	/**
@@ -124,25 +135,28 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
 		@TraitConfigurationField(fieldName = BIOME_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_IN_WATER_PATH, classToExpect = Boolean.class, optional = true),
-		@TraitConfigurationField(fieldName = ONLY_ON_LAND_PATH, classToExpect = Boolean.class, optional = true)
+		@TraitConfigurationField(fieldName = ONLY_ON_LAND_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_IN_LAVA_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = COOLDOWN_TIME_PATH, classToExpect = Integer.class, optional = true)
 	})
 	
 	@Override
 	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
 		
+		//Gets the Cooldown of the Trait.
+		if(configMap.containsKey(TraitWithRestrictions.COOLDOWN_TIME_PATH)){
+			this.cooldownTime = (Integer) configMap.get(TraitWithRestrictions.COOLDOWN_TIME_PATH);
+		}
+		
 		//Reads the min level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MIN_LEVEL_PATH)){
-			try{
-				this.minimumLevel = (Integer) configMap.get(TraitWithRestrictions.MIN_LEVEL_PATH);
-			}catch(Exception exp){}
+			this.minimumLevel = (Integer) configMap.get(TraitWithRestrictions.MIN_LEVEL_PATH);
 		}
 
 		//Reads the max level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MAX_LEVEL_PATH)){
-			try{
-				this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
-			}catch(Exception exp){}
+			this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
 		}
 		
 		//Reads the biomes for the trait if present
@@ -163,8 +177,14 @@ public abstract class AbstractBasicTrait implements Trait,
 			}catch(Exception exp){}
 		}
 		
+		//Only in water
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_WATER_PATH)){
-			
+			this.onlyInWater = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_WATER_PATH);
+		}
+
+		//Only on land
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_LAND_PATH)){
+			this.onlyOnLand = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_LAND_PATH);
 		}
 	}
 	
@@ -355,7 +375,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 
 	@Override
-	public boolean checkRestrictions(Player player) {
+	public boolean checkRestrictions(Player player, Event event) {
 		if(player == null) return true;
 		
 		String playerName = player.getName();
@@ -365,6 +385,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		Biome currentBiome = player.getLocation().getBlock().getBiome();
 		if(!biomes.contains(currentBiome)) return false;
 		
+		//Check if player is in water
 		if(onlyInWater){
 			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 			
@@ -373,11 +394,35 @@ public abstract class AbstractBasicTrait implements Trait,
 			}
 		}
 
+		//check if player is on land
 		if(onlyOnLand){
 			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 			if(feetblock.getType() == Material.WATER || feetblock.getType() == Material.STATIONARY_WATER){
 				return false;
 			}
+		}
+		
+		//check if player is in lava
+		if(onlyInLava){
+			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
+			
+			if(feetblock.getType() != Material.LAVA && feetblock.getType() != Material.STATIONARY_LAVA){
+				return false;
+			}
+		}
+		
+		//check cooldown
+		String cooldownName = "trait." + getName();
+		int playerUplinkTime = plugin.getCooldownManager().stillHasCooldown(playerName, cooldownName);
+		
+		if(playerUplinkTime > 0){
+			if(!triggerButHasUplink(event)){
+				player.sendMessage(ChatColor.RED + "[RaC] You still have " + ChatColor.LIGHT_PURPLE 
+					+ playerUplinkTime + ChatColor.RED + " seconds update on: " + ChatColor.LIGHT_PURPLE 
+					+ getName() + ChatColor.RED + ".");
+			}
+			
+			return false;
 		}
 		
 		return true;
@@ -393,6 +438,24 @@ public abstract class AbstractBasicTrait implements Trait,
 		return onlyOnLand;
 	}
 	
+	@Override
+	public boolean isStackable(){
+		return true;
+	}
+
+	@Override
+	public int getMaxUplinkTime() {
+		return cooldownTime;
+	}
+
+	@Override
+	public boolean triggerButHasUplink(Event event) {
+		return false;
+	}
 	
+	@Override
+	public String toString(){
+		return getName();
+	}
 	
 }

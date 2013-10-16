@@ -12,6 +12,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
@@ -21,8 +22,8 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.BypassHolderCheck;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithUplink;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
 
 
 public class TraitEventManager{
@@ -112,37 +113,26 @@ public class TraitEventManager{
 				
 				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions){
-					if(!((TraitWithRestrictions) trait).checkRestrictions(player)) continue;
+					if(!((TraitWithRestrictions) trait).checkRestrictions(player, event)) continue;
 				}
 				
 				//Trait is not interested in the event
 				if(!trait.canBeTriggered(event)){
 					continue;
 				}
-				
-				if(trait instanceof TraitWithUplink){
-					TraitWithUplink uplinkTrait = (TraitWithUplink) trait;
 					
-					String cooldownName = uplinkTrait.getUplinkIndicatorName();
-					String playerName = player.getName();
-					int playerUplinkTime = plugin.getCooldownManager().stillHasCooldown(playerName, cooldownName);
-					
-					if(playerUplinkTime > 0){
-						if(!uplinkTrait.triggerButHasUplink(event)){
-							player.sendMessage(ChatColor.RED + "[RaC] You still have " + ChatColor.LIGHT_PURPLE 
-								+ playerUplinkTime + ChatColor.RED + " seconds update on: " + ChatColor.LIGHT_PURPLE 
-								+ trait.getName() + ChatColor.RED + ".");
-						}
-						continue;
-					}
-					
-				}
-				
 				if(trait instanceof MagicSpellTrait){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).canCastSpell(magicTrait)){
 						if(!magicTrait.triggerButDoesNotHaveEnoghCostType(event)){
-							player.sendMessage(ChatColor.RED + "[RaC] You don't have enough mana for " + ChatColor.LIGHT_PURPLE 
+							
+							String costTypeString = magicTrait.getCostType().name();
+							if(magicTrait.getCostType() == CostType.ITEM){
+								costTypeString = magicTrait.getCastMaterialType().name();
+							}
+							
+							player.sendMessage(ChatColor.RED + "[RaC] You don't have enough " + ChatColor.LIGHT_PURPLE 
+									+ costTypeString + ChatColor.RED + " for " + ChatColor.LIGHT_PURPLE 
 									+ trait.getName() + ChatColor.RED + ".");
 						}
 						
@@ -154,12 +144,18 @@ public class TraitEventManager{
 				if(trait.trigger(event)){
 					changedSomething = true;
 					
-					if(trait instanceof TraitWithUplink){
-						TraitWithUplink uplinkTrait = (TraitWithUplink) trait;
-						
-						String cooldownName = uplinkTrait.getUplinkIndicatorName();
+					if(trait instanceof TraitWithRestrictions && player != null){
+						TraitWithRestrictions restrictionTrait = (TraitWithRestrictions) trait;
 						String playerName = player.getName();
-						plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTrait.getMaxUplinkTime());
+						String cooldownName = "trait." + trait.getName();
+						
+						int uplinkTraitTime = restrictionTrait.getMaxUplinkTime();
+						if(uplinkTraitTime > 0){
+							plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
+							
+							String cooldownDownMessage = ChatColor.LIGHT_PURPLE + trait.getName() + ChatColor.RED + " is ready again.";
+							MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
+						}
 					}
 				}
 			}catch(Exception e){

@@ -107,4 +107,8 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 		return true;
 	}
 
+	@Override
+	public boolean isStackable(){
+		return false;
+	}
 }

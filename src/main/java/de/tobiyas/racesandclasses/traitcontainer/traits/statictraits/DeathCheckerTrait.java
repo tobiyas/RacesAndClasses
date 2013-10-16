@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
@@ -26,23 +25,12 @@ import de.tobiyas.racesandclasses.util.items.DropContainer;
 
 public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait{
 	
-	private AbstractTraitHolder traitHolder;
-	
 	private HashMap<EntityType, DropContainer> dropMap;
 	private RacesAndClasses plugin;
 	
 	public DeathCheckerTrait(){
 	}
 	
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder){
-		this.traitHolder = abstractTraitHolder;
-	}
-	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
 
 	@TraitEventsUsed(registerdClasses = {EntityDeathEvent.class})
 	@Override
@@ -87,6 +75,14 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	@Override
 	public void setConfiguration(Map<String, Object> configMap) {
 	}
+	
+	
+
+	@Override
+	public boolean checkRestrictions(Player player, Event event) {
+		return true;
+	}
+
 
 	@Override
 	public boolean trigger(Event event) {
@@ -137,4 +133,8 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		return true;
 	}
 
+	@Override
+	public boolean isStackable(){
+		return false;
+	}
 }

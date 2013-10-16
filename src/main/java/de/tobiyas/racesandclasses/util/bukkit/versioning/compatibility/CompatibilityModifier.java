@@ -1,6 +1,5 @@
 package de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.bukkit.entity.Damageable;
@@ -72,20 +71,13 @@ public class CompatibilityModifier {
 		 * @param damage
 		 * @return
 		 */
+		@SuppressWarnings("deprecation")
 		public static EntityDamageEvent safeCreateEvent(Entity entity, DamageCause cause, double damage){
 			if(CertainVersionChecker.isAbove1_6()){
 				return new EntityDamageEvent(entity, cause, damage);
 			}else{
-				try{
-					Constructor<EntityDamageEvent> constructor =
-							EntityDamageEvent.class.getConstructor(Entity.class, DamageCause.class, int.class);
-					
-					return constructor.newInstance(entity, cause, damage);
-				}catch(Exception exp){
-					exp.printStackTrace();
-					
-					return null;
-				}
+				int roundedDamage = Math.round((float) damage);
+				return new EntityDamageEvent(entity, cause, roundedDamage);
 			}
 		}
 		
@@ -101,15 +93,14 @@ public class CompatibilityModifier {
 		 * @param damage
 		 * @return
 		 */
-		public static EntityDamageEvent safeCreateEvent(Entity damager, Entity target, DamageCause cause, double damage){
+		@SuppressWarnings("deprecation")
+		public static EntityDamageByEntityEvent safeCreateEvent(Entity damager, Entity target, DamageCause cause, double damage){
 			if(CertainVersionChecker.isAbove1_6()){
 				return new EntityDamageByEntityEvent(damager, target, cause, damage);
 			}else{
 				try{
-					Constructor<EntityDamageEvent> constructor =
-							EntityDamageEvent.class.getConstructor(Entity.class, Entity.class, DamageCause.class, Integer.class);
-					
-					return constructor.newInstance(damager, target, cause, damage);
+					int roundedDamage = Math.round((float) damage);
+					return new EntityDamageByEntityEvent(damager, target, cause, roundedDamage);
 				}catch(Exception exp){
 					exp.printStackTrace();
 					
@@ -185,11 +176,16 @@ public class CompatibilityModifier {
 
 		/**
 		 * Sets the current health of a Player to the correct value
+		 * <br>The health is set is MAX the max health of a Player.
 		 * 
 		 * @param newHealth the health to set to
 		 * @param player the player to set the health
 		 */
 		public static void safeSetHealth(double newHealth, Player player) {
+			if(newHealth > safeGetMaxHealth(player)){
+				newHealth = safeGetMaxHealth(player);
+			}
+			
 			if(CertainVersionChecker.isAbove1_6()){
 				player.setHealth(newHealth);
 			}else{
@@ -202,8 +198,35 @@ public class CompatibilityModifier {
 			}
 			
 		}
+
+		
+		/**
+		 * Damages a Player by a certain Value
+		 *
+		 * @param damage the damage to do
+		 * @param player the player to damage
+		 */
+		public static void safeDamage(double damage, Player player) {
+			double oldHealth = safeGetHealth(player);
+			double newHealth = oldHealth - damage;
+			
+			safeSetHealth(newHealth, player);
+		}
+
+		
+		/**
+		 * Heals a Player by a certain Value
+		 *
+		 * @param healAmount the healing to do
+		 * @param player the player to heal
+		 */
+		public static void safeHeal(double healAmount, Player player) {
+			double oldHealth = safeGetHealth(player);
+			double newHealth = oldHealth + healAmount;
+			
+			safeSetHealth(newHealth, player);
+		}
 	}
-	
 	
 	public static class EntityHeal{
 		
@@ -323,9 +346,11 @@ public class CompatibilityModifier {
 			if(CertainVersionChecker.isAbove1_6()){
 				entity.damage(value);
 			}else{
+				int damage = Math.round((float) value);
+				
 				try{
 					Method method = org.bukkit.entity.LivingEntity.class.getMethod("damage", Integer.class);					
-					method.invoke(entity, (int) value);
+					method.invoke(entity, damage);
 				}catch(Exception exp){}//silent fail
 			}
 		}

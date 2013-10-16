@@ -158,12 +158,12 @@ public class RacesAndClasses extends JavaPlugin{
 	 * The Tutorial Manager to start / step the tutorial on.
 	 */
 	protected TutorialManager tutorialManager;
-
 	
 	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
+	
 	
 	
 	//Empty Constructor for Bukkit.
@@ -482,6 +482,9 @@ public class RacesAndClasses extends JavaPlugin{
 		tutorialManager.shutDown();
 		Bukkit.getScheduler().cancelTasks(this);
 		TraitStore.destroyClassLoaders();
+		
+		alternateEbeanServer.onShutdown();
+		alternateEbeanServer = null;
 		if(useGC){
 			System.gc();
 		}
@@ -494,22 +497,6 @@ public class RacesAndClasses extends JavaPlugin{
 	 */
 	private void checkDBAccess(){
 		getDatabase();
-		
-		/*
-		try {
-			if(getDatabase() == null){
-				installDDL();
-				return;
-			}
-			
-			for(Class<?> dbClasses : getDatabaseClasses()){
-				getDatabase().find(dbClasses).findRowCount();
-			}
-			
-        } catch (PersistenceException ex) {
-            log("Installing database for " + getDescription().getName() + " due to first time usage");
-            installDDL();
-        }*/
 	}
 	
 	
@@ -586,29 +573,6 @@ public class RacesAndClasses extends JavaPlugin{
 	public TutorialManager getTutorialManager() {
 		return tutorialManager;
 	}
-	
-	
-	/*
-	@Override
-	public List<Class<?>> getDatabaseClasses() {
-	    List<Class<?>> list = new LinkedList<Class<?>>();
-	    
-	    list.add(DBConfigOption.class);
-	    list.add(PlayerSavingContainer.class);
-	    list.add(PlayerHolderAssociation.class);
-	    list.add(ChannelSaveContainer.class);
-	    //TODO add all DB classes here.
-	    
-	    return list;
-	}
-
-
-	@Override
-	//This is just to open it up for internal usage
-	public void installDDL() {
-		super.installDDL();
-	}
-	*/
 	
 	 
 	@Override

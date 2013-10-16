@@ -59,6 +59,17 @@ public class AlternateEbeanServerImpl {
             throw new RuntimeException("Failed to retrieve the ClassLoader of the plugin using Reflection", ex);
         }
     }
+    
+    /**
+     * Called when the Plugin shuts down and releases it's resource.
+     */
+    public void onShutdown(){
+    	ebeanServer = null;
+    	classLoader = null;
+    	javaPlugin = null;
+    	loggerLevel = null;
+    	serverConfig = null;
+    }
 
     /**
      * Initialize the database using the passed arguments
