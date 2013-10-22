@@ -44,6 +44,9 @@ public class GeneralConfigFields {
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
+	
+	//GUI
+	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
 
 	
 	//Magic

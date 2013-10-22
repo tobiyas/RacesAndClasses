@@ -1,14 +1,23 @@
 package de.tobiyas.racesandclasses.util.language;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.util.language.en.EN_Text;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class LanguageTranslationUtil {
 	
+	/**
+	 * plugin to call static stuff on
+	 */
+	private final RacesAndClasses plugin = RacesAndClasses.getPlugin();
+
 	/**
 	 * Language to use
 	 */
@@ -17,10 +26,11 @@ public class LanguageTranslationUtil {
 	/**
 	 * default language to use if wanted language is not found
 	 */
-	private final String stdLanguage = "en";
-	private final File stdLanguageDir = new File(RacesAndClasses.getPlugin().getDataFolder() + File.separator 
-			+ "language" + File.separator + stdLanguage);
-	private List<YAMLConfigExtended> stdLanguageFiles = getYAMLOfFile(stdLanguageDir);
+	private static final String stdLanguage = "en";
+	private static final File stdLanguageDir = new File(RacesAndClasses.getPlugin().getDataFolder() + File.separator 
+			+ "language" + File.separator + stdLanguage + File.separator);
+	
+	private List<YAMLConfigExtended> stdLanguageFiles;
 	
 	
 	/**
@@ -28,10 +38,6 @@ public class LanguageTranslationUtil {
 	 */
 	private List<YAMLConfigExtended> languageConfiguration;
 	
-	/**
-	 * plugin to call static stuff on
-	 */
-	private RacesAndClasses plugin;
 	
 	
 	/**
@@ -48,7 +54,6 @@ public class LanguageTranslationUtil {
 	 */
 	private LanguageTranslationUtil(String language) {
 		this.language = language;
-		plugin = RacesAndClasses.getPlugin();
 	}
 	
 	/**
@@ -67,6 +72,9 @@ public class LanguageTranslationUtil {
 		
 		languageConfiguration = new LinkedList<YAMLConfigExtended>();
 		languageConfiguration.addAll(getYAMLOfFile(languageDir));
+		
+		stdLanguageFiles = new LinkedList<YAMLConfigExtended>();
+		stdLanguageFiles.addAll(getYAMLOfFile(stdLanguageDir));
 				
 		return this;
 	}
@@ -81,6 +89,8 @@ public class LanguageTranslationUtil {
 	 */
 	private List<YAMLConfigExtended> getYAMLOfFile(File file){
 		List<YAMLConfigExtended> returnList = new LinkedList<YAMLConfigExtended>();
+		if(file == null || !file.exists()) return returnList;
+		
 		if(file.isDirectory()){
 			for(File subFile : file.listFiles()){
 				returnList.addAll(getYAMLOfFile(subFile));
@@ -101,6 +111,12 @@ public class LanguageTranslationUtil {
 	
 	
 	/**
+	 * logged error to console
+	 */
+	private static boolean loggedError = false;
+	
+	
+	/**
 	 * Tries to translate the given tag into the current language.
 	 * <br>Also creates the structure if not present
 	 * <br>
@@ -114,13 +130,19 @@ public class LanguageTranslationUtil {
 	 * @throws TranslationNotFoundException if the tag was not found in the translation table.
 	 * This includes the STD translation table.
 	 */
-	public static String tryTranslate(String tag, boolean tryInStdLanguageIfFails) throws TranslationNotFoundException{
+	public static Translator tryTranslate(String tag, boolean tryInStdLanguageIfFails) throws TranslationNotFoundException{
 		lazyInit(false);
 		
 		try{
 			return tryPreferedTranslate(tag);
 		}catch(TranslationNotFoundException exp){
-			RacesAndClasses.getPlugin().log("triing to translate: '" + exp.getTagNotFound() + "' in language: " + exp.getLanguage());
+			if(!loggedError){
+				RacesAndClasses.getPlugin().log("Translate failed! Check the debug.log . There can be more translation errors.");
+				loggedError = true;
+			}
+			
+			RacesAndClasses.getPlugin().getDebugLogger().logWarning("tried to translate: '" 
+					+ exp.getTagNotFound() + "' in language: '" + exp.getLanguage() + "' but it was not found.");
 			
 			if(!tryInStdLanguageIfFails){
 				throw exp;
@@ -139,13 +161,13 @@ public class LanguageTranslationUtil {
 	 * 
 	 * @throws TranslationNotFoundException if translation is not found
 	 */
-	private static String trySTDTranslate(String tag) throws TranslationNotFoundException{
-		String translation = readFromYAMLList(instance.languageConfiguration, tag);
+	private static Translator trySTDTranslate(String tag) throws TranslationNotFoundException{
+		String translation = readFromYAMLList(instance.stdLanguageFiles, tag);
 		
 		if("".equals(translation)){
-			throw new TranslationNotFoundException(getCurrentLanguage(), tag);
+			throw new TranslationNotFoundException(stdLanguage, tag);
 		}else{
-			return translation;
+			return new Translator(translation);
 		}
 	}
 
@@ -157,13 +179,13 @@ public class LanguageTranslationUtil {
 	 * 
 	 * @throws TranslationException if translation is not found
 	 */
-	private static String tryPreferedTranslate(String tag) throws TranslationNotFoundException{
-		String translation = readFromYAMLList(instance.stdLanguageFiles, tag);
+	private static Translator tryPreferedTranslate(String tag) throws TranslationNotFoundException{
+		String translation = readFromYAMLList(instance.languageConfiguration, tag);
 		
 		if("".equals(translation)){
-			throw new TranslationNotFoundException(instance.stdLanguage, tag);
+			throw new TranslationNotFoundException(getCurrentLanguage(), tag);
 		}else{
-			return translation;
+			return new Translator(translation);
 		}
 	}
 	
@@ -211,6 +233,32 @@ public class LanguageTranslationUtil {
 		if(instance == null){
 			String language = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_usedLanguage();
 			instance = new LanguageTranslationUtil(language);
+			instance.init();
+		}
+	}
+	
+	
+	/**
+	 * "Reloads" the language.
+	 */
+	public static void reload(){
+		instance = null;
+	}
+	
+	
+	/**
+	 * Checks if the EN Language is present.
+	 */
+	public static void check_EN_isPresent(){ //TODO do some versioning or something...
+		if(!stdLanguageDir.exists()){
+			stdLanguageDir.mkdirs();
+		}
+		
+		File enDefaultFile = new File(stdLanguageDir + File.separator + "en.yml");
+		try {
+			FileUtils.write(enDefaultFile, EN_Text.en_language);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

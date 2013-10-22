@@ -2,11 +2,12 @@ package de.tobiyas.racesandclasses.APIs;
 
 import de.tobiyas.racesandclasses.util.language.LanguageTranslationUtil;
 import de.tobiyas.racesandclasses.util.language.TranslationNotFoundException;
+import de.tobiyas.racesandclasses.util.language.Translator;
 
 public class LanguageAPI {
 
 	/**
-	 * Translats the given tag to the current language defined in Configuration.
+	 * Translates the given tag to the current language defined in Configuration.
 	 * <br>If not found, an exception is thrown
 	 * <br>
 	 * @param tag to translate
@@ -14,7 +15,7 @@ public class LanguageAPI {
 	 * 
 	 * @throws TranslationNotFoundException if the tag was not found
 	 */
-	public static String translateToCurrentLanguage(String tag) throws TranslationNotFoundException{
+	public static Translator translateToCurrentLanguage(String tag) throws TranslationNotFoundException{
 		return LanguageTranslationUtil.tryTranslate(tag, false);
 	}
 	
@@ -30,7 +31,7 @@ public class LanguageAPI {
 	 * 
 	 * @throws TranslationNotFoundException 
 	 */
-	public static String translateToCurrentLanguageWithFallback(String tag) throws TranslationNotFoundException{
+	public static Translator translateToCurrentLanguageWithFallback(String tag) throws TranslationNotFoundException{
 		return LanguageTranslationUtil.tryTranslate(tag, true);
 	}
 	
@@ -44,11 +45,11 @@ public class LanguageAPI {
 	 * @param tag to search for
 	 * @return the translation or the tag itself if not found.
 	 */
-	public static String translateIgnoreError(String tag){
+	public static Translator translateIgnoreError(String tag){
 		try{
 			return LanguageTranslationUtil.tryTranslate(tag, true);
 		}catch(TranslationNotFoundException exp){
-			return tag;
+			return new Translator(tag);
 		}
 	}
 }

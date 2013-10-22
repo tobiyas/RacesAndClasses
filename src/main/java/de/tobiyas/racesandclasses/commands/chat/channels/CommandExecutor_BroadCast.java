@@ -1,11 +1,11 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class CommandExecutor_BroadCast implements CommandExecutor{
@@ -26,12 +26,13 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 			String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.broadcast)) return true;
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			sender.sendMessage(ChatColor.RED + "Channels are disabled.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "Channels").build());
 			return true;
 		}
 		
 		if(args.length == 0){
-			sender.sendMessage(ChatColor.RED + "No message given.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("no_message").build());
 			return true;
 		}
 		

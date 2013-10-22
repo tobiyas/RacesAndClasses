@@ -67,7 +67,12 @@ public interface MagicSpellTrait {
 		/**
 		 * An specific Item is used to cast this spell.
 		 */
-		ITEM;
+		ITEM,
+		
+		/**
+		 * The Hunger bar is drained to cast the spell.
+		 */
+		HUNGER;
 		
 		
 		
@@ -75,7 +80,7 @@ public interface MagicSpellTrait {
 		public String toString(){
 			String name = this.name();
 			String pre = name.substring(0, 1).toUpperCase();
-			String rest = name.substring(1, name.length() - 1).toLowerCase();
+			String rest = name.substring(1, name.length()).toLowerCase();
 			
 			return pre + rest;
 		}
@@ -97,6 +102,20 @@ public interface MagicSpellTrait {
 			
 			if(costTypeName.equalsIgnoreCase("leben")){
 				return HEALTH;
+			}
+			
+			
+			//parse Hunger stuff
+			if(costTypeName.equalsIgnoreCase("foodlevel")){
+				return HUNGER;
+			}
+			
+			if(costTypeName.equalsIgnoreCase("food")){
+				return HUNGER;
+			}
+			
+			if(costTypeName.equalsIgnoreCase("essen")){
+				return HUNGER;
 			}
 			
 			return null;

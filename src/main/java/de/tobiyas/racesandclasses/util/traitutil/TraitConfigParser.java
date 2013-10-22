@@ -8,9 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
@@ -46,9 +48,15 @@ public class TraitConfigParser {
 							"' not found in Config for Trait: " + trait.getName());
 				}
 				
-				Object toCheck = configurationMap.get(field.fieldName());
-				
 				Class<?> classToExpect = field.classToExpect();
+
+				Object toCheck = configurationMap.get(field.fieldName());
+				if(toCheck == null){
+					throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
+							"' not found in Config for Trait: " + trait.getName() + 
+							". Wanted a " + classToExpect.getCanonicalName() + " But found NOTHING.");
+				}
+				
 				if(classToExpect == Integer.class){
 					try{
 						if(toCheck instanceof Integer){
@@ -128,6 +136,35 @@ public class TraitConfigParser {
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
+
+				if(classToExpect == Material.class){
+					try{
+						if(toCheck instanceof Material){
+							continue;
+						}
+						
+						Material mat = null;
+						if(toCheck instanceof Integer){
+							int value = (Integer) toCheck;
+							mat = Material.getMaterial(value); // We still want to support IDs.
+						}else{
+							String value = toCheck.toString();
+							mat = Material.valueOf(value);
+						}
+
+						if(mat == null){
+							throw new NumberFormatException(); //early out.
+						}
+						
+						configurationMap.put(field.fieldName(), mat);
+						continue;
+						
+					}catch(NumberFormatException exp){
+						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
+								"' not found in Config for Trait: " + trait.getName() + 
+								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
+					}
+				}
 				
 				//rest... Try it at least.
 				if(classToExpect.isAssignableFrom(toCheck.getClass())){
@@ -142,7 +179,8 @@ public class TraitConfigParser {
 		}catch(TraitConfigurationFailedException exp){
 			throw exp;
 		}catch(NullPointerException exp){
-			throw new TraitConfigurationFailedException("No Annotation found in Trait: " + trait.getName());
+			RacesAndClasses.getPlugin().getDebugLogger().logStackTrace(exp);
+			throw new TraitConfigurationFailedException("Got a Nullpointer! Please report. Writing error to Error.log. Error in: " + trait.getName());
 		} catch (SecurityException e) {
 			throw new TraitConfigurationFailedException("No Annotation found in Trait: " + trait.getName());
 		} catch(NumberFormatException exp){

@@ -163,6 +163,20 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: true \n"
 			+ general_saving_savePlayerDataToDB + ": true\n\n"
+						
+			
+			//GUI
+			+ "\n"
+			+ "#####\n"
+			+ "#GUI#\n"
+			+ "#####\n"
+			+ "\n"
+			
+			+ "# Enables to also use left clicks in Inventory GUIS.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_also_use_leftclick_in_guis + ": false\n\n"
+			
 			
 			
 			//MAGIC

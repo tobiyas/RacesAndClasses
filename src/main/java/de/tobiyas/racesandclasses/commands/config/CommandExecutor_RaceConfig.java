@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 
 public class CommandExecutor_RaceConfig implements CommandExecutor {
@@ -28,17 +29,18 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "Only Players can use this command.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
 			return true;
 		}
 		
 		Player player = (Player) sender;
 		
 		if(args.length == 0){
-			player.sendMessage(ChatColor.YELLOW + "=======YOUR CONFIG=======");
+			String your = LanguageAPI.translateIgnoreError("your").build();
+			player.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
 			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 			if(config == null){
-				player.sendMessage(ChatColor.RED + "Your config could not be found. Try relogging or contact an Admin.");
+				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_not_found").build());
 				return true;
 			}
 			
@@ -58,25 +60,25 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			
 			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 			if(config == null){
-				player.sendMessage(ChatColor.RED + "Your config could not be found. Try relogging or contact an Admin.");
+				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_not_found").build());
 				return true;
 			}
 			
 			boolean worked = config.changeAttribute(attribute, value);
 			if(worked){
-				player.sendMessage(ChatColor.GREEN + "The Attribute " + ChatColor.LIGHT_PURPLE + attribute + ChatColor.GREEN +
-									" has been changed to: " + ChatColor.LIGHT_PURPLE + value);
+				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_changed")
+						.replace("attribute", attribute).replace("value", value).build());
 			}else{
-				player.sendMessage(ChatColor.RED + "The Attribute " + ChatColor.LIGHT_PURPLE + attribute + ChatColor.RED +
-						" could not be found.");
+				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_attribute_not_found")
+						.replace("attribute", attribute).build());
 			}
 			
 			return true;
 		}
 		
 		
-		player.sendMessage(ChatColor.RED + "Wrong usage. Use:" + ChatColor.LIGHT_PURPLE + " /raceconfig <attribute> <value>  or");
-		player.sendMessage(ChatColor.LIGHT_PURPLE + "/raceconfig <attribute> <value>  to list yout config");
+		player.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+				.replace("command", "/raceconfig <attribute> <value>").build());
 		return true;
 	}
 

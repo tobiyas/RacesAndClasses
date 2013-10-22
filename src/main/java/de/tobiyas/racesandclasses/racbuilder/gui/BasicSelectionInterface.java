@@ -147,7 +147,13 @@ public abstract class BasicSelectionInterface extends ItemGeneratorInterface imp
 
 		
 		event.setCancelled(true);
-		if(event.getClick() != ClickType.RIGHT) return;
+		
+		if(event.getClick() != ClickType.RIGHT){
+			if(!(event.getClick() == ClickType.LEFT 
+					&& plugin.getConfigManager().getGeneralConfig().isConfig_alsoUseLeftClickInGuis())){
+				return;
+			}
+		}
 		
 		if(this.ACCEPT_OBJECT.equals(itemClicked)){
 			onAcceptPressed();

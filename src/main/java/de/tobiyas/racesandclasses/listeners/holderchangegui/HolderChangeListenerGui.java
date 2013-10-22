@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -144,9 +145,14 @@ public abstract class HolderChangeListenerGui implements Listener {
 			return;
 		};
 		
-		if(!event.isRightClick()){
-			event.setCancelled(true);
-			return;
+		if(event.getClick() != ClickType.RIGHT){
+			if(!(event.getClick() == ClickType.LEFT 
+					&& plugin.getConfigManager().getGeneralConfig().isConfig_alsoUseLeftClickInGuis())){
+				
+				event.setCancelled(true);
+				return;
+			}
+			
 		}
 		
 		AbstractTraitHolder holder = manager.getHolderOfPlayer(playerName);

@@ -40,6 +40,7 @@ public class DefaultContainer {
 		raceConfig.createSection("Orc.traits.BerserkerRageTrait");
 		raceConfig.set("Orc.traits.BerserkerRageTrait.operation", '+');
 		raceConfig.set("Orc.traits.BerserkerRageTrait.value", 1);
+		raceConfig.set("Orc.traits.BerserkerRageTrait.cooldown", 30);
 
 		
 		raceConfig.createSection("Elv.config");
@@ -56,6 +57,7 @@ public class DefaultContainer {
 		raceConfig.createSection("Elv.traits.SprintTrait");
 		raceConfig.set("Elv.traits.SprintTrait.duration", 10);
 		raceConfig.set("Elv.traits.SprintTrait.value", 3);
+		raceConfig.set("Elv.traits.SprintTrait.cooldown", 60);
 		
 		
 		try {
@@ -135,12 +137,58 @@ public class DefaultContainer {
 		classesConfig.createSection("archer.traits.PoisonArrowTrait");
 		classesConfig.set("archer.traits.PoisonArrowTrait.duration", 10);
 		classesConfig.set("archer.traits.PoisonArrowTrait.totalDamage", 10);
+		classesConfig.set("archer.traits.PoisonArrowTrait.cooldown", 30);
 		
 		classesConfig.createSection("archer.traits.FireArrowTrait");
 		classesConfig.set("archer.traits.FireArrowTrait.duration", 10);
 		classesConfig.set("archer.traits.FireArrowTrait.totalDamage", 10);
+		classesConfig.set("archer.traits.FireArrowTrait.cooldown", 30);
 
 		classesConfig.createSection("archer.traits.TeleportArrowTrait");
+		classesConfig.set("archer.traits.TeleportArrowTrait.cooldown", 60);
+		
+		//Magician:
+		classesConfig.createSection("magician");
+		classesConfig.createSection("magician.config");
+		classesConfig.createSection("magician.traits");
+		
+		classesConfig.set("magician.config.classtag", "[Magician]");
+		classesConfig.set("magician.config.health", "-1");
+		classesConfig.set("magician.config.manabonus", 20);
+		
+		classesConfig.createSection("magician.traits.ManaRegenerationTrait");
+		classesConfig.set("magician.traits.ManaRegenerationTrait.time", 10);
+		classesConfig.set("magician.traits.ManaRegenerationTrait.value", 2);
+		
+		classesConfig.createSection("magician.traits.FireballTrait");
+		classesConfig.set("magician.traits.FireballTrait.cost", 6);
+		classesConfig.set("magician.traits.FireballTrait.cooldown", 10);
+
+		classesConfig.createSection("magician.traits.ItemForManaConsumeTrait");
+		classesConfig.set("magician.traits.ItemForManaConsumeTrait.cooldown", 10);
+		classesConfig.set("magician.traits.ItemForManaConsumeTrait.item", "WHEAT");
+		classesConfig.set("magician.traits.ItemForManaConsumeTrait.cost", 1);
+		classesConfig.set("magician.traits.ItemForManaConsumeTrait.value", 10);
+
+		classesConfig.createSection("magician.traits.WallTrait");
+		classesConfig.set("magician.traits.WallTrait.cooldown", 10);
+		classesConfig.set("magician.traits.WallTrait.cost", 5);
+		classesConfig.set("magician.traits.WallTrait.duration", 5);
+		
+		classesConfig.createSection("magician.traits.ExplosionTrait");
+		classesConfig.set("magician.traits.ExplosionTrait.cooldown", 10);
+		classesConfig.set("magician.traits.ExplosionTrait.cost", 10);
+		classesConfig.set("magician.traits.ExplosionTrait.range", 5);
+		classesConfig.set("magician.traits.ExplosionTrait.damage", 4);
+		
+		classesConfig.createSection("magician.traits.SlowFallTrait");
+		classesConfig.set("magician.traits.SlowFallTrait.cooldown", 10);
+		classesConfig.set("magician.traits.SlowFallTrait.cost", 5);
+		classesConfig.set("magician.traits.SlowFallTrait.duration", 10);
+		
+		classesConfig.createSection("magician.traits.ColdFeetTrait");
+		classesConfig.set("magician.traits.ColdFeetTrait.cost", 5);
+		classesConfig.set("magician.traits.ColdFeetTrait.duration", 10);
 		
 		try {
 			classesConfig.save(classFile);

@@ -22,8 +22,8 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Tut
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.h31ix.updater.Updater;
-import net.h31ix.updater.Updater.UpdateType;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -73,6 +73,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.language.LanguageTranslationUtil;
 import de.tobiyas.racesandclasses.util.persistence.DBConverter;
 import de.tobiyas.racesandclasses.util.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.util.tasks.DebugTask;
@@ -217,6 +218,8 @@ public class RacesAndClasses extends JavaPlugin{
 
 	private void initManagers(){
 		long currentTime = System.currentTimeMillis();
+		
+		LanguageTranslationUtil.check_EN_isPresent();
 		
 		DebugTask.initDebugger();
 		checkForDBTransfer();
@@ -407,7 +410,13 @@ public class RacesAndClasses extends JavaPlugin{
 	}
 	
 	private void checkForUpdates(){
-		new Updater(this, "racesandclasses", this.getFile(), UpdateType.DEFAULT, true);
+		new Updater(
+				this, 
+				Consts.CURSE_ID_FOR_PLUGIN, 
+				this.getFile(), 
+				UpdateType.DEFAULT, 
+				true
+			);
 	}
 
 
@@ -485,6 +494,8 @@ public class RacesAndClasses extends JavaPlugin{
 		
 		alternateEbeanServer.onShutdown();
 		alternateEbeanServer = null;
+		
+		LanguageTranslationUtil.reload();
 		if(useGC){
 			System.gc();
 		}

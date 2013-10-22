@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
@@ -46,7 +47,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){
-			sender.sendMessage(ChatColor.RED + "Classes are not activated.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "Classes").build());
 			return true;
 		}
 		
@@ -64,16 +66,17 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			if(args.length < 2){
 				classHolder = plugin.getClassManager().getHolderOfPlayer(sender.getName());
 				if(classHolder == null){
-					sender.sendMessage(ChatColor.RED + "You have no class selected. Use " + ChatColor.LIGHT_PURPLE + "/class info <class name>" 
-							+ ChatColor.RED + "  to inspect a class.");
+					sender.sendMessage(LanguageAPI.translateIgnoreError("no_class_selected_use_info").build());
 					return true;
 				}
 			}else{
 				String className = args[1];
 				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
-					sender.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className 
-							+ ChatColor.RED + " does not exist.");
+					sender.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
+							.replace("classname", className)
+							.build()
+							);
 				}
 			}	
 			
@@ -107,8 +110,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
-					player.sendMessage(ChatColor.RED + "You already have a class: " + ChatColor.AQUA + currentClass.getName()
-							+ ChatColor.RED + ". Use " + ChatColor.LIGHT_PURPLE + "/class change" + ChatColor.RED + " to change your class.");
+					player.sendMessage(LanguageAPI.translateIgnoreError("alread_have_class")
+							.replace("clasname", currentClass.getName()).build() );
 					return true;
 				}
 				
@@ -122,12 +125,14 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_to_select")
+							.build());
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+				player.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
+						.replace("holder", "Class").build());
 				return true;
 			}
 			
@@ -157,8 +162,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(currentClass == plugin.getClassManager().getDefaultHolder()){
-					player.sendMessage(ChatColor.RED + "You don't have any class. Use " + ChatColor.LIGHT_PURPLE + "/class select" 
-							+ ChatColor.RED + " to select a class.");
+					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_on_change").build());
 					return true;
 				}
 				
@@ -172,12 +176,13 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					player.sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_to_select").build());
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				player.sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+				player.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
+						.replace("holder", "Class").build());
 				return true;
 			}
 			
@@ -202,13 +207,14 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return true;
 		}
 		
-		sender.sendMessage(ChatColor.RED + "[RAC] Only players can use this command." );
+		sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
 		return false;
 	}
 	
 	
 	private void postHelp(CommandSender player){
-		player.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		player.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+				.replace("command", "").build());
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
 		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeClass))
@@ -224,7 +230,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "ClassInfo" + ChatColor.YELLOW + " =====");
 		
 		if(classContainer == null){
-			player.sendMessage(ChatColor.RED + "You have no class selected.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_selected").build());
 			return;
 		}
 		

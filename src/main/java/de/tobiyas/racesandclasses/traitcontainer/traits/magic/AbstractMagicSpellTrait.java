@@ -15,10 +15,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
@@ -177,14 +176,15 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				
 				boolean casted = magicSpellTriggered(player);
 				if(casted){
-					removeCost(player);
+					plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).removeCost(this);
 				}
 				
 				return casted;
 			}
 			
 			if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
-				return changeMagicSpell(player);
+				changeMagicSpell(player);
+				return false;
 			}
 		}
 		
@@ -199,42 +199,6 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if triggering worked and Mana should be drained.
 	 */
 	protected boolean otherEventTriggered(Event event){
-		return false;
-	}
-	
-	/**
-	 * Removes the spell cost from the player
-	 * 
-	 * @param player
-	 */
-	private void removeCost(Player player) {
-		String playerName = player.getName();
-		
-		switch(costType){
-			case HEALTH: CompatibilityModifier.BukkitPlayer.safeSetHealth(plugin.getPlayerManager()
-							.getHealthOfPlayer(playerName) - cost, player); 
-							break;
-			
-			case MANA: plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).getManaManager().playerCastSpell(this); break;
-			case ITEM: player.getInventory().removeItem(new ItemStack(materialForCasting, (int) cost)); break;
-		}
-	}
-
-
-	/**
-	 * Checks if the Player has enough Resources to cast the spell.
-	 * 
-	 * @return
-	 */
-	protected boolean checkCosts(Player player) {
-		String playerName = player.getName();
-		
-		switch(costType){
-			case HEALTH: return plugin.getPlayerManager().getHealthOfPlayer(playerName) > cost;
-			case MANA: return plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).getManaManager().hasEnoughMana(this);
-			case ITEM: return player.getInventory().contains(materialForCasting, (int) cost);
-		}
-		
 		return false;
 	}
 
@@ -256,12 +220,13 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			return true;
 		}
 
-		MagicSpellTrait currentSpell 
+		MagicSpellTrait nextSpell 
 			= plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).changeToNextSpell();
 		
-		if(currentSpell != null){
+		if(nextSpell != null){
 			player.sendMessage(ChatColor.GREEN + "Changed Spell to: " + ChatColor.LIGHT_PURPLE 
-					+ ((Trait) currentSpell).getName() + ChatColor.GREEN + ".");
+					+ ((Trait) nextSpell).getName() + ChatColor.GREEN + ". Cost: " + " " + nextSpell.getCost() + " "
+					+ (nextSpell.getCostType() == CostType.ITEM ? nextSpell.getCastMaterialType() : nextSpell.getCostType()));
 			return true;
 		}else{
 			//switching too fast.
@@ -284,7 +249,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	@TraitConfigurationNeeded( fields = {
 			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class),
 			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
-			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = String.class, optional = true)
+			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = Material.class, optional = true)
 		})
 	@Override
 	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
@@ -304,12 +269,12 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured. 'costType' was ITEM but no Item is specified at 'item'.");
 				}
 				
-				String material = (String) configMap.get(ITEM_TYPE_PATH);
-				materialForCasting = Material.valueOf(material);
+				materialForCasting = (Material) configMap.get(ITEM_TYPE_PATH);
 				if(materialForCasting == null){
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
 							+ " 'costType' was ITEM but the item read is not an Item. Items are CAPITAL. "
-							+ "See 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' for all Materials");
+							+ "See 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' for all Materials. "
+							+ "Alternative use an ItemID.");
 				}
 			}
 			

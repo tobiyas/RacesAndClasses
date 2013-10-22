@@ -44,5 +44,6 @@ public class RaCListenerRegister {
 	public static void registerGeneral(){
 		new Listener_GodModeDamagePrevent();
 		new Listener_PlayerRespawn();
+		//new QuickSlotListener();
 	}
 }

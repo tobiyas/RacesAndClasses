@@ -52,4 +52,6 @@ public class Consts {
 	public static final int minimalBukkitMainVersion = 1;
 	public static final int minimalBukkitSubVersion = 6;
 	public static final int minimalBukkitRevVersion = 2;
+	
+	public static final int CURSE_ID_FOR_PLUGIN = 58896;
 }

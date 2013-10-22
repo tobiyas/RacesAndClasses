@@ -130,6 +130,8 @@ public class PlayerSpellManager {
 			
 			case ITEM: return player.getInventory().contains(trait.getCastMaterialType(), (int) cost);
 			
+			case HUNGER : return player.getFoodLevel() >= cost;
+			
 			default: return false;
 		}
 	}
@@ -137,7 +139,7 @@ public class PlayerSpellManager {
 	/**
 	 * Removes the spell cost from the player
 	 * 
-	 * @param player
+	 * @param trait to remove the cost from
 	 */
 	public void removeCost(MagicSpellTrait trait) {
 		Player player = Bukkit.getPlayer(playerName);
@@ -150,6 +152,11 @@ public class PlayerSpellManager {
 			case MANA: getManaManager().playerCastSpell(trait); break;
 			
 			case ITEM: player.getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost())); break;
+			
+			case HUNGER: 
+				int oldFoodLevel = player.getFoodLevel();
+				int newFoodLevel = (int) (oldFoodLevel - trait.getCost());
+				player.setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 		}
 	}
 

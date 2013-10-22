@@ -1,12 +1,12 @@
 package de.tobiyas.racesandclasses.commands.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 
 public class CommandExecutor_LocalChat implements CommandExecutor{
 
@@ -25,13 +25,15 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "Only Players can use this command.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players")
+					.build());
 			return true;
 		}
 		
 		Player player = (Player) sender;		
 		if(args.length == 0){
-			player.sendMessage(ChatColor.RED + "No message given.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("send_empty_message")
+					.build());
 			return true;
 		}
 		

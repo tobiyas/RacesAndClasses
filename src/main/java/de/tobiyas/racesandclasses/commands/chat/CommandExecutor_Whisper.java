@@ -1,13 +1,13 @@
 package de.tobiyas.racesandclasses.commands.chat;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.chat.PrivateChat;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -29,31 +29,39 @@ public class CommandExecutor_Whisper implements CommandExecutor {
 			String[] args) {
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_whisper_enable()){
-			sender.sendMessage(ChatColor.RED + "[RaC] Whispering is not active, sorry.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "Whispers")
+					.build());
 			return true;
 		}
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.whisper)) return true;
 		
 		if(args.length == 0){
-			sender.sendMessage(ChatColor.RED + "You have to specify a player and a message.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+				.replace("command", "/whisper <target> <message>")
+				.build());
 			return true;
 		}
 		
 
 		Player target = Bukkit.getPlayer(args[0]);
 		if(target == null){
-			sender.sendMessage(ChatColor.RED + "Target does not exist or is not online.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("target_not_exist")
+					.build());
 			return true;
 		}
 		
 		if(args.length == 1){
-			sender.sendMessage(ChatColor.RED + "Please give a message to send.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+					.replace("command", "/whisper <target> <message>")
+					.build());
 			return true;
 		}
 		
 		if(sender.getName().equals(target.getName())){
-			sender.sendMessage(ChatColor.RED + "You can't whisper yourself.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("whisper_yourself")
+					.build());
 			return true;
 		}
 		

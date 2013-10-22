@@ -8,13 +8,13 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 
@@ -33,17 +33,19 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
 			return true;
 		}
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			sender.sendMessage(ChatColor.RED + "RaceChat is not active.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "RaceChat").build());
 			return true;
 		}
 		
 		if(args.length == 0){
-			sender.sendMessage(ChatColor.RED + "You tried to send an empty Message.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("send_empty_message")
+					.build());
 			return true;
 		}
 		
@@ -51,7 +53,8 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
-			player.sendMessage(ChatColor.RED + "You have no race selected.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("no_race_selected")
+					.build());
 			return true;
 		}
 		

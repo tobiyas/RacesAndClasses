@@ -1,13 +1,13 @@
 package de.tobiyas.racesandclasses.commands.force;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -36,7 +36,8 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.forceChange)) return true;
 		
 		if(args.length < 2){
-			sender.sendMessage(ChatColor.RED + "[RaC] Wrong usage. Use: " + ChatColor.LIGHT_PURPLE + "/racforceclass <player> <class name>");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+					.replace("command", "/racforceclass <player> <class name>").build());
 			return true;
 		}
 		
@@ -44,13 +45,15 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 		String newClass = args[1];
 		
 		if(Bukkit.getPlayer(playerToChange) == null){
-			sender.sendMessage(ChatColor.RED + "[RaC] Player: " + ChatColor.LIGHT_PURPLE + playerToChange + ChatColor.RED + " does not exist.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("player_not_exist")
+					.replace("player", playerToChange).build());
 			return true;
 		}
 		
 		ClassManager classManager = plugin.getClassManager();
 		if(classManager.getHolderByName(newClass) == null){
-			sender.sendMessage(ChatColor.RED + "[RaC] Class: " + ChatColor.LIGHT_PURPLE + newClass + ChatColor.RED + " does not exist.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
+					.replace("class", newClass).build());
 			return true;
 		}
 		
@@ -62,11 +65,12 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 		
 		Player player = Bukkit.getPlayer(playerToChange);
 		if(player.isOnline()){
-			player.sendMessage(ChatColor.GREEN + "[RaC] Your Class has been changed to: " + ChatColor.LIGHT_PURPLE + newClass + ChatColor.GREEN + ".");
+			player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
+					.replace("class", newClass).build());
 		}
 		
-		sender.sendMessage(ChatColor.GREEN + "[RaC] Class of " + ChatColor.LIGHT_PURPLE + playerToChange 
-				+ ChatColor.GREEN + " changed to: " + ChatColor.LIGHT_PURPLE + newClass + ChatColor.GREEN + ".");
+		sender.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to_other")
+				.replace("player", player.getName()).replace("class", newClass).build());
 		
 		return true;
 	}

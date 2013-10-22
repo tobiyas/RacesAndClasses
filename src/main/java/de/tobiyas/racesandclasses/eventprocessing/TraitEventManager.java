@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
@@ -108,6 +109,14 @@ public class TraitEventManager{
 								continue;
 							}
 						}	
+					}
+				}
+				
+				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent){
+					//only let the current magic spell continue for interaction events.;
+					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
+					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell() != magicTrait){
+						continue;
 					}
 				}
 				

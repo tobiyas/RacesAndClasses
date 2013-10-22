@@ -97,6 +97,8 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	private int config_debugTimeAfterLoginOpening;
 	private boolean config_useAutoUpdater;
 	
+	private boolean config_alsoUseLeftClickInGuis;
+	
 	
 	/**
 	 * Inits the Config system.
@@ -166,6 +168,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, true);
+		config.addDefault(gui_also_use_leftclick_in_guis, false);
 		
 		config.addDefault(races_gui_enable, true);
 		config.addDefault(classes_gui_enable, true);
@@ -196,6 +199,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config_enableDebugOutputs = config.getBoolean(debug_outputs_enable, true);
 		config_enableErrorUpload = config.getBoolean(debug_outputs_errorUpload, true);
+		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, false);
 		
 		config_classes_enable = config.getBoolean(classes_enable, true);
 		config_metrics_enabled = config.getBoolean(metrics_enable, true);
@@ -449,6 +453,10 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 	public String getConfig_takeRaceWhenNoRace() {
 		return config_takeRaceWhenNoRace;
+	}
+
+	public boolean isConfig_alsoUseLeftClickInGuis() {
+		return config_alsoUseLeftClickInGuis;
 	}
 
 }
