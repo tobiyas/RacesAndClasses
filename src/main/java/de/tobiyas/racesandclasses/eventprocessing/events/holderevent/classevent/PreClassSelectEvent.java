@@ -29,6 +29,18 @@ public class PreClassSelectEvent extends HolderPreSelectEvent{
 		super(player,  classToSelect);
 	}
 
+	/**
+	 * A player has selected a class.
+	 * 
+	 * @param player that selected the class
+	 * @param raceToSelect that was selected
+	 * @param checkPermissions if the permissions should be checked
+	 * @param checkCooldown if the Cooldown should be checked
+	 */
+	public PreClassSelectEvent(Player player, ClassContainer classToSelect, boolean checkPermissions, boolean checkCooldown) {
+		super(player, classToSelect, checkCooldown, checkPermissions);
+	}
+	
 
 	public ClassContainer getClassToSelect() {
 		return (ClassContainer) holderToSelect;

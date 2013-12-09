@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -32,11 +33,16 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
+			sender.sendMessage(ChatColor.RED + "[RaC] The Race System is disabled.");
+			return true;
+		}
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.forceChange)) return true;
 		
 		if(args.length < 2){
-			sender.sendMessage(ChatColor.RED + "[RaC] Wrong usage. Use: " + ChatColor.LIGHT_PURPLE + "/racforcerace <player> <race name>");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
+					.replace("command", "/racforcerace <player> <race name>").build());
 			return true;
 		}
 		
@@ -44,13 +50,15 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 		String newRace = args[1];
 		
 		if(Bukkit.getPlayer(playerToChange) == null){
-			sender.sendMessage(ChatColor.RED + "[RaC] Player: " + ChatColor.LIGHT_PURPLE + playerToChange + ChatColor.RED + " does not exist.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("player_not_exist")
+					.replace("player", playerToChange).build());
 			return true;
 		}
 		
 		RaceManager raceManager = plugin.getRaceManager();
 		if(raceManager.getHolderByName(newRace) == null){
-			sender.sendMessage(ChatColor.RED + "[RaC] Race: " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " does not exist.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("race_not_exist")
+					.replace("race", newRace).build());
 			return true;
 		}
 		
@@ -62,12 +70,12 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 		
 		Player player = Bukkit.getPlayer(playerToChange);
 		if(player.isOnline()){
-			player.sendMessage(ChatColor.GREEN + "[RaC] Your Race has been changed to: " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.GREEN + ".");
+			player.sendMessage(LanguageAPI.translateIgnoreError("race_changed_to")
+					.replace("race", newRace).build());
 		}
 		
-		sender.sendMessage(ChatColor.GREEN + "[RaC] Race of " + ChatColor.LIGHT_PURPLE + playerToChange 
-				+ ChatColor.GREEN + " changed to: " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.GREEN + ".");
-		
+		player.sendMessage(LanguageAPI.translateIgnoreError("race_changed_to_other")
+				.replace("race", newRace).replace("player", playerToChange).build());
 		return true;
 	}
 

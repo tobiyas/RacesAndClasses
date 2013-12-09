@@ -115,7 +115,7 @@ public class HolderInventory extends InventoryView{
 			
 			//add trait text as lore
 			for(Trait trait: holder.getVisibleTraits()){
-				lore.add(ChatColor.DARK_AQUA + trait.getName() + ": " );
+				lore.add(ChatColor.DARK_AQUA + trait.getDisplayName() + ": " );
 				String traitConfig = trait.getPrettyConfiguration();
 				String[] words = traitConfig.split(" ");
 				
@@ -175,11 +175,11 @@ public class HolderInventory extends InventoryView{
 	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {		
 		HolderPreSelectEvent event = null;
 		if(manager == plugin.getClassManager()){
-			event = new PreClassSelectEvent(player, (ClassContainer) holder);
+			event = new PreClassSelectEvent(player, (ClassContainer) holder, true, false);
 		}
 		
 		if(manager == plugin.getRaceManager()){
-			event = new PreRaceSelectEvent(player, (RaceContainer) holder);
+			event = new PreRaceSelectEvent(player, (RaceContainer) holder, true, false);
 		}
 		
 		if(event == null) return true;

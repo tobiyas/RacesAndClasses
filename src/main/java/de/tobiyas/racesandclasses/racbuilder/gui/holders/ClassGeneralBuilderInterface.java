@@ -5,11 +5,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
 import de.tobiyas.racesandclasses.racbuilder.ClassBuilder;
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.OperatorSelectionInterface;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
+import de.tobiyas.util.inventorymenu.stats.OperatorSelectionInterface;
 
 public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface {
 
@@ -24,8 +25,8 @@ public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface 
 	private final ItemStack healthOperationSelector;
 	
 	public ClassGeneralBuilderInterface(Player player,
-			BasicSelectionInterface parent, AbstractHolderBuilder builder) {
-		super(player, parent, builder);
+			BasicSelectionInterface parent, AbstractHolderBuilder builder, RacesAndClasses plugin) {
+		super(player, parent, builder, plugin);
 
 		this.healthOperationSelector = generateItem(Material.BAKED_POTATO, ChatColor.RED + "Health Operator", 
 				ChatColor.LIGHT_PURPLE + "Value : ");
@@ -68,7 +69,7 @@ public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface 
 		ClassBuilder classBuilder = (ClassBuilder) builder;
 		this.callbackMap.put(currentModifiedValue, classBuilder.getHealthOperation());
 		
-		openNewView(new OperatorSelectionInterface(player, this, callbackMap, currentModifiedValue));
+		openNewView(new OperatorSelectionInterface(player, this, callbackMap, currentModifiedValue, plugin));
 	}
 
 }

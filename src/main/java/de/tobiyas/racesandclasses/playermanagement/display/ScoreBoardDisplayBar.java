@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.playermanagement.health.display;
+package de.tobiyas.racesandclasses.playermanagement.display;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,6 +67,12 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 
 	@Override
 	public void display(double currentHealth, double maxHealth) {
+		if(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs()){
+			//server does not want ANY Scoreboards from RaC. 
+			//Plugin is sad. :(
+			return;
+		}
+		
 		String barString = calcForHealth(currentHealth, maxHealth, 7);
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null || !player.isOnline()){
@@ -87,8 +93,8 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 		//should remove all occurences.
 		for(OfflinePlayer scorePlayer : bordOfPlayer.getPlayers()){
 			if(scorePlayer.getName().startsWith(this.colorHigh + "|")
-					|| scorePlayer.getName().startsWith(this.colorLow + "|")){
-				bordOfPlayer.resetScores(scorePlayer);				
+					|| scorePlayer.getName().startsWith(this.colorHigh + "" + this.colorLow + "|")){
+				bordOfPlayer.resetScores(scorePlayer);
 			}
 			
 		}
@@ -99,7 +105,7 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 		Score score = objective.getScore(Bukkit.getOfflinePlayer(barString));
 		score.setScore((int) Math.ceil(currentHealth));
 		
-		delayFading(player, 5);
+		delayFading(player, 3);
 		player.setScoreboard(bordOfPlayer);
 	}
 
@@ -172,4 +178,5 @@ public class ScoreBoardDisplayBar extends AbstractDisplay{
 		private int time;
 		private Scoreboard oldBoard;
 	}
+
 }

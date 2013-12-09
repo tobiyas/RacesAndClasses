@@ -3,15 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>RacesAndClasses</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>RacesAndClasses</name>
 	<description>Races and Classes plugin for Craftbukkit</description>
 
 	<!-- Props -->
 	<properties>
 		<powermock.version>1.4.12</powermock.version>
-		<utilsVersion>1.0.9</utilsVersion>
-		<bukkit.version>1.6.4-R0.1-SNAPSHOT</bukkit.version>
+		<utilsVersion>1.0.11</utilsVersion>
+		<utilsAddition>RaC</utilsAddition>
+		<bukkit.version>1.7.2-R0.1-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->
@@ -41,6 +42,7 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+			<optional>false</optional>
 		</dependency>
 
 		<dependency>
@@ -72,6 +74,15 @@
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Hero chat -->
+		<dependency>
+           <groupId>com.dthielke</groupId>
+           <artifactId>HeroChat</artifactId>
+           <version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${basedir}/libs/Chat/Herochat.jar</systemPath>
+        </dependency>
 
 		<!-- Mockito -->
 		<dependency>
@@ -129,6 +140,7 @@
 							<artifactSet>
 								<includes>
 									<include>de.tobiyas:Utils</include>
+									<include>commons-io:commons-io</include>
 								</includes>
 							</artifactSet>
 
@@ -136,7 +148,11 @@
 							<relocations>
 								<relocation>
 									<pattern>de.tobiyas.util</pattern>
-									<shadedPattern>de.tobiyas.util.v${utilsVersion}</shadedPattern>
+									<shadedPattern>de.tobiyas.util.v${utilsVersion}${utilsAddition}</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.apache.commons.io</pattern>
+									<shadedPattern>de.tobiyas.util.apache.commons.io</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

@@ -10,14 +10,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatType;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatsSelectionInterfaceFactory;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
+import de.tobiyas.util.inventorymenu.stats.StatType;
+import de.tobiyas.util.inventorymenu.stats.StatsSelectionInterfaceFactory;
 
 public class TraitBuilderInterface extends BasicSelectionInterface {
 
@@ -38,8 +39,8 @@ public class TraitBuilderInterface extends BasicSelectionInterface {
 	
 	
 	public TraitBuilderInterface(Player player, BasicSelectionInterface parent, String traitName,
-			List<TraitConfigOptionContainer> configList) {
-		super(player, parent, "Controls", "Trait: " + traitName);
+			List<TraitConfigOptionContainer> configList, RacesAndClasses plugin) {
+		super(player, parent, "Controls", "Trait: " + traitName, plugin);
 		
 		this.configList = configList;
 		
@@ -106,7 +107,7 @@ public class TraitBuilderInterface extends BasicSelectionInterface {
 				
 				openNewView(
 						StatsSelectionInterfaceFactory.buildInterface(
-								traitItem.getType(), player, this, tempConfigList, key)
+								traitItem.getType(), player, this, tempConfigList, key, plugin)
 						);
 				
 				return;

@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
-public abstract class HolderSelectEvent extends Event{
+public abstract class HolderSelectedEvent extends Event{
 
 	private static HandlerList handlers = new HandlerList();
 	
@@ -21,6 +21,11 @@ public abstract class HolderSelectEvent extends Event{
 	 * The holder the player has selected to be
 	 */
 	protected AbstractTraitHolder holderToSelect;
+
+	/**
+	 * If the player should get an Cooldown after change.
+	 */
+	protected final boolean giveCooldown;
 	
 	
 	/**
@@ -29,9 +34,25 @@ public abstract class HolderSelectEvent extends Event{
 	 * @param player that selected the holder
 	 * @param holderToSelect that was selected
 	 */
-	public HolderSelectEvent(Player player, AbstractTraitHolder holderToSelect) {
+	public HolderSelectedEvent(Player player, AbstractTraitHolder holderToSelect) {
 		this.player = player;
 		this.holderToSelect = holderToSelect;
+		
+		this.giveCooldown = true;
+	}
+	
+	/**
+	 * A player has selected a holder.
+	 * 
+	 * @param player that selected the holder
+	 * @param holderToSelect that was selected
+	 * @param if the player should get an Cooldown
+	 */
+	public HolderSelectedEvent(Player player, AbstractTraitHolder holderToSelect, boolean giveCooldown) {
+		this.player = player;
+		this.holderToSelect = holderToSelect;
+		
+		this.giveCooldown = giveCooldown;
 	}
 	
 	
@@ -62,5 +83,9 @@ public abstract class HolderSelectEvent extends Event{
 	 */
 	public AbstractTraitHolder getHolderToSelect() {
 		return holderToSelect;
+	}
+
+	public boolean isGiveCooldown() {
+		return giveCooldown;
 	}
 }

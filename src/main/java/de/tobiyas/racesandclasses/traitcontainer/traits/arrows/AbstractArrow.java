@@ -204,10 +204,6 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		return false;
 	}
 	
-	@Override
-	public String toString(){
-		return getName();
-	}
 
 	@Override
 	public int getMaxUplinkTime() {

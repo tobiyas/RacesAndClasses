@@ -133,6 +133,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 				.contains(prefix))) return;
 		//now we are sure to be in an HolderGUI.
 		
+		
 		String playerName = event.getView().getPlayer().getName();
 		ItemStack clickedItem = event.getCurrentItem();
 		if(clickedItem == null || clickedItem.getType() == Material.AIR ){
@@ -183,7 +184,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 			worked = manager.changePlayerHolder(playerName, newHolder.getName(), true);
 		}
 		
-		
 		if(worked){
 			Player player = Bukkit.getPlayer(playerName);
 			if(player != null){
@@ -229,7 +229,13 @@ public abstract class HolderChangeListenerGui implements Listener {
 			public void run() {
 				Player player = plugin.getServer().getPlayer(playerName);
 				if(player != null && player.isOnline()){
-					player.openInventory(new HolderInventory(player, manager));
+					HolderInventory holderInv = new HolderInventory(player, manager);
+					if(holderInv.getNumberOfHolder() > 0){
+						player.openInventory(holderInv);
+						return;
+					}
+					
+					//No holder to select... So no opening needed.
 				}
 			}
 		}, ticks);
@@ -257,13 +263,17 @@ public abstract class HolderChangeListenerGui implements Listener {
 	private AbstractTraitHolder getHolder(ItemStack item){
 		if(item == null) return null;
 		if(!item.hasItemMeta()) return null;
+		if(!item.getItemMeta().hasDisplayName()) return null;
 		
-		String itemName = item.getItemMeta().getDisplayName();		
+		String itemName = item.getItemMeta().getDisplayName().toLowerCase();
 		
 		//lets see if any item is equals to a holder tag.
 		for(String holderName : manager.listAllVisibleHolders()){
 			AbstractTraitHolder holder = manager.getHolderByName(holderName);
-			if(holder.getTag().equalsIgnoreCase(itemName)){
+			String holderTag = holder.getTag().toLowerCase();
+			if("".equals(holderTag)) holderTag = holder.getName().toLowerCase();
+			
+			if(itemName.contains(holderTag)){
 				return holder;
 			}
 		}

@@ -36,8 +36,8 @@ public class Consts {
 	
 	//Version
 	public static String currentDevStage = "B T";
-	public static String detailedVersionString = "1.0.2 BETA 6 - RC 3";
-	public static final String configVersion = "1.0";
+	public static String detailedVersionString = "1.0.3 RC 1";
+	public static final String configVersion = "1.1";
 	
 	
 	//Enchants

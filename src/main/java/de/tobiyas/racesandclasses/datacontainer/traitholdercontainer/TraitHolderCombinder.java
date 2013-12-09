@@ -24,15 +24,14 @@ public class TraitHolderCombinder {
 	 */
 	public static boolean checkContainer(String playerName, Trait trait){
 		AbstractTraitHolder holder = trait.getTraitHolder();
+		if(holder == null) return true;
 		
 		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
-		if(raceHolder == null) return false;
 		if(holder == raceHolder){
 			return true;
 		}
 		
 		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
-		if(classHolder == null) return false;
 		if(holder == classHolder){
 			return true;
 		}

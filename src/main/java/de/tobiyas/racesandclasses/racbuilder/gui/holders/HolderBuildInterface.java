@@ -11,16 +11,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
-import de.tobiyas.racesandclasses.racbuilder.gui.elements.ScrollableItems;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatType;
 import de.tobiyas.racesandclasses.racbuilder.gui.trait.TraitBuilderInterface;
 import de.tobiyas.racesandclasses.racbuilder.gui.trait.TraitConfigOptionContainer;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
+import de.tobiyas.util.inventorymenu.elements.ScrollableItems;
+import de.tobiyas.util.inventorymenu.stats.StatType;
 
 public class HolderBuildInterface extends BasicSelectionInterface {
 
@@ -52,8 +53,8 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 	
 
 	
-	public HolderBuildInterface(Player player, BasicSelectionInterface parent, AbstractHolderBuilder builder) {
-		super(player, parent);
+	public HolderBuildInterface(Player player, BasicSelectionInterface parent, AbstractHolderBuilder builder, RacesAndClasses plugin) {
+		super(player, parent, plugin);
 	
 		this.builder = builder;
 		holderTraits = new ScrollableItems(selectionInventory, 0, 8, 0);
@@ -178,7 +179,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 					currentTraitEditingList = loadFromTrait(trait);
 					currentTraitName = trait.getName();
 					
-					openNewView(new TraitBuilderInterface(player, this, trait.getName(), currentTraitEditingList));
+					openNewView(new TraitBuilderInterface(player, this, trait.getName(), currentTraitEditingList, (RacesAndClasses) plugin));
 					return;
 				}
 			}
@@ -226,7 +227,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 			
 			currentTraitName = traitName;
 			currentTraitEditingList = new LinkedList<TraitConfigOptionContainer>();
-			openNewView(new TraitBuilderInterface(player, this, traitName, currentTraitEditingList));
+			openNewView(new TraitBuilderInterface(player, this, traitName, currentTraitEditingList, (RacesAndClasses) plugin));
 		}
 	}
 

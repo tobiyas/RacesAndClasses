@@ -31,8 +31,10 @@ public class ArmorToolManager {
 		itemPerms.clear();
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
 		
-		for(ItemQuality quality : container.getArmorPerms()){
-			addPerm(quality);
+		if(container != null){
+			for(ItemQuality quality : container.getArmorPerms()){
+				addPerm(quality);
+			}
 		}
 			
 		//Add ItemIDs or other here.

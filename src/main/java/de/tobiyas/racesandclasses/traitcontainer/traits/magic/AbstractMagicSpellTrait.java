@@ -120,6 +120,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				
 				return true;
 			}
+			
+			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
+				if(player.getItemInHand().getType() 
+						!= plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic()){
+					
+					return true;
+				}
+			}
 		}
 		
 		return false;
@@ -225,7 +233,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		
 		if(nextSpell != null){
 			player.sendMessage(ChatColor.GREEN + "Changed Spell to: " + ChatColor.LIGHT_PURPLE 
-					+ ((Trait) nextSpell).getName() + ChatColor.GREEN + ". Cost: " + " " + nextSpell.getCost() + " "
+					+ ((Trait) nextSpell).getDisplayName() + ChatColor.GREEN + ". Cost: " + " " + nextSpell.getCost() + " "
 					+ (nextSpell.getCostType() == CostType.ITEM ? nextSpell.getCastMaterialType() : nextSpell.getCostType()));
 			return true;
 		}else{

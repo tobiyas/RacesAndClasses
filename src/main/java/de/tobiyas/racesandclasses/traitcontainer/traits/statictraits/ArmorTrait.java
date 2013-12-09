@@ -111,4 +111,9 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 	public boolean isStackable(){
 		return false;
 	}
+
+	@Override
+	public String getDisplayName() {
+		return getName();
+	}
 }

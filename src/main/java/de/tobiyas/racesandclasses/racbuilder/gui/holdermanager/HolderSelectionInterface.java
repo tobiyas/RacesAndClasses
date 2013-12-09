@@ -8,12 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
 import de.tobiyas.racesandclasses.racbuilder.gui.holders.HolderGeneralBuilderInterface;
 import de.tobiyas.racesandclasses.racbuilder.gui.holders.HolderSelectionState;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 
 public abstract class HolderSelectionInterface extends
 		BasicSelectionInterface {
@@ -74,8 +75,8 @@ public abstract class HolderSelectionInterface extends
 	 * @param holderManager
 	 */
 	public HolderSelectionInterface(Player player,
-			BasicSelectionInterface parent, AbstractHolderManager holderManager) {
-		super(player, parent, "Controls", holderManager.getContainerTypeAsString());
+			BasicSelectionInterface parent, AbstractHolderManager holderManager, RacesAndClasses plugin) {
+		super(player, parent, "Controls", holderManager.getContainerTypeAsString(), plugin);
 		
 		
 		this.holderManager = holderManager;
@@ -242,7 +243,7 @@ public abstract class HolderSelectionInterface extends
 	 */
 	private void editHolder(HolderItemContainer holder){
 		builder = holder.getBuilder();
-		openNewView(new HolderGeneralBuilderInterface(player, this, builder));
+		openNewView(new HolderGeneralBuilderInterface(player, this, builder, (RacesAndClasses) plugin));
 	}
 	
 	/**
@@ -264,7 +265,7 @@ public abstract class HolderSelectionInterface extends
 		HolderItemContainer container = new HolderItemContainer(builder);
 		holderContainers.add(container);
 		
-		openNewView(new HolderGeneralBuilderInterface(player, this, builder));
+		openNewView(new HolderGeneralBuilderInterface(player, this, builder, (RacesAndClasses) plugin));
 	}
 
 	

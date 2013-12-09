@@ -4,14 +4,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 
 /**
  * This Event is fired, when a Player tries to select a Class. 
  * 
  * @author Tobiyas
  */
-public class AfterClassSelectedEvent extends HolderSelectEvent{
+public class AfterClassSelectedEvent extends HolderSelectedEvent{
 
 	/**
 	 * The static list of all handlers that are interested in this event

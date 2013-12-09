@@ -4,11 +4,11 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ChatDisplayBar;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayType;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.display.ChatDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.display.Display;
+import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.display.NewScoreBoardDisplayBar;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
 
@@ -78,7 +78,7 @@ public class ManaManager {
 			return new ChatDisplayBar(name, DisplayInfos.MANA);
 		
 		case Scoreboard:
-			return new ScoreBoardDisplayBar(name, DisplayInfos.MANA);
+			return new NewScoreBoardDisplayBar(name, DisplayInfos.MANA);
 			
 		default:
 			return new ChatDisplayBar(name, DisplayInfos.MANA);

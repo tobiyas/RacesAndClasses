@@ -47,6 +47,9 @@ public class Listener_PlayerEquipChange implements Listener {
 	
 	@EventHandler
 	public void playerClickedOnGroudToEquipItem(PlayerInteractEvent event){
+		boolean disableArmorCheck = plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
+		if(disableArmorCheck) return;
+		
 		ArmorSlot armorSlot = ItemUtils.getItemSlotEquiping(event.getItem());
 		
 		if(armorSlot == ArmorSlot.NONE){
@@ -68,6 +71,9 @@ public class Listener_PlayerEquipChange implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void saveOldArmors(InventoryClickEvent inventEvent){
+		boolean disableArmorCheck = plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
+		if(disableArmorCheck) return;
+		
 		InventoryHolder invHolder = inventEvent.getInventory().getHolder();
 		if(invHolder == null || !(invHolder instanceof HumanEntity)){
 			//empty player is possible
@@ -91,6 +97,8 @@ public class Listener_PlayerEquipChange implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent closeEvent){
+		boolean disableArmorCheck = plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
+		if(disableArmorCheck) return;
 		if(closeEvent.getPlayer() == null) return; //empty player is possible
 		
 		String name = closeEvent.getPlayer().getName();

@@ -163,6 +163,12 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: true \n"
 			+ general_saving_savePlayerDataToDB + ": true\n\n"
+			
+			+ "# This tells the Plugin to NOT check the Armor if turned off. \n"
+			+ "# If turned to true, the armor Checking of Races / Classes is Disabled.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ general_armor_disableArmorChecking + ": false\n\n"
 						
 			
 			//GUI
@@ -176,7 +182,11 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ gui_also_use_leftclick_in_guis + ": false\n\n"
-			
+
+			+ "# Setting this to true will disable all Outputs to scoreboards from the plugin.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_scoreboard_disableAllOutputs + ": false\n\n"
 			
 			
 			//MAGIC
@@ -220,6 +230,11 @@ public class GeneralConfigText {
 			+ "#RACES#\n"
 			+ "#######\n"
 			+ "\n"
+			
+			+ "# Tells the plugin to use the Race System. \n"
+			+ "# boolean: true or false \n"
+			+ "# default: true \n"
+			+ races_enable + ": true\n\n"
 			
 			+ "# Tells the plugin to remember everyone not having a Race to get one. \n"
 			+ "# boolean: true or false \n"

@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.playermanagement.health.display;
+package de.tobiyas.racesandclasses.playermanagement.display;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -48,8 +48,11 @@ public class Listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event){
 		final Player player = event.getPlayer();
+		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
+		
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
-		if(container == null || container == plugin.getRaceManager().getDefaultHolder()){
+		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
+				&& racesActive){
 			player.sendMessage(ChatColor.RED + "You have not selected a Race. Please select a race using /race select <racename>");
 			if(container == null){
 				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace, true);
@@ -62,13 +65,15 @@ public class Listener_Player implements Listener {
 			plugin.getChannelManager().playerLogin(player);
 		}
 		
-		container.editTABListEntry(player.getName());
+		if(racesActive){
+			container.editTABListEntry(player.getName());
+		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
 		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()) == plugin.getRaceManager().getDefaultHolder();
 		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
 		
-		if(playerHasNoRace && forceSelectOfRace){
+		if(playerHasNoRace && forceSelectOfRace && racesActive){
 			final HolderInventory raceInv = new HolderInventory(player, plugin.getRaceManager());
 			if(raceInv.getNumberOfHolder() > 0){
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -140,7 +145,7 @@ public class Listener_Player implements Listener {
 			
 			if(mat == Material.BOW){
 				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getNumberOfArrowTypes() > 0){
-					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getCurrentArrow().getName();
+					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getCurrentArrow().getDisplayName();
 					player.sendMessage(ChatColor.GREEN + "[RaC] You have a " + ChatColor.LIGHT_PURPLE 
 							+"BOW" + ChatColor.GREEN +" in your hand. Use " 
 							+ ChatColor.LIGHT_PURPLE + "LEFT" + ChatColor.GREEN + " Click to change through your arrows. "

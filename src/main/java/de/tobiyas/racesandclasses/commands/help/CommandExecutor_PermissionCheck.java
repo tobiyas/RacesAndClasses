@@ -59,6 +59,11 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	 * @param sender
 	 */
 	private void listRacePermissions(CommandSender sender){
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
+			sender.sendMessage("[RaC] Races are Disabled.");
+			return;
+		}
+		
 		sender.sendMessage(ChatColor.RED + "=====" + ChatColor.YELLOW + " Race Permissions: " + ChatColor.RED + "=====");
 		
 		List<String> holders = plugin.getRaceManager().listAllVisibleHolders();

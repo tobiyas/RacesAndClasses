@@ -28,7 +28,6 @@ import net.gravitydevelopment.updater.Updater.UpdateType;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.avaje.ebean.EbeanServer;
 
@@ -78,12 +77,13 @@ import de.tobiyas.racesandclasses.util.persistence.DBConverter;
 import de.tobiyas.racesandclasses.util.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
+import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
-public class RacesAndClasses extends JavaPlugin{
+public class RacesAndClasses extends UtilsUsingPlugin{
 	/**
 	 * Set if currently in testing mode.
 	 */
@@ -274,7 +274,9 @@ public class RacesAndClasses extends JavaPlugin{
 		currentTime = System.currentTimeMillis();
 		
 		//Race Manager
-		raceManager.init();
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
+			raceManager.init();
+		}
 		
 		RaceManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -368,6 +370,7 @@ public class RacesAndClasses extends JavaPlugin{
 		}
 	}
 	
+	@Override
 	public DebugLogger getDebugLogger(){
 		return debugLogger;
 	}
@@ -377,6 +380,7 @@ public class RacesAndClasses extends JavaPlugin{
 		RaCListenerRegister.registerCustoms();
 		RaCListenerRegister.registerProxys();
 		RaCListenerRegister.registerGeneral();
+		RaCListenerRegister.registerChatListeners();
 	}
 	
 	private void loadingDoneMessage(){
@@ -462,7 +466,7 @@ public class RacesAndClasses extends JavaPlugin{
 		return configManager;
 	}
 	
-	
+	@Override
 	public PermissionManager getPermissionManager(){
 		return permManager;
 	}

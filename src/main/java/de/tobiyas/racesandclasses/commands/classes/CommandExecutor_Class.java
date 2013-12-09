@@ -48,7 +48,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Classes").build());
+					.replace("value", "Classes")
+					.build());
 			return true;
 		}
 		
@@ -74,7 +75,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
 					sender.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-							.replace("classname", className)
+							.replace("class", className)
 							.build()
 							);
 				}
@@ -110,7 +111,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
-					player.sendMessage(LanguageAPI.translateIgnoreError("alread_have_class")
+					player.sendMessage(LanguageAPI.translateIgnoreError("already_have_class")
 							.replace("clasname", currentClass.getName()).build() );
 					return true;
 				}
@@ -240,7 +241,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		player.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.RED + "Class Traits" + ChatColor.YELLOW +" =====");
 		
 		for(Trait trait : classContainer.getVisibleTraits()){
-			player.sendMessage(ChatColor.BLUE + trait.getName() + " : " + trait.getPrettyConfiguration());
+			player.sendMessage(ChatColor.BLUE + trait.getDisplayName() + " : " + trait.getPrettyConfiguration());
 		}
 	}
 	
@@ -249,7 +250,9 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		List<String> classes = plugin.getClassManager().getAllHolderNames();
 		if(classes.size() == 0){
-			player.sendMessage(ChatColor.RED + "No Classes in the list.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_in_list")
+					.build()
+					);
 			return;
 		}
 		
@@ -258,7 +261,10 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		
 		for(String classe : classes ){
 			if(classe.equalsIgnoreCase(nameOfOwnClass)){
-				player.sendMessage(ChatColor.RED + classe + ChatColor.YELLOW + "  <-- Your Class!");
+				String yourClass = LanguageAPI.translateIgnoreError("your_class")
+						.build();
+				
+				player.sendMessage(ChatColor.RED + classe + ChatColor.YELLOW + "  <-- " + yourClass);
 			}else{
 				player.sendMessage(ChatColor.BLUE + classe);
 			}
@@ -271,7 +277,11 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		boolean classExists = classContainer != null;
 		if(!classExists){
-			player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
+					.replace("class", potentialClass)
+					.build()
+					);
+			
 			return false;
 		}
 		
@@ -286,13 +296,21 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
 		if(currentHolder == null){	
 			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass, true)){
-				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
+				player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
+						.replace("class", potentialClass)
+						.build()
+						);
+				
 				return true;
 			}
 			
 			return false;
 		}else{
-			player.sendMessage(ChatColor.RED + "You already have a class: " + ChatColor.LIGHT_PURPLE + classContainer.getName());
+			player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
+					.replace("class", classContainer.getName())
+					.build()
+					);
+			
 			return false;
 		}
 	}
@@ -303,18 +321,29 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
-			player.sendMessage(ChatColor.RED + "You have no class you could change");
+			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_on_change")
+					.build()
+					);
+			
 			return;
 		}
 		
 		if(newClassContainer == null){
-			player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");
+			player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
+					.replace("class", potentialClass)
+					.build()
+					);
+			
 			return;
 		}
 		
 		if(oldClassContainer != null){
 			if(potentialClass.equalsIgnoreCase(oldClassContainer.getName())){
-				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + oldClassContainer.getName());
+				player.sendMessage(LanguageAPI.translateIgnoreError("change_to_same_holder")
+						.replace("holder", oldClassContainer.getName())
+						.build()
+						);
+				
 				return;
 			}
 			
@@ -327,9 +356,16 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			}
 			
 			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass, true)){
-				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + potentialClass);
+				player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
+						.replace("class", potentialClass)
+						.build()
+						);
+				
 			}else{
-				player.sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + potentialClass + ChatColor.RED + " was not found.");
+				player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
+						.replace("class", potentialClass)
+						.build()
+						);
 			}
 		}
 		

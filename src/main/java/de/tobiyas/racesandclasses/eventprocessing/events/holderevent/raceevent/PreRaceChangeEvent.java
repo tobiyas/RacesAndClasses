@@ -33,6 +33,21 @@ public class PreRaceChangeEvent extends PreRaceSelectEvent {
 		this.oldRace = oldRace;
 	}
 	
+	/**
+	 * A player has selected a race.
+	 * 
+	 * @param player that selected the class
+	 * @param raceToSelect that was selected
+	 * @param checkPermissions if the permissions should be checked
+	 * @param checkCooldown if the Cooldown should be checked
+	 */
+	public PreRaceChangeEvent(Player player, RaceContainer raceToSelect, RaceContainer oldRace
+			, boolean checkPermissions, boolean checkCooldown) {
+		super(player, raceToSelect, checkCooldown, checkPermissions);
+
+		this.oldRace = oldRace;
+	}
+	
 	
 	public RaceContainer getOldRace() {
 		return oldRace;

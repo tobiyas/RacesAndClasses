@@ -23,6 +23,7 @@ public interface Trait{
 	/**
 	 * This method is called after creation of the Trait.
 	 * <br>The {@link AbstractTraitHolder} is already set to this time.
+	 * <br>The Config is already set.
 	 * <br>
 	 * <br>IMPORTATNT: This method has to be annotated with {@link TraitEventsUsed}
 	 * <br>For Example: @TraitEventsUsed(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
@@ -31,8 +32,17 @@ public interface Trait{
 	
 	
 	/**
+	 * Indicates that the Trait is beeing destroyed and should unregister all stuff allocated.
+	 */
+	public void deInit();
+	
+	
+	/**
 	 * Returns the name of the Trait
-	 * @return
+	 * <br>This must be a atomar Action! 
+	 * <br>Always return a String that is NO variable!!!
+	 * 
+	 * @return Name of the Trait.
 	 */
 	public String getName();
 	
@@ -138,5 +148,13 @@ public interface Trait{
 	 * @return true if stackable, false if not.
 	 */
 	public boolean isStackable();
+	
+	/**
+	 * Returns the Display name of the Trait.
+	 * <br>The DisplayName is by default the TraitName
+	 * 
+	 * @return the DisplayName of the Trait.
+	 */
+	public String getDisplayName();
 	
 }

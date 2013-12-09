@@ -6,11 +6,11 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.playermanagement.PlayerContainer;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ChatDisplayBar;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.health.display.Display.DisplayType;
-import de.tobiyas.racesandclasses.playermanagement.health.display.ScoreBoardDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.display.ChatDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.display.Display;
+import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.display.NewScoreBoardDisplayBar;
 
 public class HealthDisplayRunner implements Runnable {
 	
@@ -56,7 +56,7 @@ public class HealthDisplayRunner implements Runnable {
 			return new ChatDisplayBar(name, DisplayInfos.HEALTH);
 		
 		case Scoreboard:
-			return new ScoreBoardDisplayBar(name, DisplayInfos.HEALTH);
+			return new NewScoreBoardDisplayBar(name, DisplayInfos.HEALTH);
 			
 		default:
 			return new ChatDisplayBar(name, DisplayInfos.HEALTH);

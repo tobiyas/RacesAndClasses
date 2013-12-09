@@ -47,6 +47,7 @@ public class RaceChangeSelectionListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerhasPermissionToRace(PreRaceSelectEvent event){
 		if(event.getRaceToSelect() == plugin.getRaceManager().getDefaultHolder()) return;
+		if(!event.isCheckPermissions()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()){
 			Player player = event.getPlayer();
@@ -61,6 +62,8 @@ public class RaceChangeSelectionListener implements Listener {
 	
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(PreRaceSelectEvent event){
+		if(!event.isCheckCooldown()) return;
+		
 		String playerName = event.getPlayer().getName();
 		String commandName = "racechange";
 		
@@ -69,10 +72,19 @@ public class RaceChangeSelectionListener implements Listener {
 			String message = ChatColor.RED + "You still have " + ChatColor.LIGHT_PURPLE + remainingCooldown 
 					+ ChatColor.RED + " seconds cooldown on that command";
 			event.setCancelled(message);
-		}else{
-			int time = plugin.getConfigManager().getGeneralConfig().getConfig_classChangeCommandUplink();
-			cooldownManager.setCooldown(playerName, commandName, time);
 		}
+	}
+	
+	
+	@EventHandler
+	public void givePlayerUplinkAfterSelect(AfterRaceSelectedEvent event){
+		if(!event.isGiveCooldown()) return;
+		
+		String playerName = event.getPlayer().getName();
+		String commandName = "racechange";
+		
+		int time = plugin.getConfigManager().getGeneralConfig().getConfig_raceChangeCommandUplink();
+		cooldownManager.setCooldown(playerName, commandName, time);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
@@ -117,6 +118,11 @@ public class PlayerManager{
 		}else{
 			maxHealth = container.getRaceMaxHealth();
 		}
+		
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
+		if(classContainer != null){
+			maxHealth = classContainer.modifyToClass(maxHealth);
+		}
 			
 		playerData.put(player, new PlayerContainer(player, maxHealth).checkStats());
 	}
@@ -147,6 +153,11 @@ public class PlayerManager{
 			double maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
 			if(container != null){
 				maxHealth = container.getRaceMaxHealth();
+			}
+			
+			ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
+			if(classContainer != null){
+				maxHealth = classContainer.modifyToClass(maxHealth);
 			}
 			
 			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth).checkStats();

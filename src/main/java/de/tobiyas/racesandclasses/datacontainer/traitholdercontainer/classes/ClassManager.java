@@ -7,7 +7,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -78,14 +78,14 @@ public class ClassManager extends AbstractHolderManager{
 
 
 	@Override
-	protected HolderSelectEvent generateAfterSelectEvent(String player,
+	protected HolderSelectedEvent generateAfterSelectEvent(String player,
 			AbstractTraitHolder newHolder) {
 		return new AfterClassSelectedEvent(Bukkit.getPlayer(player), (ClassContainer)newHolder);
 	}
 
 
 	@Override
-	protected HolderSelectEvent generateAfterChangeEvent(String player,
+	protected HolderSelectedEvent generateAfterChangeEvent(String player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
 		return new AfterClassChangedEvent(Bukkit.getPlayer(player), (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}

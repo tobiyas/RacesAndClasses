@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 
-public class AfterRaceSelectedEvent extends HolderSelectEvent{
+public class AfterRaceSelectedEvent extends HolderSelectedEvent{
 
 	/**
 	 * The static list of all handlers that are interested in this event

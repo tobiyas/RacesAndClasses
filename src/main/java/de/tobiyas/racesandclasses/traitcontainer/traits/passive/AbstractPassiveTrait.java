@@ -36,9 +36,4 @@ public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
 		return TraitStringUtils.getNewValue(oldDmg, operation, value);
 	}
 	
-	
-	@Override
-	public String toString(){
-		return getName();
-	}
 }

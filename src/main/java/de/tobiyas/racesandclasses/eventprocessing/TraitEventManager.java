@@ -62,9 +62,9 @@ public class TraitEventManager{
 	 * Creates all Traits that are present for ALL players.
 	 */
 	private void createStaticTraits(){
-		TraitStore.buildTraitWithoutHolderByName("DeathCheckerTrait");
-		TraitStore.buildTraitWithoutHolderByName("STDAxeDamageTrait");
-		TraitStore.buildTraitWithoutHolderByName("ArmorTrait");
+		TraitStore.buildTraitWithoutHolderByName("DeathCheckerTrait").generalInit();;
+		TraitStore.buildTraitWithoutHolderByName("STDAxeDamageTrait").generalInit();;
+		TraitStore.buildTraitWithoutHolderByName("ArmorTrait").generalInit();;
 	}
 	
 	/**
@@ -94,6 +94,7 @@ public class TraitEventManager{
 		
 		for(Trait trait: traitsToCheck){
 			long timeBefore = System.currentTimeMillis();
+			if(trait == null) continue;
 			try{
 				Player player = trait.getReleventPlayer(event);
 				
@@ -142,7 +143,7 @@ public class TraitEventManager{
 							
 							player.sendMessage(ChatColor.RED + "[RaC] You don't have enough " + ChatColor.LIGHT_PURPLE 
 									+ costTypeString + ChatColor.RED + " for " + ChatColor.LIGHT_PURPLE 
-									+ trait.getName() + ChatColor.RED + ".");
+									+ trait.getDisplayName() + ChatColor.RED + ".");
 						}
 						
 						continue;
@@ -162,13 +163,13 @@ public class TraitEventManager{
 						if(uplinkTraitTime > 0){
 							plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
 							
-							String cooldownDownMessage = ChatColor.LIGHT_PURPLE + trait.getName() + ChatColor.RED + " is ready again.";
+							String cooldownDownMessage = ChatColor.LIGHT_PURPLE + trait.getDisplayName() + ChatColor.RED + " is ready again.";
 							MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
 						}
 					}
 				}
 			}catch(Exception e){
-				String holderName = trait.getTraitHolder().getName();
+				String holderName = trait.getTraitHolder()==null ? "static" : trait.getTraitHolder().getName();
 				
 				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of holder: " + 
 						holderName + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());

@@ -63,7 +63,7 @@ public class TraitInventory extends InventoryView {
 			ItemMeta meta = traitStack.getItemMeta();
 			List<String> lore = new LinkedList<String>();
 			
-			meta.setDisplayName(ChatColor.LIGHT_PURPLE + trait.getName());
+			meta.setDisplayName(ChatColor.LIGHT_PURPLE + trait.getDisplayName());
 			
 			String traitConfig = trait.getPrettyConfiguration();
 			
@@ -72,6 +72,7 @@ public class TraitInventory extends InventoryView {
 				words = traitConfig.split(" ");				
 			}
 			
+			lore.add("- Trait: " + trait.getName());
 			String currentLine = "- " + words[0];
 			for(int i = 1; i < words.length; i++){
 				String currentWord = words[i];

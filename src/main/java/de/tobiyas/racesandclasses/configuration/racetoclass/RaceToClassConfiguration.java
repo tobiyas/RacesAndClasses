@@ -82,8 +82,8 @@ public class RaceToClassConfiguration {
 	 * @throws RaceNotFoundException when the race is not found.
 	 */
 	public List<String> getClassesValidForRace(String raceName) throws RaceNotFoundException{
-		raceName = raceName.toLowerCase();
-		if(selectionMatrix.containsKey(raceName)){
+		raceName = raceName.toLowerCase();		
+		if(!selectionMatrix.containsKey(raceName)){
 			throw new RaceNotFoundException();
 		}
 		

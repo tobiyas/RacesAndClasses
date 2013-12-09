@@ -5,9 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.gui.holdermanager.ClassSelectionInterface;
 import de.tobiyas.racesandclasses.racbuilder.gui.holdermanager.RaceSelectionInterface;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 
 public class BaseSelectionInventory extends BasicSelectionInterface {
 
@@ -22,8 +23,8 @@ public class BaseSelectionInventory extends BasicSelectionInterface {
 	private final ItemStack classSelectionStack;
 	
 	
-	public BaseSelectionInventory(Player player) {
-		super(player, null, "Controls", "Select what to edit");
+	public BaseSelectionInventory(Player player, RacesAndClasses plugin) {
+		super(player, null, "Controls", "Select what to edit", plugin);
 		
 		raceSelectionStack = generateItem(Material.SKULL_ITEM, ChatColor.RED + "Races",
 				ChatColor.LIGHT_PURPLE + "Edit your Races here");
@@ -58,13 +59,15 @@ public class BaseSelectionInventory extends BasicSelectionInterface {
 	
 	@Override
 	protected void onSelectionItemPressed(ItemStack item) {
-		if(item.equals(this.classSelectionStack)){
-			openNewView(new ClassSelectionInterface(player, this, plugin.getClassManager()));
+		RacesAndClasses plugin = (RacesAndClasses) this.plugin;
+		
+		if(item.equals(this.classSelectionStack)){			
+			openNewView(new ClassSelectionInterface(player, this, plugin.getClassManager(), plugin));
 			return;
 		}
 
 		if(item.equals(this.raceSelectionStack)){
-			openNewView(new RaceSelectionInterface(player, this, plugin.getRaceManager()));
+			openNewView(new RaceSelectionInterface(player, this, plugin.getRaceManager(), plugin));
 			return;
 		}
 	}

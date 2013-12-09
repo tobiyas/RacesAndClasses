@@ -13,7 +13,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
  * @author Tobiyas
  *
  */
-public class HolderPreSelectEvent extends HolderSelectEvent implements Cancellable{
+public class HolderPreSelectEvent extends HolderSelectedEvent implements Cancellable{
 
 	private static HandlerList handlers = new HandlerList();
 	
@@ -22,6 +22,16 @@ public class HolderPreSelectEvent extends HolderSelectEvent implements Cancellab
 	 */
 	protected boolean isCancelled;
 	
+	/**
+	 * If the cooldown should be checked.
+	 */
+	protected final boolean checkCooldown;
+	
+	/**
+	 * Check the Permissions.
+	 */
+	protected final boolean checkPermissions;
+
 	
 	/**
 	 * The message that is sent when canceling. 
@@ -30,14 +40,34 @@ public class HolderPreSelectEvent extends HolderSelectEvent implements Cancellab
 	protected String cancelMessage;
 	
 	/**
+	 * This event is an indicator to check if the player can select this holder.
 	 * 
-	 * @param player
-	 * @param holderToSelect
+	 * @param player to call
+	 * @param holderToSelect to call to
 	 */
 	public HolderPreSelectEvent(Player player,
 			AbstractTraitHolder holderToSelect) {
 		super(player, holderToSelect);
 		
+		this.checkPermissions = true;
+		this.checkCooldown = true;
+	}
+	
+	/**
+	 * This event is an indicator to check if the player can select this holder.
+	 * 
+	 * @param player to call
+	 * @param holderToSelect to call to
+	 * 
+	 * @param checkCooldown if the cooldown should be checked.
+	 * @param checkPermissions if the Permissions should be checked.
+	 */
+	public HolderPreSelectEvent(Player player,
+			AbstractTraitHolder holderToSelect, boolean checkCooldown, boolean checkPermissions) {
+		super(player, holderToSelect);
+		
+		this.checkCooldown = checkCooldown;
+		this.checkPermissions = checkPermissions;
 	}
 	
 	@Override
@@ -70,6 +100,14 @@ public class HolderPreSelectEvent extends HolderSelectEvent implements Cancellab
 	}
 	
 	
+	public boolean isCheckCooldown() {
+		return checkCooldown;
+	}
+
+	public boolean isCheckPermissions() {
+		return checkPermissions;
+	}
+
 	/**
 	 * needed for Bukkit to get the list of Handlers interested
 	 * @return

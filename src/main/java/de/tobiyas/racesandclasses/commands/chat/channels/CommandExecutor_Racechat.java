@@ -37,6 +37,12 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 			return true;
 		}
 		
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "Races").build());
+			return true;
+		}
+		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
 					.replace("value", "RaceChat").build());

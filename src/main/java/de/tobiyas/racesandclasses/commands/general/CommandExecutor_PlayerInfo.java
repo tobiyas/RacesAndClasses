@@ -51,12 +51,18 @@ private RacesAndClasses plugin;
 		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player.getName());
 		String className = "None";
-		if(classContainer != null)
+		String raceName = "None";
+		if(classContainer != null){
 			className = classContainer.getName();
+		}
+		
+		if(raceContainer != null){
+			raceName = raceContainer.getName();
+		}
 		
 		
 		sender.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + "PLAYER: " + ChatColor.AQUA + player.getName() + ChatColor.YELLOW + "=====");
-		sender.sendMessage(ChatColor.YELLOW + "Race: " + ChatColor.RED + raceContainer.getName());
+		sender.sendMessage(ChatColor.YELLOW + "Race: " + ChatColor.RED + raceName);
 		sender.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.RED + className);
 		sender.sendMessage(ChatColor.YELLOW + "---L--O--C--A--T--I--O--N---");
 		sender.sendMessage(ChatColor.YELLOW + "World: " + ChatColor.AQUA + player.getWorld().getName());

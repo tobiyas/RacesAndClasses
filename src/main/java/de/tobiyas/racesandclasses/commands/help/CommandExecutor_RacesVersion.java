@@ -63,6 +63,9 @@ public class CommandExecutor_RacesVersion implements CommandExecutor{
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.YELLOW + "TESTING" + ChatColor.YELLOW + 
 					" stage. All features are there. Bugs will probably occure. No Garantee.");
 		}
+		
+		sender.sendMessage(ChatColor.YELLOW + "This Plugin is designed and implemented by: " + ChatColor.LIGHT_PURPLE + "Tobiyas" 
+				+ ChatColor.YELLOW + ".");
 			
 		return true;
 	}

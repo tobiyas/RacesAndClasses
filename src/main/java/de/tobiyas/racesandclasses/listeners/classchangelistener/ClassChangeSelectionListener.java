@@ -64,7 +64,7 @@ public class ClassChangeSelectionListener implements Listener {
 			
 			try{
 				List<String> classList = plugin.getConfigManager().getRaceToClassConfig().getClassesValidForRace(raceName);
-				if(!classList.contains(className)){
+				if(classList != null && !classList.contains(className)){
 					event.setCancelled("Your race can not select the class: " + className);
 				}
 			}catch(RaceNotFoundException exp){
@@ -79,6 +79,7 @@ public class ClassChangeSelectionListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerhasPermissionToClass(PreClassSelectEvent event){
 		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
+		if(!event.isCheckPermissions()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForClasses()){
 			Player player = event.getPlayer();
@@ -93,6 +94,8 @@ public class ClassChangeSelectionListener implements Listener {
 	
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(PreClassSelectEvent event){
+		if(!event.isCheckCooldown()) return;
+		
 		String playerName = event.getPlayer().getName();
 		String commandName = "classchange";
 		
@@ -101,10 +104,18 @@ public class ClassChangeSelectionListener implements Listener {
 			String message = ChatColor.RED + "You still have " + ChatColor.LIGHT_PURPLE + remainingCooldown 
 					+ ChatColor.RED + " seconds cooldown on that command";
 			event.setCancelled(message);
-		}else{
-			int time = plugin.getConfigManager().getGeneralConfig().getConfig_classChangeCommandUplink();
-			cooldownManager.setCooldown(playerName, commandName, time);
 		}
+	}
+	
+	@EventHandler
+	public void givePlayerUplinkAfterSelect(AfterClassSelectedEvent event){
+		if(!event.isGiveCooldown()) return;
+		
+		String playerName = event.getPlayer().getName();
+		String commandName = "classchange";
+		
+		int time = plugin.getConfigManager().getGeneralConfig().getConfig_raceChangeCommandUplink();
+		cooldownManager.setCooldown(playerName, commandName, time);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)

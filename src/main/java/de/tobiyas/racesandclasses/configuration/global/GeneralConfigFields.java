@@ -44,9 +44,11 @@ public class GeneralConfigFields {
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
+	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
+	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 
 	
 	//Magic
@@ -59,6 +61,7 @@ public class GeneralConfigFields {
 	
 	
 	//Races
+	public static final String races_enable = "races_enable";
 	public static final String races_remindDefaultRace_enable = "races_remindDefaultRace_enable";
 	public static final String races_remindDefaultRace_interval = "races_remindDefaultRace_interval";
 	public static final String races_display_adaptListName = "races_display_adaptListName";

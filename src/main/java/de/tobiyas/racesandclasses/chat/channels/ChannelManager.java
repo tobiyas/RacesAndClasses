@@ -203,6 +203,11 @@ public class ChannelManager {
 			for(String channelName : config.getChildren("channel." + level.name())){
 				try{
 					ChannelContainer container = ChannelContainer.constructFromYml(config, channelName, level);
+					if(container.getChannelLevel() == ChannelLevel.WorldChannel && Bukkit.getWorld(container.getChannelName()) == null){
+						//never load worlds that do not exist any more.
+						continue;
+					}
+					
 					if(container != null){
 						channels.put(channelName, container);
 					}

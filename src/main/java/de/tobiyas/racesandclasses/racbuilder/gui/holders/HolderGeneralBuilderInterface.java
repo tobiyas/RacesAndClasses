@@ -8,12 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.racbuilder.gui.BasicSelectionInterface;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.DoubleSelectionInterface;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StringSelectionInterface;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
+import de.tobiyas.util.inventorymenu.stats.DoubleSelectionInterface;
+import de.tobiyas.util.inventorymenu.stats.StringSelectionInterface;
 
 public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 
@@ -74,8 +75,8 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 	
 	
 	public HolderGeneralBuilderInterface(Player player,
-			BasicSelectionInterface parent, AbstractHolderBuilder builder) {
-		super(player, parent, "Controls", "Build Your Holder");
+			BasicSelectionInterface parent, AbstractHolderBuilder builder, RacesAndClasses plugin) {
+		super(player, parent, "Controls", "Build Your Holder", plugin);
 		
 		
 		this.callbackMap = new HashMap<String, Object>();
@@ -166,7 +167,7 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 		this.currentModifiedValue = NAME_PATH;
 		this.callbackMap.put(currentModifiedValue, builder.getName());
 		
-		openNewView(new StringSelectionInterface(player, this, callbackMap, currentModifiedValue));
+		openNewView(new StringSelectionInterface(player, this, callbackMap, currentModifiedValue, plugin));
 	}
 
 	/**
@@ -177,7 +178,7 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 		this.currentModifiedValue = TAG_PATH;
 		this.callbackMap.put(currentModifiedValue, builder.getName());
 		
-		openNewView(new StringSelectionInterface(player, this, callbackMap, currentModifiedValue));
+		openNewView(new StringSelectionInterface(player, this, callbackMap, currentModifiedValue, plugin));
 	}
 	
 	/**
@@ -188,7 +189,7 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 		this.currentModifiedValue = HEALTH_PATH;
 		this.callbackMap.put(currentModifiedValue, builder.getHealth());
 		
-		openNewView(new DoubleSelectionInterface(player, this, callbackMap, currentModifiedValue));
+		openNewView(new DoubleSelectionInterface(player, this, callbackMap, currentModifiedValue, plugin));
 	}
 	
 	/**
@@ -197,7 +198,7 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 	 */
 	private void editTraits(){
 		this.currentModifiedValue = null;
-		openNewView(new HolderBuildInterface(player, this, builder));
+		openNewView(new HolderBuildInterface(player, this, builder, (RacesAndClasses) plugin));
 	}
 	
 	

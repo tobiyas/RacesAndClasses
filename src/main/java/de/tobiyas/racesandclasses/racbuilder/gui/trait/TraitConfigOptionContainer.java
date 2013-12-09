@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StatType;
+import de.tobiyas.util.inventorymenu.stats.StatType;
 
 public class TraitConfigOptionContainer {
 

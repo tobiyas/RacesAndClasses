@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.gui.base.BaseSelectionInventory;
-import de.tobiyas.racesandclasses.racbuilder.gui.stats.StringSelectionInterface;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.util.inventorymenu.stats.StringSelectionInterface;
 
 public class CommandExecutor_Edit implements CommandExecutor {
 	
@@ -41,14 +41,14 @@ public class CommandExecutor_Edit implements CommandExecutor {
 
 		
 		if(args.length > 0 && args[0].equalsIgnoreCase("test")){
-			player.openInventory(new StringSelectionInterface(player, null, new HashMap<String, Object>(), "null"));
+			player.openInventory(new StringSelectionInterface(player, null, new HashMap<String, Object>(), "null", plugin));
 			return true;
 		}
 		
 		
 		
 		player.sendMessage(ChatColor.GREEN + "Opening RaC Editor...");
-		player.openInventory(new BaseSelectionInventory(player));
+		player.openInventory(new BaseSelectionInventory(player, plugin));
 		
 		return true;
 	}

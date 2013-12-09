@@ -39,9 +39,29 @@ public interface TraitWithRestrictions {
 	public static final String ONLY_IN_LAVA_PATH = "onlyInLava";
 	
 	/**
+	 * Trait works only in Lava
+	 */
+	public static final String ONLY_ON_SNOW = "onlyOnSnow";	
+	
+	/**
 	 * Trait has a Cooldown
 	 */
 	public static final String COOLDOWN_TIME_PATH = "cooldown";
+	
+	/**
+	 * Trait works only on Day.
+	 */
+	public static final String ONLY_ON_DAY_PATH = "onlyOnDay";
+	
+	/**
+	 * Trait only works in the Night.
+	 */
+	public static final String ONLY_IN_NIGHT_PATH = "onlyInNight";
+	
+	/**
+	 * The Path to the Display Name
+	 */
+	public static final String DISPLAY_NAME_PATH = "displayName";
 	
 	
 	
@@ -112,5 +132,13 @@ public interface TraitWithRestrictions {
 	 * @return true to NOT display uplink message!
 	 */
 	public boolean triggerButHasUplink(Event event);
+	
+	
+	/**
+	 * Returns if the Trait should notify it's user everytime on trigger for the Uplink.
+	 * 
+	 * @return true if should, false if not.
+	 */
+	public boolean notifyTriggeredUplinkTime();
 	
 }

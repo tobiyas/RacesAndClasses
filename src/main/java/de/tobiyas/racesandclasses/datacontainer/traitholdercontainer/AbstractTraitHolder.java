@@ -164,6 +164,7 @@ public abstract class AbstractTraitHolder {
 				if(trait != null){
 					String configPath = holderName + ".traits." + traitName;
 					configureTraitFromYAML(config, configPath, trait);
+					trait.generalInit();
 					
 					traits.add(trait);
 				}

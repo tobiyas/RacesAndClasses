@@ -18,7 +18,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -176,7 +176,7 @@ public abstract class AbstractHolderManager extends Observable{
 		plugin.getPlayerManager().checkPlayer(player);
 		
 		if(callAfterEvent){
-			HolderSelectEvent event = generateAfterSelectEvent(player, container);
+			HolderSelectedEvent event = generateAfterSelectEvent(player, container);
 			plugin.fireEventToBukkit(event);
 		}
 		
@@ -192,7 +192,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectEvent generateAfterSelectEvent(String player, AbstractTraitHolder newHolder);
+	protected abstract HolderSelectedEvent generateAfterSelectEvent(String player, AbstractTraitHolder newHolder);
 
 	
 	/**
@@ -204,7 +204,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectEvent generateAfterChangeEvent(String player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
+	protected abstract HolderSelectedEvent generateAfterChangeEvent(String player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**
@@ -327,7 +327,7 @@ public abstract class AbstractHolderManager extends Observable{
 		boolean worked = addPlayerToHolder(player, newHolderName, false);
 		if(callEvent){
 			AbstractTraitHolder newHolder = getHolderOfPlayer(player);
-			HolderSelectEvent event = generateAfterChangeEvent(player, newHolder, oldHolder);
+			HolderSelectedEvent event = generateAfterChangeEvent(player, newHolder, oldHolder);
 			plugin.fireEventToBukkit(event);
 		}
 		

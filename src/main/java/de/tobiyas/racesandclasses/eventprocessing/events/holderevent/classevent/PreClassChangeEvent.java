@@ -30,6 +30,21 @@ public class PreClassChangeEvent extends PreClassSelectEvent {
 		this.oldClass = oldClass;
 	}
 	
+	/**
+	 * A player has selected a class.
+	 * 
+	 * @param player that selected the class
+	 * @param classToSelect that was selected
+	 * @param checkPermissions if the permissions should be checked
+	 * @param checkCooldown if the Cooldown should be checked
+	 */
+	public PreClassChangeEvent(Player player, ClassContainer classToSelect, ClassContainer oldClass
+			, boolean checkPermissions, boolean checkCooldown) {
+		super(player, classToSelect, checkCooldown, checkPermissions);
+
+		this.oldClass = oldClass;
+	}
+	
 	
 	public ClassContainer getOldClass() {
 		return oldClass;

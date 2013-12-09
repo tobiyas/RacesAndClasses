@@ -98,6 +98,11 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	private boolean config_useAutoUpdater;
 	
 	private boolean config_alsoUseLeftClickInGuis;
+	private boolean config_disableAllScoreboardOutputs;
+	
+	private boolean config_enableRaces;
+	
+	private boolean config_disableArmorChecking;
 	
 	
 	/**
@@ -168,6 +173,8 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, true);
+		
+		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_also_use_leftclick_in_guis, false);
 		
 		config.addDefault(races_gui_enable, true);
@@ -177,6 +184,8 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config.addDefault(level_useRaCInbuildLevelSystem, true);
+		config.addDefault(races_enable, true);
+		config.addDefault(general_armor_disableArmorChecking, false);
 		
 		
 		config.options().copyDefaults(true);
@@ -200,6 +209,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_enableDebugOutputs = config.getBoolean(debug_outputs_enable, true);
 		config_enableErrorUpload = config.getBoolean(debug_outputs_errorUpload, true);
 		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, false);
+		config_disableAllScoreboardOutputs = config.getBoolean(gui_scoreboard_disableAllOutputs, false);
 		
 		config_classes_enable = config.getBoolean(classes_enable, true);
 		config_metrics_enabled = config.getBoolean(metrics_enable, true);
@@ -220,6 +230,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_usePermissionsForClasses = config.getBoolean(classes_permissions_usePermissionsForEachClasses, false);
 		
 		config_copyDefaultTraitsOnStartup = config.getBoolean(general_copyDefaultTraitsOnStartup, true);
+		config_disableArmorChecking = config.getBoolean(general_armor_disableArmorChecking, false);
 		
 		config_useRaceClassSelectionMatrix = config.getBoolean(classes_useRaceClassSelectionMatrix, false);
 		
@@ -235,6 +246,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config_takeClassWhenNoClass = config.getString(classes_takeClassWhenNoClass, "");
 		config_takeRaceWhenNoRace = config.getString(races_takeRaceWhenNoRace, "");
+		config_enableRaces = config.getBoolean(races_enable, true);
 		
 		if(config.isString(magic_wandId)){
 			String itemName = config.getString(magic_wandId, "STICK");
@@ -457,6 +469,18 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 	public boolean isConfig_alsoUseLeftClickInGuis() {
 		return config_alsoUseLeftClickInGuis;
+	}
+
+	public boolean isConfig_disableAllScoreboardOutputs() {
+		return config_disableAllScoreboardOutputs;
+	}
+
+	public boolean isConfig_enableRaces() {
+		return config_enableRaces;
+	}
+
+	public boolean isConfig_disableArmorChecking() {
+		return config_disableArmorChecking;
 	}
 
 }

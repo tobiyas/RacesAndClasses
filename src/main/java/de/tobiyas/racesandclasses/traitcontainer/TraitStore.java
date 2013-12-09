@@ -145,8 +145,6 @@ public class TraitStore {
 			if(wantedEvents.isEmpty()){
 				throw new AnnotationFormatError("No Events wanted -> somethign is wrong");
 			}
-				
-			trait.generalInit();
 			
 			TraitEventManager.registerTrait(trait, wantedEvents, traitPriority);
 			return true;

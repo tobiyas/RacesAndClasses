@@ -37,7 +37,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
@@ -86,9 +86,29 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected boolean onlyInLava = false;
 	
 	/**
+	 * Tells if the Trait only works on Snow
+	 */
+	protected boolean onlyOnSnow = false;
+	
+	/**
+	 * Tells if the Trait can only trigger in Night.
+	 */
+	protected boolean onlyInNight = false;
+	
+	/**
+	 * Tells if the Trait can only trigger on Day.
+	 */
+	protected boolean onlyOnDay = false;
+	
+	/**
 	 * The Time the Trait has cooldown. (in Seconds)
 	 */
 	protected int cooldownTime = 0;
+	
+	/**
+	 * The DisplayName to show.
+	 */
+	protected String displayName;
 	
 	
 	/**
@@ -137,7 +157,11 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = ONLY_IN_WATER_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_ON_LAND_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_IN_LAVA_PATH, classToExpect = Boolean.class, optional = true),
-		@TraitConfigurationField(fieldName = COOLDOWN_TIME_PATH, classToExpect = Integer.class, optional = true)
+		@TraitConfigurationField(fieldName = ONLY_ON_SNOW, classToExpect = Boolean.class, optional = true),		
+		@TraitConfigurationField(fieldName = ONLY_ON_DAY_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_IN_NIGHT_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = COOLDOWN_TIME_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true)
 	})
 	
 	@Override
@@ -182,9 +206,29 @@ public abstract class AbstractBasicTrait implements Trait,
 			this.onlyInWater = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_WATER_PATH);
 		}
 
+		//Only on snow
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_SNOW)){
+			this.onlyOnSnow = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_SNOW);
+		}
+
 		//Only on land
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_LAND_PATH)){
 			this.onlyOnLand = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_LAND_PATH);
+		}
+		
+		//Only on Day
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_DAY_PATH)){
+			this.onlyOnDay = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_DAY_PATH);
+		}
+		
+		//Only in Night
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_NIGHT_PATH)){
+			this.onlyInNight = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_NIGHT_PATH);
+		}
+				
+		//Display Name
+		if(configMap.containsKey(TraitWithRestrictions.DISPLAY_NAME_PATH)){
+			this.displayName = (String) configMap.get(TraitWithRestrictions.DISPLAY_NAME_PATH);
 		}
 	}
 	
@@ -194,6 +238,11 @@ public abstract class AbstractBasicTrait implements Trait,
 		return currentConfig;
 	}
 	
+	
+	@Override
+	public void deInit(){
+		//Meant to be overwritten!!
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -341,8 +390,8 @@ public abstract class AbstractBasicTrait implements Trait,
 			return Bukkit.getPlayer(((LevelEvent) event).getPlayerName());
 		}
 		
-		if(event instanceof HolderSelectEvent){
-			return ((HolderSelectEvent) event).getPlayer();
+		if(event instanceof HolderSelectedEvent){
+			return ((HolderSelectedEvent) event).getPlayer();
 		}
 		
 		if(event instanceof PlayerSendChannelChatMessageEvent){
@@ -410,6 +459,15 @@ public abstract class AbstractBasicTrait implements Trait,
 				return false;
 			}
 		}
+
+		//check if player is on Snow
+		if(onlyOnSnow){
+			Block feetblock = player.getLocation().getBlock();
+			
+			if(!(feetblock.getType() == Material.SNOW || feetblock.getType() == Material.SNOW_BLOCK)){
+				return false;
+			}
+		}
 		
 		//check cooldown
 		String cooldownName = "trait." + getName();
@@ -417,11 +475,28 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		if(playerUplinkTime > 0){
 			if(!triggerButHasUplink(event)){
-				player.sendMessage(ChatColor.RED + "[RaC] You still have " + ChatColor.LIGHT_PURPLE 
-					+ playerUplinkTime + ChatColor.RED + " seconds update on: " + ChatColor.LIGHT_PURPLE 
-					+ getName() + ChatColor.RED + ".");
+				if(notifyTriggeredUplinkTime()){
+					player.sendMessage(ChatColor.RED + "[RaC] You still have " + ChatColor.LIGHT_PURPLE 
+						+ playerUplinkTime + ChatColor.RED + " seconds update on: " + ChatColor.LIGHT_PURPLE 
+						+ getDisplayName() + ChatColor.RED + ".");
+				}
 			}
 			
+			return false;
+		}
+		
+		//Daytime check
+		int hour = (int) (player.getWorld().getTime() / 1000l);
+		boolean isDay = hour > 18 || hour < 6;
+		boolean isNight = hour > 6 && hour < 18;
+		
+		//Check day
+		if(onlyOnDay && isNight && !onlyInNight){
+			return false;
+		}
+		
+		//Check night
+		if(onlyInNight && isDay && !onlyOnDay){
 			return false;
 		}
 		
@@ -455,7 +530,22 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	@Override
 	public String toString(){
-		return getName();
+		return getDisplayName();
 	}
+
+	
+	/**
+	 * Can and should be overriden.
+	 */
+	@Override
+	public boolean notifyTriggeredUplinkTime() {
+		return true;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return displayName == null ? getName() : displayName;
+	}
+
 	
 }
