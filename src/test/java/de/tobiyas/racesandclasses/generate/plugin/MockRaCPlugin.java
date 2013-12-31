@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.junit.Assert;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -26,14 +23,26 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.racesandclasses.generate.translator.MockLanguageTranslator;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.permissions.PermissionManager;
 
 public class MockRaCPlugin extends RacesAndClasses {
+	
+	/**
+	 * Generates a mock Plugin
+	 */
+	public MockRaCPlugin() {
+		super(  
+			new PluginDescriptionFile("RacesAndClasses", "42", "MockRaCPlugin"),
+			createTempDir()
+			);
+	}
 
 	
 	public void mockAllManagersAndInit(){
@@ -78,25 +87,10 @@ public class MockRaCPlugin extends RacesAndClasses {
 		this.statistics = mock(StatisticGatherer.class, RETURNS_DEEP_STUBS);
 		this.tutorialManager = mock(TutorialManager.class, RETURNS_DEEP_STUBS);
 		
-		init();
-		
 		RacesAndClasses.plugin = this;
 		this.testingMode = true;
-	}
-	
-	private void init(){
-		PluginLoader loader = mock(PluginLoader.class, RETURNS_DEEP_STUBS);
-		Server bukkitServer = Bukkit.getServer() == null ? null : Bukkit.getServer();
-		PluginDescriptionFile description = new PluginDescriptionFile("RacesAndClasses", "42", "MockRaCPlugin");
 		
-		File tempDir = null;
-		try {
-			tempDir = createTempDirectory();
-		} catch (IOException e) {
-			Assert.fail("TempDir could not be created.");
-		}
-		
-		this.initialize(loader, bukkitServer, description, tempDir, null, null);
+		TranslationManagerHolder.forceManager(new MockLanguageTranslator());
 	}
 	
 	
@@ -105,6 +99,24 @@ public class MockRaCPlugin extends RacesAndClasses {
 		System.out.println("Error: " + message);
 	}
 	
+	
+	/**
+	 * Creates a Temp dir.
+	 * Returns null if not possible.
+	 * 
+	 * @return
+	 */
+	private static File createTempDir(){
+		File tempDir = null;
+		try {
+			tempDir = createTempDirectory();
+			return tempDir;
+		} catch (IOException e) {
+			Assert.fail("TempDir could not be created.");
+		};
+		
+		return null;
+	}
 	
 	/**
 	 * Creates a temporary Directory in the System temp dir.
@@ -128,7 +140,9 @@ public class MockRaCPlugin extends RacesAndClasses {
 	    return (temp);
 	}
 	
-	
+	/**
+	 * Removes everything setup for mocking.
+	 */
 	private void tearDownTempDir(){
 		try{
 			deleteRecursive(getDataFolder());
@@ -136,6 +150,12 @@ public class MockRaCPlugin extends RacesAndClasses {
 	}
 	
 	
+	/**
+	 * Deletes everything in this dir or the file passed
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
 	private void deleteRecursive(File file) throws IOException{
 		if(file.isFile()){
 			file.delete();
@@ -149,13 +169,18 @@ public class MockRaCPlugin extends RacesAndClasses {
 		}
 	}
 	
+	/**
+	 * Clears the Mock
+	 */
 	public void tearDown(){
 		tearDownTempDir();
 		RacesAndClasses.plugin = null;
 	}
 	
 	
-	
+	////////////////////////////////////////////////
+	//Setter for most managers for easier mocking //
+	////////////////////////////////////////////////
 	
 	public void setDebugLogger(DebugLogger debugLogger){
 		this.debugLogger = debugLogger;

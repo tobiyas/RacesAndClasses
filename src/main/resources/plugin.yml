@@ -125,3 +125,15 @@ commands:
     description: forces a player to take the class passed
     usage: |
            /racforceclass <player Name> <new Class>
+  raclevel:
+    description: changes the level of a player
+    usage: |
+           /raclevel <exp,lvl> <playername> <value>
+  resetplayer:
+    description: resets everything for a player.
+    usage: |
+           /resetplayer [Player Name]
+  racsave:
+    description: saves all yml files.
+    usage: |
+           /racsave [-a]

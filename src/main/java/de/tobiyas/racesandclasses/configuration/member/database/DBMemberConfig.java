@@ -1,7 +1,5 @@
 package de.tobiyas.racesandclasses.configuration.member.database;
 
-import com.avaje.ebean.EbeanServer;
-
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -31,11 +29,14 @@ public class DBMemberConfig extends MemberConfig {
 		
 		DBConfigOption informCooldownReady = DBConfigOption.loadFromPathOrCreateDefault(player, MemberConfig.cooldownInformation, true, true, true);
 		
+		DBConfigOption displayType = DBConfigOption.loadFromPathOrCreateDefault(player, "displayType", MemberConfig.displayType, "scoreboard", true);
+		
 		
 		configList.add(lifeDisplayEnable);
 		configList.add(lifeDisplayInterval);
 		configList.add(currentChannel);
 		configList.add(informCooldownReady);
+		configList.add(displayType);
 		
 		//Add other vars
 		for(DBConfigOption value : plugin.getDatabase().find(DBConfigOption.class).where().ieq("playerName", player).findList()){
@@ -64,20 +65,18 @@ public class DBMemberConfig extends MemberConfig {
 			if(value == null) continue;
 			
 			if(configList.containsPathName(value.getPath())) continue;
-			configList.add(DBConfigOption.copyFrom(value, config.getName()));
+			configList.add(DBConfigOption.copyFrom(value));
 		}
 	}
 	
 	
 	@Override
 	public DBMemberConfig save(){
-		EbeanServer eBeanServer = plugin.getDatabase();
-		
 		for(int i = 0; i < this.configList.size(); i++){
 			ConfigOption option = configList.get(i);
 			if(option != null && option instanceof DBConfigOption){
 				DBConfigOption dbOption = (DBConfigOption) option;
-				eBeanServer.save(dbOption);
+				dbOption.save(""); //no pre needed.
 			}
 		}
 		

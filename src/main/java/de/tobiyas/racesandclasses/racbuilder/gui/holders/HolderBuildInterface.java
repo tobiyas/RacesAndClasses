@@ -17,7 +17,7 @@ import de.tobiyas.racesandclasses.racbuilder.gui.trait.TraitBuilderInterface;
 import de.tobiyas.racesandclasses.racbuilder.gui.trait.TraitConfigOptionContainer;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.inventorymenu.elements.ScrollableItems;

@@ -6,8 +6,12 @@ import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChang
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_WandAndBowEquip;
+import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
+import de.tobiyas.racesandclasses.listeners.generallisteners.StunCancelListener;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.ClassChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.RaceChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.racechangelistener.RaceChangeSelectionListener;
@@ -46,7 +50,10 @@ public class RaCListenerRegister {
 	public static void registerGeneral(){
 		new Listener_GodModeDamagePrevent();
 		new Listener_PlayerRespawn();
-		//new QuickSlotListener();
+		new Listener_MaxHP_Setting();
+		new StunCancelListener();
+		new Listener_WandAndBowEquip();
+		new PlayerLastDamageListener();
 	}
 	
 	/**

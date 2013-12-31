@@ -79,7 +79,7 @@ public class CommandExecutor_WhisperTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "[RaC] Whispering is not active, sorry.");
+		verify(sender).sendMessage("something_disabled");
 	}
 
 	
@@ -96,28 +96,28 @@ public class CommandExecutor_WhisperTest {
 	public void fails_with_no_args(){
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "You have to specify a player and a message.");
+		verify(sender).sendMessage("wrong_command_use");
 	}
 	
 	@Test
 	public void fails_with_no_message(){
 		sut.onCommand(sender, null, "", new String[]{playerName});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Please give a message to send.");
+		verify(sender).sendMessage("wrong_command_use");
 	}
 	
 	@Test
 	public void fails_with_no_player_found(){
 		sut.onCommand(sender, null, "", new String[]{"invalid"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Target does not exist or is not online.");
+		verify(sender).sendMessage("target_not_exist");
 	}
 	
 	@Test
 	public void fails_with_sending_to_self(){
 		sut.onCommand(sender, null, "", new String[]{playerName, "message"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "You can't whisper yourself.");
+		verify(sender).sendMessage("whisper_yourself");
 	}
 	
 	@Test

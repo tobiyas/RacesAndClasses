@@ -1,18 +1,16 @@
 package de.tobiyas.racesandclasses.configuration.member;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
-import de.tobiyas.racesandclasses.util.consts.Consts;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
-import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 
 
 public class MemberConfigManager {
@@ -28,6 +26,9 @@ public class MemberConfigManager {
 	 */
 	private RacesAndClasses plugin;
 	
+	
+	private int bukkitTaskID = -1;
+	
 	/**
 	 * Creates the member config
 	 */
@@ -37,40 +38,37 @@ public class MemberConfigManager {
 	}
 	
 	
-	/**
-	 * creates member config file + reload the config
-	 */
-	public void reload(){
-		memberConfigs = new HashMap<String, MemberConfig>();
-		
-		checkFiles();
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
-			loadConfigs();
+	public void shutDown(){
+		if(bukkitTaskID > 0){
+			Bukkit.getScheduler().cancelTask(bukkitTaskID);
+			bukkitTaskID = -1;
 		}
 	}
 	
 	/**
-	 * Creates a new playerData File if not existent
+	 * creates member config file + reload the config
 	 */
-	private void checkFiles(){
-		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
-		if(!useDB){
-			File file = new File(RacesAndClasses.getPlugin().getDataFolder().toString() + File.separator + "PlayerData" + File.separator);
-			if(!file.exists()){
-				file.mkdirs();
-			}
-			
-			
-			File memberFile = new File(Consts.playerDataYML);
-			if(!memberFile.exists()){
-				try {
-					memberFile.createNewFile();
-				} catch (IOException e) {
-					plugin.log("Could not create File: 'plugins/Races/PlayerData/playerdata.yml'");
-				}
-			}
+	@SuppressWarnings("deprecation") //This is async scheduling for performance.
+	public void reload(){
+		memberConfigs = new HashMap<String, MemberConfig>();
+		shutDown();
+		
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
+			loadConfigs();
 		}
+		
+		int savingTime = 20 * 60 * 10;
+		bukkitTaskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				try{
+					saveConfigs();
+				}catch(Throwable exp){} //Ignore all saving errors.
+			}
+		}, savingTime, savingTime);
 	}
+	
 	
 	/**
 	 * Creates a new MemberConfig for a player and saves it.
@@ -100,11 +98,7 @@ public class MemberConfigManager {
 	 * Loads all configs from the playerdata.yml file
 	 */
 	private void loadConfigs(){
-		Set<String> playerList = new HashSet<String>();
-		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
-		playerList = config.getChildren("playerdata");
-		
+		Set<String> playerList = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());
 		
 		for(String player : playerList){
 			getCreateNewConfig(player);

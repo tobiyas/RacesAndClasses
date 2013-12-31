@@ -1,8 +1,8 @@
 package de.tobiyas.racesandclasses.racbuilder;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.racbuilder.container.BuildedClassContainer;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ClassBuilder extends AbstractHolderBuilder {

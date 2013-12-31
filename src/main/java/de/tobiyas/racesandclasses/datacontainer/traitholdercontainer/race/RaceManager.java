@@ -13,13 +13,14 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.remind
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class RaceManager extends AbstractHolderManager {
 
 	public RaceManager() {
-		super(Consts.playerDataYML, Consts.racesYML);
+		super(Consts.racesYML);
 
 		DefaultContainer.createSTDRaces();
 	}
@@ -37,7 +38,6 @@ public class RaceManager extends AbstractHolderManager {
 
 	@Override
 	protected void readMemberList() {
-		DefaultContainer.createSTDMembers();
 		super.readMemberList();
 	}
 
@@ -99,9 +99,8 @@ public class RaceManager extends AbstractHolderManager {
 		
 		memberList.remove(player);
 		
-		memberConfig.load();
-		memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
-		memberConfig.save();
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		config.set("playerdata." + player + "." + getConfigPrefix(), null);
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLeaveRace(oldRace, Bukkit.getPlayer(player));

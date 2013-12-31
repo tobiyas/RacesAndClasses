@@ -4,9 +4,10 @@ import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 
-import de.tobiyas.racesandclasses.util.language.LanguageTranslationUtil;
-import de.tobiyas.racesandclasses.util.language.TranslationNotFoundException;
-import de.tobiyas.racesandclasses.util.language.Translator;
+import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
+import de.tobiyas.racesandclasses.translation.Translator;
+import de.tobiyas.racesandclasses.translation.exception.TranslationNotFoundException;
+import de.tobiyas.util.collections.HashMapUtils;
 
 public class LanguageAPI {
 
@@ -20,7 +21,7 @@ public class LanguageAPI {
 	 * @throws TranslationNotFoundException if the tag was not found
 	 */
 	public static Translator translateToCurrentLanguage(String tag) throws TranslationNotFoundException{
-		return LanguageTranslationUtil.tryTranslate(tag, false);
+		return TranslationManagerHolder.getTranslationManager().translate(tag, false);
 	}
 	
 	
@@ -36,7 +37,7 @@ public class LanguageAPI {
 	 * @throws TranslationNotFoundException 
 	 */
 	public static Translator translateToCurrentLanguageWithFallback(String tag) throws TranslationNotFoundException{
-		return LanguageTranslationUtil.tryTranslate(tag, true);
+		return TranslationManagerHolder.getTranslationManager().translate(tag, true);
 	}
 	
 	
@@ -51,7 +52,7 @@ public class LanguageAPI {
 	 */
 	public static Translator translateIgnoreError(String tag){
 		try{
-			return LanguageTranslationUtil.tryTranslate(tag, true);
+			return translateToCurrentLanguageWithFallback(tag);
 		}catch(TranslationNotFoundException exp){
 			return new Translator(tag);
 		}
@@ -65,7 +66,7 @@ public class LanguageAPI {
 	 */
 	public static boolean containsTranslation(String tag){
 		try{
-			LanguageTranslationUtil.tryTranslate(tag, true);
+			TranslationManagerHolder.getTranslationManager().translate(tag, true);
 			return true;
 		}catch(TranslationNotFoundException exp){
 			return false;
@@ -83,6 +84,33 @@ public class LanguageAPI {
 	public static void sendTranslatedMessage(CommandSender sender, String tag, Map<String, String> replacements){
 		Translator translator = translateIgnoreError(tag);
 		translator.replace(replacements);
+		String message = translator.build();
+		if("".equals(message)) return; //no message wanted.
+		
+		sender.sendMessage(message);
+	}
+	
+	/**
+	 * Translates a messages and sends it to the passed sender.
+	 * 
+	 * @param sender to send to
+	 * @param tag to translate
+	 * @param arg The Map to replace: {arg1, replacement1, arg2, replacement2, ....}
+	 */
+	public static void sendTranslatedMessage(CommandSender sender, String tag, String... arg){
+		Map<String, String> replacements = HashMapUtils.generateStringStringMap(arg);
+		sendTranslatedMessage(sender, tag, replacements);
+	}
+	
+	/**
+	 * Translates a messages and sends it to the passed sender.
+	 * <br>No replacements here!
+	 * 
+	 * @param sender to send to
+	 * @param tag to translate
+	 */
+	public static void sendTranslatedMessage(CommandSender sender, String tag){
+		Translator translator = translateIgnoreError(tag);
 		String message = translator.build();
 		if("".equals(message)) return; //no message wanted.
 		

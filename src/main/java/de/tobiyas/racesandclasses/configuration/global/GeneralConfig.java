@@ -64,6 +64,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	
 	//disable on worlds
 	private List<String> config_worldsDisabled;
+	private boolean config_keep_max_hp_on_disabled_worlds;
 	
 	//Uplink for Race change command
 	private int config_raceChangeCommandUplink;
@@ -170,6 +171,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config.addDefault(language_used, "en");
 		
 		config.addDefault(worlds_disableOn, Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
+		config.addDefault(keep_max_hp_on_disabled_worlds, true);
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, true);
@@ -269,6 +271,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_savePlayerDataToDB = config.getBoolean(general_saving_savePlayerDataToDB, true);
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config_useRaCInbuildLevelSystem = config.getBoolean(level_useRaCInbuildLevelSystem, true);
+		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
 		
 		config_useAutoUpdater = config.getBoolean(updater_enableAutoUpdates, false);
 		
@@ -277,9 +280,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 			config_mapExpPerLevelCalculationString = "{level} * {level} * {level} * 1000";
 		}
 		
-		List<String> temp_config_worldsDisabled = config.getStringList("worlds_disableOn");
-		
-		
+		List<String> temp_config_worldsDisabled = config.getStringList("worlds_disableOn");		
 		//be sure to have lower case to not be case sensitive
 		config_worldsDisabled = new LinkedList<String>();
 		for(String tempName : temp_config_worldsDisabled){
@@ -481,6 +482,10 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 	public boolean isConfig_disableArmorChecking() {
 		return config_disableArmorChecking;
+	}
+
+	public boolean isConfig_keep_max_hp_on_disabled_worlds() {
+		return config_keep_max_hp_on_disabled_worlds;
 	}
 
 }

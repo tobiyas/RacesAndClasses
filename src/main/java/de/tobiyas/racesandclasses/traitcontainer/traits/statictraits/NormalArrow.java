@@ -7,9 +7,9 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
 
 public class NormalArrow extends AbstractArrow {

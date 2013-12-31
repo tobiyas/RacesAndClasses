@@ -1,5 +1,11 @@
 package de.tobiyas.racesandclasses.commands.races;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
@@ -54,6 +60,7 @@ public class CommandExecutor_RacesTest {
 		
 		player = mock(Player.class);
 		when(player.getName()).thenReturn(playerName);
+		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_enableRaces()).thenReturn(true);
 	}
 	
 	
@@ -127,7 +134,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + "DefaultRace" + ChatColor.RED + " found.");
+		verify(consoleSender).sendMessage(race_not_exist);
 	}
 	
 	@Test
@@ -138,8 +145,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, raceToSelect});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + raceToSelect 
-				+ ChatColor.RED + " found.");
+		verify(consoleSender).sendMessage(race_not_exist);
 	}
 	
 	@Test
@@ -180,7 +186,7 @@ public class CommandExecutor_RacesTest {
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
 		verify(consoleSender).sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
-		verify(consoleSender).sendMessage(ChatColor.RED + "DefaultRace§e  <-- Your Race!");
+		verify(consoleSender).sendMessage(ChatColor.RED + "DefaultRace§e  <-- " + your_race);
 	}
 
 	@Test
@@ -204,7 +210,7 @@ public class CommandExecutor_RacesTest {
 			verify(consoleSender).sendMessage(ChatColor.BLUE + race);
 		}
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "DefaultRace" + ChatColor.YELLOW +"  <-- Your Race!");
+		verify(consoleSender).sendMessage(ChatColor.RED + "DefaultRace" + ChatColor.YELLOW +"  <-- " + your_race);
 	}
 	
 	@Test
@@ -228,7 +234,7 @@ public class CommandExecutor_RacesTest {
 		
 		verify(consoleSender).sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
 
-		verify(consoleSender).sendMessage(ChatColor.RED + "race1" + ChatColor.YELLOW +"  <-- Your Race!");
+		verify(consoleSender).sendMessage(ChatColor.RED + "race1" + ChatColor.YELLOW +"  <-- " + your_race);
 		
 		verify(consoleSender).sendMessage(ChatColor.BLUE + "race2");
 		verify(consoleSender).sendMessage(ChatColor.BLUE + "race3");
@@ -252,7 +258,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	@Test
@@ -268,7 +274,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "[RaC] You don't have any Race to select.");
+		verify(player).sendMessage("no_race_to_select");
 	}
 	
 	@Test
@@ -290,7 +296,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "Opening Race Selection...");
+		verify(player).sendMessage("open_holder");
 	}
 	
 	@Test
@@ -313,8 +319,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.AQUA + classContainer.getName()
-				+ ChatColor.RED + ". Use " + ChatColor.LIGHT_PURPLE + "/race change" + ChatColor.RED + " to change your race.");
+		verify(player).sendMessage("already_have_race");
 	}
 	
 	
@@ -327,7 +332,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	@Test
@@ -342,8 +347,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "You don't have a race. Use " + ChatColor.LIGHT_PURPLE + "/race select" 
-				+ ChatColor.RED + " to select a race.");
+		verify(player).sendMessage("no_race_selected");
 	}
 	
 	
@@ -367,7 +371,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "[RaC] You don't have any Race to select.");
+		verify(player).sendMessage("no_race_to_select");
 	}
 	
 	@Test
@@ -390,7 +394,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "Opening Race Selection...");
+		verify(player).sendMessage("open_holder");
 	}
 	
 	////////////////////////
@@ -406,7 +410,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	
@@ -421,7 +425,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "This command needs 1 argument: /race select <racename>");
+		verify(player).sendMessage("needs_1_arg");
 	}
 	
 	@Test
@@ -443,7 +447,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + raceName);
+		verify(player).sendMessage(race_changed_to);
 	}
 	
 	
@@ -465,7 +469,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + raceContainer.getName());
+		verify(player).sendMessage(already_have_race);
 	}
 	
 	
@@ -481,7 +485,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + raceName + ChatColor.RED + " was not found.");
+		verify(player).sendMessage("race_not_exist");
 	}
 	
 	
@@ -494,7 +498,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	
@@ -509,7 +513,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "This command needs 1 argument: /race change <racename>");
+		verify(player).sendMessage("needs_1_arg");
 	}
 	
 	@Test
@@ -540,7 +544,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + raceName);
+		verify(player).sendMessage(race_changed_to);
 	}
 	
 	@Test
@@ -564,7 +568,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + raceName);
+		verify(player).sendMessage(already_are);
 	}
 	
 	
@@ -587,7 +591,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.RED + "You have no Race you could change.");
+		verify(player).sendMessage(no_race_selected);
 	}
 	
 	
@@ -604,7 +608,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + raceName + ChatColor.RED + " was not found.");
+		verify(player).sendMessage(race_not_exist);
 	}
 	
 	@Test

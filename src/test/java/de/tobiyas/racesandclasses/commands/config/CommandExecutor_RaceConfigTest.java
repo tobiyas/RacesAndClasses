@@ -82,7 +82,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Only Players can use this command.");
+		verify(sender).sendMessage("only_players");
 	}
 	
 	
@@ -91,8 +91,7 @@ public class CommandExecutor_RaceConfigTest {
 		sut.onCommand(sender, null, "", new String[]{"arg1"});
 		sut.onCommand(sender, null, "", new String[]{"arg1", "arg2", "arg3"});
 		
-		verify(sender, times(2)).sendMessage(ChatColor.RED + "Wrong usage. Use:" + ChatColor.LIGHT_PURPLE + " /raceconfig <attribute> <value>  or");
-		verify(sender, times(2)).sendMessage(ChatColor.LIGHT_PURPLE + "/raceconfig <attribute> <value>  to list yout config");
+		verify(sender, times(2)).sendMessage("wrong_command_use");
 	}
 	
 	
@@ -121,7 +120,7 @@ public class CommandExecutor_RaceConfigTest {
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender).sendMessage(ChatColor.YELLOW + "=======YOUR CONFIG=======");
-		verify(sender).sendMessage(ChatColor.RED + "Your config could not be found. Try relogging or contact an Admin.");
+		verify(sender).sendMessage("member_config_not_found");
 	}
 	
 	@Test
@@ -130,7 +129,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Your config could not be found. Try relogging or contact an Admin.");
+		verify(sender).sendMessage("member_config_not_found");
 	}
 	
 	@Test
@@ -139,8 +138,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage(ChatColor.GREEN + "The Attribute " + ChatColor.LIGHT_PURPLE + "arg1" + ChatColor.GREEN +
-				" has been changed to: " + ChatColor.LIGHT_PURPLE + "value");
+		verify(sender).sendMessage("member_config_changed");
 	}
 
 	@Test
@@ -150,8 +148,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "The Attribute " + ChatColor.LIGHT_PURPLE + "arg1" + ChatColor.RED +
-				" could not be found.");
+		verify(sender).sendMessage("member_config_attribute_not_found");
 	}
 	
 }

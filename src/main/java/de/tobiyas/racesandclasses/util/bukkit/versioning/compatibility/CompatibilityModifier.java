@@ -112,6 +112,20 @@ public class CompatibilityModifier {
 	
 	public static class BukkitPlayer{
 		
+		
+		/**
+		 * Checks if the Player is fully healed.
+		 * 
+		 * @param player to check
+		 * 
+		 * @return true if the player has full Health, false otherwise.
+		 */
+		public static boolean isFullyHealed(Player player){
+			if(player == null) return false;
+			
+			return Math.abs(safeGetMaxHealth(player) - safeGetHealth(player)) < 0.01;
+		}
+		
 		/**
 		 * Sets the max life of a Player safely to the correct value
 		 * 

@@ -8,6 +8,14 @@
 package de.tobiyas.racesandclasses.commands.races;
 
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_traits;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
+
 import java.util.List;
 import java.util.Observable;
 
@@ -24,7 +32,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderI
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -180,6 +188,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		//lists all races
 		if(raceCommand.equalsIgnoreCase("list")){
 			raceList(sender);
+			
 			this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.infoRace));
 			this.setChanged();
 			return true;
@@ -203,18 +212,21 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 
 	
 	private void postHelp(CommandSender sender, boolean wrongUsage){
-		if(wrongUsage)
+		if(wrongUsage){
 			sender.sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
-		else
+		}else{
 			sender.sendMessage(ChatColor.RED + "Use one of the following commands:");
-		
+		}
+			
 		sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "info");
 		sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "list");
-		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.changeRace))
+		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.changeRace)){
 			sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "select " + ChatColor.YELLOW + "<racename>");
-		
-		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.selectRace))
+		}
+			
+		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.selectRace)){
 			sender.sendMessage(ChatColor.RED + "/race " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<racename>");
+		}
 	}
 	
 	private void selectRace(Player player, String newRaceName){
@@ -224,14 +236,16 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(newRaceName);
 			
 			if(raceContainer == null){
-				player.sendMessage(LanguageAPI.translateIgnoreError("race_not_exist")
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
 						.replace("race", newRaceName)
 						.build());
 				return;
 			}
 			
 			if(raceContainer != null && raceContainer == stdContainer){
-				player.sendMessage(ChatColor.RED + "You can't select the default race.");
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
+						.replace("race", "default race")
+						.build());
 				return;
 			}
 			
@@ -244,11 +258,15 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName, true)){
-				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRaceName);
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_changed_to)
+						.replace("race", newRaceName)
+						.build());
 			}
 				
 		}else{
-			player.sendMessage(ChatColor.RED + "You already have a race: " + ChatColor.LIGHT_PURPLE + container.getName());
+			player.sendMessage(LanguageAPI.translateIgnoreError(already_have_race)
+					.replace("race", container.getName())
+					.build());
 		}
 	}
 	
@@ -258,18 +276,24 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		
 		if(oldContainer != null && oldContainer != plugin.getRaceManager().getDefaultHolder()){
 			if(newRace.equalsIgnoreCase(oldContainer.getName())){
-				player.sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + oldContainer.getName());
+				player.sendMessage(LanguageAPI.translateIgnoreError(already_are)
+						.replace("holder", oldContainer.getName())
+						.build());
 				return;
 			}
 			
 			if(plugin.getRaceManager().getHolderByName(newRace) != null && plugin.getRaceManager().getHolderByName(newRace) == stdContainer){
-				player.sendMessage(ChatColor.RED + "You can't select the default race.");
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
+						.replace("race", plugin.getRaceManager().getDefaultHolder().getName())
+						.build());
 				return;
 			}
 			
 			AbstractTraitHolder newContainer = plugin.getRaceManager().getHolderByName(newRace);
 			if(newContainer == null){
-				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
+						.replace("race", newRace)
+						.build());
 				return;
 			}
 			
@@ -282,12 +306,17 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace, true)){
-				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newRace);
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_changed_to)
+						.replace("race", newRace)
+						.build());
 			}else{
-				player.sendMessage(ChatColor.RED + "The race " + ChatColor.LIGHT_PURPLE + newRace + ChatColor.RED + " was not found.");
+				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
+						.replace("race", newRace)
+						.build());
 			}
 		}else{
-			player.sendMessage(ChatColor.RED + "You have no Race you could change.");
+			player.sendMessage(LanguageAPI.translateIgnoreError(no_race_selected)
+					.build());
 		}
 	}
 	
@@ -295,7 +324,9 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
 		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(sender.getName());
 		if(container == null){
-			sender.sendMessage(ChatColor.RED + "No Race named: " + ChatColor.LIGHT_PURPLE + inspectedRace + ChatColor.RED + " found.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
+					.replace("race", inspectedRace)
+					.build());
 			return;
 		}
 		
@@ -303,7 +334,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
 		
 			if(containerOfPlayer == null){
-				sender.sendMessage(ChatColor.YELLOW + "You have no race selected.");
+				sender.sendMessage(LanguageAPI.translateIgnoreError(no_race_selected)
+						.build());
 				return;
 			}
 
@@ -317,9 +349,18 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
+		double mana = container.getManaBonus();
+		if(mana > 0){
+			sender.sendMessage(ChatColor.YELLOW + "+ Mana: " + ChatColor.AQUA + mana);
+		}
+		
 		sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "Traits" + ChatColor.YELLOW + "=========");
 		for(Trait trait : container.getVisibleTraits()){
 			sender.sendMessage(ChatColor.BLUE + trait.getDisplayName() + " : " + trait.getPrettyConfiguration());
+		}
+		
+		if(container.getVisibleTraits().size() == 0){
+			sender.sendMessage(LanguageAPI.translateIgnoreError(no_traits).build());			
 		}
 	}
 	
@@ -333,9 +374,10 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		
 		sender.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
 		
+		String yourString = LanguageAPI.translateIgnoreError(your_race).build();
 		for(String race : races){
 			if(senderRace != null && race.equals(senderRace.getName())){
-				sender.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- Your Race!");
+				sender.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- " + yourString);
 			}else{	
 				sender.sendMessage(ChatColor.BLUE + race);
 			}

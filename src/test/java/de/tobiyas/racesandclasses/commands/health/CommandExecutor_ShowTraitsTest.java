@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "[RaC] Only players can use this command.");
+		verify(sender).sendMessage("only_players");
 	}
 	
 	@Test
@@ -39,8 +38,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender, times(1)).sendMessage(ChatColor.GREEN + "[RaC] Opening Traits of " + ChatColor.LIGHT_PURPLE + playerName 
-				+ ChatColor.GREEN + ".");
+		verify(sender, times(1)).sendMessage("open_traits");
 		
 		verify((Player) sender, times(1)).openInventory(any(TraitInventory.class));
 	}
@@ -51,7 +49,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"other"});
 		
-		verify(sender, times(1)).sendMessage(ChatColor.RED + "[Rac]" + " Could not find player: " + ChatColor.LIGHT_PURPLE + "other" + ChatColor.RED + ".");
+		verify(sender, times(1)).sendMessage("player_not_exist");
 		
 		verify((Player) sender, never()).openInventory(any(TraitInventory.class));
 	}
@@ -65,8 +63,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherPlayer});
 		
-		verify(sender, times(1)).sendMessage(ChatColor.GREEN + "[RaC] Opening Traits of " + ChatColor.LIGHT_PURPLE + otherPlayer 
-				+ ChatColor.GREEN + ".");
+		verify(sender, times(1)).sendMessage("open_traits");
 		
 		verify((Player) sender, times(1)).openInventory(any(TraitInventory.class));
 	}

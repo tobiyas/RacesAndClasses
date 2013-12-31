@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.inventorymenu.stats.DoubleSelectionInterface;

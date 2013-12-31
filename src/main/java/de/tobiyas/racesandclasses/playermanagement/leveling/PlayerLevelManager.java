@@ -99,4 +99,11 @@ public interface PlayerLevelManager {
 	 * Reloads the Data from the Player Data file or DB.
 	 */
 	public void reloadFromYaml();
+
+
+	/**
+	 * Forces the Display to output
+	 */
+	public void forceDisplay();
+
 }

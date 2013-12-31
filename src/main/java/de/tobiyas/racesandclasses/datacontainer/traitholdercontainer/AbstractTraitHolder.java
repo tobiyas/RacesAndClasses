@@ -8,17 +8,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Material;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.HolderPermissions;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.items.MaterialParser;
 
 public abstract class AbstractTraitHolder {
 	
@@ -57,11 +60,15 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected double manaBonus;
 	
-	
 	/**
 	 * Logs all parsing exceptions happening during startup.
 	 */
 	protected final List<HolderTraitParseException> parsingExceptionsHappened;
+	
+	/**
+	 * Material additionally used for wands.
+	 */
+	protected final Set<Material> additionalWandMaterials;
 	
 	
 	/**
@@ -77,6 +84,7 @@ public abstract class AbstractTraitHolder {
 		this.armorUsage = new boolean[]{false, false, false, false, false};
 		this.traits = new HashSet<Trait>();
 		this.holderTag = "[" + name + "]";
+		this.additionalWandMaterials = new HashSet<Material>();
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
 		this.manaBonus = 0;
@@ -94,8 +102,21 @@ public abstract class AbstractTraitHolder {
 		readConfigSection();
 		readTraitSection();
 		readPermissionSection();
+		readAdditionalWandMaterial();
 		
 		return this;
+	}
+	
+
+	/**
+	 * Reads the WandMaterial Section.
+	 */
+	protected void readAdditionalWandMaterial() {
+		additionalWandMaterials.clear();
+		if(!config.contains(holderName + ".config.wandMaterial")) return;
+		
+		List<String> wandMatList = config.getStringList(holderName + ".config.wandMaterial");
+		additionalWandMaterials.addAll(MaterialParser.parseToMaterial(wandMatList));
 	}
 	
 
@@ -350,4 +371,18 @@ public abstract class AbstractTraitHolder {
 	 * @return the holderManager of the TraitHolder
 	 */
 	public abstract AbstractHolderManager getHolderManager();
+
+	
+	/**
+	 * Returns all Wand materials for the Holder
+	 * <br>List can be empty.
+	 * <br>This is only a clone set.
+	 * 
+	 * @return set of all Wand Materials.
+	 */
+	public Set<Material> getAdditionalWandMaterials() {
+		return new HashSet<Material>(additionalWandMaterials);
+	}
+	
+	
 }

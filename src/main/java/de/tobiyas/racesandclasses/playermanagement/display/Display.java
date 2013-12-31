@@ -15,6 +15,11 @@ public interface Display {
 	
 	
 	/**
+	 * This is called when the Display is thrown away.
+	 */
+	public void unregister();
+	
+	/**
 	 * This shows the different Types of Displays
 	 * 
 	 * @author Tobiyas
@@ -57,7 +62,9 @@ public interface Display {
 	
 	public enum DisplayInfos{
 		MANA("Mana", ChatColor.WHITE, ChatColor.DARK_AQUA, ChatColor.BLUE),
-		HEALTH("Health", ChatColor.RED, ChatColor.YELLOW, ChatColor.GREEN);
+		HEALTH("Health", ChatColor.RED, ChatColor.YELLOW, ChatColor.GREEN),
+		LEVEL_EXP("Exp", ChatColor.BLACK, ChatColor.AQUA, ChatColor.YELLOW),
+		LEVEL("Level", ChatColor.BLACK, ChatColor.AQUA, ChatColor.YELLOW, true, true);
 
 		/**
 		 * Display Name
@@ -68,12 +75,21 @@ public interface Display {
 		private final ChatColor lowValueColor;
 		private final ChatColor midValueColor;
 		private final ChatColor highValueColor;
+		private final boolean useName;
+		private final boolean onlyUseOneValue;
 		
 		private DisplayInfos(String name, ChatColor lowValueColor, ChatColor midValueColor, ChatColor highValueColor) {
+			this(name, lowValueColor, midValueColor, highValueColor, false, false);
+		}
+
+		private DisplayInfos(String name, ChatColor lowValueColor, ChatColor midValueColor, 
+				ChatColor highValueColor, boolean useName, boolean onlyUseOneValue) {
 			this.name = name;
 			this.lowValueColor = lowValueColor;
 			this.midValueColor = midValueColor;
 			this.highValueColor = highValueColor;
+			this.useName = useName;
+			this.onlyUseOneValue = onlyUseOneValue;
 		}
 
 		public String getName() {
@@ -90,6 +106,14 @@ public interface Display {
 
 		public ChatColor getHighValueColor() {
 			return highValueColor;
+		}
+		
+		public boolean useName(){
+			return useName;
+		}
+		
+		public boolean onlyUseOneValue(){
+			return onlyUseOneValue;
 		}
 	}
 }

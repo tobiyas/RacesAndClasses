@@ -1,5 +1,10 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.failed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.success;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -7,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.junit.Test;
 
@@ -36,7 +40,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Only players can use this on themselves!");
+		verify(sender).sendMessage(only_players);
 	}
 	
 	@Test
@@ -44,7 +48,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 		when(RacesAndClasses.getPlugin().getPermissionManager().checkPermissions(sender, PermissionNode.god)).thenReturn(true);
 		sut.onCommand(sender, null, "", new String[]{"arg1", "arg2"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Wrong usage. Use: /racegod [playername]");
+		verify(sender).sendMessage(wrong_command_use);
 	}
 	
 	@Test
@@ -53,7 +57,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 		when(RacesAndClasses.getPlugin().getPlayerManager().switchGod(playerName)).thenReturn(true);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.GREEN + "Success.");
+		verify(sender).sendMessage(success);
 	}
 	
 	@Test
@@ -62,7 +66,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 		when(RacesAndClasses.getPlugin().getPlayerManager().switchGod(playerName)).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "failed.");
+		verify(sender).sendMessage(failed);
 	}
 	
 	@Test
@@ -71,7 +75,7 @@ public class CommandExecutor_RaceGodTest extends AbstractChatCommandTest{
 		when(Bukkit.getPlayer("invalid")).thenReturn(null);
 		sut.onCommand(sender, null, "", new String[]{"invalid"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Target not found.");
+		verify(sender).sendMessage(player_not_exist);
 	}
 	
 }

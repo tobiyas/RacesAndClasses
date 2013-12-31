@@ -1,5 +1,10 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_by;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_other;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -7,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
@@ -46,7 +50,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "You have to be a Player to use this command.");
+		verify(sender).sendMessage(only_players);
 	}
 	
 	
@@ -57,13 +61,13 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.GREEN + "You have been healed.");
+		verify(sender).sendMessage(healed);
 	}
 	
 	@Test
 	public void getting_error_when_more_than_one_arg(){
 		sut.onCommand(sender, null, "", new String[]{"arg1", "arg2"});
-		verify(sender).sendMessage(ChatColor.RED + "Wrong usage. Use: /raceheal [PlayerName]");
+		verify(sender).sendMessage("wrong_command_use");
 	}
 	
 	@Test
@@ -75,7 +79,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Player: " + ChatColor.LIGHT_PURPLE + otherName + ChatColor.RED + " could not be found.");
+		verify(sender).sendMessage("player_not_exist");
 	}
 	
 	@Test
@@ -89,7 +93,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Player: " + ChatColor.LIGHT_PURPLE + otherName + ChatColor.RED + " could not be found.");
+		verify(sender).sendMessage(player_not_exist);
 	}
 	
 	@Test
@@ -100,7 +104,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage(ChatColor.GREEN + "You have healed: " + ChatColor.LIGHT_PURPLE +  otherName);
-		verify(Bukkit.getPlayer(otherName)).sendMessage(ChatColor.GREEN + "You have been healed from: " + ChatColor.LIGHT_PURPLE + sender.getName());
+		verify(sender).sendMessage(healed_other);
+		verify(Bukkit.getPlayer(otherName)).sendMessage(healed_by);
 	}
 }

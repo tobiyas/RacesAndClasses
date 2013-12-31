@@ -1,29 +1,25 @@
 package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
-import org.bukkit.event.Event;
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 
-public abstract class LevelEvent extends Event {
+public abstract class LevelEvent extends PlayerEvent {
 
 	private final static HandlerList handlers = new HandlerList();
 	
-	
-	/**
-	 * The PlayerName this event is associated to.
-	 */
-	protected final String playerName;
-	
+	private final String playerName;
 	
 	/**
 	 * Creates a new Level Event. 
 	 * Manditory is the Player that the event is associated to.
 	 * 
 	 * @param player the Event is associated to.
-	 */
-	public LevelEvent(String player) {
-		this.playerName = player;
+	 */	
+	public LevelEvent(String playerName){
+		super(Bukkit.getPlayer(playerName));
+		this.playerName = playerName;
 	}
-
 
 	
 	@Override
@@ -44,6 +40,7 @@ public abstract class LevelEvent extends Event {
 	public String getPlayerName() {
 		return playerName;
 	}
+	
 	
 	
 }

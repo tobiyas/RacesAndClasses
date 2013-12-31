@@ -1,13 +1,20 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_by;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_other;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -41,7 +48,9 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 			return true;
 		}
 		
-		sender.sendMessage(ChatColor.RED + "Wrong usage. Use: /raceheal [PlayerName]");
+		sender.sendMessage(LanguageAPI.translateIgnoreError(wrong_command_use)
+				.replace("command", "/raceheal [PlayerName]")
+				.build());
 		return true;
 	}
 
@@ -63,8 +72,12 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				
 				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
 				
-				player.sendMessage(ChatColor.GREEN + "You have been healed.");
-			}else sender.sendMessage(ChatColor.RED + "You have to be a Player to use this command.");
+				sender.sendMessage(LanguageAPI.translateIgnoreError(healed)
+						.build());
+			}else{
+				sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
+						.build());
+			}
 		}
 	}
 	
@@ -86,10 +99,17 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				
 				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
 				
-				other.sendMessage(ChatColor.GREEN + "You have been healed from: " + ChatColor.LIGHT_PURPLE + player.getName());
-				player.sendMessage(ChatColor.GREEN + "You have healed: " + ChatColor.LIGHT_PURPLE +  other.getName());
+				sender.sendMessage(LanguageAPI.translateIgnoreError(healed_other)
+						.replace("player", other.getName())
+						.build());
+				
+				other.sendMessage(LanguageAPI.translateIgnoreError(healed_by)
+						.replace("player", player.getName())
+						.build());
 			}else{
-				sender.sendMessage(ChatColor.RED + "Player: " + ChatColor.LIGHT_PURPLE + otherName + ChatColor.RED + " could not be found.");
+				sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
+						.replace("player", otherName)
+						.build());
 			}
 		}
 	}

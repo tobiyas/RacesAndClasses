@@ -1,13 +1,17 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.open_traits;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.traitcontainer.traitgui.TraitInventory;
 
 public class CommandExecutor_ShowTraits implements CommandExecutor {
@@ -30,7 +34,8 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 			String label, String[] args) {
 		
 		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "[RaC] Only players can use this command.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
+					.build());
 			return true;
 		}
 		
@@ -41,7 +46,10 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 			String playerName = args[0];
 			playerToSearch = Bukkit.getPlayer(playerName);
 			if(playerToSearch == null){
-				sender.sendMessage(ChatColor.RED + "[Rac]" + " Could not find player: " + ChatColor.LIGHT_PURPLE + playerName + ChatColor.RED + ".");
+				sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
+						.replace("player", playerName)
+						.build());
+				
 				return true;
 			}
 		}
@@ -49,8 +57,9 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 		TraitInventory inventory = new TraitInventory(playerToSearch);
 		player.openInventory(inventory);
 		
-		player.sendMessage(ChatColor.GREEN + "[RaC] Opening Traits of " + ChatColor.LIGHT_PURPLE + playerToSearch.getName() 
-				+ ChatColor.GREEN + ".");
+		sender.sendMessage(LanguageAPI.translateIgnoreError(open_traits)
+				.replace("player", playerToSearch.getName())
+				.build());
 		return true;
 	}
 

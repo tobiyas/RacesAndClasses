@@ -31,7 +31,13 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 
 	@Override
 	protected void addValues(Objective objective) {
-		String barString = calcForHealth(currentHealth, maxHealth, 7);
+		String barString = "";
+		if(displayInfo.useName()){
+			barString = displayInfo.getName();
+		}else{
+			barString = calcForHealth(currentHealth, maxHealth, 7);			
+		}
+		
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null || !player.isOnline()){
 			return;
@@ -55,4 +61,23 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		}
 	}
 
+
+
+	@Override
+	public void unregister() {
+		super.unregister();
+		
+		if(fadingTime > 0){
+			Player player = Bukkit.getPlayer(playerName);
+			if(player != null){
+				if(oldBoardToStore != null){
+					player.setScoreboard(oldBoardToStore);
+				}else{
+					player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+				}
+			}
+		}
+	}
+
+	
 }

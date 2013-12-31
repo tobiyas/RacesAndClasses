@@ -1,30 +1,34 @@
 package de.tobiyas.racesandclasses.eventprocessing;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_dont_have_enough;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.BypassHolderCheck;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.ByPassWorldDisabledCheck;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.BypassHolderCheck;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
 
 public class TraitEventManager{
@@ -62,9 +66,9 @@ public class TraitEventManager{
 	 * Creates all Traits that are present for ALL players.
 	 */
 	private void createStaticTraits(){
-		TraitStore.buildTraitWithoutHolderByName("DeathCheckerTrait").generalInit();;
-		TraitStore.buildTraitWithoutHolderByName("STDAxeDamageTrait").generalInit();;
-		TraitStore.buildTraitWithoutHolderByName("ArmorTrait").generalInit();;
+		TraitStore.buildTraitWithoutHolderByName("DeathCheckerTrait").generalInit();
+		TraitStore.buildTraitWithoutHolderByName("STDAxeDamageTrait").generalInit();
+		TraitStore.buildTraitWithoutHolderByName("ArmorTrait").generalInit();
 	}
 	
 	/**
@@ -82,7 +86,7 @@ public class TraitEventManager{
 			eventIDs.put(event.hashCode(), System.currentTimeMillis());
 		}
 		
-		if(checkDisabledPerWorld(event)) return false;
+		boolean disabledOnWorld = checkDisabledPerWorld(event);
 		
 		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
 		for(Class<?> clazz : traitList.keySet()){
@@ -96,6 +100,13 @@ public class TraitEventManager{
 			long timeBefore = System.currentTimeMillis();
 			if(trait == null) continue;
 			try{
+				//first check if the Trait has a DisabledWorldBypass
+				if(disabledOnWorld){
+					if(!trait.getClass().isAnnotationPresent(ByPassWorldDisabledCheck.class)){
+						continue;
+					}
+				}
+				
 				Player player = trait.getReleventPlayer(event);
 				
 				//Check if Static Trait -> Always interested!
@@ -140,10 +151,10 @@ public class TraitEventManager{
 							if(magicTrait.getCostType() == CostType.ITEM){
 								costTypeString = magicTrait.getCastMaterialType().name();
 							}
-							
-							player.sendMessage(ChatColor.RED + "[RaC] You don't have enough " + ChatColor.LIGHT_PURPLE 
-									+ costTypeString + ChatColor.RED + " for " + ChatColor.LIGHT_PURPLE 
-									+ trait.getDisplayName() + ChatColor.RED + ".");
+								
+							LanguageAPI.sendTranslatedMessage(player, magic_dont_have_enough, 
+									"cost_type", costTypeString, 
+									"trait_name", trait.getDisplayName());
 						}
 						
 						continue;
@@ -163,7 +174,7 @@ public class TraitEventManager{
 						if(uplinkTraitTime > 0){
 							plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
 							
-							String cooldownDownMessage = ChatColor.LIGHT_PURPLE + trait.getDisplayName() + ChatColor.RED + " is ready again.";
+							String cooldownDownMessage = LanguageAPI.translateIgnoreError(cooldown_is_ready_again).build();
 							MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
 						}
 					}
@@ -196,8 +207,10 @@ public class TraitEventManager{
 		
 		String worldName = WorldResolver.getWorldNameOfEvent(event);
 		
-		if(worldsDisabledOn.contains(worldName)){
-			return true;
+		for(String world : worldsDisabledOn){
+			if(world.equalsIgnoreCase(worldName)){
+				return true;
+			}
 		}
 		
 		return false;

@@ -22,13 +22,22 @@ public class ChatDisplayBar extends AbstractDisplay{
 	
 	@Override
 	public void display(double currentAmount, double maxAmount) {
-		String barString = calcForHealth(currentAmount, maxAmount, Consts.displayBarLength);
+		String barString = "";
+		if(!displayInfo.useName()){
+			barString = calcForHealth(currentAmount, maxAmount, Consts.displayBarLength);
+		}
 		
 		int pre = (int) Math.floor(currentAmount);
 		int after = (int) Math.floor(currentAmount * 100D) % 100;
 		
-		String healthAsNumbers = colorMedium + " " + getColorOfPercent(currentAmount, maxAmount) + 
-				pre + "." + after + colorMedium + "/" + colorHigh + maxAmount;
+		String healthAsNumbers = "";
+		
+		if(displayInfo.onlyUseOneValue()){
+			healthAsNumbers = String.valueOf( currentAmount );
+		}else{
+			healthAsNumbers = colorMedium + " " + getColorOfPercent(currentAmount, maxAmount) + 
+					pre + "." + after + colorMedium + "/" + colorHigh + maxAmount;			
+		}
 		
 		
 		Player player = Bukkit.getPlayer(playerName);

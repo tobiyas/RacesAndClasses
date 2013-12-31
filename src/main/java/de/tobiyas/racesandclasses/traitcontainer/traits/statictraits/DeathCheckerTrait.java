@@ -3,22 +3,27 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.LazyMetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.items.CreateDropContainer;
 import de.tobiyas.racesandclasses.util.items.DropContainer;
@@ -28,11 +33,8 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	private HashMap<EntityType, DropContainer> dropMap;
 	private RacesAndClasses plugin;
 	
-	public DeathCheckerTrait(){
-	}
-	
 
-	@TraitEventsUsed(registerdClasses = {EntityDeathEvent.class})
+	@TraitEventsUsed(registerdClasses = {EntityDeathEvent.class, CreatureSpawnEvent.class})
 	@Override
 	public void generalInit() {
 		plugin = RacesAndClasses.getPlugin();
@@ -68,7 +70,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 
 	@Override
 	public String getPrettyConfiguration() {
-		return null;
+		return "";
 	}
 
 	@TraitConfigurationNeeded
@@ -83,9 +85,30 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		return true;
 	}
 
+	
+	/**
+	 * This key indicates that the Monster has been spawned by a Spawner.
+	 */
+	private final static String SPAWNER_KEY = "spawner_spawned";
 
 	@Override
 	public boolean trigger(Event event) {
+		if(event instanceof CreatureSpawnEvent){
+			if(((CreatureSpawnEvent) event).getSpawnReason() == SpawnReason.SPAWNER){
+				((CreatureSpawnEvent) event).getEntity().setMetadata(SPAWNER_KEY, new LazyMetadataValue(plugin, new Callable<Object>() {
+					
+					@Override
+					public Object call() throws Exception {
+						return true;
+					}
+				}));
+				
+				return true;
+			}
+			
+			return false;
+		}
+		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_expDropBonus()) return false;
 		
 		if(!(event instanceof EntityDeathEvent)) return false;
@@ -99,6 +122,16 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		
 		Eevent.setDroppedExp(modifyEXP(exp, entity));
 		modifyItems(items, entity);
+		
+		if(Eevent.getEntity().getMetadata(SPAWNER_KEY).isEmpty()) return false;
+		Player killer = entity.getKiller();
+		if(killer != null){
+			int expForLevel = (int) (Eevent.getDroppedExp() / 10d);
+			
+			PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(killer.getName());
+			manager.addExp(expForLevel);
+		}
+		
 		return true;
 	}
 	

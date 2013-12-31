@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 @Entity
@@ -138,6 +138,14 @@ public class ConfigOption {
 	@NotEmpty
 	protected String displayName;
 	
+	/**
+	 * the player this option is belonging.
+	 */
+	@NotEmpty
+	protected String playerName;
+	
+	@Transient
+	protected boolean needsSaving = true;
 	
 	/**
 	 * Creates a new config option that represents the following:
@@ -193,6 +201,7 @@ public class ConfigOption {
 		this.defaultValue = defaultValue;
 		this.displayName = displayName;
 		this.format = identifyFormat(value);
+		this.playerName = playerName;
 	}
 	
 	/**
@@ -215,6 +224,13 @@ public class ConfigOption {
 	 * ONLY FOR DB ACCESS!!!!
 	 */
 	public ConfigOption(){
+	}
+
+	/**
+	 * ONLY FOR SQL DB ACCESS!!!!
+	 */
+	public ConfigOption(String playerName){
+		this.playerName = playerName;
 	}
 
 	
@@ -243,6 +259,8 @@ public class ConfigOption {
 		}
 		
 		this.value = value;
+		needsSaving = true;
+		
 		return true;
 	}
 
@@ -290,7 +308,9 @@ public class ConfigOption {
 	 * @param pre to save to
 	 */
 	public void save(String pre){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		if(!needsSaving) return; //No saving = don't even try
+		
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		
 		config.set(pre + "." + path + "." + DEFAULT_FORMAT_PATH, format.name());
 		config.set(pre + "." + path + "." + DEFAULT_VALUE_PATH, value);
@@ -298,7 +318,7 @@ public class ConfigOption {
 		config.set(pre + "." + path + "." + DEFAULT_VISIBLE_PATH, visible);
 		config.set(pre + "." + path + "." + DEFAULT_DISPLAY_NAME_PATH, displayName);
 		
-		config.save();
+		needsSaving = false;
 	}
 	
 	
@@ -313,7 +333,7 @@ public class ConfigOption {
 	 * @throws IOException when the Option could not be build.
 	 */
 	public static ConfigOption loadFromPath(String pre, String playerName, String path) throws IOException{
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		
 		boolean visible = config.getBoolean(pre + "." + path + "." + DEFAULT_VISIBLE_PATH, true);
 		Object defaultValue = config.get(pre + "." + path + "." + DEFAULT_DEFAULTVALUE_PATH, null);
@@ -325,7 +345,9 @@ public class ConfigOption {
 			throw new IOException("Could not determin Type of '" + path + "' was: " + value);
 		}
 		
-		return new ConfigOption(path, playerName, displayName, value, defaultValue, visible);
+		ConfigOption option = new ConfigOption(path, playerName, displayName, value, defaultValue, visible);
+		option.needsSaving = false;
+		return option;
 	}
 	
 	
@@ -467,9 +489,9 @@ public class ConfigOption {
 	}
 
 	
-	////////////////////////////
-	//Setters for DB Building.//
-	////////////////////////////
+	////////////////////////////////////////
+	//Setters and getters for DB Building.//
+	////////////////////////////////////////
 	public void setPath(String path) {
 		this.path = path;
 	}
@@ -485,6 +507,14 @@ public class ConfigOption {
 
 	public void setFormat(SaveFormat format) {
 		this.format = format;
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public boolean needsSaving() {
+		return needsSaving;
 	}
 
 }

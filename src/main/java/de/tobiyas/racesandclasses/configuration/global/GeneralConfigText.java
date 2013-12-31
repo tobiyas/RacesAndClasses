@@ -144,6 +144,11 @@ public class GeneralConfigText {
 			+ "# default: [] \n"
 			+ worlds_disableOn + ": []\n\n"
 			
+			+ "# Tells the Plugin to reset the HP on change to disabled world. \n"
+			+ "# boolean: true or false\n"
+			+ "# default: true \n"
+			+ keep_max_hp_on_disabled_worlds + ": true\n\n"
+			
 			
 			//GENERAL
 			+ "\n"

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -36,6 +35,7 @@ public class CommandExecutor_RacechatTest {
 		GenerateBukkitServer.generatePlayerOnServer(playerName);
 		
 		ConfigManager configManager = mock(ConfigManager.class, RETURNS_DEEP_STUBS);
+		
 		((MockRaCPlugin) RacesAndClasses.getPlugin() ).setConfigManager(configManager);
 		
 		
@@ -45,6 +45,7 @@ public class CommandExecutor_RacechatTest {
 		when(player.getName()).thenReturn(playerName);
 		
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_channels_enable()).thenReturn(true);
+		when(configManager.getGeneralConfig().isConfig_enableRaces()).thenReturn(true);
 	}
 	
 	
@@ -73,7 +74,7 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Only players can use this command.");
+		verify(sender).sendMessage("only_players");
 	}
 	
 	
@@ -83,14 +84,14 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(player, null, "", new String[]{});
 		
-		verify(player).sendMessage(ChatColor.RED + "RaceChat is not active.");
+		verify(player).sendMessage("something_disabled");
 	}
 	
 	@Test
 	public void no_race_selected_returns_error(){
 		sut.onCommand(player, null, null, new String[]{"message"});
 		
-		verify(player).sendMessage(ChatColor.RED + "You have no race selected.");
+		verify(player).sendMessage("no_race_selected");
 	}
 	
 	@Test
@@ -104,7 +105,7 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(player, null, null, new String[]{});
 		
-		verify(player).sendMessage(ChatColor.RED + "You tried to send an empty Message.");
+		verify(player).sendMessage("send_empty_message");
 	}
 	
 	@Test

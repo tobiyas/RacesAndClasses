@@ -1,22 +1,24 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.armor_not_allowed;
+
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.StaticTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 
@@ -67,8 +69,8 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 		if(armorItem == null) return false;
 		
 		if(!plugin.getPlayerManager().getArmorToolManagerOfPlayer(player.getName()).hasPermissionForItem(armorItem)){ 
-			player.sendMessage(ChatColor.RED + "You are not allowed to use " 
-					+ ChatColor.LIGHT_PURPLE + getMaterialName(armorItem.getType()) + ChatColor.RED + ".");
+			String matName = getMaterialName(armorItem.getType());
+			LanguageAPI.sendTranslatedMessage(player, armor_not_allowed, "material", matName);
 			playerEquipEvent.setCancelled(true);
 		}
 

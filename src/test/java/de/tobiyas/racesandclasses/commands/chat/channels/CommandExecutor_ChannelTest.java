@@ -81,17 +81,17 @@ public class CommandExecutor_ChannelTest {
 	
 	
 	private void verifyHelp(CommandSender sender){
-		verify(sender).sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		verify(sender).sendMessage("wrong_command_use");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "<post/change/switch> " + ChatColor.YELLOW + "<channelname>");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "join " + ChatColor.YELLOW + "<channelname> " + 
-				ChatColor.AQUA + "[password]");
+				ChatColor.AQUA + "[@password@]");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "leave " + ChatColor.YELLOW + "<channelname> ");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "create " + ChatColor.YELLOW + "<channelname> " +
-				   ChatColor.AQUA + "[channeltype] [password]");
+				   ChatColor.AQUA + "[channeltype] [@password@]");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelname> " +
-				ChatColor.AQUA + "<property> <newValue>");
+				ChatColor.AQUA + "<@channel_propertie@> <@new_value@>");
 	}
 	
 	
@@ -100,7 +100,7 @@ public class CommandExecutor_ChannelTest {
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_channels_enable()).thenReturn(false);
 		
 		sut.onCommand(sender, null, "", new String[]{});
-		verify(sender).sendMessage(ChatColor.RED + "Channels are disabled.");
+		verify(sender).sendMessage("something_disabled");
 	}
 	
 	
@@ -159,7 +159,7 @@ public class CommandExecutor_ChannelTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"change"});
 		
-		verify(sender).sendMessage(ChatColor.RED + "This command can only be used by Players.");
+		verify(sender).sendMessage("only_players");
 	}
 	
 	
@@ -204,8 +204,7 @@ public class CommandExecutor_ChannelTest {
 	@Test
 	public void change_channel_with_too_few_arguments_posts_error(){
 		sut.onCommand(sender, null, "", new String[]{"change"});
-		verify(sender).sendMessage(ChatColor.RED + "Wrong usage. Use the command like this:" + 
-				ChatColor.LIGHT_PURPLE + "/channel change <channelname>");
+		verify(sender).sendMessage("wrong_command_use");
 	}
 	
 	
@@ -251,8 +250,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"join"});
 		sut.onCommand(sender, null, "", new String[]{"join", "arg2", "arg3", "tooMuchArg"});
 		
-		verify(sender, times(2)).sendMessage(ChatColor.RED + "The command: " + ChatColor.LIGHT_PURPLE + "/channel join <channelname> [password]" + 
-									ChatColor.RED + " needs a channelname. And optionaly a password");
+		verify(sender, times(2)).sendMessage("wrong_command_use");
 	}
 	
 	
@@ -327,7 +325,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"leave"});
 		sut.onCommand(sender, null, "", new String[]{"leave", "arg2", "arg3"});
 		
-		verify(sender, times(2)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel leave <channelname>");
+		verify(sender, times(2)).sendMessage("wrong_command_use");
 	}
 	
 	
@@ -336,7 +334,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"create"});
 		sut.onCommand(sender, null, "", new String[]{"create", "arg2", "arg3", "arg4", "arg5"});
 		
-		verify(sender, times(2)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel create <channelname> [channelType] [password]");
+		verify(sender, times(2)).sendMessage("wrong_command_use");
 	}
 	
 	
@@ -412,7 +410,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"ban", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"ban", "arg2", "arg3", "arg4" , "arg5"});
 		
-		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel ban <channelname> <playername> [time in sec]");
+		verify(sender, times(3)).sendMessage("wrong_command_use");
 	}
 
 	
@@ -453,7 +451,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"unban", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"unban", "arg2", "arg3", "arg4"});
 		
-		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel unban <channelname> <playername>");
+		verify(sender, times(3)).sendMessage("wrong_command_use");
 	}
 
 	
@@ -476,7 +474,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"mute", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"mute", "arg2", "arg3", "arg4" , "arg5"});
 		
-		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel mute <channelname> <playername> [time in sec]");
+		verify(sender, times(3)).sendMessage("wrong_command_use");
 	}
 
 	
@@ -517,7 +515,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"unmute", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"unmute", "arg2", "arg3", "arg4"});
 		
-		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel unmute <channelname> <playername>");
+		verify(sender, times(3)).sendMessage("wrong_command_use");
 	}
 
 	
@@ -540,7 +538,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"edit", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"edit"});
 		
-		verify(sender, times(3)).sendMessage(ChatColor.RED + "Wrong usage. Use: /channel edit <channelname> <channelproperty> <newValue>");
+		verify(sender, times(3)).sendMessage("wrong_command_use");
 	}
 	
 	@Test

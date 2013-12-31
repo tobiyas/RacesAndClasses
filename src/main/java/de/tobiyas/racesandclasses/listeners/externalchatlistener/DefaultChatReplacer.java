@@ -22,8 +22,9 @@ public class DefaultChatReplacer implements Listener {
 		this.plugin = RacesAndClasses.getPlugin();
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
+	
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void asyncChat(AsyncPlayerChatEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			//plugin is already handling chat.

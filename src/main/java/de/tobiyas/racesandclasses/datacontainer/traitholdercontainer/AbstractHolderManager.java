@@ -19,7 +19,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
-import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractHolderManager extends Observable{
@@ -27,7 +27,6 @@ public abstract class AbstractHolderManager extends Observable{
 	protected Map<String, AbstractTraitHolder> memberList;
 	protected Set<AbstractTraitHolder> traitHolderList;
 	protected YAMLConfigExtended traitHolderConfig;	
-	protected YAMLConfigExtended memberConfig;
 	
 	protected RacesAndClasses plugin;
 	
@@ -38,10 +37,9 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param memberPath
 	 * @param traitHolderConfigPath
 	 */
-	public AbstractHolderManager(String memberPath, String traitHolderConfigPath){
+	public AbstractHolderManager(String traitHolderConfigPath){
 		plugin = RacesAndClasses.getPlugin();
 		
-		this.memberConfig = new YAMLConfigExtended(memberPath);
 		this.traitHolderConfig = new YAMLConfigExtended(traitHolderConfigPath);
 	
 		memberList = new HashMap<String, AbstractTraitHolder>();
@@ -129,14 +127,14 @@ public abstract class AbstractHolderManager extends Observable{
 					memberList.put(holder.getPlayerName(), traitHolder);				
 				}
 			}
-			
-		}else{		
-			memberConfig = new YAMLConfigExtended(Consts.playerDataYML).load();
+		}else{
 			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
+			Set<String> playerNames = YAMLPersistenceProvider.getAllPlayersKnown();
 			
-			for(String member : memberConfig.getChildren("playerdata")){
-				String raceName = memberConfig.getString("playerdata." + member + "." + getConfigPrefix(), defaultHolderName);
-				memberList.put(member, getHolderByName(raceName));
+			for(String playerName : playerNames){
+				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+				String raceName = playerConfig.getString("playerdata." + playerName + "." + getConfigPrefix(), defaultHolderName);
+				memberList.put(playerName, getHolderByName(raceName));
 			}
 		}
 				
@@ -165,7 +163,7 @@ public abstract class AbstractHolderManager extends Observable{
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
 		
-		saveNewHolderToDB(player, container);
+		saveNewHolderToDB(player, container, false);
 		memberList.put(player, container);
 		
 		//setting permission group afterwards
@@ -210,18 +208,21 @@ public abstract class AbstractHolderManager extends Observable{
 	/**
 	 * Saves the new Holder to the DB or YAML
 	 * 
-	 * @param player
+	 * @param playerName
 	 * @param newHolder
 	 */
-	private void saveNewHolderToDB(String player, AbstractTraitHolder newHolder){
+	private void saveNewHolderToDB(String playerName, AbstractTraitHolder newHolder, boolean rescanAfter){
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
-		String newHolderName = newHolder.getName();
+		String newHolderName = "";
+		if(newHolder != null){
+			newHolderName = newHolder.getName();			
+		}
 		
 		if(useDB){
-			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerName", player).findUnique();
+			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerName", playerName).findUnique();
 			if(container == null){
 				container = new PlayerHolderAssociation();
-				container.setPlayerName(player);
+				container.setPlayerName(playerName);
 				container.setClassName(null);
 				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getName());
 			}
@@ -234,13 +235,30 @@ public abstract class AbstractHolderManager extends Observable{
 				plugin.getDebugLogger().logStackTrace(exp);
 			}
 		}else{
-			memberConfig.load();
+			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+			memberConfig.set("playerdata." + playerName + "." + getConfigPrefix(), newHolderName);
+		}
+		
+		if(rescanAfter){
+			plugin.getPlayerManager().checkPlayer(playerName);			
+		}
+	}
+	
+	
+	/**
+	 * Saves all containers.
+	 */
+	public void saveAll(){
+		for(Map.Entry<String, AbstractTraitHolder> entry : memberList.entrySet()){
+			String playerName = entry.getKey();
+			AbstractTraitHolder holder = entry.getValue();
+			if(holder == null){
+				holder = getDefaultHolder();
+				entry.setValue(getDefaultHolder());
+			}
 			
-			memberConfig.set("playerdata." + player + "." + getConfigPrefix(), newHolderName);
-			plugin.getPlayerManager().checkPlayer(player);
-			
-			memberConfig.save();
-		}		
+			saveNewHolderToDB(playerName, holder, false);
+		}
 	}
 	
 	
@@ -319,9 +337,8 @@ public abstract class AbstractHolderManager extends Observable{
 		memberList.remove(player);
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
-			memberConfig.load();
+			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
-			memberConfig.save();
 		}
 		
 		boolean worked = addPlayerToHolder(player, newHolderName, false);

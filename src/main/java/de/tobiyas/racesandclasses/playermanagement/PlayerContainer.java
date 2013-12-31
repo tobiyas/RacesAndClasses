@@ -14,14 +14,14 @@ import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.events.rescan.PlayerIsBeingRescannedEvent;
+import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
 import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
-import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerContainer {
@@ -181,15 +181,14 @@ public class PlayerContainer {
 				return false;
 			}
 		}else{
-			YAMLConfigExtended config = new YAMLConfigExtended(Consts.playerDataYML);
-			config.load();
+			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 			if(!config.isConfigurationSection("playerdata." + playerName))
 				config.createSection("playerdata." + playerName);
 			config.set("playerdata." + playerName + ".hasGod", hasGod);
 			
 			levelManager.save();
 			
-			return config.save();			
+			return true;			
 		}
 		
 		
@@ -278,10 +277,14 @@ public class PlayerContainer {
 	 * Checks the Player if he has any Wrong set values and resets the MaxHealth if needed.
 	 */
 	public PlayerContainer checkStats() {
+		final Player player = Bukkit.getPlayer(playerName);
+		boolean isOnDisabledWorld = WorldResolver.isOnDisabledWorld(player);
+		boolean keepMaxHPOnDisabledWorld = plugin.getConfigManager().getGeneralConfig().isConfig_keep_max_hp_on_disabled_worlds();
+		
 		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerName);
 		
-		if(raceContainer == null) {
+		if(raceContainer == null || (isOnDisabledWorld && !keepMaxHPOnDisabledWorld)) {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
 		}else{
 			double tempMaxHealth = raceContainer.getRaceMaxHealth();
@@ -289,7 +292,7 @@ public class PlayerContainer {
 			maxHealth = tempMaxHealth;
 		}
 		
-		if(classContainer != null){
+		if(classContainer != null && keepMaxHPOnDisabledWorld){
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
@@ -299,27 +302,15 @@ public class PlayerContainer {
 		
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
-
-		final Player player = Bukkit.getPlayer(playerName);
-		if(player != null && player.isOnline()){
-			
+		
+		if(player != null && player.isOnline()){			
 			Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
 			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);
-			if(Math.abs(currentMaxHealth - maxHealth) > 0.5){
+			if(Math.abs(currentMaxHealth - maxHealth) >= 0.5){
 				CompatibilityModifier.BukkitPlayer.safeSetMaxHealth(maxHealth, bukkitPlayer);
 			}
-			
-			//We got to schedule this. Otherwise we would produce an Infinite loop.
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					PlayerIsBeingRescannedEvent event = new PlayerIsBeingRescannedEvent(player);
-					plugin.fireEventToBukkit(event);
-				}
-			}, 1);
-			
+						
 			
 		}
 		

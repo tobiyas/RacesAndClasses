@@ -1,6 +1,10 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.arrows;
 
-import org.bukkit.ChatColor;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.arrow_change;
+
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -12,13 +16,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.metadata.LazyMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 
 public abstract class AbstractArrow extends AbstractBasicTrait {
@@ -57,7 +64,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
 			Player player = (Player) Eevent.getEntity();
-			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;			
 			if(!isThisArrow(player)) return false;
 			
 			return true;
@@ -74,6 +81,20 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			
 			Player player = (Player) arrow.getShooter();
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+
+			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
+			List<MetadataValue> metaValues = arrow.getMetadata(ARROW_META_KEY);
+			
+			boolean found = false;
+			for(MetadataValue value : metaValues){
+				if(getName().equals(value.value())){
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found) return false;
+			
 			if(!isThisArrow(player)) return false;
 			
 			return true;
@@ -95,6 +116,20 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 
 			Player player = (Player) shooter;
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
+			
+			if(realArrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
+			List<MetadataValue> metaValues = realArrow.getMetadata(ARROW_META_KEY);
+			
+			boolean found = false;
+			for(MetadataValue value : metaValues){
+				if(getName().equals(value.value())){
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found) return false;
+			
 			if(!isThisArrow(player)) return false;
 
 			return true;
@@ -116,6 +151,11 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		return true;
 	}
 	
+	/**
+	 * The Meta Key for the Arrow to search for.
+	 */
+	private static final String ARROW_META_KEY = "arrowType";
+	
 	@Override	
 	public boolean trigger(Event event) {
 		//Change ArrowType
@@ -127,7 +167,17 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			
 		//Projectile launch
 		if(event instanceof EntityShootBowEvent){
-			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;			
+			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
+			
+			
+			Arrow arrow = (Arrow) Eevent.getProjectile();
+			arrow.setMetadata(ARROW_META_KEY , new LazyMetadataValue(plugin, new Callable<Object>() {
+				@Override
+				public Object call() throws Exception {
+					return getName();
+				}
+			}));
+			
 			return onShoot(Eevent);
 		}
 		
@@ -159,7 +209,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		
 		AbstractArrow newArrow = arrowManager.nextArrow();
 		if(newArrow != null && newArrow != arrow){
-			player.sendMessage(ChatColor.GREEN + "Switched arrows to: " + ChatColor.LIGHT_PURPLE + newArrow.getArrowName());
+			LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", this.getDisplayName());
 		}
 		
 	}
@@ -196,6 +246,16 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	protected abstract String getArrowName();
 	
 	
+	@Override
+	public String getDisplayName() {
+		String superDisplayName = super.getDisplayName();
+		if(superDisplayName.equals(getName())){
+			return getArrowName();
+		}
+		
+		return superDisplayName;
+	}
+
 	@Override
 	public boolean isBetterThan(Trait trait){
 		if(trait.getClass() != this.getClass()) return false;

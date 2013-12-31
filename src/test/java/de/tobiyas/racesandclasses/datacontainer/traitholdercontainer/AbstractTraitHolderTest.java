@@ -24,10 +24,11 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.HolderPermissions;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.racesandclasses.generate.traits.InvisibleTrait;
+import de.tobiyas.racesandclasses.generate.traits.TraitWithConfigAnnotations;
 import de.tobiyas.racesandclasses.generate.traits.TraitWithNoAnnotations;
 import de.tobiyas.racesandclasses.generate.traits.VisibleTrait;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -195,15 +196,13 @@ public abstract class AbstractTraitHolderTest {
 	
 	@Test
 	public void loading_invalid_traits_adds_expcetions_to_list_works() throws IOException{
-		String traitExceptionMessage = "No Annotation found in Trait: ";		
+		String traitExceptionMessage1 = "Field: 'test.traits.test1.needed' not found in Config for Trait: ";		
+		String traitExceptionMessage2 = "Field: 'test.traits.test2.needed' not found in Config for Trait: ";		
 		
 		PowerMockito.mockStatic(TraitStore.class);
 		
-		Trait trait1 = mock(Trait.class);
-		when(trait1.getName()).thenReturn("trait1");
-		
-		Trait trait2 = mock(Trait.class);
-		when(trait2.getName()).thenReturn("trait2");
+		Trait trait1 = new TraitWithConfigAnnotations();
+		Trait trait2 = new TraitWithConfigAnnotations();
 		
 		Trait trait3 = mock(Trait.class);
 		when(trait3.getName()).thenReturn("NormalArrow");
@@ -232,10 +231,10 @@ public abstract class AbstractTraitHolderTest {
 		assertEquals(2, sut.getParsingExceptionsHappened().size());
 		
 		HolderTraitParseException actualExp = sut.getParsingExceptionsHappened().get(0);
-		assertEquals(traitExceptionMessage + trait1.getName(), actualExp.getMessage());
+		assertEquals(traitExceptionMessage1, actualExp.getMessage());
 		
 		HolderTraitParseException actualExp2 = sut.getParsingExceptionsHappened().get(1);
-		assertEquals(traitExceptionMessage + trait2.getName(), actualExp2.getMessage());
+		assertEquals(traitExceptionMessage2, actualExp2.getMessage());
 	}
 	
 	

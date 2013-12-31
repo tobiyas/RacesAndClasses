@@ -113,4 +113,11 @@ public abstract class AbstractDisplay implements Display{
 		return chatString;
 	}
 
+	@Override
+	public void unregister() {
+		//Just default impl.
+	}
+
+	
+	
 }

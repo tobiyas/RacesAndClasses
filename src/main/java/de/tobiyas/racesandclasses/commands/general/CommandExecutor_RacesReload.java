@@ -1,11 +1,13 @@
 package de.tobiyas.racesandclasses.commands.general;
 
-import org.bukkit.ChatColor;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.reload_message;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class CommandExecutor_RacesReload implements CommandExecutor {
@@ -33,8 +35,10 @@ public class CommandExecutor_RacesReload implements CommandExecutor {
 			timeTaken = plugin.fullReload(true, false);
 		
 		plugin.getDebugLogger().log("[RaC] Reload called by: " + sender.getName() + " took: " + timeTaken + " ms.");
-		sender.sendMessage(ChatColor.GREEN + "Reload of " + ChatColor.LIGHT_PURPLE + "Races" + ChatColor.GREEN + 
-							" done successfully. Time taken: " + ChatColor.LIGHT_PURPLE + timeTaken + ChatColor.GREEN + " ms");
+		
+		sender.sendMessage(LanguageAPI.translateIgnoreError(reload_message)
+				.replace("time", String.valueOf(timeTaken))
+				.build());
 		return true;
 	}
 

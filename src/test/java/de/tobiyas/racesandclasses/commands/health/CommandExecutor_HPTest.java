@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_healthcontainer_found;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -7,7 +9,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -78,7 +79,7 @@ public class CommandExecutor_HPTest {
 		sender = mock(CommandSender.class);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Only Players can use this command.");
+		verify(sender).sendMessage(only_players);
 	}
 	
 	
@@ -95,6 +96,6 @@ public class CommandExecutor_HPTest {
 		when(RacesAndClasses.getPlugin().getPlayerManager().displayHealth(playerName)).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");
+		verify(sender).sendMessage(no_healthcontainer_found);
 	}
 }

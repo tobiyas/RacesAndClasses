@@ -6,16 +6,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.persistence.converter.DBConverter;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.chat.WordParsing;
-import de.tobiyas.racesandclasses.util.persistence.DBConverter;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class MemberConfig {
+public class MemberConfig extends Observable {
 	
 	/*
 	 * The values for predefined stuff
@@ -24,6 +25,7 @@ public class MemberConfig {
 	public static final String displayInterval = "displayinterval";
 	public static final String chatChannel = "chatchannel";
 	public static final String cooldownInformation = "cooldowninform";
+	public static final String displayType = "displaytype";
 	
 	
 	/**
@@ -67,7 +69,7 @@ public class MemberConfig {
 	 * @param player to create
 	 */
 	protected MemberConfig(String player){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		this.player = player;
 		configList = new MemberConfigList<ConfigOption>();
 		configPre = "playerdata." + player + ".config";
@@ -83,11 +85,14 @@ public class MemberConfig {
 		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "channelsCurrent", MemberConfig.chatChannel, "Global", true);
 		
 		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "cooldownInform", MemberConfig.cooldownInformation, true, true);
+
+		ConfigOption displayType = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "displayType", MemberConfig.displayType, "scoreboard", true);
 		
 		configList.add(lifeDisplayEnable);
 		configList.add(lifeDisplayInterval);
 		configList.add(currentChannel);
 		configList.add(informCooldownReady);
+		configList.add(displayType);
 		
 		
 		//Add other vars
@@ -101,8 +106,6 @@ public class MemberConfig {
 				}catch(IOException exp){}
 			}
 		}
-		
-		config.save();
 	}
 	
 
@@ -134,6 +137,8 @@ public class MemberConfig {
 	 */
 	public MemberConfig save(){
 		for(ConfigOption option : configList){
+			if(!option.needsSaving) continue;
+			
 			option.save(configPre);
 		}
 		
@@ -160,6 +165,11 @@ public class MemberConfig {
 		Object convertedValue = WordParsing.parseToSaveFormat(value, format);
 		boolean returnValue = option.setObjectValue(convertedValue);
 		option.save(configPre);
+		
+		if(returnValue){
+			this.notifyObservers(attribute);
+			this.setChanged();
+		}
 		
 		return returnValue;
 	}

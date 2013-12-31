@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.bukkit.Material.*;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
+
 public class ItemUtilsTest {
 
 	
@@ -24,42 +26,42 @@ public class ItemUtilsTest {
 	public void check_item_value_for_armor(){
 		//Leather
 		ItemQuality toCheck = ItemQuality.Leather;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(298)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(299)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(300)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(301)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(LEATHER_HELMET)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(LEATHER_CHESTPLATE)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(LEATHER_LEGGINGS)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(LEATHER_BOOTS)));
 		
 		//Chain
 		toCheck = ItemQuality.Chain;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(302)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(303)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(304)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(305)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(CHAINMAIL_HELMET)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(CHAINMAIL_CHESTPLATE)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(CHAINMAIL_LEGGINGS)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(CHAINMAIL_BOOTS)));
 		
 		//Iron
 		toCheck = ItemQuality.Iron;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(306)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(307)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(308)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(309)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(IRON_HELMET)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(IRON_CHESTPLATE)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(IRON_LEGGINGS)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(IRON_BOOTS)));
 		
 		//Diamond
 		toCheck = ItemQuality.Diamond;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(310)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(311)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(312)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(313)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(DIAMOND_HELMET)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(DIAMOND_CHESTPLATE)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(DIAMOND_LEGGINGS)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(DIAMOND_BOOTS)));
 		
 		//Gold
 		toCheck = ItemQuality.Gold;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(314)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(315)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(316)));
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(317)));		
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(GOLD_HELMET)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(GOLD_CHESTPLATE)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(GOLD_LEGGINGS)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(GOLD_BOOTS)));		
 		
 		//Other
 		toCheck = ItemQuality.None;
-		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(1337)));
+		assertEquals(toCheck, ItemUtils.getItemValue(new ItemStack(BOW)));
 	}
 	
 	

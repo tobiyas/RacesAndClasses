@@ -19,6 +19,7 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Tra
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TutorialManager;
 
+import java.io.File;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -41,6 +42,7 @@ import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
+import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_SaveNow;
 import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceClass;
 import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceRace;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
@@ -54,6 +56,7 @@ import de.tobiyas.racesandclasses.commands.help.CommandExecutor_PermissionCheck;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RaceHelp;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
+import de.tobiyas.racesandclasses.commands.level.Command_RACLevel;
 import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
@@ -62,20 +65,23 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
+import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
+import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
+import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPeristanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
+import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
 import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
-import de.tobiyas.racesandclasses.util.language.LanguageTranslationUtil;
-import de.tobiyas.racesandclasses.util.persistence.DBConverter;
-import de.tobiyas.racesandclasses.util.persistence.db.AlternateEbeanServerImpl;
-import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.debug.logger.DebugLogger;
@@ -161,6 +167,16 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	protected TutorialManager tutorialManager;
 	
 	/**
+	 * The StunManager of the plugin
+	 */
+	protected StunManager stunManager;
+	
+	/**
+	 * The poisonManager of the Plugin
+	 */
+	protected PoisonManager poisonManager;
+	
+	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
@@ -171,7 +187,21 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	public RacesAndClasses(){
 	}
 	
-	
+	/**
+	 * ONLY FOR TESTING!!!
+	 * 
+	 * @param loader
+	 * @param description
+	 * @param dataFolder
+	 * @param file
+	 */
+	protected RacesAndClasses(PluginDescriptionFile description, File dataFolder) {
+		super(Bukkit.getServer(), null, description, dataFolder, null);
+	}
+
+
+
+
 	@Override
 	public void onEnable(){
 		statistics = new StatisticGatherer(System.currentTimeMillis());
@@ -219,11 +249,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	private void initManagers(){
 		long currentTime = System.currentTimeMillis();
 		
-		LanguageTranslationUtil.check_EN_isPresent();
-		
-		DebugTask.initDebugger();
-		checkForDBTransfer();
 		setupConfiguration();
+		YAMLPeristanceSaver.start(true); //TODO check async
 		
 		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -247,6 +274,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		permManager = new PermissionManager(this);
 		
 		cooldownManager = new CooldownManager();
+		stunManager = new StunManager();
+		poisonManager = new PoisonManager();
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -295,21 +324,21 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		PlayerManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
+		
 		//Channel Manager
 		if(configManager.getGeneralConfig().isConfig_channels_enable()){
 			channelManager.init();
 		}
 		
 		ChannelManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
+
+		//Stun manager
+		stunManager.init();
+		
+		//Poison manager
+		poisonManager.init();
 	}
 	
-	/**
-	 * Converts the PlayerData YML file to DB
-	 */
-	private void checkForDBTransfer() {
-		DBConverter.convertAll();
-	}
-
 
 	private void registerCommands(){
 		long currentTime = System.currentTimeMillis();
@@ -337,9 +366,12 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		new CommandExecutor_Statistics();
 		new CommandExecutor_ShowTraits();
 		new CommandExecutor_Edit();
+		new CommandExecutor_SaveNow();
 		
 		new CommandExecutor_ForceRace();
 		new CommandExecutor_ForceClass();
+		
+		new Command_RACLevel();
 		
 		if(System.currentTimeMillis() - currentTime > 1000){
 			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
@@ -429,9 +461,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		
 		//We pre reload this to have global vars ready.
 		configManager.getGeneralConfig().reload();
-		if(configManager.getGeneralConfig().isConfig_savePlayerDataToDB()){
-			this.checkForDBTransfer();
-		}
+		PersistenceStorageManager.startup();
+		ConverterChecker.checkAllConvertionsNeeded();
 		
 		configManager.reload();
 		setupDebugLogger();
@@ -491,18 +522,33 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		debugLogger.shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
+		getConfigManager().getMemberConfigManager().shutDown();
 		channelManager.saveChannels();
 		tutorialManager.shutDown();
 		Bukkit.getScheduler().cancelTasks(this);
 		TraitStore.destroyClassLoaders();
 		
+		stunManager.deinit();
+		poisonManager.deinit();
+		
 		alternateEbeanServer.onShutdown();
 		alternateEbeanServer = null;
 		
-		LanguageTranslationUtil.reload();
+		TranslationManagerHolder.shutdown();
+		
+		if(!configManager.getGeneralConfig().isConfig_savePlayerDataToDB()){
+			log("Doing some YML file flushing. This can take a while.");
+			YAMLPeristanceSaver.flushNow(false, false);
+			YAMLPeristanceSaver.stop();
+			log("YML file flushing done.");
+		}
+		
 		if(useGC){
 			System.gc();
 		}
+		
+		//Close all open persistence connections
+		PersistenceStorageManager.shutdownPersistence();
 	}
 	
 	
@@ -604,4 +650,25 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		alternateEbeanServer = new AlternateEbeanServerImpl(this);
 		alternateEbeanServer.initializeLocalSQLite();
 	}
+	
+	/**
+	 * Gets the plugin's classLoader.
+	 * 
+	 * @return
+	 */
+	public ClassLoader getPluginsClassLoader(){
+		return super.getClassLoader();
+	}
+
+
+	public StunManager getStunManager() {
+		return stunManager;
+	}
+
+
+	public PoisonManager getPoisonManager() {
+		return poisonManager;
+	}
+	
+	
 }

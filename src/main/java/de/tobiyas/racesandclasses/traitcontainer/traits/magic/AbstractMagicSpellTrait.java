@@ -1,23 +1,28 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
-import java.util.HashMap;
-import java.util.Map;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_change_spells;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_no_spells;
 
-import org.bukkit.ChatColor;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
@@ -82,15 +87,13 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
 		Player player = playerInteractEvent.getPlayer();
 		
-		Material wandMaterial = plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic();
-		ItemStack itemInHand = player.getItemInHand();
+		boolean playerHasWandInHand = checkWandInHand(player);
 		
 		//early out for not wand in hand.
-		if(itemInHand == null || itemInHand.getType() != wandMaterial) return false;
+		if(!playerHasWandInHand) return false;
 		
 		//check if the Spell is the current selected Spell
 		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
-		
 		
 		return true;
 	}
@@ -122,11 +125,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			}
 			
 			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
-				if(player.getItemInHand().getType() 
-						!= plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic()){
-					
-					return true;
-				}
+				boolean playerHasWandInHand = checkWandInHand(player);
+				return playerHasWandInHand;
 			}
 		}
 		
@@ -134,6 +134,34 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	}
 	
 	
+	
+	/**
+	 * Checks if the Player has a Wand in his hand.
+	 * 
+	 * @param player to check
+	 * @return true if he has, false otherwise.
+	 */
+	public boolean checkWandInHand(Player player) {
+		Material playerHoldsInHand = player.getItemInHand().getType();
+		String playerName = player.getName();
+		
+		Set<Material> wands = new HashSet<Material>();
+		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
+		
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
+		if(classHolder != null){
+			wands.addAll(classHolder.getAdditionalWandMaterials());
+		}
+		
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		if(raceHolder != null){
+			wands.addAll(raceHolder.getAdditionalWandMaterials());
+		}
+		
+		return wands.contains(playerHoldsInHand);
+	}
+
+
 	@Override
 	public boolean triggerButDoesNotHaveEnoghCostType(Event event){
 		if(event instanceof PlayerInteractEvent){
@@ -158,11 +186,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
 			Player player = playerInteractEvent.getPlayer();
 			
-			Material wandMaterial = plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic();
-			ItemStack itemInHand = player.getItemInHand();
-			
+			boolean playerHasWandInHand = checkWandInHand(player);
 			//early out for not wand in hand.
-			if(itemInHand == null || itemInHand.getType() != wandMaterial) return false;
+			if(!playerHasWandInHand) return false;
 			
 			//check if the Spell is the current selected Spell
 			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
@@ -224,7 +250,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		if(plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).getCurrentSpell() == null) return false;
 		
 		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() == 0){
-			player.sendMessage(ChatColor.GREEN + "You can not cast any spells.");
+			LanguageAPI.sendTranslatedMessage(player, magic_no_spells);
 			return true;
 		}
 
@@ -232,9 +258,17 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			= plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).changeToNextSpell();
 		
 		if(nextSpell != null){
-			player.sendMessage(ChatColor.GREEN + "Changed Spell to: " + ChatColor.LIGHT_PURPLE 
-					+ ((Trait) nextSpell).getDisplayName() + ChatColor.GREEN + ". Cost: " + " " + nextSpell.getCost() + " "
-					+ (nextSpell.getCostType() == CostType.ITEM ? nextSpell.getCastMaterialType() : nextSpell.getCostType()));
+			DecimalFormat formatter = new DecimalFormat("###.#");
+			
+			String costName = formatter.format(nextSpell.getCost());
+			String costTypeString = nextSpell.getCostType() == CostType.ITEM 
+							? nextSpell.getCastMaterialType().name() 
+							: nextSpell.getCostType().name();
+			
+			LanguageAPI.sendTranslatedMessage(player, magic_change_spells, 
+					"cost", costName, 
+					"cost_type", costTypeString
+					);
 			return true;
 		}else{
 			//switching too fast.
@@ -255,7 +289,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	
 	//This is just for Mana + CostType
 	@TraitConfigurationNeeded( fields = {
-			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class),
+			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class, optional = true),
 			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = Material.class, optional = true)
 		})
@@ -263,7 +297,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		cost = (Double) configMap.get(COST_PATH);
+		if(configMap.containsKey(COST_PATH)){
+			cost = (Double) configMap.get(COST_PATH);
+		}
 		
 		if(configMap.containsKey(COST_TYPE_PATH)){
 			String costTypeName = (String) configMap.get(COST_TYPE_PATH);

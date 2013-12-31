@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -72,7 +71,7 @@ public class CommandExecutor_LocalChatTest {
 	public void command_without_message_fails(){
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "No message given.");
+		verify(sender).sendMessage("send_empty_message");
 	}
 	
 	
@@ -81,7 +80,7 @@ public class CommandExecutor_LocalChatTest {
 		sender = mock(CommandSender.class);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Only Players can use this command.");
+		verify(sender).sendMessage("only_players");
 	}
 	
 

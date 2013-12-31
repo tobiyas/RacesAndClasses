@@ -1,12 +1,15 @@
 package de.tobiyas.racesandclasses.commands.health;
 
-import org.bukkit.ChatColor;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_healthcontainer_found;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 
 public class CommandExecutor_HP implements CommandExecutor {
 
@@ -26,16 +29,19 @@ public class CommandExecutor_HP implements CommandExecutor {
 			String[] args) {
 		
 		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "Only Players can use this command.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
+					.build());
 			return true;
 		}
 		
 		Player player = (Player) sender;
 		if(!plugin.getPlayerManager().displayHealth(player.getName())){
-			player.sendMessage(ChatColor.RED + "Something gone Wrong. No healthcontainer found for you.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found)
+					.build());
 		}
 		
-		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().outputManaToPlayer();		
+		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().outputManaToPlayer();
+		plugin.getPlayerManager().getPlayerLevelManager(player.getName()).forceDisplay();
 		return true;
 	}
 

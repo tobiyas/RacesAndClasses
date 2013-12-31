@@ -155,5 +155,14 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 			}
 		}
 	}
+
+	@Override
+	public void unregister() {
+		
+		if(bukkitTaskId > 0){
+			Bukkit.getScheduler().cancelTask(bukkitTaskId);
+		}
+	}
+	
 	
 }

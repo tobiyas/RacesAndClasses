@@ -1,8 +1,8 @@
 package de.tobiyas.racesandclasses.racbuilder;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.racbuilder.container.BuilderRaceContainer;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 

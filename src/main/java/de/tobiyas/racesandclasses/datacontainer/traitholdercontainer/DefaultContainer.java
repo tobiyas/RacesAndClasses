@@ -68,30 +68,6 @@ public class DefaultContainer {
 		}	
 	}
 	
-	public static void createSTDMembers(){
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		File membersFile = new File(Consts.playerDataYML);
-		if(membersFile.exists()) return;
-		
-		try {
-			membersFile.createNewFile();
-		} catch (IOException e) {
-			plugin.log("Could not create members.yml");
-			return;
-		}
-		
-		plugin.log("No Member file found. Creating new.");
-		
-		YamlConfiguration membersConfig = new YamlConfiguration();
-		membersConfig.createSection("playerdata");
-		
-		try {
-			membersConfig.save(membersFile);
-		} catch (IOException e) {
-			plugin.log("Saving STD member.yml failed.");
-			return;
-		}
-	}
 	
 	public static void createSTDClasses(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();

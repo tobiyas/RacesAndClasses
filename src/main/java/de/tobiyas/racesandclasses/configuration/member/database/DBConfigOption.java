@@ -15,12 +15,6 @@ import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 @Entity
 @Table(name = "_config_options")
 public class DBConfigOption extends ConfigOption {
-
-	/**
-	 * the player this option is belonging.
-	 */
-	@NotEmpty
-	private String playerName;
 	
 	@NotEmpty
 	private String stringValue;
@@ -74,6 +68,16 @@ public class DBConfigOption extends ConfigOption {
 		
 		plugin = RacesAndClasses.getPlugin();
 	}
+
+	/**
+	 * DB init Constructor.
+	 * DO NOT USE!
+	 */
+	public DBConfigOption(String playerName){
+		super(playerName);
+		
+		plugin = RacesAndClasses.getPlugin();
+	}
 	
 	
 	
@@ -93,10 +97,19 @@ public class DBConfigOption extends ConfigOption {
 
 	@Override
 	public void save(String pre) {
-		if(plugin.getDatabase().find(DBConfigOption.class).where().ieq("path", playerName + path).findUnique() == null){
-			plugin.getDatabase().save(this);
-		}else{
-			plugin.getDatabase().update(this);
+		if(!needsSaving) return;
+		//When no saving needed, don't try.
+		
+		try{
+			if(plugin.getDatabase().find(DBConfigOption.class).where().ieq("path", playerName + path).findUnique() == null){
+				plugin.getDatabase().save(this);
+			}else{
+				plugin.getDatabase().update(this);
+			}
+			
+			needsSaving = false;
+		}catch(Exception exp){
+			plugin.getDebugLogger().logStackTrace(exp);
 		}
 		
 	}
@@ -146,9 +159,11 @@ public class DBConfigOption extends ConfigOption {
 	 * @param option to copy
 	 * @return the copied DBConfigOption
 	 */
-	public static DBConfigOption copyFrom(ConfigOption option, String playerName){
+	public static DBConfigOption copyFrom(ConfigOption option){
 		String path = option.getPath();
 		String displayName = option.getDisplayName();
+		String playerName = option.getPlayerName();
+		
 		Object value = option.getValue();
 		Object defaultValue = option.getDefaultValue();
 		boolean visible = option.isVisible();

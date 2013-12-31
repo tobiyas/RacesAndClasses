@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.traitcontainer.container;
 
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitInfoContainer {
 

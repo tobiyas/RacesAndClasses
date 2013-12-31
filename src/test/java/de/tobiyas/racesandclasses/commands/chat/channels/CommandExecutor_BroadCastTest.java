@@ -8,7 +8,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -75,7 +74,7 @@ public class CommandExecutor_BroadCastTest {
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_channels_enable()).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "Channels are disabled.");
+		verify(sender).sendMessage("something_disabled");
 	}
 	
 	@Test
@@ -92,7 +91,7 @@ public class CommandExecutor_BroadCastTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(ChatColor.RED + "No message given.");
+		verify(sender).sendMessage("no_message");
 	}
 
 	@Test

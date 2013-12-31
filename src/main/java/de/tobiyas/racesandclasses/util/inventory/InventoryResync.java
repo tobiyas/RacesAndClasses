@@ -29,7 +29,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 			if(player != null && player.isOnline()){
 				try{
 					player.updateInventory();
-				}catch(Exception exp){}; //since this is depricated, we catch everything to prevent errors.
+				}catch(Exception exp){}; //since this is deprecated, we catch everything to prevent errors.
 			}
 		}
 		

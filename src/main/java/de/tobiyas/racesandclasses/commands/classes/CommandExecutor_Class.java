@@ -16,7 +16,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.Cla
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -234,14 +234,26 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_selected").build());
 			return;
 		}
+
 		
-		player.sendMessage(ChatColor.YELLOW + "ClassHealthMod: " + ChatColor.LIGHT_PURPLE + classContainer.getClassHealthModify());
+		player.sendMessage(ChatColor.YELLOW + "ClassHealth: " 
+				+ ChatColor.LIGHT_PURPLE + classContainer.getClassHealthModify()
+				+ classContainer.getClassHealthModValue());
 		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getName());
 		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
-		player.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.RED + "Class Traits" + ChatColor.YELLOW +" =====");
 		
+		double mana = classContainer.getManaBonus();
+		if(mana > 0){
+			player.sendMessage(ChatColor.YELLOW + "+ Mana: " + ChatColor.AQUA + mana);
+		}
+		
+		player.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.RED + "Class Traits" + ChatColor.YELLOW +" =====");
 		for(Trait trait : classContainer.getVisibleTraits()){
 			player.sendMessage(ChatColor.BLUE + trait.getDisplayName() + " : " + trait.getPrettyConfiguration());
+		}
+		
+		if(classContainer.getVisibleTraits().size() == 0){
+			player.sendMessage(ChatColor.BLUE + "No Traits.");			
 		}
 	}
 	

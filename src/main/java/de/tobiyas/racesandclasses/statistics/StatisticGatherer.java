@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.statistics;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 
 public class StatisticGatherer {

@@ -86,13 +86,13 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "Classes are not activated.");
+		verify(consoleSender).sendMessage("something_disabled");
 	}
 	
 	//Send help
 	
 	private void verifyHelp(CommandSender sender, boolean permissions){
-		verify(sender).sendMessage(ChatColor.RED + "Wrong usage. The correct usage is one of the following:");
+		verify(sender).sendMessage("wrong_command_use");
 		verify(sender).sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		verify(sender).sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
 
@@ -133,8 +133,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "You have no class selected. Use " + ChatColor.LIGHT_PURPLE + "/class info <class name>" 
-							+ ChatColor.RED + "  to inspect a class.");
+		verify(consoleSender).sendMessage("no_class_selected_use_info");
 	}
 	
 	@Test
@@ -144,8 +143,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, classToSelect});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + classToSelect 
-				+ ChatColor.RED + " does not exist.");
+		verify(consoleSender).sendMessage("class_not_exist");
 	}
 	
 	@Test
@@ -180,7 +178,7 @@ public class CommandExecutor_ClassTest {
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
 		verify(consoleSender).sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "Classes" + ChatColor.YELLOW + " =====");
-		verify(consoleSender).sendMessage(ChatColor.RED + "No Classes in the list.");
+		verify(consoleSender).sendMessage("no_class_in_list");
 	}
 
 	@Test
@@ -222,7 +220,7 @@ public class CommandExecutor_ClassTest {
 		
 		verify(consoleSender).sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "Classes" + ChatColor.YELLOW + " =====");
 				
-		verify(consoleSender).sendMessage(ChatColor.RED + "class1" + ChatColor.YELLOW + "  <-- Your Class!");
+		verify(consoleSender).sendMessage(ChatColor.RED + "class1" + ChatColor.YELLOW + "  <-- your_class");
 		verify(consoleSender).sendMessage(ChatColor.BLUE + "class2");
 		verify(consoleSender).sendMessage(ChatColor.BLUE + "class3");
 	}
@@ -245,7 +243,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, clazz});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	@Test
@@ -270,7 +268,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+		verify(player).sendMessage("no_class_to_select");
 	}
 	
 	@Test
@@ -293,7 +291,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+		verify(player).sendMessage("open_holder");
 	}
 	
 	@Test
@@ -316,8 +314,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "You already have a class: " + ChatColor.AQUA + classContainer.getName()
-				+ ChatColor.RED + ". Use " + ChatColor.LIGHT_PURPLE + "/class change" + ChatColor.RED + " to change your class.");
+		verify(player).sendMessage("already_have_class");
 	}
 	
 	
@@ -330,7 +327,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, clazz});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	@Test
@@ -346,8 +343,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "You don't have any class. Use " + ChatColor.LIGHT_PURPLE + "/class select" 
-				+ ChatColor.RED + " to select a class.");
+		verify(player).sendMessage("no_class_on_change");
 	}
 	
 	
@@ -371,7 +367,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.RED + "[RaC] You don't have any Classes to select.");
+		verify(player).sendMessage("no_class_to_select");
 	}
 	
 	@Test
@@ -394,7 +390,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "Opening Class Selection...");
+		verify(player).sendMessage("open_holder");
 	}
 	
 	////////////////////////
@@ -410,7 +406,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, clazz});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	
@@ -449,7 +445,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + className);
+		verify(player).sendMessage("class_changed_to");
 		
 		verify(RacesAndClasses.getPlugin().getTutorialManager()).update(any(CommandExecutor_Class.class), any(TutorialStepContainer.class));
 	}
@@ -473,7 +469,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "You already have a class: " + ChatColor.LIGHT_PURPLE + classContainer.getName());
+		verify(player).sendMessage("class_changed_to");
 	}
 	
 	
@@ -490,7 +486,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className + ChatColor.RED + " was not found.");
+		verify(player).sendMessage("class_not_exist");
 	}
 	
 	
@@ -503,7 +499,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, clazz});
 		
-		verify(consoleSender).sendMessage(ChatColor.RED + "[RAC] Only players can use this command.");
+		verify(consoleSender).sendMessage("only_players");
 	}
 	
 	
@@ -550,7 +546,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + className);
+		verify(player).sendMessage("class_changed_to");
 	}
 	
 	@Test
@@ -581,7 +577,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className + ChatColor.RED + " was not found.");
+		verify(player).sendMessage("class_not_exist");
 	}
 	
 	@Test
@@ -606,7 +602,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "You are already a " + ChatColor.LIGHT_PURPLE + className);
+		verify(player).sendMessage("change_to_same_holder");
 	}
 	
 	
@@ -630,7 +626,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "You have no class you could change");
+		verify(player).sendMessage("no_class_on_change");
 	}
 	
 	
@@ -648,7 +644,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage(ChatColor.RED + "The class " + ChatColor.LIGHT_PURPLE + className + ChatColor.RED + " was not found.");
+		verify(player).sendMessage("class_not_exist");
 	}
 	
 	@Test

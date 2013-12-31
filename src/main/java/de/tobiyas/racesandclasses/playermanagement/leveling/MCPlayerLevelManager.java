@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MCPlayerLevelManager implements PlayerLevelManager{
@@ -94,7 +94,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -103,8 +103,6 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	
 		config.set("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getLevel());
 		config.set("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getExp() * player.getExpToLevel()));
-		
-		config.save();
 	}
 
 	@Override
@@ -130,7 +128,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void reloadFromYaml() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -150,6 +148,12 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 */
 	private Player getPlayer(){
 		return Bukkit.getPlayer(playerName);
+	}
+
+
+	@Override
+	public void forceDisplay() {
+		//we have no display to force... The EXP bar is our display.
 	}
 	
 }

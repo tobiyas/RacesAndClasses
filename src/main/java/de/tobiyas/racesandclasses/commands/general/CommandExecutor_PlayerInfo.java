@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class CommandExecutor_PlayerInfo implements CommandExecutor {
@@ -33,18 +34,23 @@ private RacesAndClasses plugin;
 		
 		Player player = null;
 		if(args.length == 0){
-			if(sender instanceof Player)
+			if(sender instanceof Player){
 				player = (Player) sender;
-			else{
-				sender.sendMessage(ChatColor.RED + "Expected a Playername as argument.");
+			}else{
+				sender.sendMessage(ChatColor.RED + LanguageAPI.translateIgnoreError("needs_1_arg")
+						.replace("command", "/playerinfo <playername>")
+						.build());
 				return true;
 			}
 				
-		}else
+		}else{
 			player = Bukkit.getPlayer(args[0]);
-		
+		}
+			
 		if(player == null){
-			sender.sendMessage(ChatColor.RED + "The provided Player could not be found.");
+			sender.sendMessage(ChatColor.RED + LanguageAPI.translateIgnoreError("player_not_exist")
+					.replace("player", args[0])
+					.build());
 			return true;
 		}
 		

@@ -5,7 +5,7 @@ import java.util.Map;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitWithNoAnnotations extends AbstractBasicTrait {
 

@@ -1,18 +1,19 @@
 package de.tobiyas.racesandclasses.playermanagement.health;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.playermanagement.PlayerContainer;
-import de.tobiyas.racesandclasses.playermanagement.display.ChatDisplayBar;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
-import de.tobiyas.racesandclasses.playermanagement.display.NewScoreBoardDisplayBar;
+import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 
-public class HealthDisplayRunner implements Runnable {
+public class HealthDisplayRunner implements Runnable, Observer {
 	
 	private MemberConfig config;
 	private PlayerContainer healthContainer;
@@ -38,29 +39,21 @@ public class HealthDisplayRunner implements Runnable {
 		oldInterval = config.getLifeDisplayInterval();
 		scedulerTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, oldInterval, oldInterval);
 		
-		Object healthDisplayTypeAsObject = config.getValueDisplayName("healthDisplayType");
-		String healthDisplayType = "score";
-		if(healthDisplayTypeAsObject != null && healthDisplayTypeAsObject instanceof String){
-			healthDisplayType = (String) healthDisplayTypeAsObject;
-		}
-		
-		DisplayType type = DisplayType.resolve(healthDisplayType);
-		
-		display = generateFromType(type, config.getName());
+		rescanDisplay();
+		config.addObserver(this);
 	}
 	
 	
-	private Display generateFromType(DisplayType type, String name){
-		switch (type) {
-		case Chat:
-			return new ChatDisplayBar(name, DisplayInfos.HEALTH);
-		
-		case Scoreboard:
-			return new NewScoreBoardDisplayBar(name, DisplayInfos.HEALTH);
-			
-		default:
-			return new ChatDisplayBar(name, DisplayInfos.HEALTH);
+	/**
+	 * This re-registers the display.
+	 * <br>Meaning to throw the old one away and generate a new one.
+	 */
+	private void rescanDisplay(){
+		if(display != null){
+			display.unregister();
 		}
+		
+		display = DisplayGenerator.generateDisplay(config.getName(), DisplayInfos.HEALTH);
 	}
 
 	@Override
@@ -104,6 +97,16 @@ public class HealthDisplayRunner implements Runnable {
 	
 	public void forceHPOut() {
 		display();
+	}
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		String changedValue = (String) arg;
+		
+		if(changedValue.equalsIgnoreCase("displayType")){
+			rescanDisplay();
+		}
 	}
 
 }

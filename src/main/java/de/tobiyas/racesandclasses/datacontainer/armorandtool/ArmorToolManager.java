@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
 import de.tobiyas.racesandclasses.util.items.ItemUtils;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
@@ -29,8 +30,12 @@ public class ArmorToolManager {
 	
 	public void rescanPermission(){
 		itemPerms.clear();
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		if(WorldResolver.isOnDisabledWorld(playerName)){
+			itemPerms.add(new AllItemsPermission());
+			return;
+		}
 		
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
 		if(container != null){
 			for(ItemQuality quality : container.getArmorPerms()){
 				addPerm(quality);
@@ -46,7 +51,7 @@ public class ArmorToolManager {
 			}
 		}
 		
-		addDefaultPerm();		
+		addDefaultPerm();
 	}
 	
 	

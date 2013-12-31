@@ -16,8 +16,8 @@ import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
 
@@ -51,7 +51,7 @@ public class ManaManagerTest {
 		
 		when(RacesAndClasses.getPlugin().getConfigManager().getMemberConfigManager()).thenReturn(mock(MemberConfigManager.class, Mockito.RETURNS_DEEP_STUBS));
 		when(RacesAndClasses.getPlugin().getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerName)
-				.getValueDisplayName("healthDisplayType")).thenReturn("score");
+				.getValueDisplayName("displayType")).thenReturn("score");
 		
 		sut = new ManaManager(playerName);
 	}

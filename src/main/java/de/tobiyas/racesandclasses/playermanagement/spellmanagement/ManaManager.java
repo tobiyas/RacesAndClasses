@@ -1,18 +1,19 @@
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.playermanagement.display.ChatDisplayBar;
+import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
-import de.tobiyas.racesandclasses.playermanagement.display.NewScoreBoardDisplayBar;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait.CostType;
+import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
-public class ManaManager {
+public class ManaManager implements Observer {
 
 	/**
 	 * The Plugin to call Stuff on
@@ -39,7 +40,7 @@ public class ManaManager {
 	/**
 	 * The Display displaying mana change to the Player
 	 */
-	private final Display manaDisplay;
+	private Display manaDisplay;
 	
 	
 	
@@ -53,36 +54,21 @@ public class ManaManager {
 		this.maxMana = 0;
 		this.currentMana = 0;
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerName);
-		Object healthDisplayTypeAsObject = config.getValueDisplayName("healthDisplayType");
-		String healthDisplayType = "score";
-		if(healthDisplayTypeAsObject != null && healthDisplayTypeAsObject instanceof String){
-			healthDisplayType = (String) healthDisplayTypeAsObject;
-		}
+		rescanDisplay();
 		
-		DisplayType type = DisplayType.resolve(healthDisplayType);
-		
-		manaDisplay = generateFromType(type, config.getName());
+		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(getPlayerName()).addObserver(this);
 	}
 	
 	/**
-	 * Generates a Display from the type passed.
-	 * 
-	 * @param type
-	 * @param name
-	 * @return
+	 * This re-registers the display.
+	 * <br>Meaning to throw the old one away and generate a new one.
 	 */
-	private Display generateFromType(DisplayType type, String name){
-		switch (type) {
-		case Chat:
-			return new ChatDisplayBar(name, DisplayInfos.MANA);
-		
-		case Scoreboard:
-			return new NewScoreBoardDisplayBar(name, DisplayInfos.MANA);
-			
-		default:
-			return new ChatDisplayBar(name, DisplayInfos.MANA);
+	private void rescanDisplay(){
+		if(manaDisplay != null){
+			manaDisplay.unregister();
 		}
+		
+		manaDisplay = DisplayGenerator.generateDisplay(playerName, DisplayInfos.MANA);
 	}
 	
 	
@@ -91,6 +77,10 @@ public class ManaManager {
 	 */
 	public void rescanPlayer(){
 		maxMana = 0;
+		
+		if(WorldResolver.isOnDisabledWorld(playerName)){
+			return;
+		}
 		
 		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
 		if(race != null){
@@ -245,5 +235,14 @@ public class ManaManager {
 	 */
 	public boolean isManaFull(){
 		return currentMana >= maxMana;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		String changedValue = (String) arg;
+		
+		if(changedValue.equalsIgnoreCase("displayType")){
+			rescanDisplay();
+		}
 	}
 }

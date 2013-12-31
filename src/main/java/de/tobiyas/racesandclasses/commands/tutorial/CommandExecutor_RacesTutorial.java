@@ -1,5 +1,11 @@
 package de.tobiyas.racesandclasses.commands.tutorial;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_already_running;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_error;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_no_set_at_this_state;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_not_running;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_stopped;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class CommandExecutor_RacesTutorial implements CommandExecutor{
@@ -49,9 +56,11 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 			if(args.length != 2 || TutorialState.getState(args[1]) == TutorialState.none){
 				player.sendMessage(ChatColor.RED + "The command needs a valid new State! Valid Stats are: ");
 				String stateString = "";
-				for(TutorialState state : TutorialState.values())
-					if(state != TutorialState.none)
+				for(TutorialState state : TutorialState.values()){
+					if(state != TutorialState.none){
 						stateString += ChatColor.AQUA + state.name() + ChatColor.RED + ", ";
+					}
+				}
 				
 				stateString = stateString.substring(0, stateString.length() - 2);
 				player.sendMessage(stateString);
@@ -130,54 +139,59 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	
 	private void tutorialStart(Player player){
 		if(plugin.getTutorialManager().getCurrentState(player.getName()) != null){
-			player.sendMessage(ChatColor.RED + "You already have a Tutorial Running.");
+			LanguageAPI.sendTranslatedMessage(player, tutorial_already_running);
 			return;
 		}
 		
-		if(!plugin.getTutorialManager().start(player.getName()))
-			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
+		if(!plugin.getTutorialManager().start(player.getName())){
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+		}
 	}
 	
 	private void tutorialStop(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(plugin.getTutorialManager().stop(player.getName()))
-			player.sendMessage(ChatColor.RED + "Tutorial Stopped. To restart it, use " + ChatColor.AQUA + "/racestutorial start");
-		else
-			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
+		if(plugin.getTutorialManager().stop(player.getName())){
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_stopped).build());
+		}else{
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+		}
 	}
 	
 	private void tutorialSkip(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().skip(player.getName()))
-			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
+		if(!plugin.getTutorialManager().skip(player.getName())){
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+		}
 	}
 	
 	private void tutorialReset(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().reset(player.getName()))
-			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
+		if(!plugin.getTutorialManager().reset(player.getName())){
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+		}
 	}
 	
 	private void tutorialRepost(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().repost(player.getName()))
-			player.sendMessage(ChatColor.RED + "Could not execute this command at your current Step.");
+		if(!plugin.getTutorialManager().repost(player.getName())){
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+		}
 	}
 	
 	private void setState(Player player, String state){
 		if(!checkHasTutorial(player)) return;
 		
 		if(!plugin.getTutorialManager().setState(player.getName(), state))
-			player.sendMessage(ChatColor.RED + "Can not set state at this moment.");
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_no_set_at_this_state).build());
 	}
 	
 	private boolean checkHasTutorial(Player player){
 		if(plugin.getTutorialManager().getCurrentState(player.getName()) == null){
-			player.sendMessage(ChatColor.RED + "You have no Tutorial running.");
+			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_not_running).build());
 			return false;
 		}
 		

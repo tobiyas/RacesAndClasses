@@ -1,7 +1,5 @@
 package de.tobiyas.racesandclasses.playermanagement;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,10 +12,9 @@ import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
-import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerManager{
 	
@@ -47,11 +44,9 @@ public class PlayerManager{
 	}
 	
 	/**
-	 * Stores the data in the PlayerManager in the playerData.yml.
+	 * Stores the data in the PlayerManager in the player data ymls
 	 */
 	public void savePlayerContainer(){
-		checkFileExist();
-		
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 		for(PlayerContainer container: playerData.values()){
 			container.save(useDB);
@@ -62,7 +57,6 @@ public class PlayerManager{
 	 * loads the health manager internally
 	 */
 	private void loadPlayerContainer(){
-		checkFileExist();
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 
 		Set<String> players = new HashSet<String>();
@@ -71,33 +65,13 @@ public class PlayerManager{
 				players.add(player.getName());
 			}
 		}else{
-			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
-			players = config.getChildren("playerdata");
+			players = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());
 		}
 		
 		for(String player : players){
 			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
 			if(container != null){
 				playerData.put(player, container);
-			}
-		}
-	}
-	
-	/**
-	 * Checks if the playerData file exists and creates it if not.
-	 */
-	private void checkFileExist(){
-		File file = new File(plugin.getDataFolder() + File.separator + "PlayerData" + File.separator);
-		if(!file.exists())
-			file.mkdirs();
-		
-		File file2 = new File(file.toString() + File.separator + "playerdata.yml");
-		
-		if(!file2.exists()){
-			try {
-				file2.createNewFile();
-			} catch (IOException e) {
-				plugin.log("Could not create playerdata.yml in folder: plugins/Races/PlayerData/");
 			}
 		}
 	}

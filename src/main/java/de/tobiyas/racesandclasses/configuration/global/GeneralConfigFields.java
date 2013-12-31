@@ -39,6 +39,7 @@ public class GeneralConfigFields {
 	
 	//Multiworld
 	public static final String worlds_disableOn = "worlds_disableOn";
+	public static final String keep_max_hp_on_disabled_worlds = "keep_max_hp_on_disabled_worlds";
 	
 	
 	//General

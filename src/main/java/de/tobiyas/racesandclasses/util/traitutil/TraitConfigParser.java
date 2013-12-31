@@ -13,9 +13,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitConfigParser {
 
@@ -82,7 +82,7 @@ public class TraitConfigParser {
 						String value = toCheck.toString();
 						configurationMap.put(field.fieldName(), value);
 						continue;
-					}catch(NumberFormatException exp){
+					}catch(Exception exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
 								"' not found in Config for Trait: " + trait.getName() + 
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
@@ -149,7 +149,11 @@ public class TraitConfigParser {
 							mat = Material.getMaterial(value); // We still want to support IDs.
 						}else{
 							String value = toCheck.toString();
-							mat = Material.valueOf(value);
+							try{
+								mat = Material.valueOf(value);
+							}catch(IllegalArgumentException exp){
+								throw new NumberFormatException();
+							}
 						}
 
 						if(mat == null){
@@ -168,14 +172,22 @@ public class TraitConfigParser {
 				
 				//rest... Try it at least.
 				if(classToExpect.isAssignableFrom(toCheck.getClass())){
-					throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-							"' not found in Config for Trait: " + trait.getName() + 
-							". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
+					configurationMap.put(field.fieldName(), classToExpect.cast(toCheck));
+					continue;
 				}
+
+				throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
+						"' not found in Config for Trait: " + trait.getName() + 
+						". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 				
 			}
 			
-			trait.setConfiguration(configurationMap);
+			try{
+				trait.setConfiguration(configurationMap);
+			}catch(Exception exp){
+				throw new TraitConfigurationFailedException("Configuration of: " + trait.getDisplayName() 
+						+ " Failed. Check your Config! There seems to be a wrong / unset value! Check the Documentation for Value references.");
+			}
 		}catch(TraitConfigurationFailedException exp){
 			throw exp;
 		}catch(NullPointerException exp){

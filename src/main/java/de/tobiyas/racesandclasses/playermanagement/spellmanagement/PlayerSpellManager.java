@@ -10,8 +10,9 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.traits.magic.MagicSpellTrait;
+import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 public class PlayerSpellManager {
@@ -63,8 +64,13 @@ public class PlayerSpellManager {
 	/**
 	 * Rescans the Spells the player can cast
 	 */
-	private void spellRescan(){
+	private void spellRescan(){		
 		List<MagicSpellTrait> spellList = new LinkedList<MagicSpellTrait>();
+		
+		if(WorldResolver.isOnDisabledWorld(playerName)){
+			this.spellList.setEntries(spellList);
+			return;
+		}
 		
 		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(playerName);
 		for(Trait trait : traits){

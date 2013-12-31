@@ -6,12 +6,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import org.bukkit.Bukkit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
+import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
@@ -26,6 +32,13 @@ public class PlayerLevelManagerTest {
 	public void init(){
 		GenerateBukkitServer.generateServer();
 		GenerateRaces.generateRaces();
+		
+		MemberConfig mockMemberConfig = mock(MemberConfig.class, Mockito.RETURNS_DEEP_STUBS);
+		MemberConfigManager manager = mock(MemberConfigManager.class);
+		
+		when(manager.getConfigOfPlayer(playerName)).thenReturn(mockMemberConfig);
+		when(RacesAndClasses.getPlugin().getConfigManager().getMemberConfigManager()).thenReturn(manager);
+		
 		
 		sut = new CustomPlayerLevelManager(playerName);
 	}

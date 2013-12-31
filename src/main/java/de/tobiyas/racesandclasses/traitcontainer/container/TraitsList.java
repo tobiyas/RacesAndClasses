@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.ArmorTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.DeathCheckerTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.NormalArrow;

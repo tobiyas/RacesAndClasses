@@ -22,10 +22,11 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.NeedMC1_6;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitEventsUsed;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_6;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_7;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
@@ -73,7 +74,7 @@ public class TraitStore {
 			return trait;
 			
 		}catch(TraitNotFoundException e){
-			RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
+			RacesAndClasses.getPlugin().log("Trait not found: " + e.getLocalizedMessage());
 		}catch(AnnotationFormatError e){
 			RacesAndClasses.getPlugin().log("Could not find Annotation for: " + traitName);
 		}catch(TraitConfigurationFailedException exp){
@@ -206,7 +207,8 @@ public class TraitStore {
 	
 	@SuppressWarnings("unchecked")
 	private static void loadExternalTrait(File file){
-		try{
+		try{			
+			//old but working: //TODO replace by new Classloader with no leaking of memory
 			URLClassLoader clazzLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, RacesAndClasses.getPlugin().getClass().getClassLoader());
 			
 			classLoaders.add(clazzLoader);
@@ -230,6 +232,15 @@ public class TraitStore {
 	                    				continue;	                    				
 	                    			}
 	                    		}
+	                    		
+	                    		if(clazz.isAnnotationPresent(NeedMC1_7.class)){
+	                    			if(!CertainVersionChecker.isAbove1_7()){
+	                    				//We need MC > 1.7 But do not have it.
+	                    				continue;	                    				
+	                    			}
+	                    		}
+	                    		
+	                    		
 	                    		
 	                    		clazzArray.add((Class<Trait>) clazz);
 	                    	}

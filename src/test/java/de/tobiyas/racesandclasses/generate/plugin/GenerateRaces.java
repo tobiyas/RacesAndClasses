@@ -13,7 +13,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProviderSetter;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -65,7 +66,7 @@ public class GenerateRaces {
 			
 			YAMLPersistenceProviderSetter.setClassesYAML(new YAMLConfigExtended(File.createTempFile("classes" + StringGenerator.nextRandomString(42), ".yml", tempDirectory)));
 			YAMLPersistenceProviderSetter.setRacesYAML(new YAMLConfigExtended(File.createTempFile("races" + StringGenerator.nextRandomString(42), ".yml", tempDirectory)));
-			YAMLPersistenceProviderSetter.setPlayerYAML(new YAMLConfigExtended(File.createTempFile("playerData" + StringGenerator.nextRandomString(42), ".yml", tempDirectory)));
+			YAMLPersistenceProviderSetter.setPlayerYAMLPath(tempDirectory.getAbsolutePath());
 		}catch(Exception exp){
 			Assert.fail("YAML Generation failed: " + exp.getLocalizedMessage());
 		}
@@ -123,10 +124,17 @@ public class GenerateRaces {
 			
 			boolean playerDataDeleted = false;
 			for(int i = 0; i < 5; i++){
-				File file = YAMLPersistenceProvider.getLoadedPlayerFile(false).getFileLoadFrom();
+				File file = new File(Consts.playerDataPath);
 				if(!file.exists()){
 					playerDataDeleted = true;
 					break;
+				}
+				
+				File[] subFiles = file.listFiles();
+				if(subFiles != null && subFiles.length != 0){
+					for(File subFile : subFiles){
+						subFile.delete();
+					}
 				}
 				
 				playerDataDeleted = file.delete();
@@ -136,7 +144,6 @@ public class GenerateRaces {
 			
 			YAMLPersistenceProviderSetter.setClassesYAML(null);
 			YAMLPersistenceProviderSetter.setRacesYAML(null);
-			YAMLPersistenceProviderSetter.setPlayerYAML(null);
 			
 			if(!classesDeleted || !racesDeleted || !playerDataDeleted){
 				Assert.fail("Could not delete:" + (classesDeleted ? "" : " classes.yml ") + (playerDataDeleted ? "" : " player.yml ") + (racesDeleted ? "" : " races.yml ") );

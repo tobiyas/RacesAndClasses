@@ -17,7 +17,7 @@ public class ClassManager extends AbstractHolderManager{
 
 	
 	public ClassManager(){
-		super(Consts.playerDataYML, Consts.classesYML);
+		super(Consts.classesYML);
 		
 		DefaultContainer.createSTDClasses();
 	}

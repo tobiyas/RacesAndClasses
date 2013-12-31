@@ -22,6 +22,7 @@ public class ClassAPI {
 	 * If the player has no Class, the Default Class is returned.
 	 * 
 	 * @param playerName to search
+	 * 
 	 * @return the {@link RaceContainer} of the player
 	 */
 	public static ClassContainer getClassOfPlayer(String playerName){
@@ -40,6 +41,7 @@ public class ClassAPI {
 	 * If the Class is not found, Null is returned.
 	 * 
 	 * @param className to search
+	 * 
 	 * @return the Class corresponding to the name
 	 */
 	public static ClassContainer getClassByName(String className){
@@ -69,6 +71,7 @@ public class ClassAPI {
 	 * 
 	 * @param playerName the player that the Class should be changed.
 	 * @param className to change to
+	 * 
 	 * @return true if worked, false otherwise
 	 */
 	public static boolean addPlayerToClass(String playerName, String className){

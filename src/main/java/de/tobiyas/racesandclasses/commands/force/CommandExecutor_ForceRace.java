@@ -1,7 +1,6 @@
 package de.tobiyas.racesandclasses.commands.force;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +33,9 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 			String label, String[] args) {
 
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
-			sender.sendMessage(ChatColor.RED + "[RaC] The Race System is disabled.");
+			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
+					.replace("value", "Races")
+					.build());
 			return true;
 		}
 		

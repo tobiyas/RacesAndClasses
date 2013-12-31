@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.StatisticAPI;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -61,6 +62,11 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 			showStartupStatistics(sender);
 			return;
 		}
+
+		if(traitName.equalsIgnoreCase("ymlcache")){
+			showYMLCacheStatistics(sender);
+			return;
+		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.AQUA + "Statistics to: " + ChatColor.LIGHT_PURPLE 
 				+ traitName + ChatColor.YELLOW + " ====");
@@ -85,6 +91,16 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeUsedForTrait))
 			);
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Time used for Trait: " + ChatColor.AQUA + formated);
+	}
+
+
+	private void showYMLCacheStatistics(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "===== YML Cache =====");
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "total Cache accesses: " 
+				+ ChatColor.LIGHT_PURPLE + YAMLPersistenceProvider.getTotalTries() + "x");
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Cache Hit-Rate: " 
+				+ ChatColor.LIGHT_PURPLE + (100*YAMLPersistenceProvider.getCacheHitRate()) + "%");
+		
 	}
 
 

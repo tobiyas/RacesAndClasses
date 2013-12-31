@@ -13,14 +13,17 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -33,6 +36,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -40,7 +44,13 @@ import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendCha
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
+import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractBasicTrait implements Trait,
@@ -67,8 +77,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The Set of biomes restricted.
 	 */
-	protected Set<Biome> biomes = new HashSet<Biome>(Arrays.asList(Biome.values()));
+	protected final Set<Biome> biomes = new HashSet<Biome>(Arrays.asList(Biome.values()));
 	
+	/**
+	 * The set of Items NEEDED to be weared.s
+	 */
+	protected final Set<Material> wearing = new HashSet<Material>();
 	
 	/**
 	 * Tells if the Trait only works in the water
@@ -109,6 +123,40 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * The DisplayName to show.
 	 */
 	protected String displayName;
+	
+	/**
+	 * The Elevation the player has to be above
+	 */
+	protected int aboveElevation = Integer.MIN_VALUE;
+	
+	/**
+	 * The Elevation the player has to be below
+	 */
+	protected int belowElevation = Integer.MAX_VALUE;
+	
+	/**
+	 * Tells if the Trait can only be triggered in the Rain.
+	 */
+	protected boolean onlyInRain = false;
+
+	/**
+	 * Tells if the Trait may only be used after player has been damaged.
+	 * <br>Time in seconds.
+	 * <br> onlyAfterDamage <= 0 = no check.
+	 */
+	protected int onlyAfterDamaged = -1;
+	
+	/**
+	 * Tells if the Trait may only be used after player has NOT been damaged.
+	 * <br>Time in seconds.
+	 * <br> onlyAfterNotDamaged <= 0 = no check.
+	 */
+	protected int onlyAfterNotDamaged = -1;
+	
+	/**
+	 * Tells the Trait can be activated only on certain blocks.
+	 */
+	protected final List<Material> onlyOnBlocks = new LinkedList<Material>();
 	
 	
 	/**
@@ -154,13 +202,19 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = MIN_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
 		@TraitConfigurationField(fieldName = MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
 		@TraitConfigurationField(fieldName = BIOME_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_ON_BLOCK_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_IN_WATER_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_ON_LAND_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_IN_LAVA_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_ON_SNOW, classToExpect = Boolean.class, optional = true),		
 		@TraitConfigurationField(fieldName = ONLY_ON_DAY_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_IN_NIGHT_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_IN_RAIN_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_AFTER_DAMAGED_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_AFTER_NOT_DAMAGED_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = COOLDOWN_TIME_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = ABOVE_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = BELOW_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true)
 	})
 	
@@ -183,6 +237,26 @@ public abstract class AbstractBasicTrait implements Trait,
 			this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
 		}
 		
+		//Reads the only after damage value
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_AFTER_DAMAGED_PATH)){
+			this.onlyAfterDamaged = (Integer) configMap.get(TraitWithRestrictions.ONLY_AFTER_DAMAGED_PATH);
+		}
+
+		//Reads the only after damage value
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_AFTER_NOT_DAMAGED_PATH)){
+			this.onlyAfterNotDamaged = (Integer) configMap.get(TraitWithRestrictions.ONLY_AFTER_NOT_DAMAGED_PATH);
+		}
+
+		//above elevation
+		if(configMap.containsKey(TraitWithRestrictions.ABOVE_ELEVATION_PATH)){
+			this.aboveElevation = (Integer) configMap.get(TraitWithRestrictions.ABOVE_ELEVATION_PATH);
+		}
+		
+		//below elevation
+		if(configMap.containsKey(TraitWithRestrictions.BELOW_ELEVATION_PATH)){
+			this.belowElevation = (Integer) configMap.get(TraitWithRestrictions.BELOW_ELEVATION_PATH);
+		}
+		
 		//Reads the biomes for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.BIOME_PATH)){
 			try{
@@ -200,10 +274,51 @@ public abstract class AbstractBasicTrait implements Trait,
 				}
 			}catch(Exception exp){}
 		}
+
+		//Reads the blocks for the trait if present
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_BLOCK_PATH)){
+			try{
+				@SuppressWarnings("unchecked")
+				List<String> stringBlocks = (List<String>) configMap.get(TraitWithRestrictions.ONLY_ON_BLOCK_PATH);
+				this.onlyOnBlocks.clear();
+				
+				for(String block : stringBlocks){
+					block = block.toUpperCase();
+					Material type = Material.valueOf(block);
+					
+					if(type != null){
+						onlyOnBlocks.add(type);
+					}
+				}
+			}catch(Exception exp){}
+		}
+
+		//Reads the Armor for the trait to wear
+		if(configMap.containsKey(TraitWithRestrictions.WEARING_PATH)){
+			try{
+				@SuppressWarnings("unchecked")
+				List<String> stringBlocks = (List<String>) configMap.get(TraitWithRestrictions.WEARING_PATH);
+				this.wearing.clear();
+				
+				for(String armor : stringBlocks){
+					armor = armor.toUpperCase();
+					Material type = Material.valueOf(armor);
+					
+					if(type != null){
+						wearing.add(type);
+					}
+				}
+			}catch(Exception exp){}
+		}
 		
 		//Only in water
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_WATER_PATH)){
 			this.onlyInWater = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_WATER_PATH);
+		}
+		
+		//Only in Rain
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_RAIN_PATH)){
+			this.onlyInRain = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_RAIN_PATH);
 		}
 
 		//Only on snow
@@ -253,28 +368,19 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	@Override
 	public final List<String> getOptionalConfigFields(){
+		List<TraitConfigurationField> configFields = TraitConfigParser.getAllTraitConfigFieldsOfTrait(this);
 		List<String> optionalFields = new LinkedList<String>();
-		optionalFields.add(TraitWithRestrictions.BIOME_PATH);
-		optionalFields.add(TraitWithRestrictions.MAX_LEVEL_PATH);
-		optionalFields.add(TraitWithRestrictions.MIN_LEVEL_PATH);
-		
-		List<String> additionalOptionalFields = getAdditionalOptionalConfigFields();
-		if(additionalOptionalFields != null && !additionalOptionalFields.isEmpty()){
-			optionalFields.addAll(additionalOptionalFields);			
+
+		for(TraitConfigurationField field : configFields){
+			if(field.optional() == true){
+				optionalFields.add(field.fieldName());
+			}
 		}
 		
 		return optionalFields;
 	}
 
-	/**
-	 * Adds the Fields passed here to: {@link #getOptionalConfigFields()}.
-	 * 
-	 * @return the list to add
-	 */
-	protected List<String> getAdditionalOptionalConfigFields() {
-		return new LinkedList<String>();
-	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -317,8 +423,19 @@ public abstract class AbstractBasicTrait implements Trait,
 			if(shooter instanceof Player) return (Player) shooter;
 		}
 		
+		if(event instanceof EntityDamageByEntityEvent){
+			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
+			Entity damager = damageEvent.getDamager();
+			if(damager instanceof Projectile){
+				Entity shooter = ((Projectile) damager).getShooter();
+				if(shooter instanceof Player){
+					return (Player) shooter;
+				}
+			}
+		}
 		
-		if(event instanceof EntityEvent){
+		
+		if(event instanceof EntityEvent){			
 			EntityEvent entityEvent = (EntityEvent) event;
 			if(entityEvent.getEntityType() == EntityType.PLAYER){
 				return (Player) entityEvent.getEntity();
@@ -467,6 +584,65 @@ public abstract class AbstractBasicTrait implements Trait,
 			if(!(feetblock.getType() == Material.SNOW || feetblock.getType() == Material.SNOW_BLOCK)){
 				return false;
 			}
+		}
+		
+		//check if player is in Rain
+		if(onlyInRain){
+			if(!player.getWorld().hasStorm()) return false;
+			Block feetblock = player.getLocation().getBlock();
+			int ownY = feetblock.getY();
+			int highestY = feetblock.getWorld().getHighestBlockYAt(feetblock.getX(), feetblock.getZ());
+			//This means having a roof over oneself
+			if(ownY != highestY) return false;
+		}
+		
+		
+		//checking for wearing
+		if(!wearing.isEmpty()){
+			boolean found = false;
+			for(Material mat : wearing){
+				found = false;
+				for(ItemStack item : player.getInventory().getArmorContents()){
+					if(item == null) continue;
+					
+					if(mat == item.getType()){
+						found = true;
+						break;
+					}
+				}
+				
+				if(!found) return false;
+			}
+		}
+		
+		//check above elevation
+		if(aboveElevation != Integer.MIN_VALUE){
+			Block feetblock = player.getLocation().getBlock();
+			if(feetblock.getY() <= aboveElevation) return false;
+		}
+
+		//check below elevation
+		if(belowElevation != Integer.MAX_VALUE){
+			Block feetblock = player.getLocation().getBlock();
+			if(feetblock.getY() <= belowElevation) return false;
+		}
+
+		//check onlyAfterDamaged
+		if(onlyAfterDamaged > 0){
+			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
+			if(lastDamage > onlyAfterDamaged) return false;
+		}
+		
+		//check onlyAfterDamaged
+		if(onlyAfterNotDamaged > 0){
+			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
+			if(onlyAfterNotDamaged > lastDamage) return false;
+		}
+		
+		//check blocks on
+		if(!onlyOnBlocks.isEmpty()){
+			Block feetblock = player.getLocation().getBlock();
+			if(!onlyOnBlocks.contains(feetblock.getType())) return false;
 		}
 		
 		//check cooldown

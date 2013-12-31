@@ -12,9 +12,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.Trait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationField;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ResistanceInterface;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
@@ -67,6 +68,14 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		Player player = (Player) entity;
 		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
+				
+				//If there is damage * 0, cancel the Event to show no damage effect.
+				if(instantCancle()){
+					CompatibilityModifier.EntityDamage.safeSetDamage(0, Eevent);
+					Eevent.setCancelled(true);
+					return true;
+				}
+				
 				double oldDmg = CompatibilityModifier.EntityDamage.safeGetDamage(Eevent);
 				double newDmg = TraitStringUtils.getNewValue(oldDmg, operation, value);
 				
@@ -77,6 +86,14 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Checks if the event should get an instant cancle.
+	 * <br>This is when we have '*' as operator and 0 as value.
+	 */
+	private boolean instantCancle(){
+		return operation.equals("*") && value == 0;
 	}
 	
 	@Override

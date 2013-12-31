@@ -1,16 +1,22 @@
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
-import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.playermanagement.display.Display;
+import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class CustomPlayerLevelManager implements PlayerLevelManager{
+public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 
 	/**
 	 * The Path to the current Level of the Player
@@ -40,6 +46,16 @@ public class CustomPlayerLevelManager implements PlayerLevelManager{
 	 */
 	private int currentExpOfLevel;
 	
+	/**
+	 * The Display to show.
+	 */
+	private Display expDisplay;
+
+	/**
+	 * The Display to show.
+	 */
+	private Display levelDisplay;
+	
 	
 	/**
 	 * Creates a LevelManager for the Player.
@@ -51,12 +67,27 @@ public class CustomPlayerLevelManager implements PlayerLevelManager{
 		
 		this.currentLevel = 1;
 		this.currentExpOfLevel = 0;
+		
+		rescanDisplay();
+	}
+	
+	/**
+	 * This re-registers the display.
+	 * <br>Meaning to throw the old one away and generate a new one.
+	 */
+	private void rescanDisplay(){
+		if(expDisplay != null){
+			expDisplay.unregister();
+		}
+		
+		expDisplay = DisplayGenerator.generateDisplay(playerName, DisplayInfos.LEVEL_EXP);
+		levelDisplay = DisplayGenerator.generateDisplay(playerName, DisplayInfos.LEVEL);
 	}
 	
 	
 	@Override
 	public void reloadFromYaml(){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -150,6 +181,8 @@ public class CustomPlayerLevelManager implements PlayerLevelManager{
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
 		
+		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
+		levelDisplay.display(currentLevel, currentLevel);
 		return true;
 	}
 	
@@ -197,21 +230,21 @@ public class CustomPlayerLevelManager implements PlayerLevelManager{
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
 		}
 		
+		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
+		levelDisplay.display(currentLevel, currentLevel);
 		return true;
 	}
 
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(true);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 		if(!config.getValidLoad()){
 			return;
 		}
 	
 		config.set("playerdata." + playerName + CURRENT_PLAYER_LEVEL_PATH, currentLevel);
 		config.set("playerdata." + playerName + CURRENT_PLAYER_LEVEL_EXP_PATH, currentExpOfLevel);
-		
-		config.save();
 	}
 
 
@@ -219,6 +252,22 @@ public class CustomPlayerLevelManager implements PlayerLevelManager{
 	public void saveTo(PlayerSavingContainer container) {
 		container.setPlayerLevel(currentLevel);
 		container.setPlayerLevelExp(currentExpOfLevel);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		String changedValue = (String) arg;
+		
+		if(changedValue.equalsIgnoreCase("displayType")){
+			rescanDisplay();
+		}
+	}
+
+	@Override
+	public void forceDisplay() {
+		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
+		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
+		levelDisplay.display(currentLevel, currentLevel);
 	}
 
 	

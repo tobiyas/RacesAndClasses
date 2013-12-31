@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
-import de.tobiyas.racesandclasses.util.tasks.DebugTask;
 
 public class CommandExecutor_RaceDebug implements CommandExecutor {
 
@@ -61,14 +60,7 @@ public class CommandExecutor_RaceDebug implements CommandExecutor {
 					sender.sendMessage(ChatColor.GREEN + "Worked!");
 					return true;
 				}
-			}
-			
-			if(commandString.equalsIgnoreCase("tasks")){
-				sender.sendMessage(ChatColor.GREEN + "Testing all Schedulers Tasks! This can take some time.");
-				DebugTask.senderCall(sender);
-				return true;
-			}
-			
+			}			
 			
 			sender.sendMessage(ChatColor.RED + "No debug command found for: " + ChatColor.LIGHT_PURPLE + commandString);
 			return true;
