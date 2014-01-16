@@ -2,6 +2,10 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.stun_still;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,6 +27,13 @@ import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 public class StunCancelListener implements Listener {
 
 	/**
+	 * The cooldown map to use.
+	 */
+	private final Map<String, Integer> cooldownMap = new HashMap<String, Integer>();
+	
+	
+	
+	/**
 	 * The plugin to get the StunManager.
 	 */
 	private final RacesAndClasses plugin;
@@ -33,7 +44,24 @@ public class StunCancelListener implements Listener {
 	public StunCancelListener() {
 		this.plugin = RacesAndClasses.getPlugin();
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+		
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), new Runnable() {
+			
+			@Override
+			public void run() {
+				Iterator<Map.Entry<String, Integer>> entryIt = cooldownMap.entrySet().iterator();
+				while(entryIt.hasNext()){
+					Map.Entry<String, Integer> entry = entryIt.next();
+					entry.setValue(entry.getValue() - 1);
+					
+					if(entry.getValue() < 0){
+						entryIt.remove();
+					}
+				}
+			}
+		}, 20 * 1, 20 * 1);
 	}
+	
 	
 	/**
 	 * Returns the Stunmanager of the Plugin.
@@ -76,9 +104,11 @@ public class StunCancelListener implements Listener {
 		if(isStunned(player)){
 			event.setCancelled(true);
 			
+			if(cooldownMap.containsKey(player.getName())) return;
 			String time = String.valueOf(getRemainingStunSeconds(player));
 			String action = "move";
 			LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+			cooldownMap.put(player.getName(), 2);
 		}
 	}
 
@@ -87,9 +117,12 @@ public class StunCancelListener implements Listener {
 		Player player = event.getPlayer();
 		if(isStunned(player)){
 			event.setCancelled(true);
+			
+			if(cooldownMap.containsKey(player.getName())) return;
 			String time = String.valueOf(getRemainingStunSeconds(player));
 			String action = "teleport";
 			LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+			cooldownMap.put(player.getName(), 2);
 		}
 	}
 	
@@ -100,10 +133,13 @@ public class StunCancelListener implements Listener {
 			
 			if(event.getDamager() instanceof Player){
 				Player player = (Player) event.getDamager();
+				if(cooldownMap.containsKey(player.getName())) return;
 				
+				if(cooldownMap.containsKey(player.getName())) return;
 				String time = String.valueOf(getRemainingStunSeconds(player));
 				String action = "attack";
 				LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+				cooldownMap.put(player.getName(), 2);
 			}
 		}
 	}
@@ -116,9 +152,11 @@ public class StunCancelListener implements Listener {
 			if(event.getEntity() instanceof Player){
 				Player player = (Player) event.getEntity();
 				
+				if(cooldownMap.containsKey(player.getName())) return;
 				String time = String.valueOf(getRemainingStunSeconds(player));
 				String action = "shoot your bow";
 				LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+				cooldownMap.put(player.getName(), 2);
 			}
 		}
 	}
@@ -130,9 +168,11 @@ public class StunCancelListener implements Listener {
 		if(isStunned(player)){
 			event.setCancelled(true);
 			
+			if(cooldownMap.containsKey(player.getName())) return;
 			String time = String.valueOf(getRemainingStunSeconds(player));
 			String action = "place anything";
 			LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+			cooldownMap.put(player.getName(), 2);
 		}
 	}
 	
@@ -143,9 +183,11 @@ public class StunCancelListener implements Listener {
 		if(isStunned(player)){
 			event.setCancelled(true);
 			
+			if(cooldownMap.containsKey(player.getName())) return;
 			String time = String.valueOf(getRemainingStunSeconds(player));
 			String action = "break anything";
 			LanguageAPI.sendTranslatedMessage(player, stun_still, "time", time, "action", action);
+			cooldownMap.put(player.getName(), 2);
 		}
 	}
 	

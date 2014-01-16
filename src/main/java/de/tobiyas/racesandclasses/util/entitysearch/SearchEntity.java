@@ -19,11 +19,25 @@ public class SearchEntity {
 	 * 
 	 * @return the Found entity or null if none found.
 	 */
-	public static LivingEntity inLineOfSight(int maxDistance, LivingEntity toSearchFrom){
+	@SuppressWarnings("unchecked")
+	public static <T extends LivingEntity> T inLineOfSight(int maxDistance, LivingEntity toSearchFrom){
 		List<Entity> nearEntities = toSearchFrom.getNearbyEntities(maxDistance * 2, maxDistance * 2, maxDistance * 2);
 		Iterator<Entity> entityIt = nearEntities.iterator();
 		while(entityIt.hasNext()){
-			if(!(entityIt.next() instanceof LivingEntity)){
+			Entity entityToCheck = entityIt.next();
+			boolean remove = false;
+			if(!(entityToCheck instanceof LivingEntity)){
+				remove = true;
+			}
+
+			try{
+				@SuppressWarnings({ "unused" })
+				T t = (T) entityToCheck; //This is just a check if it is T type.
+			}catch(ClassCastException exp){
+				remove = true;
+			}
+
+			if(remove){
 				entityIt.remove();
 			}
 		}
@@ -35,7 +49,7 @@ public class SearchEntity {
 			for(Entity entity : nearEntities){
 				double distance = block.getLocation().distanceSquared(entity.getLocation());
 				if(distance < 1){
-					return (LivingEntity) entity;
+					return (T) entity;
 				}
 			}
 		}

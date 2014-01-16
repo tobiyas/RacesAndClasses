@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.chat;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -71,7 +72,7 @@ public class CommandExecutor_LocalChatTest {
 	public void command_without_message_fails(){
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("send_empty_message");
+		verify(sender).sendMessage(plugin_pre + "send_empty_message");
 	}
 	
 	
@@ -80,7 +81,7 @@ public class CommandExecutor_LocalChatTest {
 		sender = mock(CommandSender.class);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("only_players");
+		verify(sender).sendMessage(plugin_pre + "only_players");
 	}
 	
 

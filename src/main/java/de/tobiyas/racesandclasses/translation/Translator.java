@@ -87,7 +87,7 @@ public class Translator {
 	 * 
 	 * @return this like a builder.
 	 */
-	public Translator replace(Map<String, String> replaceMap){
+	public Translator replace(Map<String, String> replaceMap){		
 		for(Entry<String, String> entry : replaceMap.entrySet()){
 			String toReplace = "%" + entry.getKey().toUpperCase() + "%";
 			String replaceWith = entry.getValue();

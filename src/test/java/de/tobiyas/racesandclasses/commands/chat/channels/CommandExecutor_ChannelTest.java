@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -81,7 +82,7 @@ public class CommandExecutor_ChannelTest {
 	
 	
 	private void verifyHelp(CommandSender sender){
-		verify(sender).sendMessage("wrong_command_use");
+		verify(sender).sendMessage(plugin_pre + "wrong_command_use");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		verify(sender).sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "<post/change/switch> " + ChatColor.YELLOW + "<channelname>");
@@ -100,7 +101,7 @@ public class CommandExecutor_ChannelTest {
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_channels_enable()).thenReturn(false);
 		
 		sut.onCommand(sender, null, "", new String[]{});
-		verify(sender).sendMessage("something_disabled");
+		verify(sender).sendMessage(plugin_pre + "something_disabled");
 	}
 	
 	
@@ -159,7 +160,7 @@ public class CommandExecutor_ChannelTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"change"});
 		
-		verify(sender).sendMessage("only_players");
+		verify(sender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	
@@ -204,7 +205,7 @@ public class CommandExecutor_ChannelTest {
 	@Test
 	public void change_channel_with_too_few_arguments_posts_error(){
 		sut.onCommand(sender, null, "", new String[]{"change"});
-		verify(sender).sendMessage("wrong_command_use");
+		verify(sender).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	
@@ -250,7 +251,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"join"});
 		sut.onCommand(sender, null, "", new String[]{"join", "arg2", "arg3", "tooMuchArg"});
 		
-		verify(sender, times(2)).sendMessage("wrong_command_use");
+		verify(sender, times(2)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	
@@ -325,7 +326,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"leave"});
 		sut.onCommand(sender, null, "", new String[]{"leave", "arg2", "arg3"});
 		
-		verify(sender, times(2)).sendMessage("wrong_command_use");
+		verify(sender, times(2)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	
@@ -334,7 +335,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"create"});
 		sut.onCommand(sender, null, "", new String[]{"create", "arg2", "arg3", "arg4", "arg5"});
 		
-		verify(sender, times(2)).sendMessage("wrong_command_use");
+		verify(sender, times(2)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	
@@ -410,7 +411,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"ban", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"ban", "arg2", "arg3", "arg4" , "arg5"});
 		
-		verify(sender, times(3)).sendMessage("wrong_command_use");
+		verify(sender, times(3)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 
 	
@@ -451,7 +452,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"unban", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"unban", "arg2", "arg3", "arg4"});
 		
-		verify(sender, times(3)).sendMessage("wrong_command_use");
+		verify(sender, times(3)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 
 	
@@ -474,7 +475,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"mute", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"mute", "arg2", "arg3", "arg4" , "arg5"});
 		
-		verify(sender, times(3)).sendMessage("wrong_command_use");
+		verify(sender, times(3)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 
 	
@@ -515,7 +516,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"unmute", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"unmute", "arg2", "arg3", "arg4"});
 		
-		verify(sender, times(3)).sendMessage("wrong_command_use");
+		verify(sender, times(3)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 
 	
@@ -538,7 +539,7 @@ public class CommandExecutor_ChannelTest {
 		sut.onCommand(sender, null, "", new String[]{"edit", "arg2"});
 		sut.onCommand(sender, null, "", new String[]{"edit"});
 		
-		verify(sender, times(3)).sendMessage("wrong_command_use");
+		verify(sender, times(3)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	@Test

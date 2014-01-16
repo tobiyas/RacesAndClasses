@@ -47,9 +47,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Classes")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",
+					"value", "Classes");
 			return true;
 		}
 		
@@ -67,17 +66,15 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			if(args.length < 2){
 				classHolder = plugin.getClassManager().getHolderOfPlayer(sender.getName());
 				if(classHolder == null){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("no_class_selected_use_info").build());
+					LanguageAPI.sendTranslatedMessage(sender,"no_class_selected_use_info");
 					return true;
 				}
 			}else{
 				String className = args[1];
 				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-							.replace("class", className)
-							.build()
-							);
+					LanguageAPI.sendTranslatedMessage(sender,"class_not_exist",
+							"class", className);
 				}
 			}	
 			
@@ -111,8 +108,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
-					player.sendMessage(LanguageAPI.translateIgnoreError("already_have_class")
-							.replace("clasname", currentClass.getName()).build() );
+					LanguageAPI.sendTranslatedMessage(sender,"already_have_class",
+							"clasname", currentClass.getName());
 					return true;
 				}
 				
@@ -126,14 +123,13 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_to_select")
-							.build());
+					LanguageAPI.sendTranslatedMessage(sender, "no_class_to_select");
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				player.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
-						.replace("holder", "Class").build());
+				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
+						"holder", "Class");
 				return true;
 			}
 			
@@ -163,7 +159,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getName());
 				if(currentClass == plugin.getClassManager().getDefaultHolder()){
-					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_on_change").build());
+					LanguageAPI.sendTranslatedMessage(sender, "no_class_on_change");
 					return true;
 				}
 				
@@ -177,13 +173,13 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					player.sendMessage(LanguageAPI.translateIgnoreError("no_class_to_select").build());
+					LanguageAPI.sendTranslatedMessage(sender,"no_class_to_select");
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				player.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
-						.replace("holder", "Class").build());
+				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
+						"holder", "Class");
 				return true;
 			}
 			
@@ -214,15 +210,17 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	
 	
 	private void postHelp(CommandSender player){
-		player.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
-				.replace("command", "").build());
+		LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+				"command", "");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeClass))
+		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.changeClass)){
 			player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "select " + ChatColor.YELLOW + "<classname>");
-		
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.selectClass))
+		}
+			
+		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.selectClass)){
 			player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "change " + ChatColor.YELLOW + "<classname>");
+		}
 	}
 	
 	private void info(CommandSender player, AbstractTraitHolder holder){
@@ -231,7 +229,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "ClassInfo" + ChatColor.YELLOW + " =====");
 		
 		if(classContainer == null){
-			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_selected").build());
+			LanguageAPI.sendTranslatedMessage(player, "no_class_selected");
 			return;
 		}
 
@@ -289,10 +287,8 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		boolean classExists = classContainer != null;
 		if(!classExists){
-			player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-					.replace("class", potentialClass)
-					.build()
-					);
+			LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+					"class", potentialClass);
 			
 			return false;
 		}
@@ -308,21 +304,15 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getName());
 		if(currentHolder == null){	
 			if(plugin.getClassManager().addPlayerToHolder(player.getName(), potentialClass, true)){
-				player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
-						.replace("class", potentialClass)
-						.build()
-						);
-				
+				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
+						"class", potentialClass);
 				return true;
 			}
 			
 			return false;
 		}else{
-			player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
-					.replace("class", classContainer.getName())
-					.build()
-					);
-			
+			LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
+					"class", classContainer.getName());
 			return false;
 		}
 	}
@@ -333,29 +323,20 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
-			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_on_change")
-					.build()
-					);
-			
+			LanguageAPI.sendTranslatedMessage(player, "no_class_on_change");
 			return;
 		}
 		
 		if(newClassContainer == null){
-			player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-					.replace("class", potentialClass)
-					.build()
-					);
-			
+			LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+					"class", potentialClass);
 			return;
 		}
 		
 		if(oldClassContainer != null){
 			if(potentialClass.equalsIgnoreCase(oldClassContainer.getName())){
-				player.sendMessage(LanguageAPI.translateIgnoreError("change_to_same_holder")
-						.replace("holder", oldClassContainer.getName())
-						.build()
-						);
-				
+				LanguageAPI.sendTranslatedMessage(player, "change_to_same_holder",
+						"holder", oldClassContainer.getName());
 				return;
 			}
 			
@@ -368,16 +349,11 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			}
 			
 			if(plugin.getClassManager().changePlayerHolder(player.getName(), potentialClass, true)){
-				player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
-						.replace("class", potentialClass)
-						.build()
-						);
-				
+				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
+						"class", potentialClass);
 			}else{
-				player.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-						.replace("class", potentialClass)
-						.build()
-						);
+				LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+						"class", potentialClass);
 			}
 		}
 		

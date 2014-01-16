@@ -303,7 +303,8 @@ public class PlayerContainer {
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
 		
-		if(player != null && player.isOnline()){			
+		boolean disableHealthMods = plugin.getConfigManager().getGeneralConfig().isConfig_disableHealthMods();
+		if(player != null && player.isOnline() && !disableHealthMods){			
 			Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
 			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);

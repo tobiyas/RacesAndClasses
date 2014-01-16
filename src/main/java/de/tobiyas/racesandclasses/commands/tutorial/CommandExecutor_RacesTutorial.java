@@ -144,7 +144,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		}
 		
 		if(!plugin.getTutorialManager().start(player.getName())){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
@@ -152,9 +152,9 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		if(!checkHasTutorial(player)) return;
 		
 		if(plugin.getTutorialManager().stop(player.getName())){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_stopped).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_stopped);
 		}else{
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
@@ -162,7 +162,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		if(!checkHasTutorial(player)) return;
 		
 		if(!plugin.getTutorialManager().skip(player.getName())){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		if(!checkHasTutorial(player)) return;
 		
 		if(!plugin.getTutorialManager().reset(player.getName())){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		if(!checkHasTutorial(player)) return;
 		
 		if(!plugin.getTutorialManager().repost(player.getName())){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_error).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
@@ -186,12 +186,12 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 		if(!checkHasTutorial(player)) return;
 		
 		if(!plugin.getTutorialManager().setState(player.getName(), state))
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_no_set_at_this_state).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_no_set_at_this_state);
 	}
 	
 	private boolean checkHasTutorial(Player player){
 		if(plugin.getTutorialManager().getCurrentState(player.getName()) == null){
-			player.sendMessage(LanguageAPI.translateIgnoreError(tutorial_not_running).build());
+			LanguageAPI.sendTranslatedMessage(player, tutorial_not_running);
 			return false;
 		}
 		

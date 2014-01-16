@@ -34,8 +34,7 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 			String label, String[] args) {
 		
 		if(!(sender instanceof Player)){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, only_players);
 			return true;
 		}
 		
@@ -46,10 +45,8 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 			String playerName = args[0];
 			playerToSearch = Bukkit.getPlayer(playerName);
 			if(playerToSearch == null){
-				sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
-						.replace("player", playerName)
-						.build());
-				
+				LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+						"player", playerName);
 				return true;
 			}
 		}
@@ -57,9 +54,8 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 		TraitInventory inventory = new TraitInventory(playerToSearch);
 		player.openInventory(inventory);
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError(open_traits)
-				.replace("player", playerToSearch.getName())
-				.build());
+		LanguageAPI.sendTranslatedMessage(sender, open_traits,
+				"player", playerToSearch.getName());
 		return true;
 	}
 

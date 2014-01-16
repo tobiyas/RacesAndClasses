@@ -25,15 +25,13 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!(sender instanceof Player)){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender,"only_players");
 			return true;
 		}
 		
 		Player player = (Player) sender;		
 		if(args.length == 0){
-			player.sendMessage(LanguageAPI.translateIgnoreError("send_empty_message")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender,"send_empty_message");
 			return true;
 		}
 		

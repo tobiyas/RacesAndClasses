@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -39,6 +40,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
@@ -395,6 +397,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			return preProcessedPlayer;
 		}
 		
+		//block events like place / break
 		if(event instanceof BlockEvent){
 			if(event instanceof BlockPlaceEvent){
 				return ((BlockPlaceEvent) event).getPlayer();
@@ -423,12 +426,13 @@ public abstract class AbstractBasicTrait implements Trait,
 			if(shooter instanceof Player) return (Player) shooter;
 		}
 		
+		//check if any projectile
 		if(event instanceof EntityDamageByEntityEvent){
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
 			Entity damager = damageEvent.getDamager();
 			if(damager instanceof Projectile){
 				Entity shooter = ((Projectile) damager).getShooter();
-				if(shooter instanceof Player){
+				if(shooter != null && shooter instanceof Player){
 					return (Player) shooter;
 				}
 			}
@@ -652,28 +656,31 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(playerUplinkTime > 0){
 			if(!triggerButHasUplink(event)){
 				if(notifyTriggeredUplinkTime()){
-					player.sendMessage(ChatColor.RED + "[RaC] You still have " + ChatColor.LIGHT_PURPLE 
-						+ playerUplinkTime + ChatColor.RED + " seconds update on: " + ChatColor.LIGHT_PURPLE 
-						+ getDisplayName() + ChatColor.RED + ".");
+					LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
+							"seconds", String.valueOf(playerUplinkTime),
+							"name", getDisplayName());
 				}
 			}
 			
 			return false;
 		}
 		
-		//Daytime check
-		int hour = (int) (player.getWorld().getTime() / 1000l);
-		boolean isDay = hour > 18 || hour < 6;
-		boolean isNight = hour > 6 && hour < 18;
-		
-		//Check day
-		if(onlyOnDay && isNight && !onlyInNight){
-			return false;
-		}
-		
-		//Check night
-		if(onlyInNight && isDay && !onlyOnDay){
-			return false;
+		//Only check if we really need. Otherwise we would use resources we don't need
+		if(onlyOnDay || onlyInNight){
+			//Daytime check
+			int hour = (int) (player.getWorld().getTime() / 1000l);
+			boolean isDay = hour > 18 || hour < 6;
+			boolean isNight = hour > 6 && hour < 18;
+			
+			//Check day
+			if(onlyOnDay && isNight && !onlyInNight){
+				return false;
+			}
+			
+			//Check night
+			if(onlyInNight && isDay && !onlyOnDay){
+				return false;
+			}
 		}
 		
 		return true;

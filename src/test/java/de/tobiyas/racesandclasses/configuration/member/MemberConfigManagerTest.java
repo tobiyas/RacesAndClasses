@@ -2,16 +2,12 @@ package de.tobiyas.racesandclasses.configuration.member;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
@@ -39,29 +35,6 @@ public class MemberConfigManagerTest {
 		GenerateRaces.dropMock();
 		GenerateBukkitServer.dropServer();
 	}
-	
-	
-	@Test
-	public void reload_creates_empty_file_if_not_exists(){		
-		if(RacesAndClasses.getPlugin().getDataFolder().list().length != 0){
-			for(File file : RacesAndClasses.getPlugin().getDataFolder().listFiles()){
-				file.delete();
-			}
-		}
-		
-		sut.reload();
-		assertTrue(RacesAndClasses.getPlugin().getDataFolder().list().length == 1);
-	}
-	
-	
-	@Test
-	public void reload_with_file_works(){
-		sut.reload();
-		assertTrue(RacesAndClasses.getPlugin().getDataFolder().list().length == 1);
-		sut.reload();
-		assertTrue(RacesAndClasses.getPlugin().getDataFolder().list().length == 1);
-	}
-	
 	
 	@Test
 	public void creating_and_retrieving_config_works(){

@@ -5,6 +5,7 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_by;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_other;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -50,7 +51,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(only_players);
+		verify(sender).sendMessage(plugin_pre + only_players);
 	}
 	
 	
@@ -61,13 +62,13 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage(healed);
+		verify(sender).sendMessage(plugin_pre + healed);
 	}
 	
 	@Test
 	public void getting_error_when_more_than_one_arg(){
 		sut.onCommand(sender, null, "", new String[]{"arg1", "arg2"});
-		verify(sender).sendMessage("wrong_command_use");
+		verify(sender).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	@Test
@@ -79,7 +80,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage("player_not_exist");
+		verify(sender).sendMessage( plugin_pre + "player_not_exist");
 	}
 	
 	@Test
@@ -93,7 +94,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage(player_not_exist);
+		verify(sender).sendMessage(plugin_pre + player_not_exist);
 	}
 	
 	@Test
@@ -104,7 +105,7 @@ public class CommandExecutor_RaceHealTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherName});
 		
-		verify(sender).sendMessage(healed_other);
-		verify(Bukkit.getPlayer(otherName)).sendMessage(healed_by);
+		verify(sender).sendMessage(plugin_pre + healed_other);
+		verify(Bukkit.getPlayer(otherName)).sendMessage(plugin_pre + healed_by);
 	}
 }

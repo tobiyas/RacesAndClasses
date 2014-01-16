@@ -1,5 +1,12 @@
 package de.tobiyas.racesandclasses.commands.force;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to_other;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,17 +40,16 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 			String label, String[] args) {
 
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Races")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, something_disabled,
+					"value", "Races");
 			return true;
 		}
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.forceChange)) return true;
 		
 		if(args.length < 2){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
-					.replace("command", "/racforcerace <player> <race name>").build());
+			LanguageAPI.sendTranslatedMessage(sender, wrong_command_use,
+					"command", "/racforcerace <player> <race name>");
 			return true;
 		}
 		
@@ -51,15 +57,15 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 		String newRace = args[1];
 		
 		if(Bukkit.getPlayer(playerToChange) == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("player_not_exist")
-					.replace("player", playerToChange).build());
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+					"player", playerToChange);
 			return true;
 		}
 		
 		RaceManager raceManager = plugin.getRaceManager();
 		if(raceManager.getHolderByName(newRace) == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("race_not_exist")
-					.replace("race", newRace).build());
+			LanguageAPI.sendTranslatedMessage(sender, race_not_exist,
+					"race", newRace);
 			return true;
 		}
 		
@@ -71,12 +77,12 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 		
 		Player player = Bukkit.getPlayer(playerToChange);
 		if(player.isOnline()){
-			player.sendMessage(LanguageAPI.translateIgnoreError("race_changed_to")
-					.replace("race", newRace).build());
+			LanguageAPI.sendTranslatedMessage(player, race_changed_to,
+					"race", newRace);
 		}
 		
-		player.sendMessage(LanguageAPI.translateIgnoreError("race_changed_to_other")
-				.replace("race", newRace).replace("player", playerToChange).build());
+		LanguageAPI.sendTranslatedMessage(sender, race_changed_to_other,
+				"race", newRace, "player", playerToChange);
 		return true;
 	}
 

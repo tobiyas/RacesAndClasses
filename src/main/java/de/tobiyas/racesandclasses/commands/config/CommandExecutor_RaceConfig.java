@@ -1,5 +1,10 @@
 package de.tobiyas.racesandclasses.commands.config;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_attribute_not_found;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_changed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_not_found;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -29,7 +34,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!(sender instanceof Player)){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
+			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players).build());
 			return true;
 		}
 		
@@ -40,7 +45,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			player.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
 			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 			if(config == null){
-				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_not_found").build());
+				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;
 			}
 			
@@ -60,25 +65,25 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			
 			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 			if(config == null){
-				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_not_found").build());
+				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;
 			}
 			
 			boolean worked = config.changeAttribute(attribute, value);
 			if(worked){
-				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_changed")
-						.replace("attribute", attribute).replace("value", value).build());
+				LanguageAPI.sendTranslatedMessage(sender, member_config_changed,
+						"attribute", attribute, "value", value);
 			}else{
-				player.sendMessage(LanguageAPI.translateIgnoreError("member_config_attribute_not_found")
-						.replace("attribute", attribute).build());
+				LanguageAPI.sendTranslatedMessage(sender, member_config_attribute_not_found,
+						"attribute", attribute);
 			}
 			
 			return true;
 		}
 		
 		
-		player.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
-				.replace("command", "/raceconfig <attribute> <value>").build());
+		LanguageAPI.sendTranslatedMessage(sender, "wrong_command_use",
+				"command", "/raceconfig <attribute> <value>");
 		return true;
 	}
 

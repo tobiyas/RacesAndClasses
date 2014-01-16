@@ -31,6 +31,7 @@ public class PlayerDataToSmallFileConverter {
 		
 		int totalSize = playerNames.size();
 		int notifyAt = totalSize / 4;
+		if(notifyAt == 0) notifyAt = 1;
 		
 		int i = 0;
 		Iterator<String> nameIt = playerNames.iterator();

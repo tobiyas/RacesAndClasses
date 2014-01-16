@@ -1,14 +1,17 @@
 package de.tobiyas.racesandclasses.commands.debug;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
+
 import java.util.HashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.racbuilder.gui.base.BaseSelectionInventory;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.util.inventorymenu.stats.StringSelectionInterface;
@@ -32,7 +35,7 @@ public class CommandExecutor_Edit implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "[RaC] Needing a player to open an Inventory. Sorry.");
+			LanguageAPI.sendTranslatedMessage(sender, only_players);
 			return true;
 		}
 		
@@ -46,8 +49,7 @@ public class CommandExecutor_Edit implements CommandExecutor {
 		}
 		
 		
-		
-		player.sendMessage(ChatColor.GREEN + "Opening RaC Editor...");
+		LanguageAPI.sendTranslatedMessage(sender, open_holder);
 		player.openInventory(new BaseSelectionInventory(player, plugin));
 		
 		return true;

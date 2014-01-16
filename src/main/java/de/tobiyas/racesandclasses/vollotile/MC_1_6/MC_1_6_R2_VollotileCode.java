@@ -23,7 +23,6 @@ public class MC_1_6_R2_VollotileCode extends VollotileCode {
 			Method playOutAnnimation= mcPlayer.getClass().getDeclaredMethod("b", Class.forName("net.minecraft.server." + CB_RELOCATION + ".Entity"));
 			playOutAnnimation.invoke(mcPlayer, mcEntity);
 		}catch(Exception exp){
-			exp.printStackTrace();
 		}
 	}
 }

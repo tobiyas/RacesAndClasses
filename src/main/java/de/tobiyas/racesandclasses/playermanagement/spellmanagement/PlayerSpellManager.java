@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
@@ -174,5 +179,53 @@ public class PlayerSpellManager {
 	 */
 	public int getSpellAmount() {
 		return spellList.size();
+	}
+
+
+	/**
+	 * Changes the current spell to the one posted.
+	 * 
+	 * @param spellName to set. This is the display name!!!
+	 * 
+	 * @return true if it worked, false otherwise.
+	 */
+	public boolean changeToSpell(String spellName) {
+		if(getSpellAmount() == 0) return false;
+		
+		for(int i = 0; i < spellList.size(); i++){
+			MagicSpellTrait spell = spellList.currentEntry();
+			if(spell instanceof AbstractBasicTrait){
+				String name = ((AbstractBasicTrait) spell).getDisplayName();
+				if(name.equalsIgnoreCase(spellName)){
+					return true;
+				}
+			}
+			
+			spellList.next();
+		}
+		
+		return false;
+	}
+
+
+	/**
+	 * Tries to cast the current spell.
+	 * 
+	 * @return true if worked, false otherwise.
+	 */
+	public boolean tryCastCurrentSpell() {
+		MagicSpellTrait currentSpell = spellList.currentEntry();
+		if(currentSpell == null) return false;
+		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		
+		Player player = Bukkit.getPlayer(playerName);
+		@SuppressWarnings("deprecation") //we need this to get the next block
+		List<Block> blocks = player.getLineOfSight(null, 100);
+		Block lookingAt = blocks.iterator().next();
+		ItemStack wandItem = new ItemStack(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
+		
+		plugin.fireEventIntern(new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, wandItem, 
+				lookingAt, BlockFace.UP));
+		return true;
 	}
 }

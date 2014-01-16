@@ -55,6 +55,11 @@ public class GeneralConfigText {
 			+ "# default: true \n"
 			+ health_bar_inChat_enable + ": true\n\n"
 			
+			+ "# Tells the plugin to NOT use health modifications. \n"
+			+ "# boolean: true or false \n"
+			+ "# default: false \n"
+			+ disable_health_modifications + ": false\n\n"
+			
 			//DEBUG
 			+ "\n"
 			+ "#######\n"

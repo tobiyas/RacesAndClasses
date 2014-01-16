@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -74,7 +75,7 @@ public class CommandExecutor_BroadCastTest {
 		when(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_channels_enable()).thenReturn(false);
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("something_disabled");
+		verify(sender).sendMessage(plugin_pre + "something_disabled");
 	}
 	
 	@Test
@@ -91,7 +92,7 @@ public class CommandExecutor_BroadCastTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("no_message");
+		verify(sender).sendMessage(plugin_pre + "no_message");
 	}
 
 	@Test

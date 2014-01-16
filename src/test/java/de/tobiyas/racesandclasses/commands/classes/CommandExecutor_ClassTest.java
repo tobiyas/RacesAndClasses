@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.classes;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyBoolean;
@@ -86,13 +87,13 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {});
 		
-		verify(consoleSender).sendMessage("something_disabled");
+		verify(consoleSender).sendMessage(plugin_pre + "something_disabled");
 	}
 	
 	//Send help
 	
 	private void verifyHelp(CommandSender sender, boolean permissions){
-		verify(sender).sendMessage("wrong_command_use");
+		verify(sender).sendMessage(plugin_pre + "wrong_command_use");
 		verify(sender).sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		verify(sender).sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
 
@@ -133,7 +134,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
-		verify(consoleSender).sendMessage("no_class_selected_use_info");
+		verify(consoleSender).sendMessage(plugin_pre + "no_class_selected_use_info");
 	}
 	
 	@Test
@@ -143,7 +144,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, classToSelect});
 		
-		verify(consoleSender).sendMessage("class_not_exist");
+		verify(consoleSender).sendMessage(plugin_pre + "class_not_exist");
 	}
 	
 	@Test
@@ -268,7 +269,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_class_to_select");
+		verify(player).sendMessage(plugin_pre + "no_class_to_select");
 	}
 	
 	@Test
@@ -291,7 +292,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("open_holder");
+		verify(player).sendMessage(plugin_pre + "open_holder");
 	}
 	
 	@Test
@@ -314,7 +315,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("already_have_class");
+		verify(player).sendMessage(plugin_pre + "already_have_class");
 	}
 	
 	
@@ -343,7 +344,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_class_on_change");
+		verify(player).sendMessage(plugin_pre + "no_class_on_change");
 	}
 	
 	
@@ -367,7 +368,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_class_to_select");
+		verify(player).sendMessage(plugin_pre + "no_class_to_select");
 	}
 	
 	@Test
@@ -390,7 +391,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("open_holder");
+		verify(player).sendMessage(plugin_pre + "open_holder");
 	}
 	
 	////////////////////////
@@ -445,7 +446,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_changed_to");
+		verify(player).sendMessage(plugin_pre + "class_changed_to");
 		
 		verify(RacesAndClasses.getPlugin().getTutorialManager()).update(any(CommandExecutor_Class.class), any(TutorialStepContainer.class));
 	}
@@ -469,7 +470,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_changed_to");
+		verify(player).sendMessage(plugin_pre + "class_changed_to");
 	}
 	
 	
@@ -486,7 +487,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_not_exist");
+		verify(player).sendMessage(plugin_pre + "class_not_exist");
 	}
 	
 	
@@ -546,7 +547,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_changed_to");
+		verify(player).sendMessage(plugin_pre + "class_changed_to");
 	}
 	
 	@Test
@@ -577,7 +578,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_not_exist");
+		verify(player).sendMessage(plugin_pre + "class_not_exist");
 	}
 	
 	@Test
@@ -602,7 +603,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("change_to_same_holder");
+		verify(player).sendMessage(plugin_pre + "change_to_same_holder");
 	}
 	
 	
@@ -626,7 +627,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("no_class_on_change");
+		verify(player).sendMessage(plugin_pre + "no_class_on_change");
 	}
 	
 	
@@ -644,7 +645,7 @@ public class CommandExecutor_ClassTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, className});
 		
-		verify(player).sendMessage("class_not_exist");
+		verify(player).sendMessage(plugin_pre + "class_not_exist");
 	}
 	
 	@Test

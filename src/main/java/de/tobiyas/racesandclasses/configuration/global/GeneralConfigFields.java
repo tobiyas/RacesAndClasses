@@ -12,6 +12,7 @@ public class GeneralConfigFields {
 
 	//Health
 	public static final String health_defaultHealth = "health_defaultHealth";
+	public static final String disable_health_modifications = "disable_health_modifications";
 	public static final String health_bar_inChat_enable = "health_bar_inChat_enable";
 
 	

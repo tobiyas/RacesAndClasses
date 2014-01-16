@@ -36,9 +36,8 @@ public class CommandExecutor_RacesReload implements CommandExecutor {
 		
 		plugin.getDebugLogger().log("[RaC] Reload called by: " + sender.getName() + " took: " + timeTaken + " ms.");
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError(reload_message)
-				.replace("time", String.valueOf(timeTaken))
-				.build());
+		LanguageAPI.sendTranslatedMessage(sender, reload_message,
+				"time", String.valueOf(timeTaken));
 		return true;
 	}
 

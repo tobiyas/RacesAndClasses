@@ -48,9 +48,8 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 			return true;
 		}
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError(wrong_command_use)
-				.replace("command", "/raceheal [PlayerName]")
-				.build());
+		LanguageAPI.sendTranslatedMessage(sender, wrong_command_use,
+				"command", "/raceheal [PlayerName]");
 		return true;
 	}
 
@@ -72,11 +71,9 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				
 				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
 				
-				sender.sendMessage(LanguageAPI.translateIgnoreError(healed)
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, healed);
 			}else{
-				sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, only_players);
 			}
 		}
 	}
@@ -99,17 +96,14 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				
 				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
 				
-				sender.sendMessage(LanguageAPI.translateIgnoreError(healed_other)
-						.replace("player", other.getName())
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, healed_other,
+						"player", other.getName());
 				
-				other.sendMessage(LanguageAPI.translateIgnoreError(healed_by)
-						.replace("player", player.getName())
-						.build());
+				LanguageAPI.sendTranslatedMessage(other, healed_by,
+						"player", player.getName());
 			}else{
-				sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
-						.replace("player", otherName)
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+						"player", otherName);
 			}
 		}
 	}

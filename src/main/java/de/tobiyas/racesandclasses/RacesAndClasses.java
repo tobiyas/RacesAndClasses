@@ -21,7 +21,6 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Tut
 
 import java.io.File;
 import java.util.Set;
-import java.util.logging.Level;
 
 import net.gravitydevelopment.updater.Updater;
 import net.gravitydevelopment.updater.Updater.UpdateType;
@@ -84,9 +83,7 @@ import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
-import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
-import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class RacesAndClasses extends UtilsUsingPlugin{
@@ -94,11 +91,6 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	 * Set if currently in testing mode.
 	 */
 	public boolean testingMode = false;
-	
-	/**
-	 * The Logger to call logging stuff on
-	 */
-	protected DebugLogger debugLogger;
 	
 	/**
 	 * The Plugin description File. AKA plugin.yml
@@ -129,11 +121,6 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	 * The singleton plugin Instance used.
 	 */
 	protected static RacesAndClasses plugin;
-	
-	/**
-	 * The Permission manager handling Permission checks
-	 */
-	protected PermissionManager permManager;
 	
 	/**
 	 * tells if an Error occurred on startup.
@@ -213,8 +200,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			prefix = "[" + description.getName() + "] ";
 			
 			//temporary debug logger
-			debugLogger = new DebugLogger(this);
-			debugLogger.setAlsoToPlugin(true);
+			getDebugLogger().setAlsoToPlugin(true);
 			
 			checkIfCBVersionGreaterRequired();
 						
@@ -228,7 +214,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			
 		}catch(Exception e){
 			log("An Error has occured during startup sequence: " + e.getLocalizedMessage());
-			debugLogger.logStackTrace(e);
+			getDebugLogger().logStackTrace(e);
 			
 			errored = true;
 			registerAllCommandsAsError();
@@ -271,7 +257,6 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		classManager = new ClassManager();
 		playerManager = new PlayerManager();
 		channelManager = new ChannelManager();
-		permManager = new PermissionManager(this);
 		
 		cooldownManager = new CooldownManager();
 		stunManager = new StunManager();
@@ -394,19 +379,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		log("disabled " + description.getFullName());
 
 	}
-	public void log(String message){
-		if(debugLogger == null){
-			this.getLogger().log(Level.INFO , prefix + message);
-		}else{
-			debugLogger.log(message);
-		}
-	}
 	
-	@Override
-	public DebugLogger getDebugLogger(){
-		return debugLogger;
-	}
-
 
 	private void registerEvents(){
 		RaCListenerRegister.registerCustoms();
@@ -414,6 +387,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		RaCListenerRegister.registerGeneral();
 		RaCListenerRegister.registerChatListeners();
 	}
+	
 	
 	private void loadingDoneMessage(){
 		if(TraitHolderLoadingErrorHandler.evalAndSave()){
@@ -438,7 +412,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		
 		log("loaded: " + traits + races + classes + channels + events);
 		log(description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
-				+ permManager.getPermissionsName());
+				+ getPermissionManager().getPermissionsName());
 		
 		if(configManager.getGeneralConfig().isConfig_useAutoUpdater()){
 			checkForUpdates();
@@ -468,20 +442,18 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		setupDebugLogger();
 	}
 	
-	private void setupDebugLogger(){
-		if(debugLogger == null){
-			debugLogger = new DebugLogger(this);
-		}
-		
+	private void setupDebugLogger(){		
 		if(!configManager.getGeneralConfig().isConfig_enableDebugOutputs()){
-			debugLogger.disable();
+			getDebugLogger().disable();
+		}else{
+			getDebugLogger().shutDown();
 		}
 		
 		if(!configManager.getGeneralConfig().isConfig_enableErrorUpload()){
-			debugLogger.enableUploads(false);
+			getDebugLogger().enableUploads(false);
 		}
 	
-		debugLogger.setAlsoToPlugin(true);
+		getDebugLogger().setAlsoToPlugin(true);
 	}
 	
 	private void registerAllCommandsAsError() {
@@ -495,11 +467,6 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	
 	public ConfigManager getConfigManager(){
 		return configManager;
-	}
-	
-	@Override
-	public PermissionManager getPermissionManager(){
-		return permManager;
 	}
 	
 	public static RacesAndClasses getPlugin(){
@@ -519,7 +486,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	
 	private void shutDownSequenz(boolean useGC){
 		playerManager.savePlayerContainer();
-		debugLogger.shutDown();
+		getDebugLogger().shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
 		getConfigManager().getMemberConfigManager().shutDown();

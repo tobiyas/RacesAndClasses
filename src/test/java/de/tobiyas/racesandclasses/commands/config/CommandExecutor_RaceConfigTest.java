@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.config;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -91,7 +92,7 @@ public class CommandExecutor_RaceConfigTest {
 		sut.onCommand(sender, null, "", new String[]{"arg1"});
 		sut.onCommand(sender, null, "", new String[]{"arg1", "arg2", "arg3"});
 		
-		verify(sender, times(2)).sendMessage("wrong_command_use");
+		verify(sender, times(2)).sendMessage(plugin_pre + "wrong_command_use");
 	}
 	
 	
@@ -120,7 +121,7 @@ public class CommandExecutor_RaceConfigTest {
 		sut.onCommand(sender, null, "", new String[]{});
 		
 		verify(sender).sendMessage(ChatColor.YELLOW + "=======YOUR CONFIG=======");
-		verify(sender).sendMessage("member_config_not_found");
+		verify(sender).sendMessage(plugin_pre + "member_config_not_found");
 	}
 	
 	@Test
@@ -129,7 +130,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage("member_config_not_found");
+		verify(sender).sendMessage(plugin_pre + "member_config_not_found");
 	}
 	
 	@Test
@@ -138,7 +139,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage("member_config_changed");
+		verify(sender).sendMessage(plugin_pre + "member_config_changed");
 	}
 
 	@Test
@@ -148,7 +149,7 @@ public class CommandExecutor_RaceConfigTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"arg1", "value"});
 		
-		verify(sender).sendMessage("member_config_attribute_not_found");
+		verify(sender).sendMessage(plugin_pre + "member_config_attribute_not_found");
 	}
 	
 }

@@ -1,5 +1,10 @@
 package de.tobiyas.racesandclasses.commands.force;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.class_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.class_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,17 +38,16 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 			String label, String[] args) {
 
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Class")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",
+					"value", "Class");
 			return true;
 		}
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.forceChange)) return true;
 		
 		if(args.length < 2){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("wrong_command_use")
-					.replace("command", "/racforceclass <player> <class name>").build());
+			LanguageAPI.sendTranslatedMessage(sender, wrong_command_use,
+					"command", "/racforceclass <player> <class name>");
 			return true;
 		}
 		
@@ -51,15 +55,15 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 		String newClass = args[1];
 		
 		if(Bukkit.getPlayer(playerToChange) == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("player_not_exist")
-					.replace("player", playerToChange).build());
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+					"player", playerToChange);
 			return true;
 		}
 		
 		ClassManager classManager = plugin.getClassManager();
 		if(classManager.getHolderByName(newClass) == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("class_not_exist")
-					.replace("class", newClass).build());
+			LanguageAPI.sendTranslatedMessage(sender, class_not_exist,
+					"class", newClass);
 			return true;
 		}
 		
@@ -71,12 +75,12 @@ public class CommandExecutor_ForceClass implements CommandExecutor {
 		
 		Player player = Bukkit.getPlayer(playerToChange);
 		if(player.isOnline()){
-			player.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to")
-					.replace("class", newClass).build());
+			LanguageAPI.sendTranslatedMessage(player, class_changed_to,
+					"class", newClass);
 		}
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError("class_changed_to_other")
-				.replace("player", player.getName()).replace("class", newClass).build());
+		LanguageAPI.sendTranslatedMessage(sender, "class_changed_to_other",
+				"player", player.getName(), "class", newClass);
 		
 		return true;
 	}

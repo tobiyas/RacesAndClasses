@@ -44,7 +44,6 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 		if(args.length == 0){
 			if(!(sender instanceof Player)){
 				LanguageAPI.sendTranslatedMessage(sender, only_players, new HashMap<String, String>());
-				//sender.sendMessage(ChatColor.RED + "Only players can use this on themselves!");
 				return true;
 			}
 			
@@ -52,25 +51,21 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 		}
 		
 		if(args.length > 1){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(wrong_command_use)
-					.replace("command", "/racegod [playername]")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, wrong_command_use,
+					"command", "/racegod [playername]");
 			return true;
 		}
 		
 		if(target == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
-					.replace("player", args[0])
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+					"player", args[0]);
 			return true;
 		}
 		
 		if(plugin.getPlayerManager().switchGod(target.getName())){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(success)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, success);
 		}else{
-			sender.sendMessage(LanguageAPI.translateIgnoreError(failed)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, failed);
 		}
 			
 		return true;

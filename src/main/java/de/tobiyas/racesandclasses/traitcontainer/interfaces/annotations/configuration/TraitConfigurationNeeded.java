@@ -21,4 +21,9 @@ public @interface TraitConfigurationNeeded{
 	 * @return the Fields the Trait wants
 	 */
 	TraitConfigurationField[] fields() default {};
+
+	/**
+	 * This is a list of Fields that are removed from super class
+	 */
+	RemoveSuperConfigField[] removedFields() default {};
 }

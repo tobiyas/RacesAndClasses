@@ -1,8 +1,10 @@
 package de.tobiyas.racesandclasses.vollotile;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public abstract class VollotileCode {
@@ -23,6 +25,24 @@ public abstract class VollotileCode {
 	 * @param player to play on.
 	 */
 	public abstract void playCriticalHitEffect(Player toSendTo, Entity toPlayEffect);
+	
+	
+	/**
+	 * Removes the Particle Effect off the Entity.
+	 * 
+	 * @param entity to remove the effect.
+	 */
+	public void removeParticleEffect(LivingEntity entity){
+		Object mcPlayer = getMCEntityFromBukkitEntity(entity);
+		try{
+			Field dataWatcher = mcPlayer.getClass().getField("datawatcher");
+			Method method = dataWatcher.getClass().getMethod("watch", Integer.class, Object.class);
+			
+			method.invoke(dataWatcher, 8, (byte) 0);
+		}catch(Exception exp){
+			//didn't work.... but well who cares. :D
+		}
+	}
 	
 	
 	/**

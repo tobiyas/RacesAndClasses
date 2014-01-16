@@ -50,24 +50,20 @@ public class Command_RACLevel implements CommandExecutor {
 		try{
 			value = Integer.valueOf(args[2]);
 		}catch(NumberFormatException exp){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(number_not_readable)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, number_not_readable);
 			return true;
 		}
 		
 		PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(player);
 		if(manager == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(player_not_exist)
-					.replace("player", player)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
+					"player", player);
 			return true;
 		}
 		
 		if(value == 0){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(value_0_not_allowed)
-					.replace("player", player)
-					.build());
-			
+			LanguageAPI.sendTranslatedMessage(sender, value_0_not_allowed,
+					"player", player);
 			return true;
 		}
 		
@@ -81,8 +77,7 @@ public class Command_RACLevel implements CommandExecutor {
 				manager.addExp(value);
 			}
 			
-			sender.sendMessage(LanguageAPI.translateIgnoreError(success)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, success);
 			return true;
 		}
 		
@@ -90,8 +85,7 @@ public class Command_RACLevel implements CommandExecutor {
 			int newLevel = manager.getCurrentLevel() + value;
 			manager.setCurrentLevel(newLevel);
 			
-			sender.sendMessage(LanguageAPI.translateIgnoreError(success)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, success);
 			return true;
 		}
 		

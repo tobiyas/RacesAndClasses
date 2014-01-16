@@ -109,7 +109,8 @@ public class DBConfigOption extends ConfigOption {
 			
 			needsSaving = false;
 		}catch(Exception exp){
-			plugin.getDebugLogger().logStackTrace(exp);
+			//We don't want the console to get spammed as shit.
+			//plugin.getDebugLogger().logStackTrace(exp);
 		}
 		
 	}

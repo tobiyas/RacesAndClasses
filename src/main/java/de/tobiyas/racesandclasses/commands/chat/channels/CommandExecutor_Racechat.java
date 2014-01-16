@@ -33,25 +33,24 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
+			LanguageAPI.sendTranslatedMessage(sender,"only_players");
 			return true;
 		}
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Races").build());
+			LanguageAPI.sendTranslatedMessage(sender,"something_disabled",
+					"value", "Races");
 			return true;
 		}
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "RaceChat").build());
+			LanguageAPI.sendTranslatedMessage(sender,"something_disabled",
+					"value", "RaceChat");
 			return true;
 		}
 		
 		if(args.length == 0){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("send_empty_message")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender,"send_empty_message");
 			return true;
 		}
 		
@@ -59,8 +58,7 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
-			player.sendMessage(LanguageAPI.translateIgnoreError("no_race_selected")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender,"no_race_selected");
 			return true;
 		}
 		

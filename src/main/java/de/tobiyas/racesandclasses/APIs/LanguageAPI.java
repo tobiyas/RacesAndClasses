@@ -1,5 +1,8 @@
 package de.tobiyas.racesandclasses.APIs;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
@@ -87,7 +90,8 @@ public class LanguageAPI {
 		String message = translator.build();
 		if("".equals(message)) return; //no message wanted.
 		
-		sender.sendMessage(message);
+		String pluginPre = translateIgnoreError(plugin_pre).build();
+		sender.sendMessage(pluginPre + message);
 	}
 	
 	/**
@@ -110,10 +114,6 @@ public class LanguageAPI {
 	 * @param tag to translate
 	 */
 	public static void sendTranslatedMessage(CommandSender sender, String tag){
-		Translator translator = translateIgnoreError(tag);
-		String message = translator.build();
-		if("".equals(message)) return; //no message wanted.
-		
-		sender.sendMessage(message);
+		sendTranslatedMessage(sender, tag, new HashMap<String, String>());
 	}
 }

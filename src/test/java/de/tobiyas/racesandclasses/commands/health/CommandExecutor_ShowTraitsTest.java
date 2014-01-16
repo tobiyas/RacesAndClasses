@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.health;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -29,7 +30,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("only_players");
+		verify(sender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	@Test
@@ -38,7 +39,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender, times(1)).sendMessage("open_traits");
+		verify(sender, times(1)).sendMessage(plugin_pre + "open_traits");
 		
 		verify((Player) sender, times(1)).openInventory(any(TraitInventory.class));
 	}
@@ -49,7 +50,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{"other"});
 		
-		verify(sender, times(1)).sendMessage("player_not_exist");
+		verify(sender, times(1)).sendMessage(plugin_pre + "player_not_exist");
 		
 		verify((Player) sender, never()).openInventory(any(TraitInventory.class));
 	}
@@ -63,7 +64,7 @@ public class CommandExecutor_ShowTraitsTest extends AbstractChatCommandTest {
 		
 		sut.onCommand(sender, null, "", new String[]{otherPlayer});
 		
-		verify(sender, times(1)).sendMessage("open_traits");
+		verify(sender, times(1)).sendMessage(plugin_pre + "open_traits");
 		
 		verify((Player) sender, times(1)).openInventory(any(TraitInventory.class));
 	}

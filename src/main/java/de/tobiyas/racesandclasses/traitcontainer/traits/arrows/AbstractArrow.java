@@ -209,7 +209,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		
 		AbstractArrow newArrow = arrowManager.nextArrow();
 		if(newArrow != null && newArrow != arrow){
-			LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", this.getDisplayName());
+			LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", newArrow.getDisplayName());
 		}
 		
 	}

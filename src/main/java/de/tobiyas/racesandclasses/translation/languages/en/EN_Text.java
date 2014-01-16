@@ -1,71 +1,6 @@
 package de.tobiyas.racesandclasses.translation.languages.en;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_class;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.armor_not_allowed;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.arrow_change;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.bow_selected_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.change_to_same_holder;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.channel_propertie;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.class_changed_to;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.class_changed_to_other;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.class_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.failed;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.healed;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.healed_other;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.login_no_race_selected;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_change_spells;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_dont_have_enough;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_no_spells;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_attribute_not_found;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_changed;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.member_config_not_found;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.needs_1_arg;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.new_value;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_in_list;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_on_change;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_selected;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_selected_use_info;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_to_select;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_healthcontainer_found;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_to_select;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_traits;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.number_not_readable;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.open_traits;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.password;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to_other;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.reload_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.send_empty_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.stun_ended;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.stun_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.stun_still;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.success;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.target_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.time_in_seconds;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_already_running;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_error;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_no_set_at_this_state;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_not_running;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.tutorial_stopped;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.value_0_not_allowed;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.wand_select_message;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.whisper_yourself;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.your;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.your_class;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
 
 
 public class EN_Text {
@@ -79,7 +14,7 @@ public class EN_Text {
 			+ arrow_change + ": '&aSwitched arrows to: &d%TRAIT_NAME%&a.'\r\n"
 			
 			//b
-			+ bow_selected_message + ": '&a@plugin_pre@ You have a &dBOW &ain your hand. Use &dLEFT &aClick to change through your arrows. Current arrow: &d%CURRENT_ARROW% &a.'\r\n"
+			+ bow_selected_message + ": '&a You have a &dBOW &ain your hand. Use &dLEFT &aClick to change through your arrows. Current arrow: &d%CURRENT_ARROW% &a.'\r\n"
 			
 			//c
 			+ channel_propertie + ": 'channelPropertie'\r\n"
@@ -117,12 +52,14 @@ public class EN_Text {
 			
 			//l
 			+ login_no_race_selected + ": '&cYou have not selected a Race. Please select a race using /race select <racename>'\r\n"
+			+ launched_something + ": '&a%NAME% launched.'\r\n"
 			
 			
 			//m
 			+ magic_change_spells + ": '&aChanged Spell to: &d%TRATINAME% &aCost: &d%COST% %COST_TYPE%&a.'\r\n"
-			+ magic_dont_have_enough + ": '&c@plugin_pre@ You do not have enough &d%COST_TYPE% %cfor &d%TRAIT_NAME% &c.'\r\n"
+			+ magic_dont_have_enough + ": '&c You do not have enough &d%COST_TYPE% %cfor &d%TRAIT_NAME% &c.'\r\n"
 			+ magic_no_spells + ": '&cYou can not cast any spells.'\r\n"
+			+ mana_already_full + ": '&cYour Mana is already full.'\r\n"
 			+ member_config_not_found + ": '&cYour config could not be found. Try relogging or contact an Admin.'\r\n"
 			+ member_config_changed + ": '&aThe Attribute &d%ATTRIBUTE%&a has been changed to: &d%VALUE%&a.'\r\n"
 			+ member_config_attribute_not_found + ": '&cThe Attribute &d%ATTRIBUTE%&c could not be found.'\r\n"
@@ -134,25 +71,28 @@ public class EN_Text {
 			+ no_class_on_change + ": '@no_class_selected@. Use &d/class select &cto select a class.'\r\n"
 			+ no_class_selected_use_info + ": '&cYou have no class selected. Use &d/class info <class name> &cto inspect a class.'\r\n"			
 			+ no_class_selected + ": '&cYou have no class selected.'\r\n"			
-			+ no_class_to_select + ": '&c@plugin_pre@ You do not have any Classes to select.'\r\n"
+			+ no_class_to_select + ": '&c You do not have any Classes to select.'\r\n"
 			+ no_healthcontainer_found + ": '&cSomething gone Wrong. No healthcontainer found for you.'\r\n"
 			+ no_message + ": '&cNo message given.'\r\n"
 			+ number_not_readable + ": '&cNumber could not be read.'\r\n"
 			+ no_race_selected + ": '&cYou have no race selected.'\r\n"
-			+ no_race_to_select + ": '&c@plugin_pre@ You do not have any Race to select.'\r\n"			
-			+ no_traits + ": '&cNo Traits.'\r\n"			
+			+ no_race_to_select + ": '&c You do not have any Race to select.'\r\n"			
+			+ no_taget_found + ": '&cNo target found.'\r\n"
+			+ no_traits + ": '&cNo Traits.'\r\n"
 			
 			//o
 			+ only_players + ": '&cThis command can only be used by Players.'\r\n"
 			+ open_holder + ": '&2Opening %HOLDER% Selection....'\r\n"
-			+ open_traits + ": '&a@plugin_pre@ Opening Traits of &d%PLAYER%&a.'\r\n"
+			+ open_traits + ": '&a Opening Traits of &d%PLAYER%&a.'\r\n"
 			
 			//p
 			+ password + ": 'password'\r\n"
 			+ player_not_exist + ": '&cPlayer &d%PLAYER%&c does not exist.'\r\n"
-			+ plugin_pre + ": '[RaC]'\r\n"
+			+ plugin_pre + ": '&4[RaC]'\r\n"
 			
 			//q
+			+ quick_slot_item_lore + ": '&4Throw this item away in the Inventory to remove it.'\r\n"
+			+ quick_slot_selected + ": '&4Quickslot item recieved in inventory.'\r\n"
 			
 			//r
 			+ race + ": 'race'\r\n"
@@ -164,20 +104,54 @@ public class EN_Text {
 			//s
 			+ send_empty_message + ": '&cYou tried to send an empty Message.'\r\n"
 			+ something_disabled + ": '&c%VALUE% are disabled.'\r\n"
-			+ stun_ended + ": '@plugin_pre@ &cYou are not stunned any more.'\r\n"
-			+ stun_message + ": '@plugin_pre@ &cYou are stunned for &d %TIME% &cSeconds.'\r\n"
-			+ stun_still + ": '@plugin_pre@ &cYou are still stunned for &b%TIME% &cSeconds. You can not %ACTION%.'\r\n"
+			+ stun_ended + ": ' &cYou are not stunned any more.'\r\n"
+			+ stun_message + ": ' &cYou are stunned for &d %TIME% &cSeconds.'\r\n"
+			+ stun_still + ": ' &cYou are still stunned for &b%TIME% &cSeconds. You can not %ACTION%.'\r\n"
 			+ success + ": '&aSuccess.'\r\n"
 			
 
 			//t
 			+ target_not_exist + ": '&cTarget does not exist or is offline'\r\n"
 			+ time_in_seconds + ": 'time in seconds'\r\n"
+			+ too_far_away + ": '&cTarget too far away.'\r\n"
 			+ tutorial_already_running + ": '&cYou already have a Tutorial Running.'\r\n"
 			+ tutorial_error + ": '&cCould not execute this command at your current Step.'\r\n"
 			+ tutorial_no_set_at_this_state + ": '&cCan not set state at this moment.'\r\n"
 			+ tutorial_not_running + ": '&cYou have no Tutorial running.'\r\n"
 			+ tutorial_stopped + ": '&cTutorial Stopped. To restart it, use &b/racestutorial start'\r\n"
+			
+			//trait specific
+			+ trait_backstab_success + ": '&a%NAME% backstabed.'\r\n"
+			+ trait_dodged + ": '&aYou dodged the Attack.'\r\n"
+			+ trait_fly_toggle + ": '&aYou can now &dfly &afor &d%DURATION% &aseconds.'\r\n"
+			+ trait_invisible_toggle + ": '&aYou are now &dinvisible &afor &d%DURATION% &aseconds.'\r\n"
+			+ trait_consume_success + ": '&aYou have been given &d%VALUE% &aMana. &d%MATERIAL% &aconsumed.'\r\n"
+			+ trait_laststand_success + ": '&d%NAME% &atoggled. You were healed &d%VALUE%&a.'\r\n"
+			+ trait_lifetap_success + ": '&aYou have been given &d%VALUE% &aMana. You take &d%DAMAGE% &adamage.'\r\n"
+			+ trait_heal_target_full + ": '&aTarget does not need any healing.'\r\n"			
+			+ trait_healed_target_success + ": '&d%TARGET% &ahealed.'\r\n"
+			+ trait_healed_other_success + ": '&aHealed by &d%HEALER%&a.'\r\n"
+			+ trait_pickup_success + ": '&aItem picked up.'\r\n"
+			+ trait_pickup_inv_full + ": '&aInventory is full.'\r\n"
+			+ trait_poison_success + ": '&a%TARGET% poisoned.'\r\n"
+			+ trait_poison_imun + ": '&a%TARGET% is imun to poisoned.'\r\n"
+			+ trait_poison_notify_other + ": '&cYou got Poisoned by %PLAYER%.'\r\n"
+			+ trait_pushaway_success + ": '&d%TARGET% &apushed away.'\r\n"
+			+ trait_stun_arrow_success + ": '&aYou stunned &d%TARGET% &afor &d%DURATION% &aSeconds.'\r\n"
+			+ trait_taunt_success + ": '&d%TARGET% &atauneted.'\r\n"
+			+ trait_taunt_fade + ": '&aTaunt on &d%TARGET% &afaded.'\r\n"
+			+ trait_teleport_solidtarger + ": '&cTarget is solid. Can not teleport.'\r\n"
+			+ trait_teleport_success + ": '&aTeleported.'\r\n"
+			+ trait_wall_success + ": '&aWall created.'\r\n"
+			+ trait_wall_faded + ": '&aWall disapears.'\r\n"
+
+			//trait general
+			+ trait_already_active + ": '&d%NAME% &c is already active.'\r\n"
+			+ trait_cooldown + ": '&cYou still have &d%SECONDS% &cseconds cooldown on: &d%NAME%&c.'\r\n"
+			+ trait_faded + ": '&d%NAME% &cfaded.'\r\n"
+			+ trait_failed + ": '&d%NAME% &cfailed.'\r\n"			
+			+ trait_toggled + ": '&d%NAME% &atoggled.'\r\n"
+			
 			
 			//u
 			
@@ -185,7 +159,7 @@ public class EN_Text {
 			+ value_0_not_allowed + ": '&cValue of 0 is not allowed.'\r\n"
 			
 			//w
-			+ wand_select_message + ": '&a@plugin_pre@ You have a &d WAND &ain your hand. Use &dLEFT &aClick to cast and &dRIGHT &aClick to switch spells. Current spell: &d%CURRENT_SPELL%&a.'\r\n"
+			+ wand_select_message + ": '&a You have a &d WAND &ain your hand. Use &dLEFT &aClick to cast and &dRIGHT &aClick to switch spells. Current spell: &d%CURRENT_SPELL%&a.'\r\n"
 			+ wrong_command_use + ": '&cWrong usage. Use the command like this: &d%COMMAND%&c.'\r\n"
 			+ whisper_yourself + ": '&cYou can not whisper yourself.'\r\n"
 			
@@ -195,6 +169,7 @@ public class EN_Text {
 			+ your + ": 'your'\r\n"
 			+ your_class + ": 'your Class'\r\n"
 			+ your_race + ": 'your Race'\r\n"
+			+ you_would_kill_yourself + ": '&cYou would kill yourself'\r\n"
 			
 			//z
 			

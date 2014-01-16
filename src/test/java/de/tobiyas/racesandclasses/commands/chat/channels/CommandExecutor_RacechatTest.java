@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -74,7 +75,7 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(sender, null, "", new String[]{});
 		
-		verify(sender).sendMessage("only_players");
+		verify(sender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	
@@ -84,14 +85,14 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(player, null, "", new String[]{});
 		
-		verify(player).sendMessage("something_disabled");
+		verify(player).sendMessage(plugin_pre + "something_disabled");
 	}
 	
 	@Test
 	public void no_race_selected_returns_error(){
 		sut.onCommand(player, null, null, new String[]{"message"});
 		
-		verify(player).sendMessage("no_race_selected");
+		verify(player).sendMessage(plugin_pre + "no_race_selected");
 	}
 	
 	@Test
@@ -105,7 +106,7 @@ public class CommandExecutor_RacechatTest {
 		
 		sut.onCommand(player, null, null, new String[]{});
 		
-		verify(player).sendMessage("send_empty_message");
+		verify(player).sendMessage(plugin_pre + "send_empty_message");
 	}
 	
 	@Test

@@ -26,13 +26,13 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 			String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.broadcast)) return true;
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Channels").build());
+			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",
+					"value", "Channels");
 			return true;
 		}
 		
 		if(args.length == 0){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("no_message").build());
+			LanguageAPI.sendTranslatedMessage(sender, "no_message");
 			return true;
 		}
 		

@@ -49,12 +49,14 @@ public class Keys {
 	
 	//l
 	public static final String login_no_race_selected = "login_no_race_selected";
+	public static final String launched_something = "launched_something";
 	
 	
 	//m
 	public static final String magic_change_spells = "magic_change_spells";
 	public static final String magic_dont_have_enough = "magic_dont_have_enough";
 	public static final String magic_no_spells = "magic_no_spells";
+	public static final String mana_already_full = "mana_already_full";	
 	public static final String member_config_not_found = "member_config_not_found";
 	public static final String member_config_changed = "member_config_changed";
 	public static final String member_config_attribute_not_found = "member_config_attribute_not_found";
@@ -72,6 +74,7 @@ public class Keys {
 	public static final String number_not_readable = "number_not_readable";	
 	public static final String no_race_selected = "no_race_selected";
 	public static final String no_race_to_select = "no_race_to_select";
+	public static final String no_taget_found = "no_taget_found";
 	public static final String no_traits = "no_traits";
 	
 	//o
@@ -85,6 +88,8 @@ public class Keys {
 	public static final String plugin_pre = "plugin_pre";
 	
 	//q
+	public static final String quick_slot_item_lore = "quick_slot_item_lore";
+	public static final String quick_slot_selected = "quick_slot_selected";
 	
 	//r
 	public static final String race = "race";
@@ -105,11 +110,44 @@ public class Keys {
 	//t
 	public static final String target_not_exist = "target_not_exist";
 	public static final String time_in_seconds = "time_in_seconds";
+	public static final String too_far_away = "too_far_away";
 	public static final String tutorial_error = "tutorial_error";
 	public static final String tutorial_already_running = "tutorial_already_running";
 	public static final String tutorial_no_set_at_this_state = "tutorial_no_set_at_this_state";
 	public static final String tutorial_not_running = "tutorial_not_running";
 	public static final String tutorial_stopped = "tutorial_stopped";
+
+	//traits
+	public static final String trait_backstab_success = "trait_backstab_success";
+	public static final String trait_consume_success = "trait_consume_success";
+	public static final String trait_dodged = "trait_dodged";
+	public static final String trait_fly_toggle = "trait_fly_toggle";
+	public static final String trait_invisible_toggle = "trait_invisible_toggle";
+	public static final String trait_laststand_success = "trait_laststand_success";
+	public static final String trait_lifetap_success = "trait_lifetap_success";
+	public static final String trait_heal_target_full = "trait_heal_target_full";
+	public static final String trait_healed_target_success = "trait_healed_target_success";
+	public static final String trait_healed_other_success = "trait_healed_other_success";
+	public static final String trait_pickup_success = "trait_pickup_success";
+	public static final String trait_pickup_inv_full = "trait_pickup_inv_full";
+	public static final String trait_poison_success = "trait_poison_success";
+	public static final String trait_poison_imun = "trait_poison_imun";
+	public static final String trait_poison_notify_other = "trait_poison_notify_other";
+	public static final String trait_pushaway_success = "trait_pushaway_success";
+	public static final String trait_stun_arrow_success = "trait_stun_arrow_success";
+	public static final String trait_taunt_success = "trait_taunt_success";
+	public static final String trait_taunt_fade = "trait_taunt_fade";
+	public static final String trait_teleport_solidtarger = "trait_teleport_solidtarger";
+	public static final String trait_teleport_success = "trait_teleport_success";
+	public static final String trait_wall_success = "trait_wall_success";
+	public static final String trait_wall_faded = "trait_wall_faded";
+	
+	//trait general
+	public static final String trait_already_active = "trait_already_active";
+	public static final String trait_cooldown = "trait_cooldown";
+	public static final String trait_faded = "trait_faded";
+	public static final String trait_failed = "trait_failed";
+	public static final String trait_toggled = "trait_toggled";
 	
 	//u
 	
@@ -127,6 +165,7 @@ public class Keys {
 	public static final String your = "your";
 	public static final String your_class = "your_class";
 	public static final String your_race = "your_race";
+	public static final String you_would_kill_yourself = "you_would_kill_yourself";
 	
 	//z
 }

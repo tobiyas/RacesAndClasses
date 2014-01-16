@@ -65,13 +65,9 @@ public class MockRaCPlugin extends RacesAndClasses {
 		
 		this.cooldownManager = mock(CooldownManager.class, RETURNS_DEEP_STUBS);
 		
-		this.debugLogger = mock(DebugLogger.class, RETURNS_DEEP_STUBS);
-		
 		this.errored = false;
 		
 		this.playerManager = mock(PlayerManager.class, RETURNS_DEEP_STUBS);
-		
-		this.permManager = mock(PermissionManager.class, RETURNS_DEEP_STUBS);
 		
 		//Mock RaceManager
 		raceManager = mock(RaceManager.class);
@@ -94,9 +90,38 @@ public class MockRaCPlugin extends RacesAndClasses {
 	}
 	
 	
+	private PermissionManager mockPermManager = mock(PermissionManager.class, RETURNS_DEEP_STUBS);	
+	
+	@Override
+	public PermissionManager getPermissionManager() {
+		return mockPermManager;
+	}
+
+	
+	private DebugLogger mockLogger = mock(DebugLogger.class, RETURNS_DEEP_STUBS); 
+
+	@Override
+	public DebugLogger getDebugLogger() {
+		return mockLogger;
+	}
+
+
+	@Override
+	public void logWarning(String message) {
+		System.err.println("Warning: " + message);
+	}
+
+
+	@Override
+	public void logStackTrace(String message, Exception exp) {
+		System.out.println("Stacktrace: " + message);
+		exp.printStackTrace();
+	}
+
+
 	@Override
 	public void log(String message){
-		System.out.println("Error: " + message);
+		System.out.println("Log: " + message);
 	}
 	
 	
@@ -182,11 +207,6 @@ public class MockRaCPlugin extends RacesAndClasses {
 	//Setter for most managers for easier mocking //
 	////////////////////////////////////////////////
 	
-	public void setDebugLogger(DebugLogger debugLogger){
-		this.debugLogger = debugLogger;
-	}
-	
-
 	public void setConfigManager(ConfigManager configManager){
 		this.configManager = configManager;
 	}
@@ -200,12 +220,6 @@ public class MockRaCPlugin extends RacesAndClasses {
 	public void setCooldownManager(CooldownManager cooldownManager){
 		this.cooldownManager = cooldownManager;
 	}
-	
-	
-	public void setPermissionManager(PermissionManager permManager){
-		this.permManager = permManager;
-	}
-
 	
 	
 	public void setStatisticGatherer(StatisticGatherer statistics){

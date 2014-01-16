@@ -10,10 +10,14 @@ package de.tobiyas.racesandclasses.commands.races;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.needs_1_arg;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_to_select;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.no_traits;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
 
 import java.util.List;
@@ -56,9 +60,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Race")
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, something_disabled,
+					"value", "Race");
 			return true;
 		}
 		
@@ -80,9 +83,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			if(useGUI){
 				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 				if(currentRace != plugin.getRaceManager().getDefaultHolder()){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("already_have_race")
-							.replace("race", currentRace.getName())
-							.build());
+					LanguageAPI.sendTranslatedMessage(sender, already_have_race,
+							"race", currentRace.getName());
 					
 					return true;
 				}
@@ -98,22 +100,19 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getRaceManager());
 				
 				if(holderInventory.getNumberOfHolder() <= 0){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("no_race_to_select")
-							.build());
+					LanguageAPI.sendTranslatedMessage(sender, no_race_to_select);
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				sender.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
-						.replace("holder", "Race")
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
+						"holder", "Race");
 				return true;
 			}
 			
 			if(args.length != 2){
-				sender.sendMessage(LanguageAPI.translateIgnoreError("needs_1_arg")
-						.replace("command", "/race select <racename>")
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, needs_1_arg,
+						"command", "/race select <racename>");
 				return true;
 			}
 			
@@ -133,9 +132,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			if(useGUI){
 				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
 				if(currentRace == plugin.getRaceManager().getDefaultHolder()){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("no_race_selected")
-							.build());
-					
+					LanguageAPI.sendTranslatedMessage(sender, no_race_selected);
 					return true;
 				}
 				
@@ -149,22 +146,19 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getRaceManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					sender.sendMessage(LanguageAPI.translateIgnoreError("no_race_to_select")
-							.build());
+					LanguageAPI.sendTranslatedMessage(sender, no_race_to_select);
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				sender.sendMessage(LanguageAPI.translateIgnoreError("open_holder")
-						.replace("holder", "Race")
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, open_holder,
+						"holder", "Race");
 				return true;
 			}
 			
 			if(args.length != 2){
-				sender.sendMessage(LanguageAPI.translateIgnoreError("needs_1_arg")
-						.replace("command", "/race change <racename>")
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, needs_1_arg,
+						"command", "/race change <racename>");
 				return true;
 			}
 			
@@ -204,9 +198,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			return true;
 		}
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError("only_players")
-				.build());
-
+		LanguageAPI.sendTranslatedMessage(sender, "only_players");
 		return false;
 	}
 
@@ -236,16 +228,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(newRaceName);
 			
 			if(raceContainer == null){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-						.replace("race", newRaceName)
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
+						"race", newRaceName);
 				return;
 			}
 			
 			if(raceContainer != null && raceContainer == stdContainer){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-						.replace("race", "default race")
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
+						"race", "default race");
 				return;
 			}
 			
@@ -258,15 +248,13 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName, true)){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_changed_to)
-						.replace("race", newRaceName)
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
+						"race", newRaceName);
 			}
 				
 		}else{
-			player.sendMessage(LanguageAPI.translateIgnoreError(already_have_race)
-					.replace("race", container.getName())
-					.build());
+			LanguageAPI.sendTranslatedMessage(player, already_have_race,
+					"race", container.getName());
 		}
 	}
 	
@@ -283,17 +271,15 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			if(plugin.getRaceManager().getHolderByName(newRace) != null && plugin.getRaceManager().getHolderByName(newRace) == stdContainer){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-						.replace("race", plugin.getRaceManager().getDefaultHolder().getName())
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
+						"race", plugin.getRaceManager().getDefaultHolder().getName());
 				return;
 			}
 			
 			AbstractTraitHolder newContainer = plugin.getRaceManager().getHolderByName(newRace);
 			if(newContainer == null){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-						.replace("race", newRace)
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
+						"race", newRace);
 				return;
 			}
 			
@@ -306,17 +292,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace, true)){
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_changed_to)
-						.replace("race", newRace)
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
+						"race", newRace);
 			}else{
-				player.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-						.replace("race", newRace)
-						.build());
+				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
+						"race", newRace);
 			}
 		}else{
-			player.sendMessage(LanguageAPI.translateIgnoreError(no_race_selected)
-					.build());
+			LanguageAPI.sendTranslatedMessage(player, no_race_selected);
 		}
 	}
 	
@@ -324,9 +307,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
 		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(sender.getName());
 		if(container == null){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(race_not_exist)
-					.replace("race", inspectedRace)
-					.build());
+			LanguageAPI.sendTranslatedMessage(sender, race_not_exist,
+					"race", inspectedRace);
 			return;
 		}
 		
@@ -334,8 +316,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			sender.sendMessage(ChatColor.YELLOW + "=========" + ChatColor.RED + "RACE INFO" + ChatColor.YELLOW + "=========");
 		
 			if(containerOfPlayer == null){
-				sender.sendMessage(LanguageAPI.translateIgnoreError(no_race_selected)
-						.build());
+				LanguageAPI.sendTranslatedMessage(sender, no_race_selected);
 				return;
 			}
 
@@ -360,7 +341,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 		
 		if(container.getVisibleTraits().size() == 0){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(no_traits).build());			
+			LanguageAPI.sendTranslatedMessage(sender, no_traits);			
 		}
 	}
 	

@@ -50,6 +50,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	private boolean config_enable_healthbar_in_chat;
 	
 	private boolean config_tutorials_enable;
+	private boolean config_disableHealthMods;
 	
 	
 	private boolean config_usePermissionsForRaces;
@@ -188,7 +189,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config.addDefault(level_useRaCInbuildLevelSystem, true);
 		config.addDefault(races_enable, true);
 		config.addDefault(general_armor_disableArmorChecking, false);
-		
+		config.addDefault(disable_health_modifications, false);
 		
 		config.options().copyDefaults(true);
 	}
@@ -272,6 +273,8 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config_useRaCInbuildLevelSystem = config.getBoolean(level_useRaCInbuildLevelSystem, true);
 		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
+		
+		config_disableHealthMods = config.getBoolean(disable_health_modifications, false);
 		
 		config_useAutoUpdater = config.getBoolean(updater_enableAutoUpdates, false);
 		
@@ -486,6 +489,10 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 	public boolean isConfig_keep_max_hp_on_disabled_worlds() {
 		return config_keep_max_hp_on_disabled_worlds;
+	}
+
+	public boolean isConfig_disableHealthMods() {
+		return config_disableHealthMods;
 	}
 
 }

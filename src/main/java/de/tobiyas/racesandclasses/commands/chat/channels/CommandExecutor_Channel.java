@@ -36,8 +36,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
-					.replace("value", "Channels").build());
+			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",
+					"value", "Channels");
 			return true;
 		}
 
@@ -66,7 +66,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		
 		if(!(sender instanceof Player)){
-			sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
+			LanguageAPI.sendTranslatedMessage(sender,"only_players");
 			return true;
 		}
 	
@@ -77,11 +77,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				|| channelCommand.equalsIgnoreCase("ch")){
 			
 			if(args.length != 2){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-									.replace("command", "/channel change <channelname>")
-									.build();
-				
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+									"command", "/channel change <channelname>");
 				return true;
 			}
 
@@ -93,10 +90,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		if(channelCommand.equalsIgnoreCase("join")){
 			if(args.length == 1 || args.length > 3){
 				
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel join <channelname> [@password@]")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel join <channelname> [@password@]");
 				return true;
 			}
 			
@@ -112,10 +107,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("leave")){
 			if(args.length != 2){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel leave <channelname>")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel leave <channelname>");
 				return true;
 			}
 			String channelName = args[1];
@@ -125,10 +118,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("create")){
 			if(args.length == 1 || args.length > 4){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel create <channelname> [channelType] [@password@]")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel create <channelname> [channelType] [@password@]");
 				return true;
 			}
 			
@@ -148,10 +139,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("ban")){
 			if(!(args.length == 3 ||  args.length == 4)){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel ban <channelname> <playername> [@time_in_seconds@]")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+						"command", "/channel ban <channelname> <playername> [@time_in_seconds@]");
 				return true;
 			}
 			
@@ -167,10 +156,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("unban")){
 			if(!(args.length == 3)){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel unban <channelname> <playername>")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel unban <channelname> <playername>");
 				return true;
 			}
 			
@@ -180,10 +167,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("mute")){
 			if(!(args.length == 3 ||  args.length == 4)){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel mute <channelname> <playername> [@time_in_seconds@]")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel mute <channelname> <playername> [@time_in_seconds@]");
 				return true;
 			}
 			
@@ -199,10 +184,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("unmute")){
 			if(!(args.length == 3)){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel unmute <channelname> <playername>")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player,"wrong_command_use",
+						"command", "/channel unmute <channelname> <playername>");
 				return true;
 			}
 			
@@ -212,10 +195,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		if(channelCommand.equalsIgnoreCase("edit")){
 			if(args.length < 4){
-				String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-						.replace("command", "/channel edit <channelname> <@channel_propertie@> <@new_value@>")
-						.build();
-				player.sendMessage(message);
+				LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+						"command", "/channel edit <channelname> <@channel_propertie@> <@new_value@>");
 				return true;
 			}
 			
@@ -240,10 +221,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	}
 	
 	private void postHelp(CommandSender sender){
-		String message = LanguageAPI.translateIgnoreError("wrong_command_use")
-				.replace("command", "")
-				.build();
-		sender.sendMessage(message);
+		LanguageAPI.sendTranslatedMessage(sender,"wrong_command_use",
+				"command", "");
 		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "info " + ChatColor.AQUA + "[channelname]");
 		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "list");
 		

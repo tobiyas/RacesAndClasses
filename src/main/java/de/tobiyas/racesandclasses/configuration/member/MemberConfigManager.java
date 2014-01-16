@@ -95,7 +95,7 @@ public class MemberConfigManager {
 	}
 	
 	/**
-	 * Loads all configs from the playerdata.yml file
+	 * Loads all configs from the playerdata file
 	 */
 	private void loadConfigs(){
 		Set<String> playerList = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());

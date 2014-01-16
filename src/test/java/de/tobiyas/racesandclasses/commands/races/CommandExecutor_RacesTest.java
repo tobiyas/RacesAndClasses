@@ -3,6 +3,7 @@ package de.tobiyas.racesandclasses.commands.races;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.plugin_pre;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
@@ -134,7 +135,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command});
 		
-		verify(consoleSender).sendMessage(race_not_exist);
+		verify(consoleSender).sendMessage(plugin_pre + race_not_exist);
 	}
 	
 	@Test
@@ -145,7 +146,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, raceToSelect});
 		
-		verify(consoleSender).sendMessage(race_not_exist);
+		verify(consoleSender).sendMessage(plugin_pre + race_not_exist);
 	}
 	
 	@Test
@@ -258,7 +259,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage("only_players");
+		verify(consoleSender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	@Test
@@ -274,7 +275,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_race_to_select");
+		verify(player).sendMessage(plugin_pre + "no_race_to_select");
 	}
 	
 	@Test
@@ -296,7 +297,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("open_holder");
+		verify(player).sendMessage(plugin_pre + "open_holder");
 	}
 	
 	@Test
@@ -319,7 +320,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("already_have_race");
+		verify(player).sendMessage(plugin_pre + "already_have_race");
 	}
 	
 	
@@ -332,7 +333,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage("only_players");
+		verify(consoleSender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	@Test
@@ -347,7 +348,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_race_selected");
+		verify(player).sendMessage(plugin_pre + "no_race_selected");
 	}
 	
 	
@@ -371,7 +372,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("no_race_to_select");
+		verify(player).sendMessage(plugin_pre + "no_race_to_select");
 	}
 	
 	@Test
@@ -394,7 +395,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("open_holder");
+		verify(player).sendMessage(plugin_pre + "open_holder");
 	}
 	
 	////////////////////////
@@ -410,7 +411,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage("only_players");
+		verify(consoleSender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	
@@ -425,7 +426,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("needs_1_arg");
+		verify(player).sendMessage(plugin_pre + "needs_1_arg");
 	}
 	
 	@Test
@@ -447,7 +448,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(race_changed_to);
+		verify(player).sendMessage(plugin_pre + race_changed_to);
 	}
 	
 	
@@ -469,7 +470,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(already_have_race);
+		verify(player).sendMessage(plugin_pre + already_have_race);
 	}
 	
 	
@@ -485,7 +486,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage("race_not_exist");
+		verify(player).sendMessage(plugin_pre + "race_not_exist");
 	}
 	
 	
@@ -498,7 +499,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(consoleSender, null, "", new String[] {command, race});
 		
-		verify(consoleSender).sendMessage("only_players");
+		verify(consoleSender).sendMessage(plugin_pre + "only_players");
 	}
 	
 	
@@ -513,7 +514,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command});
 		
-		verify(player).sendMessage("needs_1_arg");
+		verify(player).sendMessage(plugin_pre + "needs_1_arg");
 	}
 	
 	@Test
@@ -544,7 +545,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(race_changed_to);
+		verify(player).sendMessage(plugin_pre + race_changed_to);
 	}
 	
 	@Test
@@ -591,7 +592,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(no_race_selected);
+		verify(player).sendMessage(plugin_pre + no_race_selected);
 	}
 	
 	
@@ -608,7 +609,7 @@ public class CommandExecutor_RacesTest {
 		
 		sut.onCommand(player, null, "", new String[] {command, raceName});
 		
-		verify(player).sendMessage(race_not_exist);
+		verify(player).sendMessage(plugin_pre + race_not_exist);
 	}
 	
 	@Test

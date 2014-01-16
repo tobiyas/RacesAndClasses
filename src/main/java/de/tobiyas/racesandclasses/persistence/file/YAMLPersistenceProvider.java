@@ -12,10 +12,6 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class YAMLPersistenceProvider {
 	
-	static{
-		rescanKnownPlayers();
-	}
-	
 	/**
 	 * The Cached Player YAML files
 	 */
@@ -54,9 +50,19 @@ public class YAMLPersistenceProvider {
 	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
 	 */
 	public static YAMLConfigExtended getLoadedPlayerFile(String playerName) {
+		if(knownPlayers == null){
+			rescanKnownPlayers();
+		}
+		
 		if(playerYamls.containsKey(playerName)){
-			cacheHit++;
-			return playerYamls.get(playerName);
+			YAMLConfigExtended playerConfig = playerYamls.get(playerName);
+			if(playerConfig.getValidLoad()){
+				cacheHit++;
+				return playerConfig;
+			}
+			
+			cacheMiss++;
+			return playerConfig.load();
 		}
 		
 		if(knownPlayers.contains(playerName)){
