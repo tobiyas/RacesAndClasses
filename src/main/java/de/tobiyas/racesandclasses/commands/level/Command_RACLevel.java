@@ -27,10 +27,14 @@ public class Command_RACLevel implements CommandExecutor {
 	 */
 	public Command_RACLevel(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "raclevel";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("raclevel").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /raclevel.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}	
 	

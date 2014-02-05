@@ -179,6 +179,12 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ general_armor_disableArmorChecking + ": false\n\n"
+			
+			+ "# This tells the plugin to NOT register the following commands. \n"
+			+ "# This is a list of commands that are disabled for the plugin.\n"
+			+ "# String list: [command1,command2,...]\n"
+			+ "# default: [] \n"
+			+ general_disable_commands + ": []\n\n"
 						
 			
 			//GUI
@@ -197,6 +203,11 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ gui_scoreboard_disableAllOutputs + ": false\n\n"
+			
+			+ "# Setting this to true will disable all Outputs of bars to the chat of the players.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_disableAllChatBars + ": false\n\n"
 			
 			
 			//MAGIC

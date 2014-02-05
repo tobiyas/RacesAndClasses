@@ -16,10 +16,14 @@ public class CommandExecutor_RacesReload implements CommandExecutor {
 	
 	public CommandExecutor_RacesReload(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racesreload";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racesreload").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racesreload.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

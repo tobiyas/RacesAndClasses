@@ -14,10 +14,14 @@ public class CommandExecutor_BroadCast implements CommandExecutor{
 
 	public CommandExecutor_BroadCast(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "globalbroadcast";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("globalbroadcast").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /globalbroadcast.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

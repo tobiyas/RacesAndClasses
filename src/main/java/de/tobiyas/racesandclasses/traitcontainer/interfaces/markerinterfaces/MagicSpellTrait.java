@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 /**
@@ -44,10 +45,9 @@ public interface MagicSpellTrait {
 	 * triggered when the spell should be triggered, but no CostType is present.
 	 * 
 	 * @param event that triggered
-	 * 
-	 * @return true if no message should be sent
+	 * @param player that triggered the spell
 	 */
-	public boolean triggerButDoesNotHaveEnoghCostType(Event event);
+	public void triggerButDoesNotHaveEnoghCostType(Player player, Event event);
 	
 	
 	/**
@@ -68,6 +68,11 @@ public interface MagicSpellTrait {
 		 * An specific Item is used to cast this spell.
 		 */
 		ITEM,
+		
+		/**
+		 * This costs Experience to cost.
+		 */
+		EXP,
 		
 		/**
 		 * The Hunger bar is drained to cast the spell.
@@ -116,6 +121,14 @@ public interface MagicSpellTrait {
 			
 			if(costTypeName.equalsIgnoreCase("essen")){
 				return HUNGER;
+			}
+			
+			if(costTypeName.equalsIgnoreCase("experience")){
+				return EXP;
+			}
+			
+			if(costTypeName.equalsIgnoreCase("xp")){
+				return EXP;
 			}
 			
 			return null;

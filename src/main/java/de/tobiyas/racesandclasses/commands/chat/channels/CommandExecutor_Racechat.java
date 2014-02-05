@@ -23,10 +23,14 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 
 	public CommandExecutor_Racechat(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racechat";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racechat").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racechat.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

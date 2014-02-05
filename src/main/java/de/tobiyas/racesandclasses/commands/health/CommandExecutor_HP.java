@@ -17,10 +17,14 @@ public class CommandExecutor_HP implements CommandExecutor {
 	
 	public CommandExecutor_HP(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "playerhealth";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("playerhealth").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /playerhealth.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

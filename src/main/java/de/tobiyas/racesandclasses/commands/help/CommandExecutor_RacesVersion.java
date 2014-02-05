@@ -14,10 +14,14 @@ public class CommandExecutor_RacesVersion implements CommandExecutor{
 	
 	public CommandExecutor_RacesVersion(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racesversion";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racesversion").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racesversion.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

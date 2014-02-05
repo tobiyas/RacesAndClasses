@@ -56,6 +56,8 @@ public class Keys {
 	public static final String magic_change_spells = "magic_change_spells";
 	public static final String magic_dont_have_enough = "magic_dont_have_enough";
 	public static final String magic_no_spells = "magic_no_spells";
+	public static final String magic_spell_activated = "magic_spell_activated";
+	public static final String magic_spell_deactivated = "magic_spell_deactivated";
 	public static final String mana_already_full = "mana_already_full";	
 	public static final String member_config_not_found = "member_config_not_found";
 	public static final String member_config_changed = "member_config_changed";

@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.eventprocessing.worldresolver;
+package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

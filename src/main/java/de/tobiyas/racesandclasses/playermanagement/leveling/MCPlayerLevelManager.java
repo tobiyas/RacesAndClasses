@@ -155,5 +155,12 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	public void forceDisplay() {
 		//we have no display to force... The EXP bar is our display.
 	}
+
+
+	@Override
+	public boolean canRemove(int toRemove) {
+		toRemove -= getCurrentExpOfLevel();
+		return toRemove > 0;
+	}
 	
 }

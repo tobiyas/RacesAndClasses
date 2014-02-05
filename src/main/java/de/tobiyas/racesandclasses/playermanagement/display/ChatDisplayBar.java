@@ -3,6 +3,7 @@ package de.tobiyas.racesandclasses.playermanagement.display;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class ChatDisplayBar extends AbstractDisplay{
@@ -22,6 +23,8 @@ public class ChatDisplayBar extends AbstractDisplay{
 	
 	@Override
 	public void display(double currentAmount, double maxAmount) {
+		if(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllChatBars()) return;
+		
 		String barString = "";
 		if(!displayInfo.useName()){
 			barString = calcForHealth(currentAmount, maxAmount, Consts.displayBarLength);

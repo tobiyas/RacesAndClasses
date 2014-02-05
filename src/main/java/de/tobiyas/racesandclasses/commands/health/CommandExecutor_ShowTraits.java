@@ -21,10 +21,14 @@ public class CommandExecutor_ShowTraits implements CommandExecutor {
 	
 	public CommandExecutor_ShowTraits() {
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "showtraits";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("showtraits").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /showtraits.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

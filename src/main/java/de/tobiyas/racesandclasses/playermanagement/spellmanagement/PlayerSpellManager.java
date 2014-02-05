@@ -1,10 +1,12 @@
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -13,8 +15,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -143,6 +146,8 @@ public class PlayerSpellManager {
 			
 			case HUNGER : return player.getFoodLevel() >= cost;
 			
+			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerName).canRemove((int)cost);
+			
 			default: return false;
 		}
 	}
@@ -168,6 +173,9 @@ public class PlayerSpellManager {
 				int oldFoodLevel = player.getFoodLevel();
 				int newFoodLevel = (int) (oldFoodLevel - trait.getCost());
 				player.setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
+				
+			case EXP:
+				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerName).removeExp((int) trait.getCost());
 		}
 	}
 
@@ -227,5 +235,38 @@ public class PlayerSpellManager {
 		plugin.fireEventIntern(new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, wandItem, 
 				lookingAt, BlockFace.UP));
 		return true;
+	}
+	
+	
+	/**
+	 * Checks if the item passed is a Wand.
+	 * 
+	 * 
+	 * @param itemInHands to check against
+	 * 
+	 * @return true if the item passed is a wand for the player
+	 */
+	public boolean isWandItem(ItemStack itemInHands){
+		Player player = Bukkit.getPlayer(playerName);
+		if(player == null) return false;
+		if(itemInHands == null) return false;
+		
+		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		String playerName = player.getName();
+		
+		Set<Material> wands = new HashSet<Material>();
+		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
+		
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
+		if(classHolder != null){
+			wands.addAll(classHolder.getAdditionalWandMaterials());
+		}
+		
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		if(raceHolder != null){
+			wands.addAll(raceHolder.getAdditionalWandMaterials());
+		}
+		
+		return wands.contains(itemInHands.getType());
 	}
 }

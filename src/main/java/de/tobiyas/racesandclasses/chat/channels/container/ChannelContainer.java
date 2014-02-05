@@ -381,6 +381,7 @@ public class ChannelContainer extends Observable{
 				break;
 				
 			case LocalChannel:
+				participants.clear();
 				if(localPlayer == null) return;
 				int distance = plugin.getConfigManager().getChannelConfig().getConfig_localchat_range();
 				Location loc = localPlayer.getLocation();

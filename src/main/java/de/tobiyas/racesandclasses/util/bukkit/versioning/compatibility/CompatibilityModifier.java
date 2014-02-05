@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -34,8 +35,6 @@ public class CompatibilityModifier {
 					
 					return value;
 				}catch(Exception exp){
-					exp.printStackTrace();
-					
 					return 1;
 				}
 			}
@@ -57,7 +56,6 @@ public class CompatibilityModifier {
 					int intValue = (int) damage;
 					method.invoke(event, intValue);
 				}catch(Exception exp){
-					exp.printStackTrace();
 				}
 			}
 		}
@@ -102,8 +100,6 @@ public class CompatibilityModifier {
 					int roundedDamage = Math.round((float) damage);
 					return new EntityDamageByEntityEvent(damager, target, cause, roundedDamage);
 				}catch(Exception exp){
-					exp.printStackTrace();
-					
 					return null;
 				}
 			}
@@ -133,6 +129,8 @@ public class CompatibilityModifier {
 		 * @param player
 		 */
 		public static void safeSetMaxHealth(double maxHealth, Player player){
+			if(maxHealth <= 0) return;
+			
 			if(CertainVersionChecker.isAbove1_6()){
 				player.setMaxHealth(maxHealth);
 			}else{
@@ -142,7 +140,6 @@ public class CompatibilityModifier {
 					int intHealthValue = (int) maxHealth;
 					method.invoke(player, intHealthValue);
 				}catch(Exception exp){
-					exp.printStackTrace();
 				}
 			}
 		}
@@ -367,6 +364,36 @@ public class CompatibilityModifier {
 					method.invoke(entity, damage);
 				}catch(Exception exp){}//silent fail
 			}
+		}
+	}
+	
+	public static class Shooter{
+		
+		
+		/**
+		 * Finds the shooter of an arrow if any present.
+		 * 
+		 * @param arrow the arrow to get the shooter from.
+		 * @return the found Living entity the arrow belongs to or NULL if not found.
+		 */
+		public static org.bukkit.entity.LivingEntity getShooter(Projectile projectile){
+			if(projectile == null) return null;
+			
+			try{
+				return (org.bukkit.entity.LivingEntity)projectile.getShooter();
+			}catch(Throwable exp){
+				//lets do good old reflections on this.
+			}
+			
+			try{
+				Method method = projectile.getClass().getMethod("getShooter");
+				return (org.bukkit.entity.LivingEntity) method.invoke(projectile, method);
+			}catch(Throwable exp){
+				//well we don't know how to get to the shooter.
+			}
+			
+			//nothing worked...
+			return null;
 		}
 	}
 	

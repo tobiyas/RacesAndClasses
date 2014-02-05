@@ -14,10 +14,14 @@ public class CommandExecutor_LocalChat implements CommandExecutor{
 	
 	public CommandExecutor_LocalChat(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "localchat";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("localchat").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /localchat.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

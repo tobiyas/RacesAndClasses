@@ -28,7 +28,7 @@ public class NormalArrow extends AbstractArrow {
 	}
 
 	@Override
-	public String getPrettyConfiguration() {
+	protected String getPrettyConfigIntern() {
 		return "Just a normal Arrow";
 	}
 

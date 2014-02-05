@@ -28,10 +28,14 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 	
 	public CommandExecutor_ForceRace() {
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racforcerace";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racforcerace").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racforcerace.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

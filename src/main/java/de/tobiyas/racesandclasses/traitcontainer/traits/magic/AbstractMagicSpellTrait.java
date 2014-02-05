@@ -1,13 +1,12 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_change_spells;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_dont_have_enough;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_no_spells;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,7 +22,9 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.naming.MCPrettyName;
 
 public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
 
@@ -142,41 +143,33 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if he has, false otherwise.
 	 */
 	public boolean checkWandInHand(Player player) {
-		Material playerHoldsInHand = player.getItemInHand().getType();
-		String playerName = player.getName();
-		
-		Set<Material> wands = new HashSet<Material>();
-		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
-		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
-		if(classHolder != null){
-			wands.addAll(classHolder.getAdditionalWandMaterials());
-		}
-		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
-		if(raceHolder != null){
-			wands.addAll(raceHolder.getAdditionalWandMaterials());
-		}
-		
-		return wands.contains(playerHoldsInHand);
+		return plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName())
+				.isWandItem(player.getItemInHand());
 	}
 
 
 	@Override
-	public boolean triggerButDoesNotHaveEnoghCostType(Event event){
+	public void triggerButDoesNotHaveEnoghCostType(Player player, Event event){
 		if(event instanceof PlayerInteractEvent){
-			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
-			Action action = playerInteractEvent.getAction();
-			Player player = playerInteractEvent.getPlayer();
-			
+			Action action = ((PlayerInteractEvent) event).getAction();
 			if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
 				changeMagicSpell(player);
 				
-				return true;
+				return;
 			}
 		}
 		
-		return false;
+		String costTypeString = getCostType().name();
+		if(getCostType() == CostType.ITEM){
+			costTypeString = MCPrettyName.getPrettyName(
+					getCastMaterialType(),
+					(short) 0,
+					"en_US");
+		}
+			
+		LanguageAPI.sendTranslatedMessage(player, magic_dont_have_enough, 
+				"cost_type", costTypeString, 
+				"trait_name", getDisplayName());
 	}
 
 
@@ -199,6 +192,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				if(lastCastMap.containsKey(playerName)){
 					if(System.currentTimeMillis() - lastCastMap.get(playerName) < 100){
 						//2 casts directly after each other.
+						//lets cancle the second
 						return false;
 					}else{
 						lastCastMap.remove(playerName);
@@ -264,8 +258,10 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			String costTypeString = nextSpell.getCostType() == CostType.ITEM 
 							? nextSpell.getCastMaterialType().name() 
 							: nextSpell.getCostType().name();
-			
+			String newSpellName = ((Trait)nextSpell).getDisplayName();
+							
 			LanguageAPI.sendTranslatedMessage(player, magic_change_spells, 
+					"trait_name", newSpellName,
 					"cost", costName, 
 					"cost_type", costTypeString
 					);

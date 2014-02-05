@@ -48,7 +48,7 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 
 
 	@Override
-	public String getPrettyConfiguration(){
+	protected String getPrettyConfigIntern(){
 		return "";
 	}
 

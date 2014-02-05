@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
 

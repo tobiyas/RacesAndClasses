@@ -43,7 +43,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	}
 
 	@Override
-	public String getPrettyConfiguration(){
+	protected String getPrettyConfigIntern(){
 		return operation + " " + value;
 	}
 

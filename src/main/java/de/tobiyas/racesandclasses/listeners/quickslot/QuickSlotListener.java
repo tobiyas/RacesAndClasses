@@ -40,6 +40,7 @@ public class QuickSlotListener implements Listener {
 	 * @return true if it is a quick slot item.
 	 */
 	private boolean isQuickBarItem(ItemStack item){
+		if(item == null) return false;
 		if(item.getType() != Material.WOOL) return false;
 		
 		if(!item.hasItemMeta()) return false;

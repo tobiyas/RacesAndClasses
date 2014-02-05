@@ -19,10 +19,14 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 
 	public CommandExecutor_Statistics(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racstatistics";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racstatistics").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racestatistics.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

@@ -106,4 +106,14 @@ public interface PlayerLevelManager {
 	 */
 	public void forceDisplay();
 
+
+	/**
+	 * Tells if the player can be removed X exp.
+	 * 
+	 * @param toRemove to be removed later.
+	 * 
+	 * @return true if can be removed.
+	 */
+	public boolean canRemove(int toRemove);
+
 }

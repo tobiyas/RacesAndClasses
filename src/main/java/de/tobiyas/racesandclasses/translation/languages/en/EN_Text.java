@@ -56,9 +56,11 @@ public class EN_Text {
 			
 			
 			//m
-			+ magic_change_spells + ": '&aChanged Spell to: &d%TRATINAME% &aCost: &d%COST% %COST_TYPE%&a.'\r\n"
+			+ magic_change_spells + ": '&aChanged Spell to: &d%TRAIT_NAME% &aCost: &d%COST% %COST_TYPE%&a.'\r\n"
 			+ magic_dont_have_enough + ": '&c You do not have enough &d%COST_TYPE% %cfor &d%TRAIT_NAME% &c.'\r\n"
 			+ magic_no_spells + ": '&cYou can not cast any spells.'\r\n"
+			+ magic_spell_activated + ": '&d%TRAIT_NAME% &aactivated.'\r\n"
+			+ magic_spell_deactivated + ": '&d%TRAIT_NAME% &cdeactivated.'\r\n"
 			+ mana_already_full + ": '&cYour Mana is already full.'\r\n"
 			+ member_config_not_found + ": '&cYour config could not be found. Try relogging or contact an Admin.'\r\n"
 			+ member_config_changed + ": '&aThe Attribute &d%ATTRIBUTE%&a has been changed to: &d%VALUE%&a.'\r\n"
@@ -149,7 +151,7 @@ public class EN_Text {
 			+ trait_already_active + ": '&d%NAME% &c is already active.'\r\n"
 			+ trait_cooldown + ": '&cYou still have &d%SECONDS% &cseconds cooldown on: &d%NAME%&c.'\r\n"
 			+ trait_faded + ": '&d%NAME% &cfaded.'\r\n"
-			+ trait_failed + ": '&d%NAME% &cfailed.'\r\n"			
+			+ trait_failed + ": '&d%NAME% &cfailed.'\r\n"
 			+ trait_toggled + ": '&d%NAME% &atoggled.'\r\n"
 			
 			

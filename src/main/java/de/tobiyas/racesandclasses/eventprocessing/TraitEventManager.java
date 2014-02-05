@@ -1,7 +1,6 @@
 package de.tobiyas.racesandclasses.eventprocessing;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_dont_have_enough;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -18,7 +18,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
@@ -28,7 +29,6 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
 
 public class TraitEventManager{
@@ -74,8 +74,8 @@ public class TraitEventManager{
 	/**
 	 * Fires a synchronous Event intern
 	 * 
-	 * @param event
-	 * @return
+	 * @param event that was fired
+	 * @return if the Event was progressed by the plugin
 	 */
 	private boolean fireEventIntern(Event event){
 		calls ++;
@@ -86,7 +86,10 @@ public class TraitEventManager{
 			eventIDs.put(event.hashCode(), System.currentTimeMillis());
 		}
 		
-		boolean disabledOnWorld = checkDisabledPerWorld(event);
+		EventWrapper eventWrapper = EventWrapperFactory.buildFromEvent(event);
+		if(eventWrapper == null) return false; //we can't process this event.
+		
+		boolean disabledOnWorld = checkDisabledPerWorld(eventWrapper.getWorld());
 		
 		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
 		for(Class<?> clazz : traitList.keySet()){
@@ -107,7 +110,8 @@ public class TraitEventManager{
 					}
 				}
 				
-				Player player = trait.getReleventPlayer(event);
+				//Player player = trait.getReleventPlayer(event); //TODO check
+				Player player = eventWrapper.getPlayer();
 				
 				//Check if Static Trait -> Always interested!
 				//Check if Player has Trait.
@@ -145,18 +149,7 @@ public class TraitEventManager{
 				if(trait instanceof MagicSpellTrait){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).canCastSpell(magicTrait)){
-						if(!magicTrait.triggerButDoesNotHaveEnoghCostType(event)){
-							
-							String costTypeString = magicTrait.getCostType().name();
-							if(magicTrait.getCostType() == CostType.ITEM){
-								costTypeString = magicTrait.getCastMaterialType().name();
-							}
-								
-							LanguageAPI.sendTranslatedMessage(player, magic_dont_have_enough, 
-									"cost_type", costTypeString, 
-									"trait_name", trait.getDisplayName());
-						}
-						
+						magicTrait.triggerButDoesNotHaveEnoghCostType(player, event);
 						continue;
 					}
 				}
@@ -174,7 +167,10 @@ public class TraitEventManager{
 						if(uplinkTraitTime > 0){
 							plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
 							
-							String cooldownDownMessage = LanguageAPI.translateIgnoreError(cooldown_is_ready_again).build();
+							String cooldownDownMessage = LanguageAPI.translateIgnoreError(cooldown_is_ready_again)
+									.replace("trait_name", trait.getDisplayName())
+									.build();
+							
 							MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
 						}
 					}
@@ -202,13 +198,12 @@ public class TraitEventManager{
 	 * @param event
 	 * @return
 	 */
-	private boolean checkDisabledPerWorld(Event event) {
+	private boolean checkDisabledPerWorld(World world) {
 		List<String> worldsDisabledOn = plugin.getConfigManager().getGeneralConfig().getConfig_worldsDisabled();
 		
-		String worldName = WorldResolver.getWorldNameOfEvent(event);
-		
-		for(String world : worldsDisabledOn){
-			if(world.equalsIgnoreCase(worldName)){
+		String worldName = world == null ? "" : world.getName();
+		for(String disabledWorldName : worldsDisabledOn){
+			if(disabledWorldName.equalsIgnoreCase(worldName)){
 				return true;
 			}
 		}

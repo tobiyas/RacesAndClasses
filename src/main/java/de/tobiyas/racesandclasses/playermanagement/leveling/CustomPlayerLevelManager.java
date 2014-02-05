@@ -271,4 +271,11 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	}
 
 	
+
+	@Override
+	public boolean canRemove(int toRemove) {
+		toRemove -= getCurrentExpOfLevel();
+		return toRemove > 0;
+	}
+	
 }

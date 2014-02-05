@@ -36,14 +36,15 @@ private int schedulerTaskId = -1;
 			public void run() {
 				for(String playerName : holder.getHolderManager().getAllPlayersOfHolder(holder)){
 					Player player = Bukkit.getPlayer(playerName);
-					if(player != null 
-							&& !checkRestrictions(player, null) 
-							&& canBeTriggered(new PlayerBedEnterEvent(player, null))){
+					
+					if(player == null) return;
+					if(!checkRestrictions(player, null) || !canBeTriggered(new PlayerBedEnterEvent(player, null))) {
+						restrictionsFailed(player);
+						return;
+					}
 						
-						
-						if(tickDoneForPlayer(player)){
-							plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
-						}
+					if(tickDoneForPlayer(player)){
+						plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
 					}
 				}
 				
@@ -52,6 +53,14 @@ private int schedulerTaskId = -1;
 		}, seconds * 20, seconds * 20);
 	}
 	
+	/**
+	 * Notifies that the restrictions failed.
+	 * <br>NOTICE: To be overriden
+	 * 
+	 * @param player to check
+	 */
+	protected void restrictionsFailed(Player player) {}
+
 	/**
 	 * Is called when the Tick for the Player is on it's way.
 	 * 
@@ -69,7 +78,7 @@ private int schedulerTaskId = -1;
 
 
 	@Override
-	public String getPrettyConfiguration() {
+	protected String getPrettyConfigIntern() {
 		String reason = "Nothing";
 		if(onlyInLava){
 			reason = "in Lava";

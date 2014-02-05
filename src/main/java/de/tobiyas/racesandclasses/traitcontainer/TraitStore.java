@@ -76,7 +76,8 @@ public class TraitStore {
 		}catch(TraitNotFoundException e){
 			RacesAndClasses.getPlugin().log("Trait not found: " + e.getLocalizedMessage());
 		}catch(AnnotationFormatError e){
-			RacesAndClasses.getPlugin().log("Could not find Annotation for: " + traitName);
+			RacesAndClasses.getPlugin().log("Could not find Annotation for: " + traitName + 
+					" Error was: " + e.getLocalizedMessage());
 		}catch(TraitConfigurationFailedException exp){
 			RacesAndClasses.getPlugin().log("Coild not Construct trait: " + traitName + ". Problem was: " 
 					+ exp.getLocalizedMessage());
@@ -115,8 +116,9 @@ public class TraitStore {
 	/**
 	 * Registers a trait for Uplink and event recieving
 	 * 
-	 * @param trait
-	 * @return
+	 * @param trait to register
+	 * @return if worked or not
+	 * 
 	 * @throws AnnotationFormatError
 	 */
 	private static boolean registerTrait(Trait trait) throws AnnotationFormatError{
@@ -143,9 +145,8 @@ public class TraitStore {
 				}
 			}
 			
-			if(wantedEvents.isEmpty()){
-				throw new AnnotationFormatError("No Events wanted -> somethign is wrong");
-			}
+			//No events wanted? So don't bother them.
+			if(wantedEvents.isEmpty()) return true;
 			
 			TraitEventManager.registerTrait(trait, wantedEvents, traitPriority);
 			return true;
@@ -245,7 +246,10 @@ public class TraitStore {
 	                    		clazzArray.add((Class<Trait>) clazz);
 	                    	}
 	                    }
-	                } catch (Exception e) {
+	                } catch (Throwable e) {
+	                	RacesAndClasses.getPlugin().getDebugLogger().logError("Could not load Java Class: " 
+	                			+ element.getName() + ". In: " + jarFile.getName());
+	                	
 	                	continue;
 	                }
 	            }

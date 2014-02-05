@@ -55,8 +55,8 @@ public class DamageTicker implements Runnable{
 		this.damager = damagedBy;
 		if(damagedBy instanceof Arrow){
 			Arrow arrow = (Arrow) damagedBy;
-			if(arrow != null && arrow.getShooter() != null)
-				damager = arrow.getShooter();
+			if(arrow != null && CompatibilityModifier.Shooter.getShooter(arrow) != null)
+				damager = (Entity) CompatibilityModifier.Shooter.getShooter(arrow);
 		}
 		
 		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, 20, 20);

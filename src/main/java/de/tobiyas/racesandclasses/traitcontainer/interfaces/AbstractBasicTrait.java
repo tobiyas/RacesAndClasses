@@ -52,6 +52,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
@@ -160,6 +161,23 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected final List<Material> onlyOnBlocks = new LinkedList<Material>();
 	
+	/**
+	 * Tells the Trait can be activated while the player sneaks.
+	 */
+	protected boolean onlyWhileSneaking = false;
+	
+	/**
+	 * Tells the Trait can be activated while the player does NOT sneaks.
+	 */
+	protected boolean onlyWhileNotSneaking = false;
+	
+
+	/**
+	 * The Description of the Trait.
+	 */
+	protected String traitDiscription = "";
+	
+	
 	
 	/**
 	 * The holder of the Trait.
@@ -172,22 +190,6 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected Map<String, Object> currentConfig;
 	
-	
-	
-	@Override
-	public int getMinimumLevel() {
-		return minimumLevel;
-	}
-
-	@Override
-	public Set<Biome> getBiomeRestrictions() {
-		return biomes;
-	}
-
-	@Override
-	public int getMaximumLevel() {
-		return maximumLevel;
-	}
 
 	@Override
 	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
@@ -214,10 +216,13 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = ONLY_IN_RAIN_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_AFTER_DAMAGED_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = ONLY_AFTER_NOT_DAMAGED_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_WHILE_SNEAKING_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_WHILE_NOT_SNEAKING_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = COOLDOWN_TIME_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = ABOVE_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = BELOW_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
-		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true)
+		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = DESCRIPTION_PATH, classToExpect = String.class, optional = true),
 	})
 	
 	@Override
@@ -227,6 +232,11 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Gets the Cooldown of the Trait.
 		if(configMap.containsKey(TraitWithRestrictions.COOLDOWN_TIME_PATH)){
 			this.cooldownTime = (Integer) configMap.get(TraitWithRestrictions.COOLDOWN_TIME_PATH);
+		}
+		
+		//Description
+		if(configMap.containsKey(TraitWithRestrictions.DESCRIPTION_PATH)){
+			this.traitDiscription = (String) configMap.get(TraitWithRestrictions.DESCRIPTION_PATH);
 		}
 		
 		//Reads the min level for the trait if present
@@ -286,7 +296,10 @@ public abstract class AbstractBasicTrait implements Trait,
 				
 				for(String block : stringBlocks){
 					block = block.toUpperCase();
-					Material type = Material.valueOf(block);
+					Material type =  null;
+					try{
+						type = Material.valueOf(block);
+					}catch(IllegalArgumentException exp){}
 					
 					if(type != null){
 						onlyOnBlocks.add(type);
@@ -347,6 +360,18 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(configMap.containsKey(TraitWithRestrictions.DISPLAY_NAME_PATH)){
 			this.displayName = (String) configMap.get(TraitWithRestrictions.DISPLAY_NAME_PATH);
 		}
+		
+		//Sneaking
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_SNEAKING_PATH)){
+			this.onlyWhileSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_SNEAKING_PATH);
+		}
+		
+		//Not sneaking
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH)){
+			this.onlyWhileNotSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH);
+		}
+		
+		
 	}
 	
 
@@ -416,13 +441,13 @@ public abstract class AbstractBasicTrait implements Trait,
 		//We need to get the shooter.
 		if(event instanceof ProjectileHitEvent){
 			ProjectileHitEvent launchEvent = (ProjectileHitEvent) event;
-			LivingEntity shooter = launchEvent.getEntity().getShooter();
+			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(launchEvent.getEntity());
 			if(shooter instanceof Player) return (Player) shooter;
 		}
 		
 		if(event instanceof ProjectileLaunchEvent){
 			ProjectileLaunchEvent launchEvent = (ProjectileLaunchEvent) event;
-			LivingEntity shooter = launchEvent.getEntity().getShooter();
+			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(launchEvent.getEntity());
 			if(shooter instanceof Player) return (Player) shooter;
 		}
 		
@@ -431,7 +456,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
 			Entity damager = damageEvent.getDamager();
 			if(damager instanceof Projectile){
-				Entity shooter = ((Projectile) damager).getShooter();
+				LivingEntity shooter = CompatibilityModifier.Shooter.getShooter((Projectile) damager);
 				if(shooter != null && shooter instanceof Player){
 					return (Player) shooter;
 				}
@@ -544,6 +569,22 @@ public abstract class AbstractBasicTrait implements Trait,
 		return null;
 	}
 
+	
+	@Override
+	public final String getPrettyConfiguration() {
+		if("".equals(traitDiscription)){
+			return getPrettyConfigIntern();
+		}
+		
+		return traitDiscription;
+	}
+	
+	/**
+	 * Returns the Pretty config.
+	 * @return pretty name
+	 */
+	protected abstract String getPrettyConfigIntern();
+	
 	@Override
 	public boolean checkRestrictions(Player player, Event event) {
 		if(player == null) return true;
@@ -564,6 +605,16 @@ public abstract class AbstractBasicTrait implements Trait,
 			}
 		}
 
+		//Sneaking
+		if(onlyWhileSneaking){
+			if(!player.isSneaking()) return false;
+		}
+		
+		//Not sneaking
+		if(onlyWhileNotSneaking){
+			if(player.isSneaking()) return false;
+		}
+		
 		//check if player is on land
 		if(onlyOnLand){
 			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
@@ -668,9 +719,9 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Only check if we really need. Otherwise we would use resources we don't need
 		if(onlyOnDay || onlyInNight){
 			//Daytime check
-			int hour = (int) (player.getWorld().getTime() / 1000l);
-			boolean isDay = hour > 18 || hour < 6;
-			boolean isNight = hour > 6 && hour < 18;
+			int hour = ((int) (player.getWorld().getTime() / 1000l) + 8) % 24;
+			boolean isNight = hour > 18 || hour < 6;
+			boolean isDay = hour > 6 && hour < 18;
 			
 			//Check day
 			if(onlyOnDay && isNight && !onlyInNight){
@@ -684,16 +735,6 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		return true;
-	}
-
-	@Override
-	public boolean isOnlyInWater() {
-		return onlyInWater;
-	}
-
-	@Override
-	public boolean isOnlyOnLand() {
-		return onlyOnLand;
 	}
 	
 	@Override

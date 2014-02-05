@@ -47,9 +47,11 @@ public class GeneralConfigFields {
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
+	public static final String general_disable_commands = "general_disable_commands";
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
+	public static final String gui_disableAllChatBars = "gui_disableAllChatBars";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 
 	

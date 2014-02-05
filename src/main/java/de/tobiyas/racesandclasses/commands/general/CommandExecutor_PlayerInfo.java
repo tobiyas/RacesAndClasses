@@ -18,10 +18,14 @@ private RacesAndClasses plugin;
 	
 	public CommandExecutor_PlayerInfo(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "playerinfo";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("playerinfo").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /playerinfo.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

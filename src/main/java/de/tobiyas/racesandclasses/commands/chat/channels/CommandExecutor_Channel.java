@@ -22,10 +22,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	
 	public CommandExecutor_Channel(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "channel";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("channel").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /channel.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 		
 		plugin.getTutorialManager().registerObserver(this);

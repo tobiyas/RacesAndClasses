@@ -14,10 +14,14 @@ public class CommandExecutor_SaveNow implements CommandExecutor{
 	
 	public CommandExecutor_SaveNow(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racsave";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racsave").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racsave.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

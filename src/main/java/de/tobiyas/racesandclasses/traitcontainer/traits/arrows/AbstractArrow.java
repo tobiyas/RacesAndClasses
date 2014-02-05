@@ -7,8 +7,8 @@ import java.util.concurrent.Callable;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -26,6 +26,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolder
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 
 public abstract class AbstractArrow extends AbstractBasicTrait {
@@ -74,12 +75,12 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		if(event instanceof ProjectileHitEvent){
 			ProjectileHitEvent Eevent = (ProjectileHitEvent) event;
 			if(Eevent.getEntityType() != EntityType.ARROW) return false;
-			if(Eevent.getEntity().getShooter() == null) return false;
+			if(CompatibilityModifier.Shooter.getShooter(Eevent.getEntity()) == null) return false;
 			
 			Arrow arrow = (Arrow) Eevent.getEntity();
-			if(arrow.getShooter().getType() != EntityType.PLAYER) return false;
+			if(CompatibilityModifier.Shooter.getShooter(arrow).getType() != EntityType.PLAYER) return false;
 			
-			Player player = (Player) arrow.getShooter();
+			Player player = (Player) CompatibilityModifier.Shooter.getShooter(arrow);
 			if(!TraitHolderCombinder.checkContainer(player.getName(), this)) return false;
 
 			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
@@ -106,10 +107,10 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			if(Eevent.getDamager().getType() != EntityType.ARROW) return false;
 			
 			Arrow realArrow = (Arrow) Eevent.getDamager();
-			Entity shooter = realArrow.getShooter();
+			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(realArrow);
 			
 			if(shooter == null || realArrow == null || realArrow.isDead()) return false;
-			if(shooter.getType() != EntityType.PLAYER) return false;
+			if(((org.bukkit.entity.LivingEntity)shooter).getType() != EntityType.PLAYER) return false;
 			
 			if(Eevent.getEntity() == shooter && realArrow.getTicksLived() < 10)
 				return false;

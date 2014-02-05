@@ -25,10 +25,14 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 	
 	public CommandExecutor_RaceHeal(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "raceheal";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("raceheal").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /raceheal.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	

@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
-import de.tobiyas.racesandclasses.eventprocessing.worldresolver.WorldResolver;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.util.items.ItemUtils;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;

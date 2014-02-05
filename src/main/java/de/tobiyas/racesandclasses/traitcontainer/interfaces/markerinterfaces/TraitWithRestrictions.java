@@ -1,8 +1,5 @@
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
-import java.util.Set;
-
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -77,6 +74,16 @@ public interface TraitWithRestrictions {
 	 * Trait only trigger when gotten damaged.
 	 */
 	public static final String ONLY_AFTER_NOT_DAMAGED_PATH = "onlyAfterNotDamaged";
+
+	/**
+	 * Trait only trigger when gotten damaged.
+	 */
+	public static final String ONLY_WHILE_SNEAKING_PATH = "onlyWhileSneaking";
+	
+	/**
+	 * Trait only trigger when gotten damaged.
+	 */
+	public static final String ONLY_WHILE_NOT_SNEAKING_PATH = "onlyWhileNotSneaking";
 	
 	/**
 	 * Trait only when standing on a certain block.
@@ -98,46 +105,12 @@ public interface TraitWithRestrictions {
 	 */
 	public static final String DISPLAY_NAME_PATH = "displayName";
 	
-	
-	
 	/**
-	 * Returns the minimum Level required with the 
-	 * 
-	 * @return
+	 * The Path to the Description Name
 	 */
-	public int getMinimumLevel();
+	public static final String DESCRIPTION_PATH = "description";
 	
 	
-	/**
-	 * Returns the maximum level this trait can be used with.
-	 * 
-	 * @return
-	 */
-	public int getMaximumLevel();
-	
-	
-	/**
-	 * Returns all Biomes the Trait can be used on.
-	 * 
-	 * @return the Biomes to be used on
-	 */
-	public Set<Biome> getBiomeRestrictions();
-
-
-	/**
-	 * Returns if the Trait only triggers in the water
-	 * 
-	 * @return true if works only in water
-	 */
-	public boolean isOnlyInWater();
-
-	
-	/**
-	 * Returns if the Trait only triggers on land
-	 * 
-	 * @return true if works only on land
-	 */
-	public boolean isOnlyOnLand();
 
 	/**
 	 * Checks the Restrictions of the Trait

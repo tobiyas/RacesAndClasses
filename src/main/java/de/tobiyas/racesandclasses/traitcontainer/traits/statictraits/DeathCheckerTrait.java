@@ -69,7 +69,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 
 
 	@Override
-	public String getPrettyConfiguration() {
+	protected String getPrettyConfigIntern() {
 		return "";
 	}
 

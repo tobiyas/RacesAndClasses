@@ -23,10 +23,14 @@ public class CommandExecutor_Edit implements CommandExecutor {
 	
 	public CommandExecutor_Edit() {
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racedit";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racedit").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racedit.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

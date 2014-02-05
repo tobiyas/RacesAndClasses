@@ -15,12 +15,16 @@ public class CommandExecutor_Whisper implements CommandExecutor {
 	
 	private RacesAndClasses plugin;
 	
-	public CommandExecutor_Whisper(){
+	public CommandExecutor_Whisper(){		
 		plugin = RacesAndClasses.getPlugin();
+	
+		String command = "whisper";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("whisper").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /whisper.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

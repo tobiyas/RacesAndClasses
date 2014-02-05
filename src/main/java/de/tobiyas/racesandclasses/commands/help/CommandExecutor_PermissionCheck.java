@@ -23,10 +23,14 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	 */
 	public CommandExecutor_PermissionCheck() {
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "racpermcheck";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("racpermcheck").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /racpermcheck.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 

@@ -74,6 +74,8 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	//Uplink for Class change command
 	private int config_classChangeCommandUplink;
 	
+	private List<String> config_general_disable_commands;
+	
 	private boolean config_useClassGUIToSelect;
 	private boolean config_useRaceGUIToSelect;
 	
@@ -106,6 +108,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	
 	private boolean config_disableArmorChecking;
 	
+	private boolean config_disableAllChatBars;
 	
 	/**
 	 * Inits the Config system.
@@ -176,8 +179,10 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, true);
+		config.addDefault(general_disable_commands, new LinkedList<String>());
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
+		config.addDefault(gui_disableAllChatBars, false);		
 		config.addDefault(gui_also_use_leftclick_in_guis, false);
 		
 		config.addDefault(races_gui_enable, true);
@@ -273,10 +278,13 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config_useRaCInbuildLevelSystem = config.getBoolean(level_useRaCInbuildLevelSystem, true);
 		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
+		config_general_disable_commands = config.getStringList(general_disable_commands);
 		
 		config_disableHealthMods = config.getBoolean(disable_health_modifications, false);
 		
 		config_useAutoUpdater = config.getBoolean(updater_enableAutoUpdates, false);
+		
+		config_disableAllChatBars = config.getBoolean(gui_disableAllChatBars, false);
 		
 		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
@@ -495,4 +503,12 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		return config_disableHealthMods;
 	}
 
+	public boolean isConfig_disableAllChatBars() {
+		return config_disableAllChatBars;
+	}
+
+	public List<String> getConfig_general_disable_commands() {
+		return config_general_disable_commands;
+	}
+	
 }

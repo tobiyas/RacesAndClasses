@@ -32,7 +32,7 @@ public class InvisibleTrait extends AbstractBasicTrait{
 	}
 
 	@Override
-	public String getPrettyConfiguration() {
+	protected String getPrettyConfigIntern() {
 		return "Nothing";
 	}
 

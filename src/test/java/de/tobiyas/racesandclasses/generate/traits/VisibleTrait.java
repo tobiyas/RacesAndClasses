@@ -31,7 +31,7 @@ public class VisibleTrait extends AbstractBasicTrait{
 	}
 
 	@Override
-	public String getPrettyConfiguration() {
+	protected String getPrettyConfigIntern() {
 		return "Nothing";
 	}
 

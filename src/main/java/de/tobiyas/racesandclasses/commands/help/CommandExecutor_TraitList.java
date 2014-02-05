@@ -16,10 +16,14 @@ public class CommandExecutor_TraitList implements CommandExecutor {
 
 	public CommandExecutor_TraitList(){
 		plugin = RacesAndClasses.getPlugin();
+
+		String command = "traitlist";
+		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+		
 		try{
-			plugin.getCommand("traitlist").setExecutor(this);
+			plugin.getCommand(command).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /traitlist.");
+			plugin.log("ERROR: Could not register command /" + command + ".");
 		}
 	}
 	
