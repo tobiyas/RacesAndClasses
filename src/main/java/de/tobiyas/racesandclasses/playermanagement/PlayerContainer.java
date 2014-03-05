@@ -1,6 +1,19 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
-
-import java.io.File;
 
 import javax.persistence.PersistenceException;
 
@@ -249,10 +262,27 @@ public class PlayerContainer {
 	 * @return the container corresponding to the player.
 	 */
 	public static PlayerContainer constructContainerFromYML(String player){
-		YAMLConfigExtended config = new YAMLConfigExtended(RacesAndClasses.getPlugin().getDataFolder() + File.separator + "PlayerData" + File.separator + "playerdata.yml");
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		config.load();
 		
-		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
+		
+		//set race when not set yet.
+		String savedRace = config.getString("playerdata." + player + ".race", null);
+		boolean raceEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
+		if(raceEnabled && savedRace != null && !savedRace.equals("") 
+				&& plugin.getRaceManager().getHolderOfPlayer(player) == plugin.getRaceManager().getDefaultHolder()){
+			plugin.getRaceManager().changePlayerHolder(player, savedRace, false);
+		}
+
+		
+		//set class when not set
+		String savedClass = config.getString("playerdata." + player + ".class", null);
+		boolean classEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable();
+		if(classEnabled && savedClass != null && !savedClass.equals("") 
+				&& plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder()){
+			plugin.getClassManager().changePlayerHolder(player, savedClass, false);
+		}
+		
 		
 		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
@@ -267,6 +297,7 @@ public class PlayerContainer {
 		}
 			
 		PlayerContainer container = new PlayerContainer(player, maxHealth).checkStats();
+		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
 		if(hasGod){
 			container.switchGod();
 		}

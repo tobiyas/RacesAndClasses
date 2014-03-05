@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
@@ -23,6 +38,7 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFac
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.ByPassWorldDisabledCheck;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.BypassHolderCheck;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
@@ -91,7 +107,7 @@ public class TraitEventManager{
 		
 		boolean disabledOnWorld = checkDisabledPerWorld(eventWrapper.getWorld());
 		
-		HashSet<Trait> traitsToCheck = new HashSet<Trait>();
+		Set<Trait> traitsToCheck = new HashSet<Trait>();
 		for(Class<?> clazz : traitList.keySet()){
 			if(clazz.isAssignableFrom(event.getClass())){
 				traitsToCheck.addAll(traitList.get(clazz));
@@ -129,7 +145,7 @@ public class TraitEventManager{
 				}
 				
 				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent){
-					//only let the current magic spell continue for interaction events.;
+					//only let the current magic spell continue for interaction events
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell() != magicTrait){
 						continue;
@@ -138,30 +154,31 @@ public class TraitEventManager{
 				
 				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions){
-					if(!((TraitWithRestrictions) trait).checkRestrictions(player, event)) continue;
+					if(!((TraitWithRestrictions) trait).checkRestrictions(eventWrapper)) continue;
 				}
 				
 				//Trait is not interested in the event
-				if(!trait.canBeTriggered(event)){
+				if(!trait.canBeTriggered(eventWrapper)){
 					continue;
 				}
 					
 				if(trait instanceof MagicSpellTrait){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).canCastSpell(magicTrait)){
-						magicTrait.triggerButDoesNotHaveEnoghCostType(player, event);
+						magicTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
 						continue;
 					}
 				}
 				
 				plugin.getStatistics().traitTriggered(trait); //Statistic gathering
-				if(trait.trigger(event)){
+				TraitResults result =  trait.trigger(event);
+				if(result.isTriggered()){
 					changedSomething = true;
 					
-					if(trait instanceof TraitWithRestrictions && player != null){
+					if(trait instanceof TraitWithRestrictions && player != null && result.isSetCooldownOnPositiveTrigger()){
 						TraitWithRestrictions restrictionTrait = (TraitWithRestrictions) trait;
 						String playerName = player.getName();
-						String cooldownName = "trait." + trait.getName();
+						String cooldownName = "trait." + trait.getDisplayName();
 						
 						int uplinkTraitTime = restrictionTrait.getMaxUplinkTime();
 						if(uplinkTraitTime > 0){

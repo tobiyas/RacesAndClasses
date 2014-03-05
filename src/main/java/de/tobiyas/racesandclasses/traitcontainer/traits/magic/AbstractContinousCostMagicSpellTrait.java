@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.magic;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_spell_activated;
@@ -10,6 +25,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ContinousCostMagicTrait;
@@ -47,23 +65,25 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 
 	@Override
 	public final boolean activate(final Player player) {
+		if(player == null) return false;
 		if(isActivated(player)) return false;
 		if(!activateIntern(player)) return false;
 		
 		int tickDuration = everyXSeconds <= 0 ? durationInSeconds : everyXSeconds;
+		tick(player, true, true);
 		
 		int bukkitID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run() {
-				if(!tick(player, true)){
+				if(!tick(player, true, false)){
 					deactivate(player);
 					return;
 				}
 			}
-		}, tickDuration * 20, tickDuration * 20);			
+		}, tickDuration * 20, tickDuration * 20);
 		
 		
-		LanguageAPI.sendTranslatedMessage(player, magic_spell_activated, "%TRAIT_NAME%", this.getDisplayName());
+		LanguageAPI.sendTranslatedMessage(player, magic_spell_activated, "trait_name", this.getDisplayName());
 		activePlayersSchedulerMap.put(player.getName(), bukkitID);
 		return true;
 	}
@@ -79,6 +99,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	
 	@Override
 	public final boolean deactivate(Player player) {
+		if(player == null) return false;
 		if(!isActivated(player)) return false;
 		if(!deactivateIntern(player)) return false;
 		
@@ -86,7 +107,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		Bukkit.getScheduler().cancelTask(schedulerID);
 		
 		activePlayersSchedulerMap.remove(player.getName());
-		LanguageAPI.sendTranslatedMessage(player, magic_spell_deactivated, "%TRAIT_NAME%", this.getDisplayName());
+		LanguageAPI.sendTranslatedMessage(player, magic_spell_deactivated, "trait_name", this.getDisplayName());
 		return true;
 	}
 
@@ -103,22 +124,51 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	
 	@Override
 	public final boolean isActivated(Player player) {
+		if(player == null) return false;
 		return activePlayersSchedulerMap.containsKey(player.getName());
 	}
 
 	@Override
-	protected final boolean magicSpellTriggered(Player player) {
+	protected final void magicSpellTriggered(Player player, TraitResults result) {
 		if(everyXSeconds < 1){
-			return activate(player);
+			result.setRemoveCostsAfterTrigger(activate(player));
+			return;
 		}
 		
 		if(isActivated(player)){
-			return deactivate(player);
+			deactivate(player);
+			result.setRemoveCostsAfterTrigger(false).setTriggered(true).setSetCooldownOnPositiveTrigger(true);
+			return;
 		}else{
-			return activate(player);
+			activate(player);
+			result.setRemoveCostsAfterTrigger(true).setTriggered(true).setSetCooldownOnPositiveTrigger(false);
+			return;
 		}
 	}
 	
+	
+	
+	
+	@Override
+	public boolean triggerButHasUplink(EventWrapper wrapper) {
+		if(wrapper.getPlayerAction() == PlayerAction.CAST_SPELL && isActivated(wrapper.getPlayer())){
+			deactivate(wrapper.getPlayer());
+			return true;
+		}
+		
+		return super.triggerButHasUplink(wrapper);
+	}
+
+	@Override
+	public void triggerButDoesNotHaveEnoghCostType(EventWrapper wrapper) {
+		if(wrapper.getPlayerAction() == PlayerAction.CAST_SPELL && isActivated(wrapper.getPlayer())){
+			deactivate(wrapper.getPlayer());
+			return;
+		}
+		
+		super.triggerButDoesNotHaveEnoghCostType(wrapper);
+	}
+
 	/**
 	 * Ticks the Player.
 	 * <br>CHECKS costs and returns false if ticking should stop!
@@ -127,8 +177,11 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	 * 
 	 * @return if worked or not.
 	 */
-	protected final boolean tick(Player player, boolean checkRemoveCost){
-		if(everyXSeconds <= 0) return false;
+	protected final boolean tick(Player player, boolean checkRemoveCost, boolean bypassEverySecondCheck){
+		if(!bypassEverySecondCheck && everyXSeconds <= 0){
+			setCooldownIfNeeded(player);
+			return false;
+		}
 		
 		String playerName = player.getName();
 		if(checkRemoveCost && !plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).canCastSpell(this)){

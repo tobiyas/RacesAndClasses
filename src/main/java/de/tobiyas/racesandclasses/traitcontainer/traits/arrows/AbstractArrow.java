@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.arrows;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.arrow_change;
@@ -23,7 +38,10 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
@@ -40,7 +58,8 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	
 	
 	@Override
-	public boolean canBeTriggered(Event event){
+	public boolean canBeTriggered(EventWrapper wrapper){
+		Event event = wrapper.getEvent();
 		if(!(event instanceof PlayerInteractEvent || 
 				event instanceof EntityShootBowEvent || 
 				event instanceof ProjectileHitEvent ||
@@ -158,12 +177,13 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	private static final String ARROW_META_KEY = "arrowType";
 	
 	@Override	
-	public boolean trigger(Event event) {
+	public TraitResults trigger(Event event) {
+		TraitResults result = new TraitResults();
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){
 			PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 			changeArrowType(Eevent.getPlayer());
-			return false;
+			return result.setTriggered(false);
 		}
 			
 		//Projectile launch
@@ -179,14 +199,14 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 				}
 			}));
 			
-			return onShoot(Eevent);
+			return result.setTriggered(onShoot(Eevent));
 		}
 		
 		//Arrow Hit Location
 		if(event instanceof ProjectileHitEvent){
 			ProjectileHitEvent Eevent = (ProjectileHitEvent) event;
 			boolean change = onHitLocation(Eevent);
-			return change;
+			return result.setTriggered(change);
 		}
 		
 		//Arrow Hits target
@@ -194,10 +214,10 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 			boolean change = onHitEntity(Eevent);
 			Eevent.getDamager().remove();
-			return change;
+			return result.setTriggered(change);
 		}
 		
-		return false;
+		return result.setTriggered(false);
 	}
 	
 	/**
@@ -272,17 +292,18 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	}
 
 	@Override
-	public boolean triggerButHasUplink(Event event) {
-		if(event instanceof PlayerInteractEvent){
-			changeArrowType(((PlayerInteractEvent) event).getPlayer());
+	public boolean triggerButHasUplink(EventWrapper wrapper) {
+		if(wrapper.getPlayerAction() == PlayerAction.INTERACT_BLOCK 
+				|| wrapper.getPlayerAction() == PlayerAction.INTERACT_BLOCK){
+			changeArrowType(wrapper.getPlayer());
 			return true;
 		}
 		
-		if(event instanceof ProjectileHitEvent){
+		if(wrapper.getEvent() instanceof ProjectileHitEvent){
 			return true;
 		}
 		
-		if(event instanceof EntityDamageByEntityEvent){
+		if(wrapper.getPlayerAction() == PlayerAction.DO_DAMAGE){
 			return true;
 		}
 		

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.global;
 
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -37,6 +52,11 @@ public class GeneralConfigText {
 			+ "# boolean: true or false \n"
 			+ "# default: true \n"
 			+ chat_channel_enable + ": true\n\n"
+						
+			+ "# Disables the channel join / leave messages. \n"
+			+ "# boolean: true or false \n"
+			+ "# default: false \n"
+			+ chat_disable_channel_join_leave_messages + ": false\n\n"
 			
 			//Health
 			+ "\n"
@@ -173,6 +193,12 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: true \n"
 			+ general_saving_savePlayerDataToDB + ": true\n\n"
+			
+			+ "# This tells the plugin to look at conversion at startup.. \n"
+			+ "# If turned to false, no conversion of playerdata will be done on startup!\n"
+			+ "# boolean: true or false\n"
+			+ "# default: true \n"
+			+ general_convert_database_on_startup + ": true\n\n"
 			
 			+ "# This tells the Plugin to NOT check the Armor if turned off. \n"
 			+ "# If turned to true, the armor Checking of Races / Classes is Disabled.\n"

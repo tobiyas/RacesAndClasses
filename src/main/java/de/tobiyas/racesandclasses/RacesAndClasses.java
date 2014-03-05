@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 /*
  * Races - by tobiyas
  * http://
@@ -81,6 +96,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.permissions.VaultHook;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.metrics.SendMetrics;
@@ -196,6 +212,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		try{
 			plugin = this;
 			
+			VaultHook.init(this);
+			
 			description = getDescription();
 			prefix = "[" + description.getName() + "] ";
 			
@@ -203,6 +221,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			getDebugLogger().setAlsoToPlugin(true);
 			
 			checkIfCBVersionGreaterRequired();
+			VaultHook.getHook(); //try vault hooking.
 						
 			fullReload(false, false);
 			
@@ -236,7 +255,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		long currentTime = System.currentTimeMillis();
 		
 		setupConfiguration();
-		YAMLPeristanceSaver.start(true); //TODO check async
+		YAMLPeristanceSaver.start(true);
 		
 		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -373,6 +392,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	public void onDisable(){
 		if(!errored){
 			shutDownSequenz(false);
+			VaultHook.shutdown();
 		}
 		
 		plugin = null;

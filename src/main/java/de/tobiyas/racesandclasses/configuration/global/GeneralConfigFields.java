@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.global;
 
 public class GeneralConfigFields {
@@ -8,6 +23,7 @@ public class GeneralConfigFields {
 	public static final String chat_whisper_enable = "chat_whisper_enable";
 	public static final String chat_race_encryptForOthers = "chat_race_encryptForOthers";
 	public static final String chat_channel_enable = "chat_channel_enable";
+	public static final String chat_disable_channel_join_leave_messages = "chat_disable_channel_join_leave_messages";
 		
 
 	//Health
@@ -46,6 +62,7 @@ public class GeneralConfigFields {
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
+	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	public static final String general_disable_commands = "general_disable_commands";
 	

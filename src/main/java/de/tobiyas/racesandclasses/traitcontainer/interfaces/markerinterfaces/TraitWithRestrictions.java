@@ -1,7 +1,21 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 
 public interface TraitWithRestrictions {
 
@@ -116,12 +130,11 @@ public interface TraitWithRestrictions {
 	 * Checks the Restrictions of the Trait
 	 * for a player passed.
 	 * 
-	 * @param player to check
-	 * @param event that called the trigger
+	 * @param wrapper The wrapper for the Event that accumulates all Information
 	 * 
 	 * @return true if restrictions met, false otherwise
 	 */
-	public boolean checkRestrictions(Player player, Event event);
+	public boolean checkRestrictions(EventWrapper wrapper);
 	
 	/**
 	 * Returns the total uplink time in seconds
@@ -136,17 +149,20 @@ public interface TraitWithRestrictions {
 	 * But would be triggered.
 	 * <br> Returning TRUE does NOT paste the Uplink message!
 	 * 
-	 * @param event the event that would be triggered
+	 * @param wrapper The wrapper for the Event that accumulates all Information
+	 * 
 	 * @return true to NOT display uplink message!
 	 */
-	public boolean triggerButHasUplink(Event event);
+	public boolean triggerButHasUplink(EventWrapper wrapper);
 	
 	
 	/**
 	 * Returns if the Trait should notify it's user everytime on trigger for the Uplink.
 	 * 
+	 * @param wrapper The wrapper for the Event that accumulates all Information
+	 * 
 	 * @return true if should, false if not.
 	 */
-	public boolean notifyTriggeredUplinkTime();
+	public boolean notifyTriggeredUplinkTime(EventWrapper wrapper);
 	
 }

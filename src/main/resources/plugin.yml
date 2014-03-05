@@ -3,7 +3,7 @@ main: de.tobiyas.racesandclasses.RacesAndClasses
 version: 1.0.3
 website: http://dev.bukkit.org/bukkit-mods/racesandclasses/
 author: tobiyas
-softdepends: [Vault]
+loadbefore: [Vault]
 description: >
              Races and Classes for Players
 commands:

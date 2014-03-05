@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.resistance;
 
 import java.util.List;
@@ -11,7 +26,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ResistanceInterface;
@@ -59,12 +77,13 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	}
 
 	@Override
-	public boolean trigger(Event event) {
-		if(!(event instanceof EntityDamageEvent)) return false;
+	public TraitResults trigger(Event event) {
+		TraitResults result = new TraitResults();
+		if(!(event instanceof EntityDamageEvent)) return result.setTriggered(false);
 		EntityDamageEvent Eevent = (EntityDamageEvent) event;
 		
 		Entity entity = Eevent.getEntity();
-		if(!(entity instanceof Player)) return false;
+		if(!(entity instanceof Player)) return result.setTriggered(false);
 		Player player = (Player) entity;
 		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
@@ -73,7 +92,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 				if(instantCancle()){
 					CompatibilityModifier.EntityDamage.safeSetDamage(0, Eevent);
 					Eevent.setCancelled(true);
-					return true;
+					return result;
 				}
 				
 				double oldDmg = CompatibilityModifier.EntityDamage.safeGetDamage(Eevent);
@@ -81,11 +100,11 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 				
 				CompatibilityModifier.EntityDamage.safeSetDamage(newDmg, Eevent);
 				
-				return true;
+				return result;
 			}
 		}
 		
-		return false;
+		return result.setTriggered(false);
 	}
 	
 	/**
@@ -110,17 +129,13 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	}
 
 	@Override
-	public boolean canBeTriggered(Event event) {
-		if(!(event instanceof EntityDamageEvent)) return false;
-		EntityDamageEvent Eevent = (EntityDamageEvent) event;
-		
-		Entity entity = Eevent.getEntity();
-		if(!(entity instanceof Player)) return false;
-		Player player = (Player) entity;
-		if(TraitHolderCombinder.checkContainer(player.getName(), this)){
-			if(getResistanceTypes().contains(Eevent.getCause())){
-				return true;
-			}
+	public boolean canBeTriggered(EventWrapper wrapper) {
+		PlayerAction action = wrapper.getPlayerAction();
+		if(action != PlayerAction.TAKE_DAMAGE) return false;
+
+		DamageCause cause = wrapper.getDamageCause();
+		if(getResistanceTypes().contains(cause)){
+			return true;
 		}
 		
 		return false;

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 /*
  * Races - by tobiyas
  * http://
@@ -8,7 +23,56 @@
  package de.tobiyas.racesandclasses.configuration.global;
 
  
- import java.util.Arrays;
+ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_channel_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_disable_channel_join_leave_messages;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_race_encryptForOthers;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_whisper_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_cancleGUIExitWhenNoClassPresent_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_change_uplinkInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_gui_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_permissions_usePermissionsForEachClasses;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_takeClassWhenNoClass;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_useRaceClassSelectionMatrix;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_errorUpload;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disable_health_modifications;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_armor_disableArmorChecking;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_convert_database_on_startup;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_copyDefaultTraitsOnStartup;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_commands;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_saving_savePlayerDataToDB;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_also_use_leftclick_in_guis;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_disableAllChatBars;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_disableAllOutputs;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_bar_inChat_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_defaultHealth;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useRaCInbuildLevelSystem;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_change_uplinkInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_name;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_tag;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_display_adaptListName;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_drops_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_gui_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_permissions_usePermissionsForEachRace;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_interval;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_takeRaceWhenNoRace;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.tutorials_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.updater_enableAutoUpdates;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.worlds_disableOn;
+
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +82,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 
  
  public class GeneralConfig{
@@ -59,6 +122,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	private boolean config_copyDefaultTraitsOnStartup;
 	
 	private boolean config_useRaceClassSelectionMatrix;
+	private boolean config_convertDatabaseOnStartup;
 
 	//language to use
 	private String config_usedLanguage;
@@ -109,6 +173,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 	private boolean config_disableArmorChecking;
 	
 	private boolean config_disableAllChatBars;
+	private boolean config_disableChatJoinLeaveMessages;
 	
 	/**
 	 * Inits the Config system.
@@ -136,6 +201,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config.addDefault(chat_whisper_enable, true);
 		config.addDefault(chat_race_encryptForOthers, false);
 		config.addDefault(chat_channel_enable, true);
+		config.addDefault(chat_disable_channel_join_leave_messages, false);
 		
 		config.addDefault(health_defaultHealth, 20);
 		config.addDefault(health_bar_inChat_enable, true);
@@ -179,6 +245,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, true);
+		config.addDefault(general_convert_database_on_startup, true);
 		config.addDefault(general_disable_commands, new LinkedList<String>());
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
@@ -209,6 +276,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 		config_channels_enable = config.getBoolean(chat_channel_enable, true);
 		config_racechat_encrypt = config.getBoolean(chat_race_encryptForOthers, false);		
+		config_disableChatJoinLeaveMessages = config.getBoolean(chat_disable_channel_join_leave_messages, false);
 		
 		config_whisper_enable = config.getBoolean(chat_whisper_enable, true);
 		
@@ -218,6 +286,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 		config_enableErrorUpload = config.getBoolean(debug_outputs_errorUpload, true);
 		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, false);
 		config_disableAllScoreboardOutputs = config.getBoolean(gui_scoreboard_disableAllOutputs, false);
+		config_convertDatabaseOnStartup = config.getBoolean(general_convert_database_on_startup, true);
 		
 		config_classes_enable = config.getBoolean(classes_enable, true);
 		config_metrics_enabled = config.getBoolean(metrics_enable, true);
@@ -509,6 +578,14 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 
 	public List<String> getConfig_general_disable_commands() {
 		return config_general_disable_commands;
+	}
+
+	public boolean isConfig_disableChatJoinLeaveMessages() {
+		return config_disableChatJoinLeaveMessages;
+	}
+
+	public boolean isConfig_convertDatabaseOnStartup() {
+		return config_convertDatabaseOnStartup;
 	}
 	
 }

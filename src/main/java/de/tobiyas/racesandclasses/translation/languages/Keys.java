@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.translation.languages;
 
 public class Keys {
@@ -54,6 +69,7 @@ public class Keys {
 	
 	//m
 	public static final String magic_change_spells = "magic_change_spells";
+	public static final String magic_chaneling_failed = "magic_chaneling_failed";
 	public static final String magic_dont_have_enough = "magic_dont_have_enough";
 	public static final String magic_no_spells = "magic_no_spells";
 	public static final String magic_spell_activated = "magic_spell_activated";
@@ -121,6 +137,7 @@ public class Keys {
 
 	//traits
 	public static final String trait_backstab_success = "trait_backstab_success";
+	public static final String trait_bash_success = "trait_bash_success";
 	public static final String trait_consume_success = "trait_consume_success";
 	public static final String trait_dodged = "trait_dodged";
 	public static final String trait_fly_toggle = "trait_fly_toggle";

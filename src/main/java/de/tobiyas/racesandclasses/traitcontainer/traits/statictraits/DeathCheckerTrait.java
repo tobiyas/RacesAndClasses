@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
 import java.util.HashMap;
@@ -17,8 +32,10 @@ import org.bukkit.metadata.LazyMetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
@@ -81,7 +98,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	
 
 	@Override
-	public boolean checkRestrictions(Player player, Event event) {
+	public boolean checkRestrictions(EventWrapper wrapper) {
 		return true;
 	}
 
@@ -92,7 +109,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	private final static String SPAWNER_KEY = "spawner_spawned";
 
 	@Override
-	public boolean trigger(Event event) {
+	public TraitResults trigger(Event event) {
 		if(event instanceof CreatureSpawnEvent){
 			if(((CreatureSpawnEvent) event).getSpawnReason() == SpawnReason.SPAWNER){
 				((CreatureSpawnEvent) event).getEntity().setMetadata(SPAWNER_KEY, new LazyMetadataValue(plugin, new Callable<Object>() {
@@ -103,19 +120,19 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 					}
 				}));
 				
-				return true;
+				return TraitResults.True();
 			}
 			
-			return false;
+			return TraitResults.False();
 		}
 		
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_expDropBonus()) return false;
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_expDropBonus()) return TraitResults.False();
 		
-		if(!(event instanceof EntityDeathEvent)) return false;
+		if(!(event instanceof EntityDeathEvent)) return TraitResults.False();
 		EntityDeathEvent Eevent = (EntityDeathEvent) event;
 		
 		LivingEntity entity = Eevent.getEntity();
-		if(entity == null || entity instanceof Player) return false;
+		if(entity == null || entity instanceof Player) return TraitResults.False();
 		
 		int exp = Eevent.getDroppedExp();
 		List<ItemStack> items = Eevent.getDrops();
@@ -123,7 +140,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		Eevent.setDroppedExp(modifyEXP(exp, entity));
 		modifyItems(items, entity);
 		
-		if(Eevent.getEntity().getMetadata(SPAWNER_KEY).isEmpty()) return false;
+		if(Eevent.getEntity().getMetadata(SPAWNER_KEY).isEmpty()) return TraitResults.False();
 		Player killer = entity.getKiller();
 		if(killer != null){
 			int expForLevel = (int) (Eevent.getDroppedExp() / 10d);
@@ -132,7 +149,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 			manager.addExp(expForLevel);
 		}
 		
-		return true;
+		return TraitResults.True();
 	}
 	
 	private int modifyEXP(int exp, LivingEntity entity){
@@ -162,7 +179,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	}
 
 	@Override
-	public boolean canBeTriggered(Event event) {
+	public boolean canBeTriggered(EventWrapper wrapper) {
 		return true;
 	}
 

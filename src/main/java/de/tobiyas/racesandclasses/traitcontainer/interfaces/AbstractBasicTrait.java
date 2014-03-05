@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
@@ -42,6 +57,7 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
@@ -369,9 +385,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Not sneaking
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH)){
 			this.onlyWhileNotSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH);
-		}
-		
-		
+		}		
 	}
 	
 
@@ -586,7 +600,8 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected abstract String getPrettyConfigIntern();
 	
 	@Override
-	public boolean checkRestrictions(Player player, Event event) {
+	public boolean checkRestrictions(EventWrapper wrapper) {
+		Player player = wrapper.getPlayer();
 		if(player == null) return true;
 		
 		String playerName = player.getName();
@@ -701,12 +716,12 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check cooldown
-		String cooldownName = "trait." + getName();
+		String cooldownName = "trait." + getDisplayName();
 		int playerUplinkTime = plugin.getCooldownManager().stillHasCooldown(playerName, cooldownName);
 		
 		if(playerUplinkTime > 0){
-			if(!triggerButHasUplink(event)){
-				if(notifyTriggeredUplinkTime()){
+			if(!triggerButHasUplink(wrapper)){
+				if(notifyTriggeredUplinkTime(wrapper)){
 					LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
 							"seconds", String.valueOf(playerUplinkTime),
 							"name", getDisplayName());
@@ -748,7 +763,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 
 	@Override
-	public boolean triggerButHasUplink(Event event) {
+	public boolean triggerButHasUplink(EventWrapper wrapper) {
 		return false;
 	}
 	
@@ -762,7 +777,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * Can and should be overriden.
 	 */
 	@Override
-	public boolean notifyTriggeredUplinkTime() {
+	public boolean notifyTriggeredUplinkTime(EventWrapper wrapper) {
 		return true;
 	}
 

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
 import org.bukkit.Bukkit;
@@ -24,7 +39,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.projectiles.ProjectileSource;
 
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
@@ -75,6 +89,8 @@ public class EventPlayerResolver {
 		if(event instanceof EntityDamageByEntityEvent){
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
 			Entity damager = damageEvent.getDamager();
+			if(damager instanceof Player) return (Player) damager;
+			
 			if(damager instanceof Projectile){
 				LivingEntity shooter = CompatibilityModifier.Shooter.getShooter((Projectile) damager);
 				if(shooter != null && shooter instanceof Player){
@@ -168,8 +184,22 @@ public class EventPlayerResolver {
 			return null; //This can not be interesting for a Trait.
 		}
 		
-		
-		
 		return null;
+	}
+	
+	public static boolean isArrowInvolved(Event event) {
+		//check if any projectile
+		if(event instanceof EntityDamageByEntityEvent){
+			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
+			Entity damager = damageEvent.getDamager();
+			if(damager instanceof Projectile){
+				LivingEntity shooter = CompatibilityModifier.Shooter.getShooter((Projectile) damager);
+				if(shooter != null && shooter instanceof Player){
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

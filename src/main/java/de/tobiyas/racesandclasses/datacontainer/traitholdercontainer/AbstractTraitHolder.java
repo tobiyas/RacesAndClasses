@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2014 Tobias Welther
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
 import static de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser.configureTraitFromYAML;
@@ -9,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
@@ -44,6 +60,11 @@ public abstract class AbstractTraitHolder {
 	 * The armor permissions of the Holder
 	 */
 	protected boolean[] armorUsage;
+
+	/**
+	 * The Material of the Holder to select
+	 */
+	protected ItemStack holderSelectionItem;
 	
 	/**
 	 * A set of Traits that the holder contains
@@ -71,6 +92,7 @@ public abstract class AbstractTraitHolder {
 	protected final Set<Material> additionalWandMaterials;
 	
 	
+	
 	/**
 	 * Creates an {@link AbstractTraitHolder}
 	 * 
@@ -85,6 +107,7 @@ public abstract class AbstractTraitHolder {
 		this.traits = new HashSet<Trait>();
 		this.holderTag = "[" + name + "]";
 		this.additionalWandMaterials = new HashSet<Material>();
+		this.holderSelectionItem = new ItemStack(Material.BOOK_AND_QUILL);
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
 		this.manaBonus = 0;
@@ -103,9 +126,27 @@ public abstract class AbstractTraitHolder {
 		readTraitSection();
 		readPermissionSection();
 		readAdditionalWandMaterial();
+		readHolderSelectionItem();
 		
 		return this;
 	}
+	
+
+	/**
+	 * Reads the Holder selection Item from the config.
+	 */
+	@SuppressWarnings("deprecation")
+	private void readHolderSelectionItem() {
+		Material mat = Material.BOOK_AND_QUILL;
+		try{
+			mat = Material.getMaterial(config.getInt(holderName + ".gui.item.id", Material.BOOK_AND_QUILL.getId()));
+		}catch(IllegalArgumentException exp){}
+		
+		short damageValue = (short) config.getInt(holderName + ".gui.item.damage", 0);
+		
+		this.holderSelectionItem = new ItemStack(mat, 1, damageValue);
+	}
+	
 	
 
 	/**
@@ -383,6 +424,13 @@ public abstract class AbstractTraitHolder {
 	public Set<Material> getAdditionalWandMaterials() {
 		return new HashSet<Material>(additionalWandMaterials);
 	}
+
 	
-	
+	/**
+	 * Returns the Holder Selection item representing the holder in any GUI.
+	 * 
+	 */
+	public ItemStack getHolderSelectionItem() {
+		return holderSelectionItem;
+	}
 }
