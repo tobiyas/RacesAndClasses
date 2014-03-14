@@ -84,6 +84,9 @@ public class PlayerManager{
 		}
 		
 		for(String player : players){
+			Player bukkitPlayer = Bukkit.getPlayer(player);
+			if(bukkitPlayer == null || !bukkitPlayer.isOnline()) continue;
+			
 			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
 			if(container != null){
 				playerData.put(player, container);
@@ -282,6 +285,15 @@ public class PlayerManager{
 	public PlayerLevelManager getPlayerLevelManager(String playerName){
 		PlayerContainer containerOfPlayer = getCreate(playerName);
 		return containerOfPlayer.getPlayerLevelManager();
+	}
+
+	/**
+	 * Returns the current size of the PlayerManager.
+	 * 
+	 * @return the size of the player manager.
+	 */
+	public String getPlayerNumber() {
+		return playerData.size() + "";
 	}
 
 }

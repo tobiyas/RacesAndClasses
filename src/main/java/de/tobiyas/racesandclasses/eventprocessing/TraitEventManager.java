@@ -171,7 +171,7 @@ public class TraitEventManager{
 				}
 				
 				plugin.getStatistics().traitTriggered(trait); //Statistic gathering
-				TraitResults result =  trait.trigger(event);
+				TraitResults result =  trait.trigger(eventWrapper);
 				if(result.isTriggered()){
 					changedSomething = true;
 					

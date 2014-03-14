@@ -48,20 +48,20 @@ public class LevelCalculator {
 	 * @return
 	 */
 	protected static int calcMaxExpForLevel(int level){
-		ScriptEngineManager mgr = new ScriptEngineManager();
-	    ScriptEngine engine = mgr.getEngineByName("JavaScript");
-	    String maxExpGeneratorString = RacesAndClasses.getPlugin()
-	    		.getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
-	    
-	    maxExpGeneratorString = maxExpGeneratorString.replace("{level}", String.valueOf(level));
+		try{
+			ScriptEngineManager mgr = new ScriptEngineManager();
+		    ScriptEngine engine = mgr.getEngineByName("JavaScript");
+		    String maxExpGeneratorString = RacesAndClasses.getPlugin()
+		    		.getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
+		    
+		    maxExpGeneratorString = maxExpGeneratorString.replace("{level}", String.valueOf(level));
 		
-	    try{
 	    	String parsedValue = (String) engine.eval(maxExpGeneratorString).toString();	
 	    	double doubleValue = Double.parseDouble(parsedValue);
 	    	int intValue = (int) doubleValue;
 	    	
 	    	return intValue;
-	    }catch(Exception exp){
+	    }catch(Throwable exp){
 	    	return level * level * 1000;
 	    }
 	    
@@ -105,7 +105,7 @@ public class LevelCalculator {
 	    	Integer intValue = (int) doubleValue;
 	    	
 	    	return intValue != null;
-	    }catch(Exception exp){
+	    }catch(Throwable exp){
 	    	return false;
 	    }
 	}

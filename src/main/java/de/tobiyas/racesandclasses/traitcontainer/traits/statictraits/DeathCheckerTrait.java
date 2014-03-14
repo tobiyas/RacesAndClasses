@@ -108,8 +108,10 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	 */
 	private final static String SPAWNER_KEY = "spawner_spawned";
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
+		
 		if(event instanceof CreatureSpawnEvent){
 			if(((CreatureSpawnEvent) event).getSpawnReason() == SpawnReason.SPAWNER){
 				((CreatureSpawnEvent) event).getEntity().setMetadata(SPAWNER_KEY, new LazyMetadataValue(plugin, new Callable<Object>() {

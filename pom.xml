@@ -42,6 +42,7 @@
 			<id>vault-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
+
 	</repositories>
 
 	<!-- Depends -->
@@ -121,6 +122,16 @@
 			<systemPath>${basedir}\libs\Permissions\EssentialsGroupManager.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- Skill API -->
+		<dependency>
+			<groupId>com.sucy</groupId>
+			<artifactId>skill</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}\..\Libaries\SkillAPI.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
 
 	</dependencies>
 
@@ -195,6 +206,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>plugin.yml</include>
+					<include>LICENSE-2.0.html</include>
 				</includes>
 				<excludes>
 					<exclude>*.project</exclude>

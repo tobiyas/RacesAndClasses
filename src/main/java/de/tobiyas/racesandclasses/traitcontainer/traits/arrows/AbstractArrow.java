@@ -177,7 +177,9 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	private static final String ARROW_META_KEY = "arrowType";
 	
 	@Override	
-	public TraitResults trigger(Event event) {
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
+		
 		TraitResults result = new TraitResults();
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){

@@ -99,6 +99,7 @@ import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.permissions.VaultHook;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
+import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.metrics.SendMetrics;
 
 
@@ -394,7 +395,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			shutDownSequenz(false);
 			VaultHook.shutdown();
 		}
-		
+
+		BasicSelectionInterface.closeAllInvs();
 		plugin = null;
 		log("disabled " + description.getFullName());
 

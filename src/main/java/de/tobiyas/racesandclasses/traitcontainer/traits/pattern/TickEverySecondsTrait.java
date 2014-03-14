@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
@@ -136,8 +135,8 @@ private int schedulerTaskId = -1;
 		seconds = (Integer) configMap.get("seconds");
 	}
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
 		//Not needed
 		return new TraitResults();
 	}

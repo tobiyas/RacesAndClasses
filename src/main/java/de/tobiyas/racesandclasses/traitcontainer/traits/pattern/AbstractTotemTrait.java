@@ -22,9 +22,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -56,11 +56,11 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	 */
 
 	@Override
-	protected TraitResults otherEventTriggered(Event event, TraitResults result) {
+	protected TraitResults otherEventTriggered(EventWrapper eventWrapper, TraitResults result){
 		result = TraitResults.False();
 		
-		if(event instanceof BlockBreakEvent){
-			BlockBreakEvent bEvent = (BlockBreakEvent) event;
+		if(eventWrapper.getEvent() instanceof BlockBreakEvent){
+			BlockBreakEvent bEvent = (BlockBreakEvent) eventWrapper.getEvent();
 			Location loc = bEvent.getBlock().getLocation();
 			
 			for(TotemInfos totem : activedTotems.values()){

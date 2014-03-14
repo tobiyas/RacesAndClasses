@@ -197,8 +197,8 @@ public class GeneralConfigText {
 			+ "# This tells the plugin to look at conversion at startup.. \n"
 			+ "# If turned to false, no conversion of playerdata will be done on startup!\n"
 			+ "# boolean: true or false\n"
-			+ "# default: true \n"
-			+ general_convert_database_on_startup + ": true\n\n"
+			+ "# default: false \n"
+			+ general_convert_database_on_startup + ": false\n\n"
 			
 			+ "# This tells the Plugin to NOT check the Armor if turned off. \n"
 			+ "# If turned to true, the armor Checking of Races / Classes is Disabled.\n"
@@ -264,11 +264,14 @@ public class GeneralConfigText {
 			+ "# By default, the the next level needs (level^3) * 1000 exp.\n"
 			+ level_mapExpPerLevelCalculationString + ": '{level} * {level} * {level} * 1000'\n\n"
 
-			+ "# This tells the Plugin to use the RaC Leveling system. \n"
-			+ "# Setting this to false makes the plugin use the MC level.\n"
-			+ "# boolean: true or false \n"
+			+ "# This tells the Plugin which level system to use. \n"
+			+ "# It can use one of the following:.\n"
+			+ "# - RaC: Races and Classes leveling System (currently not usable).\n"
+			+ "# - MC: Minecraft Levels.\n"
+			+ "# - SkillAPI: Leveling System from SkillAPI.\n"
+			+ "# String: RaC or MC or SkillAPI\n"
 			+ "# default: true \n"
-			+ level_useRaCInbuildLevelSystem + ": true\n\n"
+			+ level_useLevelSystem + ": RaC\n\n"
 
 			
 			//RACES

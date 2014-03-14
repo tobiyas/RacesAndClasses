@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -28,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 public class EventActionResolver {
 
@@ -88,8 +91,17 @@ public class EventActionResolver {
 		}
 		
 		if(event instanceof EntityDamageByEntityEvent){
-			if(((EntityDamageByEntityEvent) event).getDamager() == player){
+			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
+			if(damageEvent.getDamager() == player){
 				return PlayerAction.DO_DAMAGE;
+			}
+			
+			if(damageEvent.getDamager() instanceof Projectile){
+				Projectile projectile = (Projectile) damageEvent.getDamager();
+				LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(projectile);
+				if(shooter instanceof Player){
+					return PlayerAction.DO_DAMAGE;
+				}
 			}
 		}
 		

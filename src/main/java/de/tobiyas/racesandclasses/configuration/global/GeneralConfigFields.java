@@ -78,7 +78,7 @@ public class GeneralConfigFields {
 	
 	//Leveling
 	public static final String level_mapExpPerLevelCalculationString = "level_mapExpPerLevelCalculationString";
-	public static final String level_useRaCInbuildLevelSystem = "level_useRaCInbuildLevelSystem";	
+	public static final String level_useLevelSystem = "level_useLevelSystem";	
 	
 	
 	//Races

@@ -51,7 +51,7 @@ import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigField
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useRaCInbuildLevelSystem;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useLevelSystem;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
@@ -82,6 +82,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 
  
  public class GeneralConfig{
@@ -158,7 +159,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 	private Material config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
-	private boolean config_useRaCInbuildLevelSystem;
+	private LevelingSystem config_useLevelSystem;
 	
 	private boolean config_savePlayerDataToDB;
 	
@@ -258,7 +259,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		config.addDefault(magic_wandId, Material.STICK.name());
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
-		config.addDefault(level_useRaCInbuildLevelSystem, true);
+		config.addDefault(level_useLevelSystem, "RaC");
 		config.addDefault(races_enable, true);
 		config.addDefault(general_armor_disableArmorChecking, false);
 		config.addDefault(disable_health_modifications, false);
@@ -345,7 +346,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		
 		config_savePlayerDataToDB = config.getBoolean(general_saving_savePlayerDataToDB, true);
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
-		config_useRaCInbuildLevelSystem = config.getBoolean(level_useRaCInbuildLevelSystem, true);
+		config_useLevelSystem = LevelingSystem.parse(config.getString(level_useLevelSystem, "RaC"));
 		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
 		config_general_disable_commands = config.getStringList(general_disable_commands);
 		
@@ -528,8 +529,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 		return config_savePlayerDataToDB;
 	}
 
-	public boolean isConfig_useRaCInbuildLevelSystem() {
-		return config_useRaCInbuildLevelSystem;
+	public LevelingSystem isConfig_useLevelSystem() {
+		return config_useLevelSystem;
 	}
 
 	public boolean isConfig_useAutoUpdater() {

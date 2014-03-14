@@ -677,4 +677,17 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 			}
 		}
 	}
+
+
+	@Override
+	public void removePlayerHolderAssociation(PlayerHolderAssociation object) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void removePlayerSavingContainer(PlayerSavingContainer container) {
+		// TODO Auto-generated method stub
+		
+	}
 }

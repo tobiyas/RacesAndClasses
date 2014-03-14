@@ -17,8 +17,6 @@ package de.tobiyas.racesandclasses.generate.traits;
 
 import java.util.Map;
 
-import org.bukkit.event.Event;
-
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -62,8 +60,8 @@ public class TraitWithConfigAnnotations extends AbstractBasicTrait {
 		return "";
 	}
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
 		return TraitResults.False();
 	}
 

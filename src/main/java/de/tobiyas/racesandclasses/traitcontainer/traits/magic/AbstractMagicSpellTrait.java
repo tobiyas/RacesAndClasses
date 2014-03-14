@@ -231,8 +231,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	}
 
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
 		final TraitResults result = new TraitResults();
 		
 		if(event instanceof PlayerInteractEvent){
@@ -296,7 +297,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			}
 		}
 		
-		return otherEventTriggered(event, result);
+		return otherEventTriggered(eventWrapper, result);
 	}
 	
 	/**
@@ -326,7 +327,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @param event that triggered
 	 * @return true if triggering worked and Mana should be drained.
 	 */
-	protected TraitResults otherEventTriggered(Event event, TraitResults result){
+	protected TraitResults otherEventTriggered(EventWrapper eventWrapper, TraitResults result){
 		return result;
 	}
 

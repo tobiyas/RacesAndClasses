@@ -30,9 +30,10 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceCo
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
-import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
-import de.tobiyas.racesandclasses.playermanagement.leveling.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -109,10 +110,13 @@ public class PlayerContainer {
 		
 		
 		//choose level manager.
-		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaCInbuildLevelSystem()){
-			this.levelManager = new CustomPlayerLevelManager(player);			
-		}else{
-			this.levelManager = new MCPlayerLevelManager(player);
+		switch(plugin.getConfigManager().getGeneralConfig().isConfig_useLevelSystem()){
+			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player); break;
+			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player); break;
+			case SkillAPI : this.levelManager = new SkillAPILevelManager(player); break;
+			
+			//if none found (should not happen) the RaC level manager is used.
+			default: this.levelManager = new CustomPlayerLevelManager(player);
 		}
 		
 		this.spellManager = new PlayerSpellManager(player);

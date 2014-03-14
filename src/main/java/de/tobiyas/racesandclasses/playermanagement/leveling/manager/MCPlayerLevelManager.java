@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.tobiyas.racesandclasses.playermanagement.leveling;
+package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,6 +22,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPE
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MCPlayerLevelManager implements PlayerLevelManager{

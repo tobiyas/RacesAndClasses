@@ -304,4 +304,21 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 		return "YML Storage";
 	}
 
+	@Override
+	public void removePlayerHolderAssociation(PlayerHolderAssociation object) {
+		String playerName = object.getPlayerName();
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+		config.set("playerData." + playerName + "race", null);
+		config.set("playerData." + playerName + "class", null);
+	}
+
+	@Override
+	public void removePlayerSavingContainer(PlayerSavingContainer container) {
+		String playerName = container.getPlayerName();
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+		
+		config.set("playerData." + playerName + "level", null);
+		config.set("playerData." + playerName + "hasGod", null);
+	}
+
 }

@@ -74,8 +74,9 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
 		if(!(event instanceof PlayerEquipsArmorEvent)) return TraitResults.False();
 		
 		PlayerEquipsArmorEvent playerEquipEvent = (PlayerEquipsArmorEvent) event;

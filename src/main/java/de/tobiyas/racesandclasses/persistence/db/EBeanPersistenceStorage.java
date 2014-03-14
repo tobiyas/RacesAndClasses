@@ -252,4 +252,14 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 		return "EBean DB";
 	}
 
+	@Override
+	public void removePlayerHolderAssociation(PlayerHolderAssociation object) {
+		ebeanServer.delete(object);
+	}
+
+	@Override
+	public void removePlayerSavingContainer(PlayerSavingContainer container) {
+		ebeanServer.delete(container);
+	}
+
 }

@@ -87,6 +87,11 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 			return;
 		}
 		
+		if(traitName.equalsIgnoreCase("loadedplayers")){
+			showLoadedPlayers(sender);
+			return;
+		}
+		
 		sender.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.AQUA + "Statistics to: " + ChatColor.LIGHT_PURPLE 
 				+ traitName + ChatColor.YELLOW + " ====");
 		
@@ -110,6 +115,11 @@ public class CommandExecutor_Statistics implements CommandExecutor {
 			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeUsedForTrait))
 			);
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "Time used for Trait: " + ChatColor.AQUA + formated);
+	}
+
+
+	private void showLoadedPlayers(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "Loaded Players: " + plugin.getPlayerManager().getPlayerNumber());
 	}
 
 

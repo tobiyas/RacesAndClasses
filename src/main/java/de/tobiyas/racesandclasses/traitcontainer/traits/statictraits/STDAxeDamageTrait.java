@@ -91,8 +91,10 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 	public void setConfiguration(Map<String, Object> configMap) {
 	}
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
+		
 		if(!(event instanceof EntityDamageByEntityEvent)) return TraitResults.False();
 		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 		

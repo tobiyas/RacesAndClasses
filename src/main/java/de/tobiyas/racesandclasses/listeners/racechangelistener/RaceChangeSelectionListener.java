@@ -90,6 +90,7 @@ public class RaceChangeSelectionListener implements Listener {
 			String raceName = event.getRaceToSelect().getName();
 			
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(playerName);
+			if(holder == null) return; //no class -> no restrictions.
 			String className = holder.getName();
 			
 			//check if the Race can select the class passed.

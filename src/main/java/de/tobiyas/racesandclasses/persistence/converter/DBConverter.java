@@ -24,7 +24,7 @@ import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
-import de.tobiyas.racesandclasses.playermanagement.leveling.CustomPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DBConverter {

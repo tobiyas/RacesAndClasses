@@ -18,9 +18,6 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -109,18 +106,7 @@ public interface Trait{
 	 * 
 	 * @return the Trait result.
 	 */
-	public TraitResults trigger(Event event);
-	
-	/**
-	 * Extracts the relevant player from the Event
-	 * and returns it.
-	 * 
-	 * If not interested, return null;
-	 * 
-	 * @param event
-	 * @return
-	 */
-	public Player getReleventPlayer(Event event);
+	public TraitResults trigger(EventWrapper wrapper);
 	
 	
 	/**

@@ -221,8 +221,14 @@ public abstract class AbstractTraitHolder {
 		List<HolderTraitParseException> exceptionList = new LinkedList<HolderTraitParseException>();
 		
 		for(String traitName : traitNames){
+			String realTraitName = traitName;
+			if(traitName.contains("#")){
+				//always select the first part.
+				realTraitName = traitName.split("#")[0];
+			}
+			
 			try{
-				Trait trait = TraitStore.buildTraitByName(traitName, this);
+				Trait trait = TraitStore.buildTraitByName(realTraitName, this);
 				if(trait != null){
 					String configPath = holderName + ".traits." + traitName;
 					configureTraitFromYAML(config, configPath, trait);
@@ -233,7 +239,7 @@ public abstract class AbstractTraitHolder {
 			}catch(TraitConfigurationFailedException exp){
 				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
 				RacesAndClasses.getPlugin().log("Error on parsing: '" + getName() + "' Problem was: '" + exp.getMessage() 
-						+ "' On Trait: '" + traitName + "'.");
+						+ "' On Trait: '" + realTraitName + "'.");
 			}
 		}
 		

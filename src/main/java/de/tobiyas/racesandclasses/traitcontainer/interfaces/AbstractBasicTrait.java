@@ -24,51 +24,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityEvent;
-import org.bukkit.event.entity.PlayerLeashEntityEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.inventory.InventoryEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-import org.bukkit.event.vehicle.VehicleEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
-import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
@@ -218,6 +189,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 
 	
+	@SuppressWarnings("deprecation")
 	@TraitConfigurationNeeded(fields = {
 		@TraitConfigurationField(fieldName = MIN_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
 		@TraitConfigurationField(fieldName = MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),	
@@ -313,9 +285,18 @@ public abstract class AbstractBasicTrait implements Trait,
 				for(String block : stringBlocks){
 					block = block.toUpperCase();
 					Material type =  null;
+					//try String parsing
 					try{
 						type = Material.valueOf(block);
 					}catch(IllegalArgumentException exp){}
+					
+					//try id parsing
+					if(type == null){
+						try{
+							int id = Integer.parseInt(block);
+							type = Material.getMaterial(id);
+						}catch(NumberFormatException exp){}
+					}
 					
 					if(type != null){
 						onlyOnBlocks.add(type);
@@ -419,168 +400,6 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		return optionalFields;
-	}
-
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * <br>
-	 * <br>To override, use {@link #getReleventPlayerBefore(Event)}.
-	 * <br>This is preProcessed before the default Events are done.
-	 */
-	@Override
-	public final Player getReleventPlayer(Event event) {
-		Player preProcessedPlayer = getReleventPlayerBefore(event);
-		if(preProcessedPlayer != null){
-			return preProcessedPlayer;
-		}
-		
-		//block events like place / break
-		if(event instanceof BlockEvent){
-			if(event instanceof BlockPlaceEvent){
-				return ((BlockPlaceEvent) event).getPlayer();
-			}
-			
-			if(event instanceof BlockBreakEvent){
-				return ((BlockBreakEvent) event).getPlayer();
-			}
-			
-			if(event instanceof BlockDamageEvent){
-				return ((BlockDamageEvent) event).getPlayer();
-			}
-		}
-		
-		//Projectile events. 
-		//We need to get the shooter.
-		if(event instanceof ProjectileHitEvent){
-			ProjectileHitEvent launchEvent = (ProjectileHitEvent) event;
-			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(launchEvent.getEntity());
-			if(shooter instanceof Player) return (Player) shooter;
-		}
-		
-		if(event instanceof ProjectileLaunchEvent){
-			ProjectileLaunchEvent launchEvent = (ProjectileLaunchEvent) event;
-			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(launchEvent.getEntity());
-			if(shooter instanceof Player) return (Player) shooter;
-		}
-		
-		//check if any projectile
-		if(event instanceof EntityDamageByEntityEvent){
-			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
-			Entity damager = damageEvent.getDamager();
-			if(damager instanceof Projectile){
-				LivingEntity shooter = CompatibilityModifier.Shooter.getShooter((Projectile) damager);
-				if(shooter != null && shooter instanceof Player){
-					return (Player) shooter;
-				}
-			}
-		}
-		
-		
-		if(event instanceof EntityEvent){			
-			EntityEvent entityEvent = (EntityEvent) event;
-			if(entityEvent.getEntityType() == EntityType.PLAYER){
-				return (Player) entityEvent.getEntity();
-			}
-		}
-		
-		if(event instanceof InventoryEvent){
-			InventoryEvent inventoryEvent = (InventoryEvent) event;
-			if(inventoryEvent.getInventory().getHolder() instanceof Player){
-				return (Player) inventoryEvent.getInventory().getHolder();
-			}
-		}
-		
-		if(event instanceof InventoryMoveItemEvent){
-			InventoryMoveItemEvent inventoryMoveItemEvent = (InventoryMoveItemEvent) event;
-			if(inventoryMoveItemEvent.getSource().getHolder() instanceof Player){
-				return (Player) inventoryMoveItemEvent.getSource().getHolder();
-			}
-		}
-		
-		if(event instanceof InventoryPickupItemEvent){
-			InventoryPickupItemEvent pickupItemEvent = (InventoryPickupItemEvent) event;
-			if(pickupItemEvent.getInventory().getHolder() instanceof Player){
-				return (Player) pickupItemEvent.getInventory().getHolder();
-			}
-		}
-		
-		if(event instanceof PlayerEvent){
-			return ((PlayerEvent) event).getPlayer();
-		}
-		
-		if(CertainVersionChecker.isAbove1_6()){
-			if(event instanceof PlayerLeashEntityEvent){
-				return ((PlayerLeashEntityEvent) event).getPlayer();
-			}
-		}
-		
-		
-		if(event instanceof PlayerSendChannelChatMessageEvent){
-			return ((PlayerSendChannelChatMessageEvent) event).getPlayer();
-		}
-		
-		if(event instanceof VehicleEvent){
-			if(event instanceof VehicleEntityCollisionEvent){
-				VehicleEntityCollisionEvent vecevent = (VehicleEntityCollisionEvent) event;
-				if(vecevent.getEntity() instanceof Player){
-					return (Player) vecevent.getEntity();
-				}
-			}
-			
-			if(event instanceof VehicleEnterEvent){
-				VehicleEnterEvent vehicleEnterEvent = (VehicleEnterEvent) event;
-				if(vehicleEnterEvent.getEntered() instanceof Player){
-					return (Player) vehicleEnterEvent.getEntered();
-				}
-			}
-			
-			if(event instanceof VehicleExitEvent){
-				VehicleExitEvent vehicleExitEvent = (VehicleExitEvent) event;
-				if(vehicleExitEvent.getExited() instanceof Player){
-					return (Player) vehicleExitEvent.getExited();
-				}
-			}
-		}
-		
-
-		//RaC-Plugin Events:		
-		if(event instanceof LevelEvent){
-			return Bukkit.getPlayer(((LevelEvent) event).getPlayerName());
-		}
-		
-		if(event instanceof HolderSelectedEvent){
-			return ((HolderSelectedEvent) event).getPlayer();
-		}
-		
-		if(event instanceof PlayerSendChannelChatMessageEvent){
-			return ((PlayerSendChannelChatMessageEvent)event).getPlayer();
-		}
-		
-		if(event instanceof TraitTriggerEvent){
-			return null; //This can not be interesting for a Trait.
-		}
-		
-		
-		
-		return null;
-	}
-	
-	/**
-	 * This method can be Overriden when specific identifying
-	 * of a player has to be done.
-	 * 
-	 * This method is called BEFORE checking the events in {@link #getReleventPlayer(Event)}.
-	 * 
-	 * Returning null proceeds with the default checks.
-	 * Returning a player (not null) stops the search and returns the player.
-	 * 
-	 * @param event to check
-	 * @return the Player found or null if not found or wanted.
-	 */
-	protected Player getReleventPlayerBefore(Event event){
-		return null;
 	}
 
 	
@@ -694,7 +513,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		//check below elevation
 		if(belowElevation != Integer.MAX_VALUE){
 			Block feetblock = player.getLocation().getBlock();
-			if(feetblock.getY() <= belowElevation) return false;
+			if(feetblock.getY() >= belowElevation) return false;
 		}
 
 		//check onlyAfterDamaged
@@ -712,7 +531,9 @@ public abstract class AbstractBasicTrait implements Trait,
 		//check blocks on
 		if(!onlyOnBlocks.isEmpty()){
 			Block feetblock = player.getLocation().getBlock();
-			if(!onlyOnBlocks.contains(feetblock.getType())) return false;
+			Block belowFeetBlock = feetblock.getRelative(BlockFace.DOWN);
+			
+			if(!onlyOnBlocks.contains(belowFeetBlock.getType())) return false;
 		}
 		
 		//check cooldown

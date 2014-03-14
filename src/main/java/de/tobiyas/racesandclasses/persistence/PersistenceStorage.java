@@ -160,4 +160,20 @@ public interface PersistenceStorage {
 	 * @return the canonical Name of the Representation
 	 */
 	public String getNameRepresentation();
+
+
+	/**
+	 * Removes the Player association.
+	 * 
+	 * @param object to remove
+	 */
+	public void removePlayerHolderAssociation(PlayerHolderAssociation object);
+
+
+	/**
+	 * Removes the Player Saving Container.
+	 * 
+	 * @param container to remove
+	 */
+	public void removePlayerSavingContainer(PlayerSavingContainer container);
 }

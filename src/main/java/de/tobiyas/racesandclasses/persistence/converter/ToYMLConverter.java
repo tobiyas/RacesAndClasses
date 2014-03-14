@@ -48,7 +48,7 @@ public class ToYMLConverter {
 	 */
 	private static void convertHolderAssociations(PersistenceStorage ebeanStorage) {
 		YAMLConfigExtended raceFile = YAMLPersistenceProvider.getLoadedRacesFile(true);
-		YAMLConfigExtended classFile = YAMLPersistenceProvider.getLoadedRacesFile(true);
+		YAMLConfigExtended classFile = YAMLPersistenceProvider.getLoadedClassesFile(true);
 		
 		Set<String> holderSet = new HashSet<String>();
 		holderSet.addAll(raceFile.getRootChildren());
@@ -77,6 +77,11 @@ public class ToYMLConverter {
 			YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
 			playerConfig.set("playerdata." + playerName + ".class", clazz);
 			playerConfig.set("playerdata." + playerName + ".race", race);
+			
+			//save the converted data instantaniously.
+			playerConfig.saveAsync();
+			
+			ebeanStorage.removePlayerHolderAssociation(holder);
 		}
 	}
 	
@@ -105,6 +110,8 @@ public class ToYMLConverter {
 			playerConfig.set("playerdata." + playerName + ".level.currentLevel", level);
 			playerConfig.set("playerdata." + playerName + ".level.currentLevelEXP", expOfLevel);
 			playerConfig.set("playerdata." + playerName + ".hasGod", hasGod);
+			
+			storage.removePlayerSavingContainer(container);
 		}
 	}
 	

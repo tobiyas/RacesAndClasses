@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.tobiyas.racesandclasses.playermanagement.leveling;
+package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -29,6 +29,9 @@ import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
+import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{

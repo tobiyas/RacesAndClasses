@@ -36,6 +36,7 @@ import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.generate.plugin.GenerateRaces;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
 import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
 public class PlayerLevelManagerTest {

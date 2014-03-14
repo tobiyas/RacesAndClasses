@@ -76,8 +76,10 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		value = (Double) configMap.get("value");
 	}
 
-	@Override
-	public TraitResults trigger(Event event) {
+	@Override	
+	public TraitResults trigger(EventWrapper eventWrapper) {
+		Event event = eventWrapper.getEvent();
+		
 		TraitResults result = new TraitResults();
 		if(!(event instanceof EntityDamageEvent)) return result.setTriggered(false);
 		EntityDamageEvent Eevent = (EntityDamageEvent) event;
