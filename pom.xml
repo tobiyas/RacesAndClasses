@@ -229,13 +229,12 @@
 				<version>1.0-alpha-6</version>
 			</extension>
 		</extensions>
-
 	</build>
 
 	<distributionManagement>
 		<repository>
-			<id>tobiyas-maven</id>
-			<url>file:///D:/Dropbox/Öffentlich/maven</url>
+			<id>pi-maven</id>
+			<url>ftp://192.168.0.116/var/www/maven/</url>
 		</repository>
 	</distributionManagement>
 

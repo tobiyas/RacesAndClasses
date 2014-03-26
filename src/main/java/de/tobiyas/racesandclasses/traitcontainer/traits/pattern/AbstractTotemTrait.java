@@ -16,7 +16,10 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,13 +37,15 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedExcepti
 
 public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 
-	//TODO add destruction via block break.
-	
-	
 	/**
 	 * The Duration the totem lasts.
 	 */
 	protected int duration = 5;
+	
+	/**
+	 * The Range of the Totem.
+	 */
+	protected int range = 10;
 	
 	
 	@TraitEventsUsed(registerdClasses = {BlockBreakEvent.class})
@@ -85,10 +90,6 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 		
 		return result;
 	}
-	
-	
-	
-
 
 
 
@@ -106,7 +107,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	/**
 	 * The Material for the bottom block
 	 */
-	protected Material bottomMaterial = Material.SIGN_POST;
+	protected Material bottomMaterial = Material.FENCE;
 	
 	
 	/**
@@ -130,7 +131,13 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 		result.copyFrom(placeTotem(playerName, location));
 	}
 
-
+	
+	/**
+	 * A random to use.
+	 */
+	private final Random rand = new Random();
+	
+	
 	/**
 	 * Returns a location near the player.
 	 * 
@@ -139,17 +146,18 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	 * @return a location near the player.
 	 */
 	private Location getLocationNear(Player player) {
-		//we have to shift the base 1 up to be sure to use the feet location.
-		Location base = player.getLocation().clone().add(0, 1, 0);
-		
+		Location base = player.getLocation().clone();
+
+		List<Location> free = new LinkedList<Location>();
 		for(int x = -2; x <= 2; x ++){
 			for(int z = -2; z <= 2; z++){
 				Location toCheck = base.clone().add(x, 0, z);
-				if(isFree(toCheck)) return toCheck;
+				if(isFree(toCheck.clone())) free.add(toCheck);
 			}
 		}
 		
-		return null;
+		//do some randomness among the totem.
+		return free.isEmpty() ? null : free.get(rand.nextInt(free.size()));
 	}
 	
 	/**
@@ -173,8 +181,9 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 
 	@TraitConfigurationNeeded( fields = {
 			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional = true),
-			@TraitConfigurationField(fieldName = "bootomBlock", classToExpect = Material.class, optional = true),			
+			@TraitConfigurationField(fieldName = "bottomBlock", classToExpect = Material.class, optional = true),			
 			@TraitConfigurationField(fieldName = "upperBlock", classToExpect = Material.class, optional = true),
+			@TraitConfigurationField(fieldName = "range", classToExpect = Integer.class, optional = true),
 			@TraitConfigurationField(fieldName = "tickEvery", classToExpect = Integer.class, optional = true)
 		}
 	)
@@ -187,7 +196,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 			duration = (Integer) configMap.get("duration");
 		}
 
-		if(configMap.containsKey("bootomBlock")){
+		if(configMap.containsKey("bottomBlock")){
 			bottomMaterial = (Material) configMap.get("bootomBlock");
 		}
 		
@@ -197,6 +206,10 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 		
 		if(configMap.containsKey("tickEvery")){
 			tickEvery = (Integer) configMap.get("tickEvery");
+		}
+		
+		if(configMap.containsKey("range")){
+			range = (Integer) configMap.get("range");
 		}
 	}
 
@@ -238,7 +251,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 			public void run() {
 				totemTick(infos);
 			}
-		}, 0, tickEvery);
+		}, 0, tickEvery * 20);
 		
 		infos.bukkitSchedulerID = bukkitSchedulerID;
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -252,10 +265,37 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	
 	/**
 	 * The Totem ticks.
+	 * <br>This method CAN be overriden.
+	 * <br>If it is overriden, {@link #tickOn(TotemInfos, Player)} is NOT called any more.
 	 * 
 	 * @param infos to the totem.
 	 */
-	protected abstract void totemTick(TotemInfos infos);
+	protected void totemTick(TotemInfos infos){
+		Location loc = infos.topLocation;
+		List<Player> near = new LinkedList<Player>();
+		int squaredRange = range * range;
+		
+		for(Player player : loc.getWorld().getPlayers()){
+			if(player.getLocation().distanceSquared(loc) <= squaredRange){
+				near.add(player);
+			}
+		}
+		
+		//tick on all players near.
+		for(Player player : near){
+			tickOn(infos, player);
+		}
+		
+	}
+	
+	/**
+	 * The totem ticks on the player passed.
+	 * <br>This method is ONLY fired, if {@link #totemTick(TotemInfos)} is NOT Overriden!
+	 * 
+	 * @param infos of the totem.
+	 * @param player to tick on.
+	 */
+	protected abstract void tickOn(TotemInfos infos, Player player);
 	
 	/**
 	 * Removes a placed Totem.

@@ -227,6 +227,10 @@ public abstract class AbstractTraitHolder {
 				realTraitName = traitName.split("#")[0];
 			}
 			
+			if(config.isString(holderName + ".traits." + traitName + ".trait")){
+				realTraitName = config.getString(holderName + ".traits." + traitName + ".trait");
+			}
+			
 			try{
 				Trait trait = TraitStore.buildTraitByName(realTraitName, this);
 				if(trait != null){
