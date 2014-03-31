@@ -112,14 +112,13 @@ public class Listener_Player implements Listener {
 		}
 	}
 	
-	@EventHandler
-	public void onPlayerChat(AsyncPlayerChatEvent event){
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerChatEarly(AsyncPlayerChatEvent event){
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()) return;
 		String orgMsg = event.getMessage();
 		Player player = event.getPlayer();
 		
 		if(orgMsg.charAt(0) == '/') return;
-		event.setCancelled(true);
 		
 		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
 		String channel = "Global";
@@ -129,11 +128,24 @@ public class Listener_Player implements Listener {
 			if(!plugin.getChannelManager().isMember(player.getName(), channel)){
 				player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
 									ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
+				
+				event.setCancelled(true);
 				return;
 			}
 		}
-
-		plugin.getChannelManager().broadcastMessageToChannel(channel, player, orgMsg);
+		
+		plugin.getChannelManager().editToChannel(channel, event);
 	}
 	
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerChatLate(AsyncPlayerChatEvent event){
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()) return;
+		if(event.getMessage().charAt(0) == '/') return;
+		
+		String format = event.getFormat();
+		format = format.replace("{msg}", event.getMessage());
+		
+		event.setFormat(format);
+	}
 }

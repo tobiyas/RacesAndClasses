@@ -182,11 +182,21 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	 */
 	public GeneralConfig(){
 		this.plugin = RacesAndClasses.getPlugin();
+
+		checkRegenerate(false);
+	}
+	
+	/**
+	 * Checks if the Config need Regeneration.
+	 * 
+	 * @param force if True, the config is Forced to regenerate.
+	 */
+	public void checkRegenerate(boolean force){
 		setupConfiguration();
 		reload();
 		
 		ConfigTemplate template = new ConfigTemplate();
-		if(template.isOldConfigVersion()){
+		if(force || template.isOldConfigVersion()){
 			template.writeTemplate();
 		}
 	}

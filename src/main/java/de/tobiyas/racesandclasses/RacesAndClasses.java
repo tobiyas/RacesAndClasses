@@ -53,6 +53,7 @@ import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCa
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Channel;
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Racechat;
 import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
+import de.tobiyas.racesandclasses.commands.config.CommandExecutor_ConfigRegenerate;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
@@ -375,6 +376,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		
 		new CommandExecutor_ForceRace();
 		new CommandExecutor_ForceClass();
+		new CommandExecutor_ConfigRegenerate();
 		
 		new Command_RACLevel();
 		

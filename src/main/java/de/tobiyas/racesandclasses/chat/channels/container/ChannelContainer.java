@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.chat.channels.container;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
@@ -24,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.ChatFormatter;
@@ -410,7 +412,7 @@ public class ChannelContainer extends Observable{
 	}
 	
 	private String modifyMessageToPlayer(String playerName, String message, String forceFormat){		
-		return channelFormat.format(playerName, message, forceFormat);
+		return channelFormat.format(playerName, message, forceFormat, true);
 	}
 	
 	private String getTimeString(int timeInSec){
@@ -627,6 +629,31 @@ public class ChannelContainer extends Observable{
 		}
 		
 		return false;
+	}
+
+	/**
+	 * The Event is edited due to the channel.
+	 * 
+	 * @param event to edit.
+	 */
+	public void editEvent(AsyncPlayerChatEvent event) {
+		List<Player> members = new LinkedList<Player>();
+		rescanPartitions(event.getPlayer());
+		
+		
+		for(String member : participants){
+			Player memberPlayer = Bukkit.getPlayer(member);
+			if(memberPlayer != null && memberPlayer.isOnline()) members.add(memberPlayer);
+		}
+		
+		//setting receipients
+		event.getRecipients().clear();
+		event.getRecipients().addAll(members);
+		
+		//setting format.
+		String format = channelFormat.getFormat();
+		format = channelFormat.format(event.getPlayer().getName(), event.getMessage(), "", false);
+		event.setFormat(format);
 	}
 
 }

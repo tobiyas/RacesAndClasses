@@ -93,6 +93,11 @@ public class PermissionNode {
 	public static final String whisper = prePlugin + "whisper";
 	
 	/**
+	 * The Permission to whisper someone
+	 */
+	public static final String configregen = prePlugin + "configregenerate";
+	
+	/**
 	 * The Permission for the /raceHeal command
 	 */
 	public static final String healSelf = prePlugin + "heal.self";

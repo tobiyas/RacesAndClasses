@@ -266,7 +266,6 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				if(channelingTime > 0){
 					channelingMap.put(playerName, player.getLocation());
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						
 						@Override
 						public void run() {
 							if(channelingMap.containsKey(playerName)){
@@ -279,7 +278,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 								}
 							}
 						}
-					}, (long) (channelingTime / 20));
+					}, (long) (channelingTime * 20));
 					result.setTriggered(false);
 				}else{
 					magicSpellTriggered(player, result);					

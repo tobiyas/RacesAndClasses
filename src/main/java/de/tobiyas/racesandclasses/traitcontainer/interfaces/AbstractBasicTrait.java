@@ -18,6 +18,8 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -142,6 +144,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * <br> onlyAfterNotDamaged <= 0 = no check.
 	 */
 	protected int onlyAfterNotDamaged = -1;
+
+	/**
+	 * The maximal uplink time to show.
+	 */
+	protected long minUplinkShowTime = 3; 
+	
 	
 	/**
 	 * Tells the Trait can be activated only on certain blocks.
@@ -177,6 +185,11 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected Map<String, Object> currentConfig;
 	
+	/**
+	 * The map of Uplink that can be notified.
+	 */
+	protected final HashMap<String,Long> uplinkNotifyList = new HashMap<String, Long>();
+	
 
 	@Override
 	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
@@ -211,6 +224,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = BELOW_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = DESCRIPTION_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = MIN_UPLINK_SHOW_PATH, classToExpect = Integer.class, optional = true),
 	})
 	
 	@Override
@@ -366,7 +380,12 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Not sneaking
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH)){
 			this.onlyWhileNotSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH);
-		}		
+		}
+		
+		//min uplink to show.
+		if(configMap.containsKey(TraitWithRestrictions.MIN_UPLINK_SHOW_PATH)){
+			this.minUplinkShowTime = (Integer) configMap.get(TraitWithRestrictions.MIN_UPLINK_SHOW_PATH);
+		}
 	}
 	
 
@@ -543,9 +562,19 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(playerUplinkTime > 0){
 			if(!triggerButHasUplink(wrapper)){
 				if(notifyTriggeredUplinkTime(wrapper)){
-					LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
-							"seconds", String.valueOf(playerUplinkTime),
-							"name", getDisplayName());
+					//we still check to not spam players.
+					long lastNotified = uplinkNotifyList.containsKey(playerName)
+							? uplinkNotifyList.get(playerName)
+							: 0;
+					
+					long maxTime = minUplinkShowTime * 1000;		
+							
+					if(new Date().after(new Date(lastNotified + maxTime))){
+						LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
+								"seconds", String.valueOf(playerUplinkTime),
+								"name", getDisplayName());
+						uplinkNotifyList.put(playerName, new Date().getTime());
+					}
 				}
 			}
 			

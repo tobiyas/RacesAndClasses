@@ -152,7 +152,7 @@ public class PlayerManager{
 				maxHealth = classContainer.modifyToClass(maxHealth);
 			}
 			
-			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth).checkStats();
+			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth);
 			healthContainer.checkStats();
 			playerData.put(player, healthContainer);
 		}else{

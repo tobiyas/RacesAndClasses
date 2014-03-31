@@ -136,4 +136,8 @@ commands:
   racsave:
     description: saves all yml files.
     usage: |
-           /racsave [-a]
+           /racsave [-a]  
+  configregenerate:
+    description: Forces a Regeneration of the Config.yml
+    usage: |
+           /configregenerate

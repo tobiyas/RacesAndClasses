@@ -327,7 +327,8 @@ public class PlayerContainer {
 			maxHealth = tempMaxHealth;
 		}
 		
-		if(classContainer != null && keepMaxHPOnDisabledWorld){
+		
+		if(classContainer != null){
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			

@@ -56,6 +56,7 @@ public class TraitEventManager{
 	private HashMap<Class<?>, Set<Trait>> traitList;
 	private HashMap<Integer, Long> eventIDs;
 	
+	
 	private List<String> registeredEventsAsName = new LinkedList<String>();
 
 

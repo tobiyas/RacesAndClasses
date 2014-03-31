@@ -27,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelContainer;
@@ -678,6 +679,29 @@ public class ChannelManager {
 			return;
 		
 		container.editChannel(player, property, newValue);
+	}
+
+
+	/**
+	 * Edits the Event to the channel passed.
+	 * 
+	 * @param channel to edit to
+	 * @param event to edit
+	 */
+	public void editToChannel(String channel, AsyncPlayerChatEvent event) {
+		Player sender = event.getPlayer();
+		
+		ChannelContainer container = getContainer(channel);
+		if(container == null){
+			if(sender != null){
+				sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
+				event.setCancelled(true);
+			}
+			
+			return;
+		}
+		
+		container.editEvent(event);
 	}
 	
 }

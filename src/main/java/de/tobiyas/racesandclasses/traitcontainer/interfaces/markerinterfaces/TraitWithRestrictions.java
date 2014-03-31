@@ -125,6 +125,12 @@ public interface TraitWithRestrictions {
 	public static final String DESCRIPTION_PATH = "description";
 	
 	
+	/**
+	 * The Path to the min Uplink showing Name
+	 */
+	public static final String MIN_UPLINK_SHOW_PATH = "minUplinkShow";
+	
+	
 
 	/**
 	 * Checks the Restrictions of the Trait

@@ -54,7 +54,7 @@ public class ChatFormatter{
 		return format;
 	}
 	
-	public String format(String playerName, String msg, String forceFormat){
+	public String format(String playerName, String msg, String forceFormat, boolean replaceMessage){
 		Player player = Bukkit.getPlayer(playerName);
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
@@ -80,10 +80,11 @@ public class ChatFormatter{
 		}
 		
 		String messageFormat = "";
-		if(forceFormat == "")
+		if(forceFormat.equals("")){
 			messageFormat = new String(format);
-		else
+		}else{
 			messageFormat = new String(forceFormat);
+		}
 			
 		String raceTag = "NONE";
 		if(container != null){
@@ -101,7 +102,7 @@ public class ChatFormatter{
 		messageFormat = messageFormat.replaceAll(Pattern.quote("{world}"), world);
 		messageFormat = messageFormat.replaceAll(Pattern.quote("{channeltype}"), level.name());
 		messageFormat = decodeColor(messageFormat);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{msg}"), msg);
+		if(replaceMessage) messageFormat = messageFormat.replaceAll(Pattern.quote("{msg}"), msg);
 		
 		return messageFormat;
 	}
