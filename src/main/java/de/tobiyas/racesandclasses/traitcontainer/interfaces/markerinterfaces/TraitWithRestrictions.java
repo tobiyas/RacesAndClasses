@@ -124,11 +124,15 @@ public interface TraitWithRestrictions {
 	 */
 	public static final String DESCRIPTION_PATH = "description";
 	
-	
 	/**
 	 * The Path to the min Uplink showing Name
 	 */
 	public static final String MIN_UPLINK_SHOW_PATH = "minUplinkShow";
+	
+	/**
+	 * The Path to disable uplink Notices
+	 */
+	public static final String DISABLE_UPLINK_NOTICE_PATH = "disableUplinkNotice";
 	
 	
 
