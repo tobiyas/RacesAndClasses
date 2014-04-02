@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
@@ -145,12 +145,12 @@ public abstract class AbstractHolderManager extends Observable{
 			}
 		}else{			
 			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
-			Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
+			Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
 			
-			for(OfflinePlayer player : players){
+			for(UUID player : players){
 				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-				memberList.put(player.getUniqueId(), getHolderByName(holderName));
+				memberList.put(player, getHolderByName(holderName));
 			}
 		}
 				
@@ -175,12 +175,12 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param potentialHolder to add the player to
 	 * @return if it worked
 	 */
-	public boolean addPlayerToHolder(OfflinePlayer player, String potentialHolder, boolean callAfterEvent){
+	public boolean addPlayerToHolder(UUID player, String potentialHolder, boolean callAfterEvent){
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
 		
 		saveNewHolderToDB(player, container, false);
-		memberList.put(player.getUniqueId(), container);
+		memberList.put(player, container);
 		
 		//setting permission group afterwards
 		String groupName = container.getPermissions().getGroupIdentificationName();
@@ -206,7 +206,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectedEvent generateAfterSelectEvent(OfflinePlayer player, AbstractTraitHolder newHolder);
+	protected abstract HolderSelectedEvent generateAfterSelectEvent(UUID player, AbstractTraitHolder newHolder);
 
 	
 	/**
@@ -218,7 +218,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectedEvent generateAfterChangeEvent(OfflinePlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
+	protected abstract HolderSelectedEvent generateAfterChangeEvent(UUID player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**
@@ -227,7 +227,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param playerUUID
 	 * @param newHolder
 	 */
-	private void saveNewHolderToDB(OfflinePlayer player, AbstractTraitHolder newHolder, boolean rescanAfter){
+	private void saveNewHolderToDB(UUID player, AbstractTraitHolder newHolder, boolean rescanAfter){
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 		String newHolderName = "";
 		if(newHolder != null){
@@ -235,10 +235,10 @@ public abstract class AbstractHolderManager extends Observable{
 		}
 		
 		if(useDB){
-			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerUUID", player.getUniqueId().toString()).findUnique();
+			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerUUID", player.toString()).findUnique();
 			if(container == null){
 				container = new PlayerHolderAssociation();
-				container.setPlayerUUID(player.getUniqueId());
+				container.setPlayerUUID(player);
 				container.setClassName(null);
 				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getName());
 			}
@@ -273,7 +273,7 @@ public abstract class AbstractHolderManager extends Observable{
 				entry.setValue(getDefaultHolder());
 			}
 			
-			saveNewHolderToDB(Bukkit.getOfflinePlayer(playerUUID), holder, false);
+			saveNewHolderToDB(playerUUID, holder, false);
 		}
 	}
 	
@@ -299,7 +299,8 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @param playerUUID to set the speed
 	 */
-	private void resetPlayerMovementSpeed(OfflinePlayer player){
+	private void resetPlayerMovementSpeed(UUID playerUUID){
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player != null && player.isOnline()){
 			player.getPlayer().setWalkSpeed(0.2f);
 		}
@@ -342,7 +343,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return true if worked, false otherwise
 	 */
-	public boolean changePlayerHolder(OfflinePlayer player, String newHolderName, boolean callEvent){
+	public boolean changePlayerHolder(UUID player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
 		AbstractTraitHolder oldHolder = getHolderOfPlayer(player);
@@ -378,13 +379,13 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param playerUUID
 	 * @return
 	 */
-	public AbstractTraitHolder getHolderOfPlayer(OfflinePlayer player){
-		if(player == null) return null;
+	public AbstractTraitHolder getHolderOfPlayer(UUID playerUUID){
+		if(playerUUID == null) return null;
 		
-		AbstractTraitHolder holder = memberList.get(player);
+		AbstractTraitHolder holder = memberList.get(playerUUID);
 		if(holder == null){
 			holder = getStartingHolder();
-			memberList.put(player.getUniqueId(), holder);
+			memberList.put(playerUUID, holder);
 		}
 		
 		return holder;
@@ -430,16 +431,16 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param holderName
 	 * @return
 	 */
-	public List<OfflinePlayer> getAllPlayersOfHolder(AbstractTraitHolder holder) {
+	public List<UUID> getAllPlayersOfHolder(AbstractTraitHolder holder) {
 		if(holder == null){
-			return new LinkedList<OfflinePlayer>();
+			return new LinkedList<UUID>();
 		}
 
-		List<OfflinePlayer> holderMemberList = new LinkedList<OfflinePlayer>();
+		List<UUID> holderMemberList = new LinkedList<UUID>();
 		for(UUID playerUUID : memberList.keySet()){
 			AbstractTraitHolder toCheckAgainst = memberList.get(playerUUID);
 			if(holder.equals(toCheckAgainst)){
-				holderMemberList.add(Bukkit.getOfflinePlayer(playerUUID));
+				holderMemberList.add(playerUUID);
 			}
 		}
 		

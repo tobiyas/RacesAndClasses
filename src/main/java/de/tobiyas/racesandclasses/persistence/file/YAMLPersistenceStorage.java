@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
-
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
@@ -249,11 +247,11 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	@Override
 	public List<PlayerHolderAssociation> getAllPlayerHolderAssociationsForHolder(
 			String holderName) {
-		Set<OfflinePlayer> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<UUID> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		List<PlayerHolderAssociation> containers = new LinkedList<PlayerHolderAssociation>();
-		for(OfflinePlayer player : allPlayers){
-			PlayerHolderAssociation container = getPlayerHolderAssociation(player.getUniqueId());
+		for(UUID player : allPlayers){
+			PlayerHolderAssociation container = getPlayerHolderAssociation(player);
 			if(holderName.equals(container.getRaceName())
 					|| holderName.equals(container.getClassName())){
 				containers.add(container);
@@ -281,11 +279,11 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 
 	@Override
 	public List<PlayerSavingContainer> getAllPlayerSavingContainers() {
-		Set<OfflinePlayer> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<UUID> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		List<PlayerSavingContainer> containers = new LinkedList<PlayerSavingContainer>();
-		for(OfflinePlayer player : allPlayers){
-			PlayerSavingContainer container = getPlayerContainer(player.getUniqueId());
+		for(UUID player : allPlayers){
+			PlayerSavingContainer container = getPlayerContainer(player);
 			containers.add(container);
 		}
 		

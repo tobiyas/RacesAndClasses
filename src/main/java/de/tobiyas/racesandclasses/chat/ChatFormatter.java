@@ -15,9 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.chat;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -54,8 +55,8 @@ public class ChatFormatter{
 		return format;
 	}
 	
-	public String format(OfflinePlayer player, String msg, String forceFormat, boolean replaceMessage){
-		Player realPlayer = player == null ? null : player.getPlayer();
+	public String format(UUID player, String msg, String forceFormat, boolean replaceMessage){
+		Player realPlayer = player == null ? null : Bukkit.getPlayer(player);
 		
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
@@ -70,13 +71,13 @@ public class ChatFormatter{
 			world = "None";
 		}else{
 			if(realPlayer == null){
-				displayName = player.getName();
-				realName = player.getName();
+				displayName = "UNKNOWN";
+				realName = "UNKNOWN";
 				world = "UNKNOWN";
 			}else{
-				displayName = player.getPlayer().getDisplayName();
-				realName = player.getName();
-				world = player.getPlayer().getWorld().getName();				
+				displayName = realPlayer.getPlayer().getDisplayName();
+				realName = realPlayer.getName();
+				world = realPlayer.getPlayer().getWorld().getName();				
 			}
 		}
 		

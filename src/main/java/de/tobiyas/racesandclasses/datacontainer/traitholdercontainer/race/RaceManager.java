@@ -67,19 +67,18 @@ public class RaceManager extends AbstractHolderManager {
 		Player[] players = Bukkit.getOnlinePlayers();
 
 		for (Player player : players) {
-			RaceContainer container = (RaceContainer) getHolderOfPlayer(player);
+			RaceContainer container = (RaceContainer) getHolderOfPlayer(player.getUniqueId());
 			if (container == null) {
-				addPlayerToHolder(player, Consts.defaultRace, false);
-				container = (RaceContainer) getHolderOfPlayer(player);
+				addPlayerToHolder(player.getUniqueId(), Consts.defaultRace, false);
+				container = (RaceContainer) getHolderOfPlayer(player.getUniqueId());
 			}
 
-			container.editTABListEntry(player);
+			container.editTABListEntry(player.getUniqueId());
 		}
 
 		for (UUID playerUUID : memberList.keySet())
 			if (memberList.get(playerUUID) == null) {
-				OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-				addPlayerToHolder(player, Consts.defaultRace, false);
+				addPlayerToHolder(playerUUID, Consts.defaultRace, false);
 			}
 	}
 
@@ -108,7 +107,7 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean changePlayerHolder(OfflinePlayer player, String newHolderName, boolean callEvent){
+	public boolean changePlayerHolder(UUID player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
 		String oldRace = getHolderOfPlayer(player).getName();
@@ -128,7 +127,7 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean addPlayerToHolder(OfflinePlayer player, String newHolderName, boolean callEvent){		
+	public boolean addPlayerToHolder(UUID player, String newHolderName, boolean callEvent){		
 		boolean worked = super.addPlayerToHolder(player, newHolderName, callEvent);
 		if(worked){
 			AbstractTraitHolder holder = getHolderOfPlayer(player);
@@ -137,7 +136,7 @@ public class RaceManager extends AbstractHolderManager {
 			}
 			
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-				plugin.getChannelManager().playerJoinRace(holder.getName(), player.getPlayer());
+				plugin.getChannelManager().playerJoinRace(holder.getName(), player);
 			}
 		}
 		
@@ -167,16 +166,16 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	protected HolderSelectedEvent generateAfterSelectEvent(OfflinePlayer player,
+	protected HolderSelectedEvent generateAfterSelectEvent(UUID player,
 			AbstractTraitHolder newHolder) {
-		return new AfterRaceSelectedEvent(player.getPlayer(), (RaceContainer)newHolder);
+		return new AfterRaceSelectedEvent(Bukkit.getPlayer(player), (RaceContainer)newHolder);
 	}
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(OfflinePlayer player,
+	protected HolderSelectedEvent generateAfterChangeEvent(UUID player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new AfterRaceChangedEvent(player.getPlayer(), (RaceContainer) newHolder, (RaceContainer) oldHolder);
+		return new AfterRaceChangedEvent(Bukkit.getPlayer(player), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public class ClassAPI {
 	 */
 	public static ClassContainer getClassOfPlayer(OfflinePlayer player){
 		ClassManager classManager = plugin.getClassManager();
-		ClassContainer clazz = (ClassContainer) classManager.getHolderOfPlayer(player);
+		ClassContainer clazz = (ClassContainer) classManager.getHolderOfPlayer(player.getUniqueId());
 		if(clazz != null){
 			return clazz;
 		}else{
@@ -135,6 +135,6 @@ public class ClassAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(player, className, true);
+		return manager.changePlayerHolder(player.getUniqueId(), className, true);
 	}
 }

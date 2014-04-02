@@ -63,7 +63,7 @@ public class ChatAPI {
 	 * @param playerUUID
 	 */
 	public static void addPlayerToChannel(String channelName, Player player, boolean notifyOthers){
-		plugin.getChannelManager().joinChannel(player, channelName, "", notifyOthers);
+		plugin.getChannelManager().joinChannel(player.getUniqueId(), channelName, "", notifyOthers);
 	}
 	
 	
@@ -74,6 +74,6 @@ public class ChatAPI {
 	 * @param playerUUID
 	 */
 	public static void removePlayerFromChannel(String channelName, Player player, boolean notifyOthers){
-		plugin.getChannelManager().leaveChannel(player, channelName, notifyOthers);
+		plugin.getChannelManager().leaveChannel(player.getUniqueId(), channelName, notifyOthers);
 	}
 }

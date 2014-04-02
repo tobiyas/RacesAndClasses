@@ -26,6 +26,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -65,7 +66,7 @@ public class Command_RACLevel implements CommandExecutor {
 		}
 		
 		String subCommand = args[1];
-		OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+		Player player = Bukkit.getPlayer(args[0]);
 		int value = 0;
 		
 		try{
@@ -75,7 +76,7 @@ public class Command_RACLevel implements CommandExecutor {
 			return true;
 		}
 		
-		PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(player);
+		PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(player.getUniqueId());
 		if(manager == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", player.getName());

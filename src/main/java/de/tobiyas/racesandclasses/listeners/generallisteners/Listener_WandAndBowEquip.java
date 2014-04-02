@@ -56,16 +56,16 @@ public class Listener_WandAndBowEquip implements Listener {
 			boolean newMatIsWand = isWand(player, mat);
 
 			if(newMatIsWand){
-				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getSpellAmount() > 0){
-					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell().toString();
+				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getSpellAmount() > 0){
+					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell().toString();
 					LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
 							"current_spell", currentActiveSpell);
 				}
 			}
 			
 			if(mat == Material.BOW){
-				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player).getNumberOfArrowTypes() > 0){
-					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player).getCurrentArrow().getDisplayName();
+				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId()).getNumberOfArrowTypes() > 0){
+					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId()).getCurrentArrow().getDisplayName();
 					LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
 							"current_arrow", currentArrow);
 				}
@@ -84,12 +84,12 @@ public class Listener_WandAndBowEquip implements Listener {
 		Set<Material> wands = new HashSet<Material>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 		if(classHolder != null){
 			wands.addAll(classHolder.getAdditionalWandMaterials());
 		}
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		if(raceHolder != null){
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}

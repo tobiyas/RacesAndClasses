@@ -16,7 +16,7 @@
 package de.tobiyas.racesandclasses.APIs;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -53,7 +53,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 * 
-		 * @deprecated use {@link #setIntToPlayer(OfflinePlayer, String, int, boolean)} instead
+		 * @deprecated use {@link #setIntToPlayer(Player, String, int, boolean)} instead
 		 */
 		@Deprecated
 		public static boolean setIntToPlayer(String playerName, String identifier, int value, boolean visibleForPlayer){
@@ -75,7 +75,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 * 
-		 * @deprecated use {@link #setDoubleToPlayer(OfflinePlayer, String, double, boolean)} instead
+		 * @deprecated use {@link #setDoubleToPlayer(Player, String, double, boolean)} instead
 		 */
 		@Deprecated
 		public static boolean setDoubleToPlayer(String playerName, String identifier, double value, boolean visibleForPlayer){
@@ -96,7 +96,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 * 
-		 * @deprecated use {@link #setStringToPlayer(OfflinePlayer, String, String, boolean)} instead
+		 * @deprecated use {@link #setStringToPlayer(Player, String, String, boolean)} instead
 		 */
 		@Deprecated
 		public static boolean setStringToPlayer(String playerName, String identifier, String value, boolean visibleForPlayer){
@@ -118,7 +118,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 * 
-		 * @deprecated use {@link #setBooleanToPlayer(OfflinePlayer, String, boolean, boolean)} instead
+		 * @deprecated use {@link #setBooleanToPlayer(Player, String, boolean, boolean)} instead
 		 */
 		@Deprecated
 		public static boolean setBooleanToPlayer(String playerName, String identifier, boolean value, boolean visibleForPlayer){
@@ -137,11 +137,11 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if worked, false otherwise
 		 * 
-		 * @deprecated use {@link #setValueToPlayer(OfflinePlayer, String, Object, boolean)} instead
+		 * @deprecated use {@link #setValueToPlayer(Player, String, Object, boolean)} instead
 		 */
 		@Deprecated
 		private static boolean setValueToPlayer(String playerName, String identifier, Object value, boolean visibleForPlayer){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getOfflinePlayer(playerName));
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getPlayer(playerName).getUniqueId());
 			if(config == null){
 				return false;
 			}
@@ -168,7 +168,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 */
-		public static boolean setIntToPlayer(OfflinePlayer player, String identifier, int value, boolean visibleForPlayer){
+		public static boolean setIntToPlayer(Player player, String identifier, int value, boolean visibleForPlayer){
 			return setValueToPlayer(player, identifier, value, visibleForPlayer);
 		}
 		
@@ -187,7 +187,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 */
-		public static boolean setDoubleToPlayer(OfflinePlayer player, String identifier, double value, boolean visibleForPlayer){
+		public static boolean setDoubleToPlayer(Player player, String identifier, double value, boolean visibleForPlayer){
 			return setValueToPlayer(player, identifier, value, visibleForPlayer);
 		}
 		
@@ -205,7 +205,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 */
-		public static boolean setStringToPlayer(OfflinePlayer player, String identifier, String value, boolean visibleForPlayer){
+		public static boolean setStringToPlayer(Player player, String identifier, String value, boolean visibleForPlayer){
 			return setValueToPlayer(player, identifier, value, visibleForPlayer);
 		}
 		
@@ -224,7 +224,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if it worked, false otherwise
 		 */
-		public static boolean setBooleanToPlayer(OfflinePlayer player, String identifier, boolean value, boolean visibleForPlayer){
+		public static boolean setBooleanToPlayer(Player player, String identifier, boolean value, boolean visibleForPlayer){
 			return setValueToPlayer(player, identifier, value, visibleForPlayer);
 		}
 		
@@ -240,8 +240,8 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return true if worked, false otherwise
 		 */
-		private static boolean setValueToPlayer(OfflinePlayer player, String identifier, Object value, boolean visibleForPlayer){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+		private static boolean setValueToPlayer(Player player, String identifier, Object value, boolean visibleForPlayer){
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 			if(config == null){
 				return false;
 			}
@@ -365,7 +365,7 @@ public class MemberConfigurationAPI {
 		 * @return the searched Value or the defaultValue if not found.
 		 */
 		private static Object getObjectFromPlayer(String playerName, String identifier, Object defaultValue){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getOfflinePlayer(playerName));
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getPlayer(playerName).getUniqueId());
 			if(config == null || !config.containsValue(identifier)){
 				return defaultValue;
 			}
@@ -486,7 +486,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the Integer value looked for, or {@link Integer#MIN_VALUE} if not found
 		 */
-		public static int getIntFromPlayer(OfflinePlayer player, String identifier){
+		public static int getIntFromPlayer(Player player, String identifier){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Integer)){
 				return Integer.MIN_VALUE;
@@ -509,7 +509,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the Double looked for, or {@link Double#MIN_VALUE} if not found.
 		 */
-		public static double getDoubleFromPlayer(OfflinePlayer player, String identifier){
+		public static double getDoubleFromPlayer(Player player, String identifier){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Double)){
 				return Double.MIN_VALUE;
@@ -531,7 +531,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the String looked for, or "" if not found.
 		 */
-		public static String getStringFromPlayer(OfflinePlayer player, String identifier){
+		public static String getStringFromPlayer(Player player, String identifier){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof String)){
 				return "";
@@ -554,7 +554,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the boolean looked for, false if not found
 		 */
-		public static boolean getBooleanToPlayer(OfflinePlayer player, String identifier){
+		public static boolean getBooleanToPlayer(Player player, String identifier){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Boolean)){
 				return false;
@@ -574,8 +574,8 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the searched Value or the defaultValue if not found.
 		 */
-		private static Object getObjectFromPlayer(OfflinePlayer player, String identifier, Object defaultValue){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+		private static Object getObjectFromPlayer(Player player, String identifier, Object defaultValue){
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 			if(config == null || !config.containsValue(identifier)){
 				return defaultValue;
 			}
@@ -600,7 +600,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the Integer value looked for, or the defaultValue if not found
 		 */
-		public static int getIntFromPlayer(OfflinePlayer player, String identifier, int defaultValue){
+		public static int getIntFromPlayer(Player player, String identifier, int defaultValue){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Integer)){
 				return defaultValue;
@@ -624,7 +624,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the Double looked for, or the defaultValue if not found.
 		 */
-		public static double getDoubleFromPlayer(OfflinePlayer player, String identifier, double defaultValue){
+		public static double getDoubleFromPlayer(Player player, String identifier, double defaultValue){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Double)){
 				return defaultValue;
@@ -647,7 +647,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the String looked for, or the defaultValue if not found.
 		 */
-		public static String getStringFromPlayer(OfflinePlayer player, String identifier, String defaultValue){
+		public static String getStringFromPlayer(Player player, String identifier, String defaultValue){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof String)){
 				return defaultValue;
@@ -671,7 +671,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * @return the boolean looked for, or the defaultValue if not found
 		 */
-		public static boolean getBooleanToPlayer(OfflinePlayer player, String identifier, boolean defaultValue){
+		public static boolean getBooleanToPlayer(Player player, String identifier, boolean defaultValue){
 			Object value = getObjectFromPlayer(player, identifier, null);
 			if(value == null || !(value instanceof Boolean)){
 				return defaultValue;

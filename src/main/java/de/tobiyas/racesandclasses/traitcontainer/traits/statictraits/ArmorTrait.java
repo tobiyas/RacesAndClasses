@@ -86,7 +86,7 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 		ItemStack armorItem = playerEquipEvent.getArmorItem();
 		if(armorItem == null) return TraitResults.False();
 		
-		if(!plugin.getPlayerManager().getArmorToolManagerOfPlayer(player).hasPermissionForItem(armorItem)){ 
+		if(!plugin.getPlayerManager().getArmorToolManagerOfPlayer(player.getUniqueId()).hasPermissionForItem(armorItem)){ 
 			String matName = getMaterialName(armorItem.getType());
 			LanguageAPI.sendTranslatedMessage(player, armor_not_allowed, "material", matName);
 			playerEquipEvent.setCancelled(true);

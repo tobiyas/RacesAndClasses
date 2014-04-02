@@ -103,7 +103,7 @@ public class QuickSlotListener implements Listener {
 		
 		if(playerName == null || spellName == null) return;
 		
-		PlayerSpellManager manager = plugin.getPlayerManager().getSpellManagerOfPlayer(event.getPlayer());
+		PlayerSpellManager manager = plugin.getPlayerManager().getSpellManagerOfPlayer(event.getPlayer().getUniqueId());
 		if(!manager.changeToSpell(spellName.replace(QUICK_ITEM_PRE, ""))) return;
 		if(!manager.tryCastCurrentSpell()) return;
 	}

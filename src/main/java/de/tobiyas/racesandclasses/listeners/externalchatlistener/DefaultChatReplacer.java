@@ -52,7 +52,7 @@ public class DefaultChatReplacer implements Listener {
 		String raceTag = "";
 		String classTag = "";
 
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getPlayer());
+		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getPlayer().getUniqueId());
 		if(holder != null){
 			raceTag = holder.getTag();
 			if("".equals(raceTag)){
@@ -60,7 +60,7 @@ public class DefaultChatReplacer implements Listener {
 			}
 		}
 		
-		holder = plugin.getClassManager().getHolderOfPlayer(event.getPlayer());
+		holder = plugin.getClassManager().getHolderOfPlayer(event.getPlayer().getUniqueId());
 		if(holder != null){
 			classTag = holder.getTag();
 			if("".equals(classTag)){

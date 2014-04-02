@@ -183,14 +183,14 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 			return false;
 		}
 		
-		if(checkRemoveCost && !plugin.getPlayerManager().getSpellManagerOfPlayer(player).canCastSpell(this)){
+		if(checkRemoveCost && !plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).canCastSpell(this)){
 			//player does not have enough cost type to use this spell.
 			return false;
 		}
 		
 		boolean worked = tickInternal(player);
 		if(checkRemoveCost && worked){
-			plugin.getPlayerManager().getSpellManagerOfPlayer(player).removeCost(this);
+			plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(this);
 		}
 		
 		return worked;

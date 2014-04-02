@@ -56,7 +56,7 @@ public class Listener_Player implements Listener {
 	public void onPlayerLeave(PlayerQuitEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			Player player = event.getPlayer();
-			plugin.getChannelManager().playerQuit(player);
+			plugin.getChannelManager().playerQuit(player.getUniqueId());
 		}
 	}
 	 
@@ -66,27 +66,27 @@ public class Listener_Player implements Listener {
 		final Player player = event.getPlayer();
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
 				&& racesActive){
 			LanguageAPI.sendTranslatedMessage(player, login_no_race_selected);
 			if(container == null){
-				plugin.getRaceManager().addPlayerToHolder(player, Consts.defaultRace, true);
+				plugin.getRaceManager().addPlayerToHolder(player.getUniqueId(), Consts.defaultRace, true);
 			}
 		}
 		
-		plugin.getPlayerManager().checkPlayer(player);
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+		plugin.getPlayerManager().checkPlayer(player.getUniqueId());
+		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			plugin.getChannelManager().playerLogin(player);
+			plugin.getChannelManager().playerLogin(player.getUniqueId());
 		}
 		
 		if(racesActive){
-			container.editTABListEntry(player);
+			container.editTABListEntry(player.getUniqueId());
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
-		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player) == plugin.getRaceManager().getDefaultHolder();
+		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId()) == plugin.getRaceManager().getDefaultHolder();
 		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
 		
 		if(playerHasNoRace && forceSelectOfRace && racesActive){
@@ -108,7 +108,7 @@ public class Listener_Player implements Listener {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			World oldWorld = event.getFrom();
 			Player player = event.getPlayer();
-			plugin.getChannelManager().playerChangedWorld(oldWorld, player);
+			plugin.getChannelManager().playerChangedWorld(oldWorld, player.getUniqueId());
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class Listener_Player implements Listener {
 		
 		if(orgMsg.charAt(0) == '/') return;
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 		String channel = "Global";
 		
 		if(config != null){

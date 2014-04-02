@@ -16,9 +16,9 @@
 package de.tobiyas.racesandclasses.persistence.file;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -39,8 +39,8 @@ public class YAMLPersistanceSaver {
 			public void run() {
 				YAMLPersistenceProvider.rescanKnownPlayers();
 				
-				Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
-				for(OfflinePlayer player : players){
+				Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
+				for(UUID player : players){
 					YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				}
 			}
@@ -86,8 +86,8 @@ public class YAMLPersistanceSaver {
 			saveEverything();
 			YAMLPersistenceProvider.rescanKnownPlayers();
 			
-			Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
-			for(OfflinePlayer player : players){
+			Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
+			for(UUID player : players){
 				YAMLConfigExtended config = 
 						YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				

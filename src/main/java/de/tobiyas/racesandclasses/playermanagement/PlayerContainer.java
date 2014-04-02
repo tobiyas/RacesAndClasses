@@ -21,7 +21,6 @@ import javax.persistence.PersistenceException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -145,8 +144,7 @@ public class PlayerContainer {
 		
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-		MemberConfig memberConfig = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+		MemberConfig memberConfig = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID);
 		if(memberConfig != null){
 			//this should never be null, since it is created if not existent
 			display = new HealthDisplayRunner(memberConfig, this);
@@ -223,12 +221,12 @@ public class PlayerContainer {
 	 * @param player
 	 * @return
 	 */
-	public static PlayerContainer constructFromDB(OfflinePlayer player){		
+	public static PlayerContainer constructFromDB(UUID player){		
 		try{
-			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerUUID", player.getUniqueId().toString()).findUnique();
+			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerUUID", player.toString()).findUnique();
 			if(container == null) throw new PersistenceException("Not found.");
 			
-			PlayerContainer playerContainer = new PlayerContainer(player.getUniqueId(), 20).checkStats();
+			PlayerContainer playerContainer = new PlayerContainer(player, 20).checkStats();
 			
 			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
 			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
@@ -239,7 +237,7 @@ public class PlayerContainer {
 			
 			return playerContainer.checkStats();
 		}catch(PersistenceException exp){
-			PlayerContainer playerContainer = new PlayerContainer(player.getUniqueId(), 20);
+			PlayerContainer playerContainer = new PlayerContainer(player, 20);
 			playerContainer.checkStats();
 			return playerContainer;
 		}
@@ -253,7 +251,7 @@ public class PlayerContainer {
 	 * @param fromDB true if to load from DB.
 	 * @return the loaded PlayerContainer.
 	 */
-	public static PlayerContainer loadPlayerContainer(OfflinePlayer player ,boolean fromDB){
+	public static PlayerContainer loadPlayerContainer(UUID player ,boolean fromDB){
 		if(fromDB){
 			return constructFromDB(player);
 		}else{
@@ -269,13 +267,13 @@ public class PlayerContainer {
 	 * @param player to load
 	 * @return the container corresponding to the player.
 	 */
-	public static PlayerContainer constructContainerFromYML(OfflinePlayer player){
+	public static PlayerContainer constructContainerFromYML(UUID player){
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		config.load();
 		
 		
 		//set race when not set yet.
-		String savedRace = config.getString("playerdata." + player + ".race", null);
+		String savedRace = config.getString("race", null);
 		boolean raceEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		if(raceEnabled && savedRace != null && !savedRace.equals("") 
 				&& plugin.getRaceManager().getHolderOfPlayer(player) == plugin.getRaceManager().getDefaultHolder()){
@@ -284,7 +282,7 @@ public class PlayerContainer {
 
 		
 		//set class when not set
-		String savedClass = config.getString("playerdata." + player + ".class", null);
+		String savedClass = config.getString("class", null);
 		boolean classEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable();
 		if(classEnabled && savedClass != null && !savedClass.equals("") 
 				&& plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder()){
@@ -304,8 +302,8 @@ public class PlayerContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
-		PlayerContainer container = new PlayerContainer(player.getUniqueId(), maxHealth).checkStats();
-		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
+		PlayerContainer container = new PlayerContainer(player, maxHealth).checkStats();
+		boolean hasGod = config.getBoolean("hasGod");
 		if(hasGod){
 			container.switchGod();
 		}
@@ -317,11 +315,13 @@ public class PlayerContainer {
 	 */
 	public PlayerContainer checkStats() {
 		final Player player = Bukkit.getPlayer(playerUUID);
+		if(player == null || !player.isOnline()) return null;
+		
 		boolean isOnDisabledWorld = WorldResolver.isOnDisabledWorld(player);
 		boolean keepMaxHPOnDisabledWorld = plugin.getConfigManager().getGeneralConfig().isConfig_keep_max_hp_on_disabled_worlds();
 		
-		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
-		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
+		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 		
 		if(raceContainer == null || (isOnDisabledWorld && !keepMaxHPOnDisabledWorld)) {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();

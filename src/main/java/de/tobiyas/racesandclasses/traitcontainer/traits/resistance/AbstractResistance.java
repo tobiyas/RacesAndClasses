@@ -87,7 +87,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		Entity entity = Eevent.getEntity();
 		if(!(entity instanceof Player)) return result.setTriggered(false);
 		Player player = (Player) entity;
-		if(TraitHolderCombinder.checkContainer(player, this)){
+		if(TraitHolderCombinder.checkContainer(player.getUniqueId(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
 				
 				//If there is damage * 0, cancel the Event to show no damage effect.

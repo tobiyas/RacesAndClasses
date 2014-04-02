@@ -53,7 +53,7 @@ public class EventActionResolver {
 			//check player change spell first
 			
 			ItemStack itemInHands = ((PlayerInteractEvent) event).getItem();
-			if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).isWandItem(itemInHands)){
+			if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).isWandItem(itemInHands)){
 				if(((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_BLOCK
 						|| ((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_AIR){
 					

@@ -15,7 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -43,8 +44,8 @@ public class PlayerReceiveEXPEvent extends LevelEvent implements Cancellable{
 	 * @param offlinePlayer
 	 * @param exp
 	 */
-	public PlayerReceiveEXPEvent(OfflinePlayer offlinePlayer, int exp) {
-		super(offlinePlayer);
+	public PlayerReceiveEXPEvent(UUID playerUUID, int exp) {
+		super(playerUUID);
 		
 		this.exp = exp;
 	}

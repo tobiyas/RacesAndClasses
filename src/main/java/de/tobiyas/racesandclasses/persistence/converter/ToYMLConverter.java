@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
-
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
@@ -126,8 +124,8 @@ public class ToYMLConverter {
 	private static void convertMemberConfig(PersistenceStorage storage){
 		Set<ConfigOption> playerConfig = new HashSet<ConfigOption>();
 		
-		for(OfflinePlayer player : YAMLPersistenceProvider.getAllPlayersKnown()){			
-			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(player.getUniqueId());
+		for(UUID player : YAMLPersistenceProvider.getAllPlayersKnown()){			
+			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(player);
 			if(newHolders != null){
 				playerConfig.addAll(newHolders);
 			}

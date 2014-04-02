@@ -81,7 +81,7 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 			return true;
 		}
 		
-		if(plugin.getPlayerManager().switchGod(target)){
+		if(plugin.getPlayerManager().switchGod(target.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(sender, success);
 		}else{
 			LanguageAPI.sendTranslatedMessage(sender, failed);

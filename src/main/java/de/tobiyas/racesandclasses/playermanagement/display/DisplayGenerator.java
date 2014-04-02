@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -28,15 +28,15 @@ public class DisplayGenerator {
 	/**
 	 * Creates a Display for the passed infos and Player.
 	 * 
-	 * @param offlinePlayer to create
+	 * @param playerUUID to create
 	 * @param infos to create
 	 * 
 	 * @return the generated Display
 	 */
-	public static Display generateDisplay(OfflinePlayer offlinePlayer, DisplayInfos infos){
+	public static Display generateDisplay(UUID playerUUID, DisplayInfos infos){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(offlinePlayer);
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID);
 		Object displayTypeAsObject = config.getValueDisplayName("displayType");
 		String displayType = "score";
 		
@@ -51,7 +51,7 @@ public class DisplayGenerator {
 			type = DisplayType.Chat;
 		}
 		
-		return generateFromType(type, offlinePlayer, infos);
+		return generateFromType(type, playerUUID, infos);
 	}
 	
 	
@@ -64,16 +64,16 @@ public class DisplayGenerator {
 	 * 
 	 * @return the generated Display
 	 */
-	private static Display generateFromType(DisplayType type, OfflinePlayer player, DisplayInfos infos){
+	private static Display generateFromType(DisplayType type, UUID playerUUID, DisplayInfos infos){
 		switch (type) {
 		case Chat:
-			return new ChatDisplayBar(player, infos);
+			return new ChatDisplayBar(playerUUID, infos);
 		
 		case Scoreboard:
-			return new NewScoreBoardDisplayBar(player, infos);
+			return new NewScoreBoardDisplayBar(playerUUID, infos);
 			
 		default:
-			return new ChatDisplayBar(player, infos);
+			return new ChatDisplayBar(playerUUID, infos);
 		}
 	}
 }

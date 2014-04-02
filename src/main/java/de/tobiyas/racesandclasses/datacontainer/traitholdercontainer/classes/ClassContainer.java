@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
@@ -115,7 +115,7 @@ public class ClassContainer extends AbstractTraitHolder{
 
 	
 	@Override
-	public boolean containsPlayer(OfflinePlayer player){
+	public boolean containsPlayer(UUID player){
 		AbstractTraitHolder container = RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);

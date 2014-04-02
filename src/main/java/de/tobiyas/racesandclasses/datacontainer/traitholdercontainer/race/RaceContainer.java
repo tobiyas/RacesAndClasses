@@ -16,8 +16,9 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
 import java.util.HashSet;
+import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -94,7 +95,7 @@ public class RaceContainer extends AbstractTraitHolder{
 	}
 	
 	@Override
-	public boolean containsPlayer(OfflinePlayer player){
+	public boolean containsPlayer(UUID player){
 		AbstractTraitHolder container = RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getName().equals(holderName);
@@ -106,8 +107,8 @@ public class RaceContainer extends AbstractTraitHolder{
 	}
 
 
-	public void editTABListEntry(OfflinePlayer player2) {
-		Player player = player2.getPlayer();
+	public void editTABListEntry(UUID playerUUID) {
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null) return;
 		if(!RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_adaptListName()) return;
 		String total = holderTag + player.getName();

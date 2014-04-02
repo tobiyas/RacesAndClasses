@@ -157,7 +157,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		if(!playerHasWandInHand) return false;
 		
 		//check if the Spell is the current selected Spell
-		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell()) return false;
+		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell()) return false;
 		
 		return true;
 	}
@@ -205,7 +205,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if he has, false otherwise.
 	 */
 	public boolean checkWandInHand(Player player) {
-		return plugin.getPlayerManager().getSpellManagerOfPlayer(player)
+		return plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId())
 				.isWandItem(player.getItemInHand());
 	}
 
@@ -246,7 +246,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			if(!playerHasWandInHand) return result.setTriggered(false);
 			
 			//check if the Spell is the current selected Spell
-			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell()) return  result.setTriggered(false);
+			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell()) return  result.setTriggered(false);
 			
 			Action action = playerInteractEvent.getAction();
 			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
@@ -271,7 +271,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 							if(channelingMap.containsKey(player.getUniqueId())){
 								magicSpellTriggered(player, result);
 								if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-									plugin.getPlayerManager().getSpellManagerOfPlayer(player).removeCost(AbstractMagicSpellTrait.this);
+									plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(AbstractMagicSpellTrait.this);
 								}
 								if(result.isTriggered() && result.isSetCooldownOnPositiveTrigger()){
 									setCooldownIfNeeded(player);
@@ -283,7 +283,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				}else{
 					magicSpellTriggered(player, result);					
 					if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-						plugin.getPlayerManager().getSpellManagerOfPlayer(player).removeCost(this);
+						plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(this);
 					}
 				}
 				
@@ -339,9 +339,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if the Spell could be changed, false if not.
 	 */
 	protected boolean changeMagicSpell(Player player){
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell() == null) return false;
+		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell() == null) return false;
 		
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getSpellAmount() == 0){
+		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getSpellAmount() == 0){
 			LanguageAPI.sendTranslatedMessage(player, magic_no_spells);
 			return true;
 		}
@@ -350,9 +350,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		
 		MagicSpellTrait nextSpell = null;
 		if(toPrev){
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).changeToPrevSpell();
+			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).changeToPrevSpell();
 		}else{
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).changeToNextSpell();			
+			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).changeToNextSpell();			
 		}
 		
 		if(nextSpell != null){

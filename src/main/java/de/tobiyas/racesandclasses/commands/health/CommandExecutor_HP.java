@@ -54,13 +54,13 @@ public class CommandExecutor_HP implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;
-		if(!plugin.getPlayerManager().displayHealth(player)){
+		if(!plugin.getPlayerManager().displayHealth(player.getUniqueId())){
 			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found)
 					.build());
 		}
 		
-		plugin.getPlayerManager().getSpellManagerOfPlayer(player).getManaManager().outputManaToPlayer();
-		plugin.getPlayerManager().getPlayerLevelManager(player).forceDisplay();
+		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getManaManager().outputManaToPlayer();
+		plugin.getPlayerManager().getPlayerLevelManager(player.getUniqueId()).forceDisplay();
 		return true;
 	}
 

@@ -99,14 +99,14 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			expDisplay.unregister();
 		}
 		
-		expDisplay = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(playerUUID), DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(playerUUID), DisplayInfos.LEVEL);
+		expDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL_EXP);
+		levelDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL);
 	}
 	
 	
 	@Override
 	public void reloadFromYaml(){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -165,7 +165,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	
 	@Override
 	public boolean addExp(int exp){
-		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
+		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(playerUUID, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -195,7 +195,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			currentLevel++;
 			currentExpOfLevel -= levelPack.getMaxEXP();
 			
-			Bukkit.getPluginManager().callEvent(new LevelUpEvent(Bukkit.getOfflinePlayer(playerUUID), currentLevel, currentLevel + 1));
+			Bukkit.getPluginManager().callEvent(new LevelUpEvent(playerUUID, currentLevel, currentLevel + 1));
 			
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
@@ -209,7 +209,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	
 	@Override
 	public boolean removeExp(int exp){		
-		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
+		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(playerUUID, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -244,7 +244,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			currentLevel--;
 			currentExpOfLevel += levelPack.getMaxEXP();
 			
-			Bukkit.getPluginManager().callEvent(new LevelDownEvent(Bukkit.getOfflinePlayer(playerUUID), currentLevel + 1, currentLevel));
+			Bukkit.getPluginManager().callEvent(new LevelDownEvent(playerUUID, currentLevel + 1, currentLevel));
 			
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
 		}
@@ -257,7 +257,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
 		if(!config.getValidLoad()){
 			return;
 		}

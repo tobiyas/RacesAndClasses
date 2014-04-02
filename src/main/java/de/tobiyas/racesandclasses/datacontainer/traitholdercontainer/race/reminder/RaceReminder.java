@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,13 +41,13 @@ public class RaceReminder implements Runnable {
 	public void run() {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_activate_reminder()){
 			AbstractTraitHolder defaultContainer = plugin.getRaceManager().getDefaultHolder();
-			List<OfflinePlayer> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
-			for(OfflinePlayer player : list){
-				if(player == null || !player.isOnline()){
+			List<UUID> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
+			for(UUID player : list){
+				if(player == null){
 					continue;
 				}
 				
-				postSelectRace(player.getPlayer());
+				postSelectRace(player);
 			}
 		}
 	}
@@ -58,13 +59,24 @@ public class RaceReminder implements Runnable {
 	 * @param player
 	 * @return
 	 */
-	private boolean hasAnyRacePermission(Player player) {
+	private boolean hasAnyRacePermission(UUID player) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()) return true;
 		
-		if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.racePermPre + "*")) return true;
+		String name = null;
+		for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
+			if(offlinePlayer.getUniqueId().equals(player)){
+				name = offlinePlayer.getName();
+				break;
+			}
+		}
+		
+		if(name == null) return false;
+		
+		//TODO fix with Utils.
+		if(plugin.getPermissionManager().checkPermissionsSilent(name, PermissionNode.racePermPre + "*")) return true;
 		
 		for(String raceName : plugin.getRaceManager().listAllVisibleHolders()){
-			if(plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.racePermPre + raceName)){
+			if(plugin.getPermissionManager().checkPermissionsSilent(name, PermissionNode.racePermPre + raceName)){
 				return true;
 			}
 		}
@@ -79,15 +91,18 @@ public class RaceReminder implements Runnable {
 	 * 
 	 * @param player
 	 */
-	private void postSelectRace(Player player){
+	private void postSelectRace(UUID player){
 		if(!hasAnyRacePermission(player)) return;
 		
-		player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: You have not selected a race.");
-		if(plugin.getConfigManager().getGeneralConfig().isConfig_tutorials_enable()){
-			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: If you want to use the Tutorial, use " + ChatColor.LIGHT_PURPLE + "/racestutorial start");
-		}else{
-			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select <racename> " + ChatColor.YELLOW + "to select a race.");
-			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
+		Player realPlayer = Bukkit.getPlayer(player);
+		if(realPlayer != null){
+			realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: You have not selected a race.");
+			if(plugin.getConfigManager().getGeneralConfig().isConfig_tutorials_enable()){
+				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: If you want to use the Tutorial, use " + ChatColor.LIGHT_PURPLE + "/racestutorial start");
+			}else{
+				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select <racename> " + ChatColor.YELLOW + "to select a race.");
+				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
+			}
 		}
 	}
 

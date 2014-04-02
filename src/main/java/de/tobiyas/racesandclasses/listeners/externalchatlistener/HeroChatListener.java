@@ -69,12 +69,12 @@ public class HeroChatListener implements Listener  {
 		String raceTag = "";
 		String classTag = "";
 
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getSender().getPlayer());
+		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getSender().getPlayer().getUniqueId());
 		if(holder != null){
 			raceTag = holder.getTag();
 		}
 		
-		holder = plugin.getClassManager().getHolderOfPlayer(event.getSender().getPlayer());
+		holder = plugin.getClassManager().getHolderOfPlayer(event.getSender().getPlayer().getUniqueId());
 		if(holder != null){
 			classTag = holder.getTag();
 		}

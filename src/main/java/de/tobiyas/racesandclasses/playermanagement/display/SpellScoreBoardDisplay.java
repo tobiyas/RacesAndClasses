@@ -15,13 +15,13 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class SpellScoreBoardDisplay extends AbstractDisplay {
 
-	public SpellScoreBoardDisplay(OfflinePlayer player, DisplayInfos displayInfo) {
+	public SpellScoreBoardDisplay(UUID player, DisplayInfos displayInfo) {
 		super(player, displayInfo);
 
 	

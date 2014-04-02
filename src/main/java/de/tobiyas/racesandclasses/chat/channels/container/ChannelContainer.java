@@ -26,7 +26,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -196,7 +195,7 @@ public class ChannelContainer extends Observable{
 	public void banAndRemovePlayer(UUID player, int time){
 		banContainer.banPlayer(player, time);
 		if(isMember(player)){
-			removePlayerFromChannel(Bukkit.getOfflinePlayer(player), false);
+			removePlayerFromChannel(player, false);
 		}
 	}
 	
@@ -253,15 +252,15 @@ public class ChannelContainer extends Observable{
 		}
 	}
 	
-	public void addPlayerToChannel(OfflinePlayer player, String password, boolean notify){
-		Player realPlayer = player.getPlayer();
+	public void addPlayerToChannel(UUID playerUUID, String password, boolean notify){
+		Player realPlayer = Bukkit.getPlayer(playerUUID);
 		
-		if(participants.contains(player.getUniqueId())){ 
+		if(participants.contains(playerUUID)){ 
 			realPlayer.sendMessage(ChatColor.RED + "You are already member of this channel.");
 			return;
 		}
 		
-		int isBanned = banContainer.isBanned(player.getUniqueId());
+		int isBanned = banContainer.isBanned(playerUUID);
 		if(isBanned != -1){
 			String time = getTimeString(isBanned);
 			realPlayer.sendMessage(ChatColor.RED + "You are banned from this channel for: " + ChatColor.LIGHT_PURPLE + time);
@@ -269,7 +268,7 @@ public class ChannelContainer extends Observable{
 		}
 		
 		if(channelLevel == ChannelLevel.RaceChannel){
-			AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
+			AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
 			
 			if(container == null || !container.getName().equalsIgnoreCase(channelName)){
 				realPlayer.sendMessage(ChatColor.RED + "You don't belong to this race.");
@@ -292,21 +291,21 @@ public class ChannelContainer extends Observable{
 			}
 		}
 			
-		participants.add(player.getUniqueId());
-		if(player != null){
+		participants.add(playerUUID);
+		if(realPlayer != null){
 			if(notify){
 				String joinMessage = plugin.getConfigManager().getChannelConfig().getConfig_PlayerJoinFormat();
 				sendMessageInChannel(realPlayer, "", joinMessage);
 			}
 		}
 		
-		this.notifyObservers(new TutorialStepContainer(player.getUniqueId(), TutorialState.channels, 2));
+		this.notifyObservers(new TutorialStepContainer(playerUUID, TutorialState.channels, 2));
 		this.setChanged();
 	}
 	
-	public void removePlayerFromChannel(OfflinePlayer player, boolean notify){
-		Player realPlayer = player.getPlayer();
-		if(!participants.contains(player)){
+	public void removePlayerFromChannel(UUID player, boolean notify){
+		Player realPlayer = Bukkit.getPlayer(player);
+		if(!participants.contains(player) && realPlayer != null){
 			realPlayer.sendMessage(ChatColor.RED + "You are no member of this channel.");
 			return;
 		}
@@ -318,13 +317,13 @@ public class ChannelContainer extends Observable{
 			}
 		}
 		
-		participants.remove(player.getUniqueId());
+		participants.remove(player);
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel){
 			if(participants.size() == 0){
 				plugin.getChannelManager().removeChannel(this.channelName);
 				return;
 			}else{
-				if(player.getUniqueId().equals(channelAdmin)){
+				if(player.equals(channelAdmin)){
 					UUID oldChannelAdmin = channelAdmin;
 					UUID newChannelAdmin = participants.get(0);
 					setAdmin(newChannelAdmin);
@@ -333,7 +332,7 @@ public class ChannelContainer extends Observable{
 			}
 		}
 		
-		this.notifyObservers(new TutorialStepContainer(player.getUniqueId(), TutorialState.channels, 6));
+		this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 6));
 		this.setChanged();
 	}
 	
@@ -377,7 +376,7 @@ public class ChannelContainer extends Observable{
 		if(sender == null){
 			//TODO fix this: modifiedMessage = modifyMessageToPlayer("CONSOLE", event.getMessage(), event.getFormat());
 		}else{
-			modifiedMessage = modifyMessageToPlayer(player, event.getMessage(), event.getFormat());
+			modifiedMessage = modifyMessageToPlayer(player == null ? null : player.getUniqueId(), event.getMessage(), event.getFormat());
 		}
 		
 		
@@ -411,9 +410,9 @@ public class ChannelContainer extends Observable{
 					break;
 				}
 				
-				List<OfflinePlayer> allPlayersOfRace = plugin.getRaceManager().getAllPlayersOfHolder(container);
-				for(OfflinePlayer player : allPlayersOfRace) {
-					participants.add(player.getUniqueId());
+				List<UUID> allPlayersOfRace = plugin.getRaceManager().getAllPlayersOfHolder(container);
+				for(UUID player : allPlayersOfRace) {
+					participants.add(player);
 				}
 				break;
 				
@@ -431,7 +430,7 @@ public class ChannelContainer extends Observable{
 		}
 	}
 	
-	private String modifyMessageToPlayer(OfflinePlayer player, String message, String forceFormat){		
+	private String modifyMessageToPlayer(UUID player, String message, String forceFormat){		
 		return channelFormat.format(player, message, forceFormat, true);
 	}
 	
@@ -575,12 +574,12 @@ public class ChannelContainer extends Observable{
 	/**
 	 * Edits a property of the channel.
 	 * 
-	 * @param player
+	 * @param playerUUID2
 	 * @param property
 	 * @param newValue
 	 */
-	public void editChannel(Player player, String property, String newValue) {
-		UUID playerUUID = player.getUniqueId();
+	public void editChannel(UUID playerUUID, String property, String newValue) {
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel || channelLevel == ChannelLevel.LocalChannel){
 			if(!playerUUID.equals(channelAdmin)){
 				player.sendMessage(ChatColor.RED + "You must be the channel-admin to edit the channel");
@@ -598,7 +597,7 @@ public class ChannelContainer extends Observable{
 			channelFormat.setColor(newValue);
 		}else
 		if("admin".equals(loweredProperty)){
-			changed = changeAdmin(player, newValue);
+			changed = changeAdmin(playerUUID, newValue);
 		}else
 		if("prefix".equals(loweredProperty)){
 			channelFormat.setPrefix(newValue);
@@ -630,7 +629,7 @@ public class ChannelContainer extends Observable{
 	 * @param newAdmin, that is the new Admin
 	 * @return
 	 */
-	private boolean changeAdmin(Player oldAdmin, String newAdmin){
+	private boolean changeAdmin(UUID playerUUID, String newAdmin){
 		if(channelLevel == ChannelLevel.PasswordChannel || 
 			channelLevel == ChannelLevel.PrivateChannel || 
 			channelLevel == ChannelLevel.PublicChannel)
@@ -639,9 +638,7 @@ public class ChannelContainer extends Observable{
 		UUID newAdminUUID = null;
 		boolean isFoundInList = false;
 		for(UUID member : participants){
-			OfflinePlayer player = Bukkit.getOfflinePlayer(member);
-			
-			if(player.getUniqueId().equals(newAdmin)){
+			if(member.equals(newAdmin)){
 				isFoundInList = true;
 				newAdminUUID = member;
 				break;
@@ -668,7 +665,7 @@ public class ChannelContainer extends Observable{
 		
 		
 		for(UUID member : participants){
-			OfflinePlayer memberPlayer = Bukkit.getOfflinePlayer(member);
+			Player memberPlayer = Bukkit.getPlayer(member);
 			if(memberPlayer != null && memberPlayer.isOnline()) members.add(memberPlayer.getPlayer());
 		}
 		
@@ -678,7 +675,7 @@ public class ChannelContainer extends Observable{
 		
 		//setting format.
 		String format = channelFormat.getFormat();
-		format = channelFormat.format(event.getPlayer(), event.getMessage(), "", false);
+		format = channelFormat.format(event.getPlayer().getUniqueId(), event.getMessage(), "", false);
 		event.setFormat(format);
 	}
 

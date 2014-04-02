@@ -74,7 +74,7 @@ public class CommandExecutor_Racechat implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
 			LanguageAPI.sendTranslatedMessage(sender,"no_race_selected");

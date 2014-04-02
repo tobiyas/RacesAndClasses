@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -92,13 +91,13 @@ public class PlayerSpellManager {
 	private void spellRescan(){		
 		List<MagicSpellTrait> spellList = new LinkedList<MagicSpellTrait>();
 		
-		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-		if(!player.isOnline() ||WorldResolver.isOnDisabledWorld(player.getPlayer())){
+		Player player = Bukkit.getPlayer(playerUUID);
+		if(player == null || !player.isOnline() ||WorldResolver.isOnDisabledWorld(player.getPlayer())){
 			this.spellList.setEntries(spellList);
 			return;
 		}
 		
-		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
+		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(playerUUID);
 		for(Trait trait : traits){
 			if(trait instanceof MagicSpellTrait){
 				spellList.add((MagicSpellTrait) trait);
@@ -166,7 +165,7 @@ public class PlayerSpellManager {
 		
 		switch(trait.getCostType()){
 			case HEALTH: return RacesAndClasses.getPlugin().getPlayerManager()
-					.getHealthOfPlayer(player) > cost;
+					.getHealthOfPlayer(playerUUID) > cost;
 			
 			case MANA: return getManaManager().hasEnoughMana(trait);
 			
@@ -174,7 +173,7 @@ public class PlayerSpellManager {
 			
 			case HUNGER : return player.getFoodLevel() >= cost;
 			
-			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).canRemove((int)cost);
+			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerUUID).canRemove((int)cost);
 			
 			default: return false;
 		}
@@ -190,7 +189,7 @@ public class PlayerSpellManager {
 		
 		switch(trait.getCostType()){
 			case HEALTH: CompatibilityModifier.BukkitPlayer.safeSetHealth(RacesAndClasses.getPlugin()
-					.getPlayerManager().getHealthOfPlayer(player) - trait.getCost(), player); 
+					.getPlayerManager().getHealthOfPlayer(playerUUID) - trait.getCost(), player); 
 							break;
 			
 			case MANA: getManaManager().playerCastSpell(trait); break;
@@ -203,7 +202,7 @@ public class PlayerSpellManager {
 				player.setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 				
 			case EXP:
-				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) trait.getCost());
+				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerUUID).removeExp((int) trait.getCost());
 		}
 	}
 
@@ -284,12 +283,12 @@ public class PlayerSpellManager {
 		Set<Material> wands = new HashSet<Material>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerUUID);
 		if(classHolder != null){
 			wands.addAll(classHolder.getAdditionalWandMaterials());
 		}
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
 		if(raceHolder != null){
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}

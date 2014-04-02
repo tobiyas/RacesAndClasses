@@ -88,7 +88,7 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
 				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
 				
-				plugin.getPlayerManager().getSpellManagerOfPlayer(player).getManaManager().fillMana(10000);
+				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getManaManager().fillMana(10000);
 				
 				LanguageAPI.sendTranslatedMessage(sender, healed);
 			}else{
@@ -113,7 +113,7 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
 				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
 				
-				plugin.getPlayerManager().getSpellManagerOfPlayer(player).getManaManager().fillMana(10000);
+				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getManaManager().fillMana(10000);
 				
 				LanguageAPI.sendTranslatedMessage(sender, healed_other,
 						"player", other.getName());

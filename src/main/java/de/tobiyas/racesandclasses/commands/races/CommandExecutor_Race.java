@@ -100,7 +100,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player);
+				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 				if(currentRace != plugin.getRaceManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, already_have_race,
 							"race", currentRace.getName());
@@ -149,7 +149,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player);
+				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 				if(currentRace == plugin.getRaceManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, no_race_selected);
 					return true;
@@ -189,7 +189,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		//Info to a race
 		if(raceCommand.equalsIgnoreCase("info")){
 			Player player = (Player) sender;
-			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(player).getName();
+			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId()).getName();
 			
 			if(args.length > 1){
 				inspectedRace = args[1];
@@ -242,7 +242,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void selectRace(Player player, String newRaceName){
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		RaceContainer stdContainer = (RaceContainer) plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
 			RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(newRaceName);
@@ -267,7 +267,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().addPlayerToHolder(player, newRaceName, true)){
+			if(plugin.getRaceManager().addPlayerToHolder(player.getUniqueId(), newRaceName, true)){
 				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
 						"race", newRaceName);
 			}
@@ -279,7 +279,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	}
 	
 	private void changeRace(Player player, String newRace){
-		AbstractTraitHolder oldContainer = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder oldContainer = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		
 		if(oldContainer != null && oldContainer != plugin.getRaceManager().getDefaultHolder()){
@@ -311,7 +311,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().changePlayerHolder(player, newRace, true)){
+			if(plugin.getRaceManager().changePlayerHolder(player.getUniqueId(), newRace, true)){
 				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
 						"race", newRace);
 			}else{
@@ -325,7 +325,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	
 	private void raceInfo(CommandSender sender, String inspectedRace){
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
-		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer((Player)sender);
+		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(((Player)sender).getUniqueId());
 		if(container == null){
 			LanguageAPI.sendTranslatedMessage(sender, race_not_exist,
 					"race", inspectedRace);
@@ -367,7 +367,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	
 	private void raceList(CommandSender sender){
 		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		AbstractTraitHolder senderRace = plugin.getRaceManager().getHolderOfPlayer((Player) sender);
+		AbstractTraitHolder senderRace = plugin.getRaceManager().getHolderOfPlayer(((Player) sender).getUniqueId());
 		
 		if(senderRace == plugin.getRaceManager().getDefaultHolder()){
 			races.add(plugin.getRaceManager().getDefaultHolder().getName());

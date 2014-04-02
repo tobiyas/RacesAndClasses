@@ -17,8 +17,6 @@ package de.tobiyas.racesandclasses.configuration.member.database;
 
 import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
-
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -109,8 +107,8 @@ public class DBMemberConfig extends MemberConfig {
 	 * @param player
 	 * @return
 	 */
-	public static DBMemberConfig createMemberConfig(OfflinePlayer player){
-		return new DBMemberConfig(player.getUniqueId());
+	public static DBMemberConfig createMemberConfig(UUID player){
+		return new DBMemberConfig(player);
 	}
 
 

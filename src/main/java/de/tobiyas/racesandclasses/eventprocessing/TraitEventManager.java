@@ -138,7 +138,7 @@ public class TraitEventManager{
 						continue;
 					}else{
 						if(!(trait.getClass().isAnnotationPresent(BypassHolderCheck.class))){
-							if(!TraitHolderCombinder.getReducedTraitsOfPlayer(player).contains(trait)){
+							if(!TraitHolderCombinder.getReducedTraitsOfPlayer(player.getUniqueId()).contains(trait)){
 								continue;
 							}
 						}	
@@ -148,7 +148,7 @@ public class TraitEventManager{
 				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent){
 					//only let the current magic spell continue for interaction events
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
-					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell() != magicTrait){
+					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell() != magicTrait){
 						continue;
 					}
 				}
@@ -165,7 +165,7 @@ public class TraitEventManager{
 					
 				if(trait instanceof MagicSpellTrait){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
-					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player).canCastSpell(magicTrait)){
+					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).canCastSpell(magicTrait)){
 						magicTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
 						continue;
 					}

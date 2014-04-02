@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -26,7 +28,7 @@ import org.bukkit.scoreboard.Scoreboard;
 public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 
 	
-	public NewScoreBoardDisplayBar(OfflinePlayer player, DisplayInfos displayInfo) {
+	public NewScoreBoardDisplayBar(UUID player, DisplayInfos displayInfo) {
 		super(player, displayInfo);
 	}
 

@@ -20,7 +20,7 @@ import java.util.Observer;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -75,8 +75,7 @@ public class ManaManager implements Observer {
 		
 		rescanDisplay();
 		
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player).addObserver(this);
+		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID).addObserver(this);
 	}
 	
 	/**
@@ -88,7 +87,7 @@ public class ManaManager implements Observer {
 			manaDisplay.unregister();
 		}
 		
-		manaDisplay = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(playerUUID), DisplayInfos.MANA);
+		manaDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.MANA);
 	}
 	
 	
@@ -98,17 +97,17 @@ public class ManaManager implements Observer {
 	public void rescanPlayer(){
 		maxMana = 0;
 		
-		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-		if(!player.isOnline() || WorldResolver.isOnDisabledWorld(player.getPlayer())){
+		Player player = Bukkit.getPlayer(playerUUID);
+		if(player == null || !player.isOnline() || WorldResolver.isOnDisabledWorld(player)){
 			return;
 		}
 		
-		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerUUID);
 		if(race != null){
 			maxMana += race.getManaBonus();
 		}
 		
-		ClassContainer clazz = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
+		ClassContainer clazz = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerUUID);
 		if(clazz != null){
 			maxMana += clazz.getManaBonus();
 		}

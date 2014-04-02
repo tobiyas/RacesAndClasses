@@ -88,7 +88,7 @@ public class RaceChangeSelectionListener implements Listener {
 			
 			String raceName = event.getRaceToSelect().getName();
 			
-			AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(playerSelecting);
+			AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(playerSelecting.getUniqueId());
 			if(holder == null) return; //no class -> no restrictions.
 			String className = holder.getName();
 			
@@ -140,7 +140,7 @@ public class RaceChangeSelectionListener implements Listener {
 		
 		Player player = selectEvent.getPlayer();
 		
-		plugin.getPlayerManager().checkPlayer(player);
-		plugin.getPlayerManager().displayHealth(player);
+		plugin.getPlayerManager().checkPlayer(player.getUniqueId());
+		plugin.getPlayerManager().displayHealth(player.getUniqueId());
 	}
 }

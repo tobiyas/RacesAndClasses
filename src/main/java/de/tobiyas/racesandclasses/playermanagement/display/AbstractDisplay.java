@@ -18,7 +18,6 @@ package de.tobiyas.racesandclasses.playermanagement.display;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 public abstract class AbstractDisplay implements Display{
 
@@ -54,8 +53,8 @@ public abstract class AbstractDisplay implements Display{
 	 * 
 	 * @param player to display to
 	 */
-	public AbstractDisplay(OfflinePlayer player, DisplayInfos displayInfo) {
-		this.playerUUID = player.getUniqueId();
+	public AbstractDisplay(UUID player, DisplayInfos displayInfo) {
+		this.playerUUID = player;
 		this.displayInfo = displayInfo;
 		
 		changeColorsToInfo();

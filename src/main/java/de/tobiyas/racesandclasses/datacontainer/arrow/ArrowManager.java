@@ -43,11 +43,11 @@ public class ArrowManager {
 	
 	public void rescanClass(){
 		arrows.clear();
-		if(WorldResolver.isOnDisabledWorld(Bukkit.getOfflinePlayer(playerUUID).getPlayer())){
+		if(WorldResolver.isOnDisabledWorld(Bukkit.getPlayer(playerUUID))){
 			return;
 		}
 		
-		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(Bukkit.getOfflinePlayer(playerUUID));
+		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(playerUUID);
 		
 		for(Trait arrow : traits){
 			if(arrow instanceof AbstractArrow)

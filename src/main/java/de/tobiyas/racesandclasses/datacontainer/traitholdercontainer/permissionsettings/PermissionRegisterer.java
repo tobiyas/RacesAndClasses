@@ -175,17 +175,27 @@ public class PermissionRegisterer implements Runnable{
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			
-			OfflinePlayer player = Bukkit.getOfflinePlayer(member);
-			String[] groups = vaultPermissions.getPlayerGroups((String)null, player.getName());
+			String name = null;
+			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
+				if(offlinePlayer.getUniqueId().equals(member)){
+					name = offlinePlayer.getName();
+					break;
+				}
+			}
+			
+			if(name == null) continue;
+			
+			
+			String[] groups = vaultPermissions.getPlayerGroups((String)null, name);
 			if(groups == null || groups.length == 0) continue;
 			
 			for(String group : groups){
 				if(group.startsWith(permissionSpecificPrefix + typeName)){
-					vaultPermissions.playerRemoveGroup((String) null, player.getName(), permissionSpecificPrefix + group);
+					vaultPermissions.playerRemoveGroup((String) null, name, permissionSpecificPrefix + group);
 				}
 			}
 			
-			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
+			vaultPermissions.playerAddGroup((String) null, name, permissionSpecificPrefix + groupName);
 		}
 	}
 
@@ -239,17 +249,27 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from all groups with the passed prefix.
 	 * This only works if Vault is active.
 	 */
-	public static void removePlayer(OfflinePlayer player, String prefix) {
+	public static void removePlayer(UUID player, String prefix) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
-			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player.getName());
+			String name = null;
+			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
+				if(offlinePlayer.getUniqueId().equals(player)){
+					name = offlinePlayer.getName();
+					break;
+				}
+			}
+			
+			if(name == null) return;
+			
+			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, name);
 			if(groupNames == null) return; //nothing to do
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null, player.getName(), permissionSpecificPrefix + groupName);
+					vaultPermissions.playerRemoveGroup((String)null, name, permissionSpecificPrefix + groupName);
 				}
 			}
 		}
@@ -260,12 +280,22 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from the group.
 	 * This only works if Vault is active.
 	 */
-	public static void addPlayer(OfflinePlayer player, String groupName) {
+	public static void addPlayer(UUID player, String groupName) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
-			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
+			String name = null;
+			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
+				if(offlinePlayer.getUniqueId().equals(player)){
+					name = offlinePlayer.getName();
+					break;
+				}
+			}
+			
+			if(name == null) return;
+			
+			vaultPermissions.playerAddGroup((String) null, name, permissionSpecificPrefix + groupName);
 		}
 	}
 

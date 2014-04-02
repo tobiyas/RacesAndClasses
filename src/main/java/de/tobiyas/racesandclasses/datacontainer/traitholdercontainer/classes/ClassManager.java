@@ -15,7 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -93,16 +96,18 @@ public class ClassManager extends AbstractHolderManager{
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterSelectEvent(OfflinePlayer player,
+	protected HolderSelectedEvent generateAfterSelectEvent(UUID player,
 			AbstractTraitHolder newHolder) {
-		return new AfterClassSelectedEvent(player.getPlayer(), (ClassContainer)newHolder);
+		Player realplayer = Bukkit.getPlayer(player);
+		return new AfterClassSelectedEvent(realplayer, (ClassContainer)newHolder);
 	}
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(OfflinePlayer player,
+	protected HolderSelectedEvent generateAfterChangeEvent(UUID player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new AfterClassChangedEvent(player.getPlayer(), (ClassContainer) newHolder, (ClassContainer) oldHolder);
+		Player realplayer = Bukkit.getPlayer(player);
+		return new AfterClassChangedEvent(realplayer, (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}
 	
 	@Override

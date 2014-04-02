@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
@@ -93,7 +92,7 @@ public class MemberConfigManager {
 	 * @param player
 	 * @return
 	 */
-	private MemberConfig getCreateNewConfig(OfflinePlayer player){
+	private MemberConfig getCreateNewConfig(UUID player){
 		if(memberConfigs.containsKey(player)){
 			return memberConfigs.get(player);
 		}
@@ -106,7 +105,7 @@ public class MemberConfigManager {
 			config = MemberConfig.createMemberConfig(player).save();
 		}
 		
-		memberConfigs.put(player.getUniqueId(), config);
+		memberConfigs.put(player, config);
 		return config;
 	}
 	
@@ -114,9 +113,9 @@ public class MemberConfigManager {
 	 * Loads all configs from the playerdata file
 	 */
 	private void loadConfigs(){
-		Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
 		
-		for(OfflinePlayer player : players){
+		for(UUID player : players){
 			getCreateNewConfig(player);
 		}
 	}
@@ -144,7 +143,7 @@ public class MemberConfigManager {
 	 * @param player to get the config from
 	 * @return
 	 */
-	public MemberConfig getConfigOfPlayer(OfflinePlayer player){
+	public MemberConfig getConfigOfPlayer(UUID player){
 		return getCreateNewConfig(player);
 	}
 	

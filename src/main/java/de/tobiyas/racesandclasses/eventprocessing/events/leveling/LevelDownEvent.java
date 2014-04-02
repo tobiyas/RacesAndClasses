@@ -15,7 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
+
 import org.bukkit.event.HandlerList;
 
 public class LevelDownEvent extends LevelEvent {
@@ -38,12 +39,12 @@ public class LevelDownEvent extends LevelEvent {
 	/**
 	 * Indicates the Player has done a Level down.
 	 * 
-	 * @param offlinePlayer that leveled.
+	 * @param playerUUID that leveled.
 	 * @param fromLevel the Level the Player was before
 	 * @param toLevel the Level the Player is afterwards.
 	 */
-	public LevelDownEvent(OfflinePlayer offlinePlayer, int fromLevel, int toLevel) {
-		super(offlinePlayer);
+	public LevelDownEvent(UUID playerUUID, int fromLevel, int toLevel) {
+		super(playerUUID);
 		
 		this.fromLevel = fromLevel;
 		this.toLevel = toLevel;

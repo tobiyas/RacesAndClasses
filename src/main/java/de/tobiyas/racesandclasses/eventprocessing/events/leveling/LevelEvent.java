@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
@@ -23,7 +25,7 @@ public abstract class LevelEvent extends PlayerEvent {
 
 	private final static HandlerList handlers = new HandlerList();
 	
-	private final OfflinePlayer player;
+	private final UUID playerUUID;
 	
 	/**
 	 * Creates a new Level Event. 
@@ -31,9 +33,9 @@ public abstract class LevelEvent extends PlayerEvent {
 	 * 
 	 * @param player the Event is associated to.
 	 */	
-	public LevelEvent(OfflinePlayer offlinePlayer){
-		super(offlinePlayer.getPlayer());
-		this.player = offlinePlayer;
+	public LevelEvent(UUID playerUUID){
+		super(Bukkit.getPlayer(playerUUID));
+		this.playerUUID = playerUUID;
 	}
 
 	
@@ -52,8 +54,8 @@ public abstract class LevelEvent extends PlayerEvent {
 	/**
 	 * @return the player name
 	 */
-	public OfflinePlayer getOfflinePlayer() {
-		return player;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 	
 	

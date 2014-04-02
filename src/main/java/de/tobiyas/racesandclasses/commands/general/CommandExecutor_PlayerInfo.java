@@ -73,8 +73,8 @@ private RacesAndClasses plugin;
 			return true;
 		}
 		
-		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 		String className = "None";
 		String raceName = "None";
 		if(classContainer != null){

@@ -16,7 +16,7 @@
 package de.tobiyas.racesandclasses.APIs;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 
@@ -39,11 +39,11 @@ public class LevelAPI {
 	 * @param playerUUID to add to 
 	 * @param levelToAdd to add
 	 * 
-	 * @deprecated use {@link #addLevel(OfflinePlayer, int)} instead
+	 * @deprecated use {@link #addLevel(Player, int)} instead
 	 */
 	@Deprecated
 	public static void addLevel(String playerName, int levelToAdd){
-		addLevel(Bukkit.getOfflinePlayer(playerName), levelToAdd);
+		addLevel(Bukkit.getPlayer(playerName), levelToAdd);
 	}
 	
 	/**
@@ -52,11 +52,11 @@ public class LevelAPI {
 	 * @param playerUUID to add to 
 	 * @param levelToAdd to add
 	 */
-	public static void addLevel(OfflinePlayer player, int levelToAdd){
+	public static void addLevel(Player player, int levelToAdd){
 		int currentLevel = getCurrentLevel(player);
 		int newLevel = currentLevel + levelToAdd;
 		
-		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(newLevel);
+		getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).setCurrentLevel(newLevel);
 	}
 	
 	
@@ -70,7 +70,7 @@ public class LevelAPI {
 	 */
 	@Deprecated
 	public static void removeLevel(String playerName, int levelToRemove){
-		removeLevel(Bukkit.getOfflinePlayer(playerName), levelToRemove);
+		removeLevel(Bukkit.getPlayer(playerName), levelToRemove);
 	}
 	
 	/**
@@ -79,12 +79,12 @@ public class LevelAPI {
 	 * @param playerUUID to remove from
 	 * @param levelToRemove to remve
 	 */
-	public static void removeLevel(OfflinePlayer player, int levelToRemove){
+	public static void removeLevel(Player player, int levelToRemove){
 		int currentLevel = getCurrentLevel(player);
 		int newLevel = currentLevel - levelToRemove;
 		if(newLevel < 1) newLevel = 1;
 		
-		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(newLevel);
+		getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).setCurrentLevel(newLevel);
 	}
 	
 	
@@ -94,11 +94,11 @@ public class LevelAPI {
 	 * @param playerUUID to add to
 	 * @param amount to 
 	 * 
-	 * @deprecated use {@link #addExp(OfflinePlayer, double)} instead
+	 * @deprecated use {@link #addExp(Player, double)} instead
 	 */
 	@Deprecated
 	public static void addExp(String playerName, double amount){
-		addExp(Bukkit.getOfflinePlayer(playerName), amount);
+		addExp(Bukkit.getPlayer(playerName), amount);
 	}
 	
 	
@@ -108,8 +108,8 @@ public class LevelAPI {
 	 * @param playerUUID to add to
 	 * @param amount to 
 	 */
-	public static void addExp(OfflinePlayer player, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(player).addExp((int)amount);
+	public static void addExp(Player player, double amount){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).addExp((int)amount);
 	}
 	
 	
@@ -119,11 +119,11 @@ public class LevelAPI {
 	 * @param playerUUID to remove from
 	 * @param amount to remove
 	 * 
-	 * @deprecated use {@link #removeExp(OfflinePlayer, double)} instead
+	 * @deprecated use {@link #removeExp(Player, double)} instead
 	 */
 	@Deprecated
 	public static void removeExp(String playerName, double amount){
-		removeExp(Bukkit.getOfflinePlayer(playerName), amount);
+		removeExp(Bukkit.getPlayer(playerName), amount);
 	}
 	
 	/**
@@ -132,8 +132,8 @@ public class LevelAPI {
 	 * @param playerUUID to remove from
 	 * @param amount to remove
 	 */
-	public static void removeExp(OfflinePlayer player, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int)amount);
+	public static void removeExp(Player player, double amount){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).removeExp((int)amount);
 	}
 	
 	
@@ -143,11 +143,11 @@ public class LevelAPI {
 	 * @param playerUUID to get
 	 * @return the level of the player
 	 * 
-	 * @deprecated use {@link #getCurrentLevel(OfflinePlayer)} instead
+	 * @deprecated use {@link #getCurrentLevel(Player)} instead
 	 */
 	@Deprecated
 	public static int getCurrentLevel(String playerName){
-		return getCurrentLevel(Bukkit.getOfflinePlayer(playerName));
+		return getCurrentLevel(Bukkit.getPlayer(playerName));
 	}
 	
 	
@@ -157,8 +157,8 @@ public class LevelAPI {
 	 * @param playerUUID to get
 	 * @return the level of the player
 	 */
-	public static int getCurrentLevel(OfflinePlayer player){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(player).getCurrentLevel();
+	public static int getCurrentLevel(Player player){
+		return getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).getCurrentLevel();
 	}
 	
 	
@@ -168,11 +168,11 @@ public class LevelAPI {
 	 * @param playerUUID to get
 	 * @param level the level to set
 	 * 
-	 * @deprecated use {@link #setCurrentLevel(OfflinePlayer, int)} instead
+	 * @deprecated use {@link #setCurrentLevel(Player, int)} instead
 	 */
 	@Deprecated
 	public static void setCurrentLevel(String playerName, int level){
-		setCurrentLevel(Bukkit.getOfflinePlayer(playerName), level);
+		setCurrentLevel(Bukkit.getPlayer(playerName), level);
 	}
 	
 	
@@ -182,8 +182,8 @@ public class LevelAPI {
 	 * @param playerUUID to get
 	 * @param level the level to set
 	 */
-	public static void setCurrentLevel(OfflinePlayer player, int level){
-		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(level);
+	public static void setCurrentLevel(Player player, int level){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).setCurrentLevel(level);
 	}
 	
 	/**
@@ -193,10 +193,10 @@ public class LevelAPI {
 	 * 
 	 * @return the current exp of the level
 	 * 
-	 * @deprecated use {@link #getCurrentExpOfLevel(OfflinePlayer)} instead
+	 * @deprecated use {@link #getCurrentExpOfLevel(Player)} instead
 	 */
 	public static double getCurrentExpOfLevel(String playerName){
-		return getCurrentExpOfLevel(Bukkit.getOfflinePlayer(playerName));
+		return getCurrentExpOfLevel(Bukkit.getPlayer(playerName));
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class LevelAPI {
 	 * 
 	 * @return the current exp of the level
 	 */
-	public static double getCurrentExpOfLevel(OfflinePlayer player){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(player).getCurrentExpOfLevel();
+	public static double getCurrentExpOfLevel(Player player){
+		return getPlugin().getPlayerManager().getPlayerLevelManager(player.getUniqueId()).getCurrentExpOfLevel();
 	}
 }

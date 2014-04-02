@@ -15,14 +15,12 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -77,19 +75,21 @@ public class PlayerManager{
 	private void loadPlayerContainer(){
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 
-		Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
+		Set<UUID> players = new HashSet<UUID>();
 		if(useDB){
-			players.addAll(Arrays.asList(Bukkit.getOnlinePlayers()));
+			for(Player online : Bukkit.getOnlinePlayers()){
+				players.add(online.getUniqueId());
+			}
 		}else{
 			players = YAMLPersistenceProvider.getAllPlayersKnown();
 		}
 		
-		for(OfflinePlayer player : players){
-			if(player == null || !player.isOnline()) continue;
+		for(UUID player : players){
+			if(player == null) continue;
 			
 			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
 			if(container != null){
-				playerData.put(player.getUniqueId(), container);
+				playerData.put(player, container);
 			}
 		}
 	}
@@ -101,7 +101,7 @@ public class PlayerManager{
 	 * 
 	 * @param player to create
 	 */
-	public void addPlayer(OfflinePlayer player){
+	public void addPlayer(UUID player){
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		double maxHealth = 1;
 		
@@ -116,7 +116,7 @@ public class PlayerManager{
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
-		playerData.put(player.getUniqueId(), new PlayerContainer(player.getUniqueId(), maxHealth).checkStats());
+		playerData.put(player, new PlayerContainer(player, maxHealth).checkStats());
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class PlayerManager{
 	 * @param playerUUID
 	 * @return
 	 */
-	public double getHealthOfPlayer(OfflinePlayer player){
+	public double getHealthOfPlayer(UUID player){
 		PlayerContainer container = getCreate(player, true);
 		if(container == null) return -1;
 		return container.getCurrentHealth();
@@ -137,8 +137,8 @@ public class PlayerManager{
 	 *  
 	 * @param player to check
 	 */
-	public void checkPlayer(OfflinePlayer player){
-		PlayerContainer hContainer = playerData.get(player.getUniqueId());
+	public void checkPlayer(UUID player){
+		PlayerContainer hContainer = playerData.get(player);
 		if(hContainer == null){
 			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 			
@@ -152,9 +152,9 @@ public class PlayerManager{
 				maxHealth = classContainer.modifyToClass(maxHealth);
 			}
 			
-			PlayerContainer healthContainer = new PlayerContainer(player.getUniqueId(), maxHealth);
+			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth);
 			healthContainer.checkStats();
-			playerData.put(player.getUniqueId(), healthContainer);
+			playerData.put(player, healthContainer);
 		}else{
 			hContainer.checkStats();
 		}
@@ -167,7 +167,7 @@ public class PlayerManager{
 	 * @param playerUUID to check
 	 * @return the {@link ArrowManager} of the Player
 	 */
-	public ArrowManager getArrowManagerOfPlayer(OfflinePlayer player) {
+	public ArrowManager getArrowManagerOfPlayer(UUID player) {
 		return getCreate(player, true).getArrowManager();
 	}
 	
@@ -178,7 +178,7 @@ public class PlayerManager{
 	 * @param playerUUID to check
 	 * @return the {@link ArmorToolManager} of the Player
 	 */
-	public ArmorToolManager getArmorToolManagerOfPlayer(OfflinePlayer player){
+	public ArmorToolManager getArmorToolManagerOfPlayer(UUID player){
 		return getCreate(player, true).getArmorToolManager();
 	}
 
@@ -188,7 +188,7 @@ public class PlayerManager{
 	 * @param playerUUID to force the output
 	 * @return true, if it worked.
 	 */
-	public boolean displayHealth(OfflinePlayer player) {
+	public boolean displayHealth(UUID player) {
 		PlayerContainer container = getCreate(player, true);
 		if(container == null) return false; //this should not happen...
 		container.forceHPOut();
@@ -198,11 +198,11 @@ public class PlayerManager{
 	/**
 	 * Switches the God Mode of the player.
 	 * 
-	 * @param name to switch
+	 * @param playerUUID to switch
 	 * @return true if worked, false if player not found.
 	 */
-	public boolean switchGod(OfflinePlayer name) {
-		PlayerContainer container = playerData.get(name.getUniqueId());
+	public boolean switchGod(UUID playerUUID) {
+		PlayerContainer container = playerData.get(playerUUID);
 		if(container != null){
 			container.switchGod();
 			return true;
@@ -217,7 +217,7 @@ public class PlayerManager{
 	 * @param playerUUID to check
 	 * @return the max health of a player.
 	 */
-	public double getMaxHealthOfPlayer(OfflinePlayer player) {
+	public double getMaxHealthOfPlayer(UUID player) {
 		PlayerContainer container = getCreate(player, true);
 		if(container == null) return -1;
 		return container.getMaxHealth();
@@ -230,7 +230,7 @@ public class PlayerManager{
 	 * @param playerUUID to check
 	 * @return the found or new created container.
 	 */
-	private PlayerContainer getCreate(OfflinePlayer player){
+	private PlayerContainer getCreate(UUID player){
 		return getCreate(player, true);
 	}
 	
@@ -243,7 +243,7 @@ public class PlayerManager{
 	 * @param create
 	 * @return
 	 */
-	private PlayerContainer getCreate(OfflinePlayer player, boolean create){
+	private PlayerContainer getCreate(UUID player, boolean create){
 		PlayerContainer container = playerData.get(player);
 		if(container == null && create){
 			checkPlayer(player);
@@ -259,7 +259,7 @@ public class PlayerManager{
 	 * @param playerUUID to check
 	 * @return true if has god on
 	 */
-	public boolean isGod(OfflinePlayer player) {
+	public boolean isGod(UUID player) {
 		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.isGod();
 	}
@@ -270,7 +270,7 @@ public class PlayerManager{
 	 * @param playerUUID to get
 	 * @return the SpellManager of the Player.
 	 */
-	public PlayerSpellManager getSpellManagerOfPlayer(OfflinePlayer player){
+	public PlayerSpellManager getSpellManagerOfPlayer(UUID player){
 		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.getSpellManager();
 	}
@@ -282,7 +282,7 @@ public class PlayerManager{
 	 * @param playerUUID
 	 * @return
 	 */
-	public PlayerLevelManager getPlayerLevelManager(OfflinePlayer player){
+	public PlayerLevelManager getPlayerLevelManager(UUID player){
 		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.getPlayerLevelManager();
 	}

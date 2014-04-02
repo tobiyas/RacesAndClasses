@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -43,7 +44,7 @@ public class RaceAPI {
 	 */
 	@Deprecated
 	public static RaceContainer getRaceOfPlayer(String playerName){
-		return getRaceOfPlayer(Bukkit.getOfflinePlayer(playerName));
+		return getRaceOfPlayer(Bukkit.getPlayer(playerName));
 	}
 	
 	/**
@@ -53,9 +54,9 @@ public class RaceAPI {
 	 * @param playerUUID to search
 	 * @return the {@link RaceContainer} of the player
 	 */
-	public static RaceContainer getRaceOfPlayer(OfflinePlayer player){
+	public static RaceContainer getRaceOfPlayer(Player player){
 		RaceManager raceManager = plugin.getRaceManager();
-		RaceContainer race = (RaceContainer) raceManager.getHolderOfPlayer(player);
+		RaceContainer race = (RaceContainer) raceManager.getHolderOfPlayer(player.getUniqueId());
 		if(race != null){
 			return race;
 		}else{
@@ -104,7 +105,7 @@ public class RaceAPI {
 	 * @deprecated use {@link #addPlayerToRace(OfflinePlayer, String)} instead
 	 */
 	public static boolean addPlayerToRace(String playerName, String raceName){
-		return addPlayerToRace(Bukkit.getOfflinePlayer(playerName), raceName);
+		return addPlayerToRace(Bukkit.getPlayer(playerName), raceName);
 	}
 	
 	/**
@@ -121,7 +122,7 @@ public class RaceAPI {
 	 * @param className to change to
 	 * @return true if worked, false otherwise
 	 */
-	public static boolean addPlayerToRace(OfflinePlayer player, String raceName){
+	public static boolean addPlayerToRace(Player player, String raceName){
 		if(player == null) return false;
 		
 		RaceManager manager = plugin.getRaceManager();
@@ -130,6 +131,6 @@ public class RaceAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(player, raceName, true);
+		return manager.changePlayerHolder(player.getUniqueId(), raceName, true);
 	}
 }

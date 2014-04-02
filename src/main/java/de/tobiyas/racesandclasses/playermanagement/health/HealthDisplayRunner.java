@@ -69,7 +69,7 @@ public class HealthDisplayRunner implements Runnable, Observer {
 			display.unregister();
 		}
 		
-		display = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(config.getPlayerUUID()), DisplayInfos.HEALTH);
+		display = DisplayGenerator.generateDisplay(config.getPlayerUUID(), DisplayInfos.HEALTH);
 	}
 
 	@Override

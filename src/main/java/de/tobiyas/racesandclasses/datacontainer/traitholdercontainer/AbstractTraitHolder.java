@@ -22,9 +22,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -278,7 +278,7 @@ public abstract class AbstractTraitHolder {
 	 * @param playerUUID to check
 	 * @return true if is member, false otherwise
 	 */
-	public abstract boolean containsPlayer(OfflinePlayer player);
+	public abstract boolean containsPlayer(UUID player);
 	
 	
 	/**

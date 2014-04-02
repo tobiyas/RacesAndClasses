@@ -73,7 +73,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			Player player = Eevent.getPlayer();
 			if(!isThisArrow(player)) return false;
 			
-			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
 			if(player.getItemInHand().getType() != Material.BOW) return false;
 	
 			return true;
@@ -84,7 +84,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
 			Player player = (Player) Eevent.getEntity();
-			if(!TraitHolderCombinder.checkContainer(player, this)) return false;			
+			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;			
 			if(!isThisArrow(player)) return false;
 			
 			return true;
@@ -100,7 +100,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			if(CompatibilityModifier.Shooter.getShooter(arrow).getType() != EntityType.PLAYER) return false;
 			
 			Player player = (Player) CompatibilityModifier.Shooter.getShooter(arrow);
-			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
 
 			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
 			List<MetadataValue> metaValues = arrow.getMetadata(ARROW_META_KEY);
@@ -135,7 +135,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 				return false;
 
 			Player player = (Player) shooter;
-			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
 			
 			if(realArrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
 			List<MetadataValue> metaValues = realArrow.getMetadata(ARROW_META_KEY);
@@ -165,7 +165,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	 * @return true if active, false if not.
 	 */
 	private boolean isThisArrow(Player player){
-		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player);
+		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId());
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return false;
 		return true;
@@ -226,7 +226,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	 * Changes to the next arrow.
 	 */
 	protected void changeArrowType(Player player){
-		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player);
+		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId());
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return;
 		

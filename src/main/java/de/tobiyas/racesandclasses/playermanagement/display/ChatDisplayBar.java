@@ -15,8 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -29,11 +30,11 @@ public class ChatDisplayBar extends AbstractDisplay{
 	/**
 	 * Inits the display with a Player to post to.
 	 * 
-	 * @param player to display to
+	 * @param playerUUID to display to
 	 * @param displayInfo the type of display to show
 	 */
-	public ChatDisplayBar(OfflinePlayer player, DisplayInfos displayInfos) {
-		super(player, displayInfos);
+	public ChatDisplayBar(UUID playerUUID, DisplayInfos displayInfos) {
+		super(playerUUID, displayInfos);
 	}
 
 	

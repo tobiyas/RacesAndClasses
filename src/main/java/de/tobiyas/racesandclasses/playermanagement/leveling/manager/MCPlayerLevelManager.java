@@ -72,7 +72,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public boolean addExp(int exp) {
-		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
+		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(playerUUID, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -90,7 +90,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public boolean removeExp(int exp) {
-		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
+		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(playerUUID, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -112,7 +112,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getPlayer(playerUUID));
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -146,7 +146,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void reloadFromYaml() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getPlayer(playerUUID));
 		if(!config.getValidLoad()){
 			return;
 		}

@@ -17,8 +17,7 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bukkit.OfflinePlayer;
+import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -39,7 +38,7 @@ public class TraitHolderCombinder {
 	 * 
 	 * @return true if the player has access to the trait passed, false otherwise
 	 */
-	public static boolean checkContainer(OfflinePlayer player, Trait trait){
+	public static boolean checkContainer(UUID player, Trait trait){
 		AbstractTraitHolder holder = trait.getTraitHolder();
 		if(holder == null) return true;
 		
@@ -64,7 +63,7 @@ public class TraitHolderCombinder {
 	 
 	 * @return set of all Traits of player
 	 */
-	public static Set<Trait> getAllTraitsOfPlayer(OfflinePlayer offlinePlayer){
+	public static Set<Trait> getAllTraitsOfPlayer(UUID offlinePlayer){
 		Set<Trait> traits = new HashSet<Trait>();
 		
 		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(offlinePlayer);
@@ -88,7 +87,7 @@ public class TraitHolderCombinder {
 	 * 
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getVisibleTraitsOfPlayer(OfflinePlayer player){
+	public static Set<Trait> getVisibleTraitsOfPlayer(UUID player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
 		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
@@ -114,7 +113,7 @@ public class TraitHolderCombinder {
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedTraitsOfPlayer(OfflinePlayer offlinePlayer){
+	public static Set<Trait> getReducedTraitsOfPlayer(UUID offlinePlayer){
 		Set<Trait> traits = getAllTraitsOfPlayer(offlinePlayer);
 		traits = filterForDoubles(traits);
 		return traits;
@@ -131,7 +130,7 @@ public class TraitHolderCombinder {
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedVisibleTraitsOfPlayer(OfflinePlayer player){
+	public static Set<Trait> getReducedVisibleTraitsOfPlayer(UUID player){
 		Set<Trait> traits = getVisibleTraitsOfPlayer(player);
 		traits = filterForDoubles(traits);
 		return traits;

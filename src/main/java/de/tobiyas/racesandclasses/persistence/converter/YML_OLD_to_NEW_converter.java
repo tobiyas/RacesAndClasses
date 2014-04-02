@@ -21,12 +21,13 @@ public class YML_OLD_to_NEW_converter {
 		
 		int converted = 0;
 		File[] files = playerDataFolder.listFiles();
+		System.out.println("Converting " + files.length + " files");
 		
 		for(File file : files){
 			if(!file.getName().endsWith(".yml")) continue;
 			
 			YAMLConfigExtended oldConfig = new YAMLConfigExtended(file).load();
-			if(!oldConfig.contains("playerData")) continue;
+			if(!oldConfig.contains("playerdata")) continue;
 			
 			String playerName = file.getName().replace(".yml", "");
 			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);

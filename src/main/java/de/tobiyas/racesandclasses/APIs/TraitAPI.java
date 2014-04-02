@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -38,7 +39,7 @@ public class TraitAPI {
 	 */
 	@Deprecated
 	public static boolean hasTrait(String playerName, String traitName){
-		return hasTrait(Bukkit.getOfflinePlayer(playerName), traitName);
+		return hasTrait(Bukkit.getPlayer(playerName), traitName);
 	}
 
 	
@@ -55,7 +56,7 @@ public class TraitAPI {
 	 */
 	@Deprecated
 	public static boolean hasTraitWithDisplayName(String playerName, String displayName){
-		return hasTraitWithDisplayName(Bukkit.getOfflinePlayer(playerName), displayName);
+		return hasTraitWithDisplayName(Bukkit.getPlayer(playerName), displayName);
 	}
 	
 	/**
@@ -67,12 +68,12 @@ public class TraitAPI {
 	 * 
 	 * @return true if has the Trait.
 	 */
-	public static boolean hasTrait(OfflinePlayer player, String traitName){
+	public static boolean hasTrait(Player player, String traitName){
 		if(player == null || traitName == null) return false;
 		traitName = traitName.replace(" ", "");
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player.getUniqueId());
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			
@@ -97,11 +98,11 @@ public class TraitAPI {
 	 * 
 	 * @return true if has the Trait.
 	 */
-	public static boolean hasTraitWithDisplayName(OfflinePlayer player, String displayName){
+	public static boolean hasTraitWithDisplayName(Player player, String displayName){
 		if(player == null || displayName == null) return false;
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player.getUniqueId());
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			

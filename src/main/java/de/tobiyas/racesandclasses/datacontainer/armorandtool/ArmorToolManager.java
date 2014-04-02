@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
@@ -47,13 +46,13 @@ public class ArmorToolManager {
 	
 	public void rescanPermission(){
 		itemPerms.clear();
-		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-		if(!player.isOnline() && WorldResolver.isOnDisabledWorld(player.getPlayer())){
+		Player player = Bukkit.getPlayer(playerUUID);
+		if(player != null && !player.isOnline() && WorldResolver.isOnDisabledWorld(player)){
 			itemPerms.add(new AllItemsPermission());
 			return;
 		}
 		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
 		if(container != null){
 			for(ItemQuality quality : container.getArmorPerms()){
 				addPerm(quality);
@@ -62,7 +61,7 @@ public class ArmorToolManager {
 			
 		//Add ItemIDs or other here.
 		
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(playerUUID);
 		if(classContainer != null){
 			for(ItemQuality quality : classContainer.getArmorPerms()){
 				addPerm(quality);

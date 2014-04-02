@@ -70,7 +70,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 				.contains(prefix))) return;
 		
 		//safe to use since we only use online players.
-		Player player = Bukkit.getPlayer(invClose.getView().getPlayer().getName());
+		Player player = Bukkit.getPlayer(invClose.getView().getPlayer().getUniqueId());
 		if(player == null) return;
 		
 		//iterate through all items
@@ -99,7 +99,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 		final Player player = (Player) event.getView().getPlayer();
 		if(player == null) return;
 	
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(player);
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(player.getUniqueId());
 		
 		boolean forceReopen = false;
 		if(manager == plugin.getClassManager()){
@@ -119,7 +119,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 		if(manager == plugin.getRaceManager()){
 			boolean openClassSelectionAfterwards = plugin.getConfigManager().getGeneralConfig().isConfig_openClassSelectionAfterRaceSelectionWhenNoClass();
 			if(openClassSelectionAfterwards){
-				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder();
+				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId()) == plugin.getClassManager().getDefaultHolder();
 				if(hasDefaultClass){
 					final HolderInventory classSelectInventory = new HolderInventory(player, plugin.getClassManager());
 					if(classSelectInventory.getNumberOfHolder() > 0){
@@ -174,7 +174,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 			
 		}
 		
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(player);
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(player.getUniqueId());
 		HolderPreSelectEvent selectEvent = null;
 		
 		AbstractTraitHolder newHolder= getHolder(clickedItem);
@@ -196,9 +196,9 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		boolean worked = true;
 		if(hasNoHolder){
-			worked = manager.addPlayerToHolder(player, newHolder.getName(), true);
+			worked = manager.addPlayerToHolder(player.getUniqueId(), newHolder.getName(), true);
 		}else{
-			worked = manager.changePlayerHolder(player, newHolder.getName(), true);
+			worked = manager.changePlayerHolder(player.getUniqueId(), newHolder.getName(), true);
 		}
 		
 		if(worked){

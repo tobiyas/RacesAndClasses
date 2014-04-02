@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.UUID;
 
-import org.bukkit.OfflinePlayer;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
@@ -133,8 +131,8 @@ public class MemberConfig extends Observable {
 	 * @param player2
 	 * @return
 	 */
-	public static MemberConfig createMemberConfig(OfflinePlayer player){
-		return new MemberConfig(player.getUniqueId());
+	public static MemberConfig createMemberConfig(UUID player){
+		return new MemberConfig(player);
 	}
 	
 	

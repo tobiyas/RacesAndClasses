@@ -62,7 +62,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 		if(args.length == 0){
 			String your = LanguageAPI.translateIgnoreError("your").build();
 			player.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;
@@ -82,7 +82,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			String attribute = args[0];
 			String value = args[1];
 			
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
+			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;

@@ -83,7 +83,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			AbstractTraitHolder classHolder = null;
 			
 			if(args.length < 2){
-				classHolder = plugin.getClassManager().getHolderOfPlayer((Player) sender);
+				classHolder = plugin.getClassManager().getHolderOfPlayer(((Player) sender).getUniqueId());
 				if(classHolder == null){
 					LanguageAPI.sendTranslatedMessage(sender,"no_class_selected_use_info");
 					return true;
@@ -125,7 +125,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
 				
-				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player);
+				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender,"already_have_class",
 							"clasname", currentClass.getName());
@@ -176,7 +176,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
 				
-				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player);
+				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 				if(currentClass == plugin.getClassManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, "no_class_on_change");
 					return true;
@@ -285,7 +285,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 			return;
 		}
 		
-		AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer((Player)player);
+		AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(((Player)player ).getUniqueId());
 		String nameOfOwnClass = holder != null ? holder.getName() : "";
 		
 		for(String classe : classes ){
@@ -320,9 +320,9 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		}
 		
 		
-		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 		if(currentHolder == null){	
-			if(plugin.getClassManager().addPlayerToHolder(player, potentialClass, true)){
+			if(plugin.getClassManager().addPlayerToHolder(player.getUniqueId(), potentialClass, true)){
 				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
 						"class", potentialClass);
 				return true;
@@ -338,7 +338,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	
 	private void change(Player player, String potentialClass){
 		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeClass)) return;
-		ClassContainer oldClassContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
+		ClassContainer oldClassContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
 		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
@@ -367,7 +367,7 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 				return;
 			}
 			
-			if(plugin.getClassManager().changePlayerHolder(player, potentialClass, true)){
+			if(plugin.getClassManager().changePlayerHolder(player.getUniqueId(), potentialClass, true)){
 				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
 						"class", potentialClass);
 			}else{
