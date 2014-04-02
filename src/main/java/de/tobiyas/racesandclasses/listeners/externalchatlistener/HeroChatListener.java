@@ -66,17 +66,15 @@ public class HeroChatListener implements Listener  {
 			format = Herochat.getChannelManager().getStandardFormat();
 		}
 		
-		String senderName = event.getSender().getName();
-		
 		String raceTag = "";
 		String classTag = "";
 
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(senderName);
+		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getSender().getPlayer());
 		if(holder != null){
 			raceTag = holder.getTag();
 		}
 		
-		holder = plugin.getClassManager().getHolderOfPlayer(senderName);
+		holder = plugin.getClassManager().getHolderOfPlayer(event.getSender().getPlayer());
 		if(holder != null){
 			classTag = holder.getTag();
 		}

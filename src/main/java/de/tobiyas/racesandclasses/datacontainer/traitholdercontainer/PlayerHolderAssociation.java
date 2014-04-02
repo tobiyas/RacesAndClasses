@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -27,7 +29,7 @@ public class PlayerHolderAssociation {
 
 	@Id
 	@NotEmpty
-	private String playerName;
+	private UUID playerUUID;
 		
 	private String className;
 	
@@ -36,12 +38,12 @@ public class PlayerHolderAssociation {
 
 	
 	
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 
-	public void setPlayerName(String playerName) {
-		this.playerName = playerName;
+	public void setPlayerUUID(UUID playerUUID) {
+		this.playerUUID = playerUUID;
 	}
 
 	public String getClassName() {

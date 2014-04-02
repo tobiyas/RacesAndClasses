@@ -30,20 +30,25 @@ public class ConverterChecker {
 		boolean useConvertion = plugin.getConfigManager().getGeneralConfig().isConfig_convertDatabaseOnStartup();
 		if(!useConvertion) return;
 		
-		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
+		//DB is disabled.
+		//boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 		
 		
 		//first try splitting bit YML data:
 		PlayerDataToSmallFileConverter.convertPlayerDataToSmallFiles();
 		
+		//second convert Name to UUID
+		YML_OLD_to_NEW_converter.convert();
+		
+		
 		//If we use a DB, convert the YML stuff to DB if not happened.
-		if(useDB){
+		/*if(useDB){
 			DBConverter.convertYMLToDB();
 		}
 		
 		//If we use a YML File, we need to convert everything to YML first.
 		if(!useDB){
 			ToYMLConverter.convertDBToYML();
-		}
+		}*/
 	}
 }

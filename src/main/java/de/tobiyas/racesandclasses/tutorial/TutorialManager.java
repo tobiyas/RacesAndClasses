@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -35,12 +36,12 @@ public class TutorialManager implements Observer{
 	private boolean enabled;
 	
 	private RacesAndClasses plugin;
-	private HashMap<String, TutorialPath> tutorialStates;
+	private HashMap<UUID, TutorialPath> tutorialStates;
 	
 	
 	public TutorialManager(){
 		plugin = RacesAndClasses.getPlugin();
-		tutorialStates = new HashMap<String, TutorialPath>();
+		tutorialStates = new HashMap<UUID, TutorialPath>();
 		enabled = true;
 	}
 	
@@ -52,24 +53,27 @@ public class TutorialManager implements Observer{
 			return;
 		
 		for(String name : config.getChildren("states")){
+			UUID id = null;
+			try{ id = UUID.fromString(name); }catch(IllegalArgumentException exp){ continue; }
+
 			String stateName = config.getString("states." + name + ".stateName");
 			TutorialState state = TutorialState.getState(stateName);
 			int stateValue = config.getInt("states." + name + ".stateValue");
 			
-			TutorialPath path = new TutorialPath(name, true);
+			TutorialPath path = new TutorialPath(id, true);
 			path.setState(state);
 			
 			if(stateValue != 1)
 				path.setStateStep(stateValue);
 			path.activate();
-			tutorialStates.put(name, path);
+			tutorialStates.put(id, path);
 		}
 	}
 	
 	private void save(){
 		YAMLConfigExtended config = checkFileExists();
 		
-		for(String player : tutorialStates.keySet()){
+		for(UUID player : tutorialStates.keySet()){
 			TutorialPath path = tutorialStates.get(player);
 			path.save(config);
 		}
@@ -102,20 +106,20 @@ public class TutorialManager implements Observer{
 		if(!(potentialContainer instanceof TutorialStepContainer))
 			return;
 		TutorialStepContainer container = (TutorialStepContainer) potentialContainer;
-		String playerName = container.getName();
+		UUID playerUUID = container.getUUID();
 		
-		TutorialPath path = tutorialStates.get(playerName);
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null){
 			if(container.getState() == TutorialState.start)
-				createNew(container.getName());
+				createNew(container.getUUID());
 		}else
 			path.handle(container);
 	}
 	
-	private void createNew(String playerName){
+	private void createNew(UUID player){
 		synchronized(tutorialStates){
-			if(tutorialStates.get(playerName) == null)
-				tutorialStates.put(playerName, new TutorialPath(playerName));
+			if(tutorialStates.get(player) == null)
+				tutorialStates.put(player, new TutorialPath(player));
 		}
 	}
 	
@@ -123,64 +127,64 @@ public class TutorialManager implements Observer{
 	
 	//handle statics to intern
 	
-	private boolean skipIntern(String playerName){
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean skipIntern(UUID playerUUID){
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null)
 			return false;
 		
 		return path.skip();
 	}
 	
-	private boolean startIntern(String playerName){
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean startIntern(UUID player){
+		TutorialPath path = tutorialStates.get(player);
 		if(path != null)
-			tutorialStates.remove(playerName);
+			tutorialStates.remove(player);
 		
-		createNew(playerName);
+		createNew(player);
 		return true;
 	}
 	
-	private boolean stopIntern(String playerName){
-		Player player = Bukkit.getPlayer(playerName);
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean stopIntern(UUID playerUUID){
+		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null){
-			if(player != null)
-				player.sendMessage(ChatColor.RED + "No active Tutorial.");
+			if(player != null && player.isOnline())
+				player.getPlayer().sendMessage(ChatColor.RED + "No active Tutorial.");
 			return false;
 		}
 		
-		removePerson(playerName);
+		removePerson(playerUUID);
 		return path.stop();
 	}
 	
-	private void removePerson(String playerName){
+	private void removePerson(UUID playerUUID){
 		YAMLConfigExtended config = checkFileExists();
 		if(config.getValidLoad() == false)
 			return;
 		
-		config.set("states." + playerName, 0);
-		config.set("states." + playerName, null);
+		config.set("states." + playerUUID, 0);
+		config.set("states." + playerUUID, null);
 		config.save();
 	}
 	
-	private boolean resetIntern(String playerName){
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean resetIntern(UUID playerUUID){
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null)
 			return false;
 		
 		return path.reset();
 	}
 	
-	private boolean repostIntern(String playerName){
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean repostIntern(UUID playerUUID){
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null)
 			return false;
 		
 		return path.repostState();
 	}
 	
-	private boolean setStateIntern(String playerName, String state){
-		TutorialPath path = tutorialStates.get(playerName);
+	private boolean setStateIntern(UUID playerUUID, String state){
+		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null)
 			return false;
 		
@@ -207,46 +211,46 @@ public class TutorialManager implements Observer{
 	
 	//direct Handles
 	
-	public boolean skip(String playerName){
+	public boolean skip(UUID playerUUID){
 		if(!isActive())
 			return false;
 		
-		return skipIntern(playerName);
+		return skipIntern(playerUUID);
 	}
 		
-	public boolean start(String playerName){
+	public boolean start(UUID playerUUID){
 		if(!isActive())
 			return false;
 		
-		return startIntern(playerName);
+		return startIntern(playerUUID);
 	}
 		
-	public boolean stop(String playerName){
+	public boolean stop(UUID playerUUID){
 		if(!isActive())
 			return false;
 		
-		return stopIntern(playerName);
+		return stopIntern(playerUUID);
 	}
 		
-	public boolean reset(String playerName){
+	public boolean reset(UUID playerUUID){
 		if(!isActive())
 			return false;
 		
-		return resetIntern(playerName);
-	}
-	
-	public boolean repost(String playerName){
-		if(!isActive())
-			return false;
-		
-		return repostIntern(playerName);
+		return resetIntern(playerUUID);
 	}
 	
-	public boolean setState(String playerName, String state){
+	public boolean repost(UUID playerUUID){
 		if(!isActive())
 			return false;
 		
-		return setStateIntern(playerName, state);
+		return repostIntern(playerUUID);
+	}
+	
+	public boolean setState(UUID playerUUID, String state){
+		if(!isActive())
+			return false;
+		
+		return setStateIntern(playerUUID, state);
 	}
 	
 	
@@ -272,12 +276,12 @@ public class TutorialManager implements Observer{
 	}
 	
 	//writeback
-	public void unregister(String playerName){
+	public void unregister(UUID playerUUID){
 		if(!isActive())
 			return;
 		
 		synchronized(tutorialStates){
-			tutorialStates.remove(playerName);
+			tutorialStates.remove(playerUUID);
 		}
 	}
 	

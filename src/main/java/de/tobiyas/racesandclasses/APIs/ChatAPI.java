@@ -60,7 +60,7 @@ public class ChatAPI {
 	 * If notifyOthers is set to true, others in the channel will be notified to the player's join.
 	 * 
 	 * @param channelName
-	 * @param playerName
+	 * @param playerUUID
 	 */
 	public static void addPlayerToChannel(String channelName, Player player, boolean notifyOthers){
 		plugin.getChannelManager().joinChannel(player, channelName, "", notifyOthers);
@@ -71,7 +71,7 @@ public class ChatAPI {
 	 * Removes a Player from the channel name passed.
 	 * 
 	 * @param channelName
-	 * @param playerName
+	 * @param playerUUID
 	 */
 	public static void removePlayerFromChannel(String channelName, Player player, boolean notifyOthers){
 		plugin.getChannelManager().leaveChannel(player, channelName, notifyOthers);

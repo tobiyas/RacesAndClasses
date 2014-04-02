@@ -192,7 +192,7 @@ public class GeneralConfigText {
 			+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
 			+ "# boolean: true or false\n"
 			+ "# default: true \n"
-			+ general_saving_savePlayerDataToDB + ": true\n\n"
+			+ general_saving_savePlayerDataToDB + ": false\n\n"
 			
 			+ "# This tells the plugin to look at conversion at startup.. \n"
 			+ "# If turned to false, no conversion of playerdata will be done on startup!\n"

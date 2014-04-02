@@ -55,7 +55,7 @@ public class TraitInventory extends InventoryView {
 	public TraitInventory(Player player) {
 		this.player = player;
 		
-		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(player.getName());
+		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(player);
 		
 		int size = traits.size();
 		size = ((size / 9) + 1) * 9;

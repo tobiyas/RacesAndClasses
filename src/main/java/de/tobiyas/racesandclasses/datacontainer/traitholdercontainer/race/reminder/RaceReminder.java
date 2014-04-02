@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -39,16 +40,13 @@ public class RaceReminder implements Runnable {
 	public void run() {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_activate_reminder()){
 			AbstractTraitHolder defaultContainer = plugin.getRaceManager().getDefaultHolder();
-			List<String> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
-			for(String name : list){
-				Player player = Bukkit.getPlayer(name);
-
-				if(player == null){
+			List<OfflinePlayer> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
+			for(OfflinePlayer player : list){
+				if(player == null || !player.isOnline()){
 					continue;
 				}
 				
-				postSelectRace(player);
-				
+				postSelectRace(player.getPlayer());
 			}
 		}
 	}

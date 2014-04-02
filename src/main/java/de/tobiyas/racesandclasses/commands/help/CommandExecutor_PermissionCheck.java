@@ -21,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -89,7 +90,7 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getRaceManager().getHolderByName(holderName);
 			
-			boolean senderContained = holder.containsPlayer(sender.getName());
+			boolean senderContained = (sender instanceof Player) ? holder.containsPlayer((Player) sender) : false;
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.racePermPre + holderName);
 			
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
@@ -114,7 +115,7 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderByName(holderName);
 			
-			boolean senderContained = holder.containsPlayer(sender.getName());
+			boolean senderContained = (sender instanceof Player) ? holder.containsPlayer((Player)sender) : false;
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.classPermPre + holderName);
 			
 			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""

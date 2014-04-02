@@ -536,6 +536,13 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	}
 
 	public boolean isConfig_savePlayerDataToDB() {
+		if(config_savePlayerDataToDB) {
+			RacesAndClasses.getPlugin().logWarning("DataBase Support is disabled and will not be enabled in long time, maybe ever.");
+			RacesAndClasses.getPlugin().logWarning("Use an older Version to Convert to YML.");
+			RacesAndClasses.getPlugin().logWarning("For more details, look at the FAQ on the Bukkit dev page.");
+			config_savePlayerDataToDB = false;
+		}
+		
 		return config_savePlayerDataToDB;
 	}
 

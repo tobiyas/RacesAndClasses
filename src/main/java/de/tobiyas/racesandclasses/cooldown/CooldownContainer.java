@@ -38,7 +38,7 @@ public class CooldownContainer {
 	/**
 	 * Creates a new Cooldown container with the passed properties.
 	 * 
-	 * @param playerName
+	 * @param playerUUID
 	 * @param cooldownName
 	 * @param cooldownTime
 	 */

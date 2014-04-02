@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.APIs;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -35,12 +36,26 @@ public class RaceAPI {
 	 * Returns the Race of a player.
 	 * If the player has no race, the Default race is returned.
 	 * 
-	 * @param playerName to search
+	 * @param playerUUID to search
+	 * @return the {@link RaceContainer} of the player
+	 * 
+	 * @deprecated use {@link #getRaceOfPlayer(OfflinePlayer)} instead
+	 */
+	@Deprecated
+	public static RaceContainer getRaceOfPlayer(String playerName){
+		return getRaceOfPlayer(Bukkit.getOfflinePlayer(playerName));
+	}
+	
+	/**
+	 * Returns the Race of a player.
+	 * If the player has no race, the Default race is returned.
+	 * 
+	 * @param playerUUID to search
 	 * @return the {@link RaceContainer} of the player
 	 */
-	public static RaceContainer getRaceOfPlayer(String playerName){
+	public static RaceContainer getRaceOfPlayer(OfflinePlayer player){
 		RaceManager raceManager = plugin.getRaceManager();
-		RaceContainer race = (RaceContainer) raceManager.getHolderOfPlayer(playerName);
+		RaceContainer race = (RaceContainer) raceManager.getHolderOfPlayer(player);
 		if(race != null){
 			return race;
 		}else{
@@ -78,16 +93,36 @@ public class RaceAPI {
 	 * 
 	 * Returns true on success, 
 	 * false if:
-	 *  - playerName can not be found on Bukkit.getPlayer(playerName).
+	 *  - playerUUID can not be found on Bukkit.getPlayer(playerUUID).
 	 *  - the new raceName is not found.
 	 *  - any internal error occurs.
 	 * 
-	 * @param playerName the player that the Race should be changed.
+	 * @param playerUUID the player that the Race should be changed.
+	 * @param className to change to
+	 * @return true if worked, false otherwise
+	 * 
+	 * @deprecated use {@link #addPlayerToRace(OfflinePlayer, String)} instead
+	 */
+	public static boolean addPlayerToRace(String playerName, String raceName){
+		return addPlayerToRace(Bukkit.getOfflinePlayer(playerName), raceName);
+	}
+	
+	/**
+	 * Gives the passed Player a Race.
+	 * If he already has one, the Race is changed to the new one.
+	 * 
+	 * Returns true on success, 
+	 * false if:
+	 *  - playerUUID can not be found on Bukkit.getPlayer(playerUUID).
+	 *  - the new raceName is not found.
+	 *  - any internal error occurs.
+	 * 
+	 * @param playerUUID the player that the Race should be changed.
 	 * @param className to change to
 	 * @return true if worked, false otherwise
 	 */
-	public static boolean addPlayerToRace(String playerName, String raceName){
-		if(Bukkit.getPlayer(playerName) == null) return false;
+	public static boolean addPlayerToRace(OfflinePlayer player, String raceName){
+		if(player == null) return false;
 		
 		RaceManager manager = plugin.getRaceManager();
 		RaceContainer wantedRace = (RaceContainer) manager.getHolderByName(raceName);
@@ -95,6 +130,6 @@ public class RaceAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(playerName, raceName, true);
+		return manager.changePlayerHolder(player, raceName, true);
 	}
 }

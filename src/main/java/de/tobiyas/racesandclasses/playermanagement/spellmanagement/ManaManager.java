@@ -17,6 +17,10 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -38,7 +42,7 @@ public class ManaManager implements Observer {
 	/**
 	 * The Player this mana Manager belongs.
 	 */
-	private final String playerName;
+	private final UUID playerUUID;
 	
 	
 	/**
@@ -62,16 +66,17 @@ public class ManaManager implements Observer {
 	/**
 	 * Generates a new Mana Manager for the Player passed.
 	 * 
-	 * @param playerName
+	 * @param playerUUID
 	 */
-	public ManaManager(String playerName) {
-		this.playerName = playerName;
+	public ManaManager(UUID playerUUID) {
+		this.playerUUID = playerUUID;
 		this.maxMana = 0;
 		this.currentMana = 0;
 		
 		rescanDisplay();
 		
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(getPlayerName()).addObserver(this);
+		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
+		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player).addObserver(this);
 	}
 	
 	/**
@@ -83,7 +88,7 @@ public class ManaManager implements Observer {
 			manaDisplay.unregister();
 		}
 		
-		manaDisplay = DisplayGenerator.generateDisplay(playerName, DisplayInfos.MANA);
+		manaDisplay = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(playerUUID), DisplayInfos.MANA);
 	}
 	
 	
@@ -93,16 +98,17 @@ public class ManaManager implements Observer {
 	public void rescanPlayer(){
 		maxMana = 0;
 		
-		if(WorldResolver.isOnDisabledWorld(playerName)){
+		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+		if(!player.isOnline() || WorldResolver.isOnDisabledWorld(player.getPlayer())){
 			return;
 		}
 		
-		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
+		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		if(race != null){
 			maxMana += race.getManaBonus();
 		}
 		
-		ClassContainer clazz = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerName);
+		ClassContainer clazz = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
 		if(clazz != null){
 			maxMana += clazz.getManaBonus();
 		}
@@ -236,10 +242,10 @@ public class ManaManager implements Observer {
 
 
 	/**
-	 * @return the playerName
+	 * @return the playerUUID
 	 */
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 	
 	/**

@@ -71,7 +71,7 @@ public class PlayerLevelManagerTest {
 	public void constructor_works(){
 		assertEquals(1, sut.getCurrentLevel());
 		assertEquals(0, sut.getCurrentExpOfLevel());
-		assertEquals(playerName, sut.getPlayerName());
+		assertEquals(playerName, sut.getPlayerUUID());
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ public class PlayerLevelManagerTest {
 		
 		assertEquals(level, sut.getCurrentLevel());
 		assertEquals(levelExp, sut.getCurrentExpOfLevel());
-		assertEquals(playerName, sut.getPlayerName());
+		assertEquals(playerName, sut.getPlayerUUID());
 	}
 	
 	

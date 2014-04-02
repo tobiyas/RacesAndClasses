@@ -42,6 +42,7 @@ public class Consts {
 	
 	//Debugging
 	public static final int timingLength = 10;
+	public static final boolean disableBDSupport = true;
 	
 	//Version
 	public static final String currentDevStage = "B T";

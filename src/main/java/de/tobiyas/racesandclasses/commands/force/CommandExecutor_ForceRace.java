@@ -23,6 +23,7 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.something_di
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -88,10 +89,11 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 			return true;
 		}
 		
-		if(raceManager.getHolderOfPlayer(playerToChange) == raceManager.getDefaultHolder()){
-			raceManager.addPlayerToHolder(playerToChange, newRace, true);
+		OfflinePlayer toChange = Bukkit.getOfflinePlayer(playerToChange);
+		if(raceManager.getHolderOfPlayer(toChange) == raceManager.getDefaultHolder()){
+			raceManager.addPlayerToHolder(toChange, newRace, true);
 		}else{
-			raceManager.changePlayerHolder(playerToChange, newRace, true);
+			raceManager.changePlayerHolder(toChange, newRace, true);
 		}
 		
 		Player player = Bukkit.getPlayer(playerToChange);

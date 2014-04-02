@@ -147,7 +147,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		if(killer != null){
 			int expForLevel = (int) (Eevent.getDroppedExp() / 10d);
 			
-			PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(killer.getName());
+			PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(killer);
 			manager.addExp(expForLevel);
 		}
 		

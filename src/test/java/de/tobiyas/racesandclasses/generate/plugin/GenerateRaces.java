@@ -28,7 +28,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider_OLD;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.persistence.YAMLPersistenceProviderSetter;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -113,7 +113,7 @@ public class GenerateRaces {
 		try{
 			boolean classesDeleted = false;
 			for(int i = 0; i < 5; i++){
-				File file = YAMLPersistenceProvider.getLoadedClassesFile(false).getFileLoadFrom();
+				File file = YAMLPersistenceProvider_OLD.getLoadedClassesFile(false).getFileLoadFrom();
 				if(!file.exists()){
 					classesDeleted = true;
 					break;
@@ -126,7 +126,7 @@ public class GenerateRaces {
 			
 			boolean racesDeleted = false;
 			for(int i = 0; i < 5; i++){
-				File file = YAMLPersistenceProvider.getLoadedRacesFile(false).getFileLoadFrom();
+				File file = YAMLPersistenceProvider_OLD.getLoadedRacesFile(false).getFileLoadFrom();
 				if(!file.exists()){
 					racesDeleted = true;
 					break;

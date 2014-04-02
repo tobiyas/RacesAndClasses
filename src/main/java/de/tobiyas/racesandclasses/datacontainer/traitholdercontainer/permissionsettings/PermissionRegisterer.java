@@ -15,8 +15,11 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
+
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.milkbowl.vault.permission.Permission;
 
@@ -39,7 +42,7 @@ public class PermissionRegisterer implements Runnable{
 	/**
 	 * The Member config to set the Permissions to
 	 */
-	private final Map<String, AbstractTraitHolder> memberList;
+	private final Map<UUID, AbstractTraitHolder> memberList;
 	
 	/**
 	 * The prefix of the Permissions
@@ -58,7 +61,7 @@ public class PermissionRegisterer implements Runnable{
 	private static String permissionSpecificPrefix = "";
 	
 	
-	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<String, AbstractTraitHolder> memberList, String typeName){
+	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<UUID, AbstractTraitHolder> memberList, String typeName){
 		this.traitHolderList = traitHolderList;
 		this.memberList = memberList;
 		this.typeName = typeName;
@@ -166,22 +169,23 @@ public class PermissionRegisterer implements Runnable{
 	private void giveMembersAccessToGroups() {
 		if(memberList == null || memberList.isEmpty()) return;
 		
-		for(String member : memberList.keySet()){
+		for(UUID member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
 			if(holder == null) continue;
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			
-			String[] groups = vaultPermissions.getPlayerGroups((String)null, member);
+			OfflinePlayer player = Bukkit.getOfflinePlayer(member);
+			String[] groups = vaultPermissions.getPlayerGroups((String)null, player.getName());
 			if(groups == null || groups.length == 0) continue;
 			
 			for(String group : groups){
 				if(group.startsWith(permissionSpecificPrefix + typeName)){
-					vaultPermissions.playerRemoveGroup((String) null, member, permissionSpecificPrefix + group);
+					vaultPermissions.playerRemoveGroup((String) null, player.getName(), permissionSpecificPrefix + group);
 				}
 			}
 			
-			vaultPermissions.playerAddGroup((String) null, member, permissionSpecificPrefix + groupName);
+			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
 		}
 	}
 
@@ -235,17 +239,17 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from all groups with the passed prefix.
 	 * This only works if Vault is active.
 	 */
-	public static void removePlayer(String player, String prefix) {
+	public static void removePlayer(OfflinePlayer player, String prefix) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
-			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player);
+			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player.getName());
 			if(groupNames == null) return; //nothing to do
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null, player, permissionSpecificPrefix + groupName);
+					vaultPermissions.playerRemoveGroup((String)null, player.getName(), permissionSpecificPrefix + groupName);
 				}
 			}
 		}
@@ -256,12 +260,12 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from the group.
 	 * This only works if Vault is active.
 	 */
-	public static void addPlayer(String player, String groupName) {
+	public static void addPlayer(OfflinePlayer player, String groupName) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
 		if(vaultPermissions != null){
-			vaultPermissions.playerAddGroup((String) null, player, permissionSpecificPrefix + groupName);
+			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
 		}
 	}
 

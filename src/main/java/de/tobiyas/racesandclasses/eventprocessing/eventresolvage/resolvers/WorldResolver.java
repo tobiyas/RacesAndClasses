@@ -105,7 +105,7 @@ public class WorldResolver {
 	/**
 	 * Checks if the passed Player associated to the player name is on a disabled world.
 	 * 
-	 * @param playerName to check.
+	 * @param playerUUID to check.
 	 */
 	public static boolean isOnDisabledWorld(String playerName){
 		Player player = Bukkit.getPlayer(playerName);

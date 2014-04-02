@@ -80,7 +80,7 @@ public class ManaManagerTest {
 	
 	@Test
 	public void test_constructor_and_getters(){
-		assertEquals(playerName, sut.getPlayerName());
+		assertEquals(playerName, sut.getPlayerUUID());
 		assertEquals(0, sut.getCurrentMana(), 0.001);
 		assertEquals(0, sut.getMaxMana(), 0.001);
 	}

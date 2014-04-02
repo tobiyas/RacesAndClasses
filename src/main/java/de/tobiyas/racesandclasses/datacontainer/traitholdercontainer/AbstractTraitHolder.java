@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -274,10 +275,10 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * Returns if a Player is member of this holder
 	 * 
-	 * @param playerName to check
+	 * @param playerUUID to check
 	 * @return true if is member, false otherwise
 	 */
-	public abstract boolean containsPlayer(String playerName);
+	public abstract boolean containsPlayer(OfflinePlayer player);
 	
 	
 	/**

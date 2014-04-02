@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.persistence.db;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.PersistenceException;
 
@@ -127,31 +128,31 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public PlayerSavingContainer getPlayerContainer(String name) {
+	public PlayerSavingContainer getPlayerContainer(UUID player) {
 		try {
 			return ebeanServer.find(PlayerSavingContainer.class).where()
-					.ieq("playerName", name).findUnique();
+					.ieq("playerUUID", player.toString()).findUnique();
 		} catch (Exception exp) {
 			return null;
 		}
 	}
 
 	@Override
-	public PlayerHolderAssociation getPlayerHolderAssociation(String name) {
+	public PlayerHolderAssociation getPlayerHolderAssociation(UUID player) {
 		try {
 			return ebeanServer.find(PlayerHolderAssociation.class).where()
-					.ieq("playerName", name).findUnique();
+					.ieq("playerUUID", player.toString()).findUnique();
 		} catch (Exception exp) {
 			return null;
 		}
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByPath(String playerName,
+	public ConfigOption getPlayerMemberConfigEntryByPath(UUID player,
 			String entryName) {
 		try {
 			return ebeanServer.find(DBConfigOption.class).where()
-					.ieq("playerName", playerName).ieq("path", entryName)
+					.ieq("playerUUID", player.toString()).ieq("path", entryName)
 					.findUnique();
 		} catch (Exception exp) {
 			return null;
@@ -159,11 +160,11 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByName(String playerName,
+	public ConfigOption getPlayerMemberConfigEntryByName(UUID player,
 			String entryName) {
 		try {
 			return ebeanServer.find(DBConfigOption.class).where()
-					.ieq("playerName", playerName)
+					.ieq("playerUUID", player.toString())
 					.ieq("displayName", entryName).findUnique();
 		} catch (Exception exp) {
 			return null;
@@ -181,11 +182,11 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(String playerName) {
+	public List<ConfigOption> getAllConfigOptionsOfPlayer(UUID player) {
 		try {
 			List<DBConfigOption> options = ebeanServer
 					.find(DBConfigOption.class).where()
-					.ieq("playerName", playerName).findList();
+					.ieq("playerUUID", player.toString()).findList();
 
 			List<ConfigOption> convertedOptions = new LinkedList<ConfigOption>(
 					options);

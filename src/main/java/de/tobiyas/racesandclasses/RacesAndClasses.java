@@ -87,7 +87,7 @@ import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
 import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPeristanceSaver;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
@@ -257,7 +257,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		long currentTime = System.currentTimeMillis();
 		
 		setupConfiguration();
-		YAMLPeristanceSaver.start(true);
+		YAMLPersistanceSaver.start(true);
 		
 		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -522,15 +522,18 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		stunManager.deinit();
 		poisonManager.deinit();
 		
-		alternateEbeanServer.onShutdown();
-		alternateEbeanServer = null;
+
+		if(!Consts.disableBDSupport) {
+			alternateEbeanServer.onShutdown();
+			alternateEbeanServer = null;
+		}
 		
 		TranslationManagerHolder.shutdown();
 		
 		if(!configManager.getGeneralConfig().isConfig_savePlayerDataToDB()){
 			log("Doing some YML file flushing. This can take a while.");
-			YAMLPeristanceSaver.flushNow(false, false);
-			YAMLPeristanceSaver.stop();
+			YAMLPersistanceSaver.flushNow(false, false);
+			YAMLPersistanceSaver.stop();
 			log("YML file flushing done.");
 		}
 		
@@ -629,6 +632,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	 
 	@Override
 	public EbeanServer getDatabase(){
+		if(Consts.disableBDSupport) return super.getDatabase();
+		
 		if(alternateEbeanServer == null){
 			initEbeanServer();
 		}
@@ -638,6 +643,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 
 
 	private void initEbeanServer() {
+		if(Consts.disableBDSupport) return;
+		
 		alternateEbeanServer = new AlternateEbeanServerImpl(this);
 		alternateEbeanServer.initializeLocalSQLite();
 	}

@@ -163,7 +163,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 			return;
 		}
 		
-		if(!plugin.getTutorialManager().start(player.getName())){
+		if(!plugin.getTutorialManager().start(player.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
@@ -171,7 +171,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void tutorialStop(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(plugin.getTutorialManager().stop(player.getName())){
+		if(plugin.getTutorialManager().stop(player.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_stopped);
 		}else{
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
@@ -181,7 +181,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void tutorialSkip(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().skip(player.getName())){
+		if(!plugin.getTutorialManager().skip(player.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
@@ -189,7 +189,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void tutorialReset(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().reset(player.getName())){
+		if(!plugin.getTutorialManager().reset(player.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
@@ -197,7 +197,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void tutorialRepost(Player player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().repost(player.getName())){
+		if(!plugin.getTutorialManager().repost(player.getUniqueId())){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
@@ -205,7 +205,7 @@ public class CommandExecutor_RacesTutorial implements CommandExecutor{
 	private void setState(Player player, String state){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().setState(player.getName(), state))
+		if(!plugin.getTutorialManager().setState(player.getUniqueId(), state))
 			LanguageAPI.sendTranslatedMessage(player, tutorial_no_set_at_this_state);
 	}
 	

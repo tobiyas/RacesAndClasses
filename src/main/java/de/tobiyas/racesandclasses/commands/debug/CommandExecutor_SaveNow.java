@@ -21,7 +21,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPeristanceSaver;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 
 public class CommandExecutor_SaveNow implements CommandExecutor{
 
@@ -53,7 +53,7 @@ public class CommandExecutor_SaveNow implements CommandExecutor{
 		sender.sendMessage(ChatColor.GREEN + "Flushing data to files NOW " 
 				+ ChatColor.LIGHT_PURPLE + (async ? "a" : "") + "synchronusly" 
 				+ ChatColor.GREEN + ".");
-		YAMLPeristanceSaver.flushNow(async, true);
+		YAMLPersistanceSaver.flushNow(async, true);
 		
 		if(!async){
 			long timeTaken = System.currentTimeMillis() - timeBefore;

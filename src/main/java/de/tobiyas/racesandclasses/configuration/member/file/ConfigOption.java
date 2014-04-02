@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.configuration.member.file;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
@@ -26,6 +27,7 @@ import javax.persistence.Transient;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 
+import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -157,7 +159,7 @@ public class ConfigOption {
 	 * the player this option is belonging.
 	 */
 	@NotEmpty
-	protected String playerName;
+	protected UUID playerUUID;
 	
 	@Transient
 	protected boolean needsSaving = true;
@@ -174,8 +176,8 @@ public class ConfigOption {
 	 * @param path to the config
 	 * @param value the value to store
 	 */
-	public ConfigOption(String path, String playerName, Object value) {
-		this(path, playerName, path, value, value, true);
+	public ConfigOption(String path, UUID playerUUID, Object value) {
+		this(path, playerUUID, path, value, value, true);
 	}
 	
 	/**
@@ -191,8 +193,8 @@ public class ConfigOption {
 	 * @param value the value to store
 	 * @param defaultValue the default value when no other value given
 	 */
-	public ConfigOption(String path, String playerName, String displayName, Object value, Object defaultValue){
-		this(path, playerName, displayName, value, defaultValue, true);
+	public ConfigOption(String path, UUID playerUUID, String displayName, Object value, Object defaultValue){
+		this(path, playerUUID, displayName, value, defaultValue, true);
 	}
 	
 	
@@ -208,7 +210,7 @@ public class ConfigOption {
 	 * @param value the value to store
 	 * @param visible if it is visible to the player
 	 */
-	public ConfigOption(String path, String playerName, String displayName, Object value, Object defaultValue, boolean visible) {
+	public ConfigOption(String path, UUID playerUUID, String displayName, Object value, Object defaultValue, boolean visible) {
 		this.path = path;
 		this.value = value;
 		this.visible = visible;
@@ -216,7 +218,7 @@ public class ConfigOption {
 		this.defaultValue = defaultValue;
 		this.displayName = displayName;
 		this.format = identifyFormat(value);
-		this.playerName = playerName;
+		this.playerUUID = playerUUID;
 	}
 	
 	/**
@@ -244,8 +246,8 @@ public class ConfigOption {
 	/**
 	 * ONLY FOR SQL DB ACCESS!!!!
 	 */
-	public ConfigOption(String playerName){
-		this.playerName = playerName;
+	public ConfigOption(UUID playerUUID){
+		this.playerUUID = playerUUID;
 	}
 
 	
@@ -325,14 +327,7 @@ public class ConfigOption {
 	public void save(String pre){
 		if(!needsSaving) return; //No saving = don't even try
 		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
-		
-		config.set(pre + "." + path + "." + DEFAULT_FORMAT_PATH, format.name());
-		config.set(pre + "." + path + "." + DEFAULT_VALUE_PATH, value);
-		config.set(pre + "." + path + "." + DEFAULT_DEFAULTVALUE_PATH, defaultValue);
-		config.set(pre + "." + path + "." + DEFAULT_VISIBLE_PATH, visible);
-		config.set(pre + "." + path + "." + DEFAULT_DISPLAY_NAME_PATH, displayName);
-		
+		PersistenceStorageManager.getStorage().savePlayerMemberConfigEntry(this, false);
 		needsSaving = false;
 	}
 	
@@ -347,20 +342,20 @@ public class ConfigOption {
 	 * 
 	 * @throws IOException when the Option could not be build.
 	 */
-	public static ConfigOption loadFromPath(String pre, String playerName, String path) throws IOException{
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+	public static ConfigOption loadFromPath(String pre, UUID playerUUID, String path) throws IOException{
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
 		
-		boolean visible = config.getBoolean(pre + "." + path + "." + DEFAULT_VISIBLE_PATH, true);
-		Object defaultValue = config.get(pre + "." + path + "." + DEFAULT_DEFAULTVALUE_PATH, null);
-		Object value = config.get(pre + "." + path + "." + DEFAULT_VALUE_PATH, defaultValue);
+		boolean visible = config.getBoolean(DEFAULT_VISIBLE_PATH, true);
+		Object defaultValue = config.get(DEFAULT_DEFAULTVALUE_PATH, null);
+		Object value = config.get(DEFAULT_VALUE_PATH, defaultValue);
 		
-		String displayName = config.getString(pre + "." + path + "." + DEFAULT_DISPLAY_NAME_PATH, path);
+		String displayName = config.getString(DEFAULT_DISPLAY_NAME_PATH, path);
 		
 		if(value == null || identifyFormat(value) == SaveFormat.UNKNOWN){
 			throw new IOException("Could not determin Type of '" + path + "' was: " + value);
 		}
 		
-		ConfigOption option = new ConfigOption(path, playerName, displayName, value, defaultValue, visible);
+		ConfigOption option = new ConfigOption(path, playerUUID, displayName, value, defaultValue, visible);
 		option.needsSaving = false;
 		return option;
 	}
@@ -380,13 +375,13 @@ public class ConfigOption {
 	 * @param defaultVisiblity if reading did not work
 	 * @return
 	 */
-	public static ConfigOption loadFromPathOrCreateDefault(String pre, String playerName,
+	public static ConfigOption loadFromPathOrCreateDefault(String pre, UUID playerUUID,
 			String path, String defaultDisplayName, Object defaultValue, boolean defaultVisiblity){
 		
 		try{
-			return loadFromPath(pre, playerName, path);
+			return loadFromPath(pre, playerUUID, path);
 		}catch(IOException exp){
-			ConfigOption option = new ConfigOption(path, playerName, defaultDisplayName, defaultValue, defaultValue, defaultVisiblity);
+			ConfigOption option = new ConfigOption(path, playerUUID, defaultDisplayName, defaultValue, defaultValue, defaultVisiblity);
 			option.save(pre);
 			return option;
 		}
@@ -400,9 +395,9 @@ public class ConfigOption {
 	 * @param path to check
 	 * @return true if it is valid, false otherwise
 	 */
-	public static boolean isInValidFormat(String pre, String playerName, String path) {
+	public static boolean isInValidFormat(String pre, UUID playerUUID, String path) {
 		try{
-			loadFromPath(pre, playerName, path);
+			loadFromPath(pre, playerUUID, path);
 			return true;
 		}catch(IOException exp){
 			return false;
@@ -524,8 +519,8 @@ public class ConfigOption {
 		this.format = format;
 	}
 
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 
 	public boolean needsSaving() {

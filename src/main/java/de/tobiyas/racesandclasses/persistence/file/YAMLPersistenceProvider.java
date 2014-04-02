@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -30,7 +34,7 @@ public class YAMLPersistenceProvider {
 	/**
 	 * The Cached Player YAML files
 	 */
-	protected static Map<String, YAMLConfigExtended> playerYamls = new HashMap<String, YAMLConfigExtended>();
+	protected static Map<UUID, YAMLConfigExtended> playerYamls = new HashMap<UUID, YAMLConfigExtended>();
 	
 	
 	/**
@@ -50,9 +54,9 @@ public class YAMLPersistenceProvider {
 	protected static YAMLConfigExtended channelsYaml;
 	
 	/**
-	 * The knownPlayers.
+	 * The knownPlayerIDs.
 	 */
-	protected static Set<String> knownPlayers;
+	protected static Set<UUID> knownPlayerIDs;
 	
 	
 
@@ -60,17 +64,19 @@ public class YAMLPersistenceProvider {
 	 * Returns the already loaded Player YAML File.
 	 * This is a lazy load.
 	 * 
-	 * @param playerName to load
+	 * @param playerUUID to load
 	 * 
 	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
 	 */
-	public static YAMLConfigExtended getLoadedPlayerFile(String playerName) {
-		if(knownPlayers == null){
+	public static YAMLConfigExtended getLoadedPlayerFile(OfflinePlayer player) {
+		UUID playerID = player.getUniqueId();
+		
+		if(knownPlayerIDs == null){
 			rescanKnownPlayers();
 		}
 		
-		if(playerYamls.containsKey(playerName)){
-			YAMLConfigExtended playerConfig = playerYamls.get(playerName);
+		if(playerYamls.containsKey(playerID)){
+			YAMLConfigExtended playerConfig = playerYamls.get(playerID);
 			if(playerConfig.getValidLoad()){
 				cacheHit++;
 				return playerConfig;
@@ -80,17 +86,17 @@ public class YAMLPersistenceProvider {
 			return playerConfig.load();
 		}
 		
-		if(knownPlayers.contains(playerName)){
-			YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerName + ".yml")).load();
-			playerYamls.put(playerName, playerConfig);
+		if(knownPlayerIDs.contains(playerID)){
+			YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerID.toString() + ".yml")).load();
+			playerYamls.put(playerID, playerConfig);
 			
 			cacheMiss++;
 			return playerConfig;
 		}
 		
 		//Whether in cache, nor known.
-		YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerName + ".yml")).load();
-		playerYamls.put(playerName, playerConfig);
+		YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerID.toString() + ".yml")).load();
+		playerYamls.put(playerID, playerConfig);
 		
 		rescanKnownPlayers();
 		cacheMiss++;
@@ -147,12 +153,17 @@ public class YAMLPersistenceProvider {
 	 * 
 	 * @return the known Players.
 	 */
-	public static Set<String> getAllPlayersKnown(){
-		if(knownPlayers == null){
+	public static Set<OfflinePlayer> getAllPlayersKnown(){
+		if(knownPlayerIDs == null){
 			rescanKnownPlayers();
 		}
 		
-		return knownPlayers;
+		Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
+		for(UUID id : knownPlayerIDs){
+			players.add(Bukkit.getOfflinePlayer(id));
+		}
+		
+		return players;
 	}
 	
 	/**
@@ -172,16 +183,16 @@ public class YAMLPersistenceProvider {
 			}
 		};
 		
-		if(knownPlayers == null){
-			knownPlayers = new HashSet<String>();
+		if(knownPlayerIDs == null){
+			knownPlayerIDs = new HashSet<UUID>();
 		}
 		
-		knownPlayers.clear();
+		knownPlayerIDs.clear();
 		String[] playerFileNames = playerFolder.list(filter);
 		if(playerFileNames == null) return;
 		
 		for(String playerFile : playerFileNames){
-			knownPlayers.add(playerFile.replace(".yml", ""));
+			knownPlayerIDs.add(UUID.fromString(playerFile.replace(".yml", "")));
 		}
 	}
 	
@@ -208,5 +219,17 @@ public class YAMLPersistenceProvider {
 	 */
 	public static int getTotalTries(){
 		return cacheHit + cacheMiss;
+	}
+
+
+	/**
+	 * Creates an offline player and returns the File.
+	 * 
+	 * @param playerUUID to load from.
+	 * 
+	 * @return the loaded file.
+	 */
+	public static YAMLConfigExtended getLoadedPlayerFile(UUID playerUUID) {
+		return getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
 	}
 }

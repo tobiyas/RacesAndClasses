@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -30,16 +32,16 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	/**
 	 * The Player this level Manager is belonging to.
 	 */
-	private final String playerName;
+	private final UUID playerUUID;
 	
 	
 	/**
 	 * Creates a default MC Level Manager with MC Player Levels.
 	 * 
-	 * @param playerName to create for
+	 * @param playerUUID to create for
 	 */
-	public MCPlayerLevelManager(String playerName) {
-		this.playerName = playerName;
+	public MCPlayerLevelManager(UUID playerID) {
+		this.playerUUID = playerID;
 	}
 	
 	
@@ -54,8 +56,8 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	}
 
 	@Override
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public boolean addExp(int exp) {
-		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(playerName, exp);
+		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -88,7 +90,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public boolean removeExp(int exp) {
-		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(playerName, exp);
+		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(Bukkit.getOfflinePlayer(playerUUID), exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -110,15 +112,15 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
 		if(!config.getValidLoad()){
 			return;
 		}
 		
 		Player player = getPlayer();
 	
-		config.set("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getLevel());
-		config.set("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getExp() * player.getExpToLevel()));
+		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getLevel());
+		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getExp() * player.getExpToLevel()));
 	}
 
 	@Override
@@ -144,15 +146,15 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void reloadFromYaml() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getOfflinePlayer(playerUUID));
 		if(!config.getValidLoad()){
 			return;
 		}
 		
 		Player player = getPlayer();
 		
-		player.setLevel(config.getInt("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1));
-		player.setExp(config.getInt("playerdata." + playerName + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 1)
+		player.setLevel(config.getInt("playerdata." + playerUUID + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1));
+		player.setExp(config.getInt("playerdata." + playerUUID + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 1)
 				/ player.getExpToLevel());
 	}
 
@@ -163,7 +165,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 * @return
 	 */
 	private Player getPlayer(){
-		return Bukkit.getPlayer(playerName);
+		return Bukkit.getPlayer(playerUUID);
 	}
 
 

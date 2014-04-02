@@ -20,7 +20,9 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_e
 import static de.tobiyas.racesandclasses.translation.languages.Keys.success;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.value_0_not_allowed;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -63,7 +65,7 @@ public class Command_RACLevel implements CommandExecutor {
 		}
 		
 		String subCommand = args[1];
-		String player = args[0];
+		OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
 		int value = 0;
 		
 		try{
@@ -76,13 +78,13 @@ public class Command_RACLevel implements CommandExecutor {
 		PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(player);
 		if(manager == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
-					"player", player);
+					"player", player.getName());
 			return true;
 		}
 		
 		if(value == 0){
 			LanguageAPI.sendTranslatedMessage(sender, value_0_not_allowed,
-					"player", player);
+					"player", player.getName());
 			return true;
 		}
 		
@@ -119,9 +121,9 @@ public class Command_RACLevel implements CommandExecutor {
 	 */
 	private void pasteHelp(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "=== RAC Level ===");
-		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerName> exp <value>" 
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerUUID> exp <value>" 
 				+ ChatColor.YELLOW + "  Adds / Removes EXP to player.");
-		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerName> lvl <value>"
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerUUID> lvl <value>"
 				+ ChatColor.YELLOW + "  Adds / Removes LEVELS to player.");
 	}
 

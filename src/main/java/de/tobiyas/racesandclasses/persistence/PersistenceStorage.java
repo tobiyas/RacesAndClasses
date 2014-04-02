@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.persistence;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.configuration.ConfigurationOptions;
 
@@ -82,35 +83,35 @@ public interface PersistenceStorage {
 	 * @param name the PlayerName to search for
 	 * @return the found {@link PlayerSavingContainer} or NULL if not found.
 	 */
-	public PlayerSavingContainer getPlayerContainer(String name);
+	public PlayerSavingContainer getPlayerContainer(UUID playerUUID);
 	
 	
 	/**
 	 * Returns the {@link PlayerHolderAssociation} from the Storage
 	 * 
-	 * @param name the playerName to search for
+	 * @param name the playerUUID to search for
 	 * @return the found {@link PlayerHolderAssociation} or NULL if not found.
 	 */
-	public PlayerHolderAssociation getPlayerHolderAssociation(String name);
+	public PlayerHolderAssociation getPlayerHolderAssociation(UUID playerUUID);
 	
 	
 	/**
 	 * Returns the {@link ConfigOption} for the Player and the given entry Path
 	 * 
-	 * @param playerName to search for
+	 * @param playerUUID to search for
 	 * @param entryPath to search for
 	 * @return the found Entry or NULL if not found.
 	 */
-	public ConfigOption getPlayerMemberConfigEntryByPath(String playerName, String entryPath);
+	public ConfigOption getPlayerMemberConfigEntryByPath(UUID playerUUID, String entryPath);
 	
 	/**
 	 * Returns the {@link ConfigOption} for the Player and the given entry Name
 	 * 
-	 * @param playerName to search for
+	 * @param playerUUID to search for
 	 * @param entryName to search for
 	 * @return the found Entry or NULL if not found.
 	 */
-	public ConfigOption getPlayerMemberConfigEntryByName(String playerName, String entryName);
+	public ConfigOption getPlayerMemberConfigEntryByName(UUID playerUUID, String entryName);
 	
 	/**
 	 * Retrieves the ChannelSaveContainer for a Channel Name.
@@ -127,10 +128,10 @@ public interface PersistenceStorage {
 	 * Returns all {@link ConfigurationOptions} a Player contains.
 	 * If none where found, an empty list is returned.
 	 * 
-	 * @param playerName to search for
+	 * @param playerUUID to search for
 	 * @return an List of all Entries for a Player.
 	 */
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(String playerName);
+	public List<ConfigOption> getAllConfigOptionsOfPlayer(UUID playerUUID);
 	
 	/**
 	 * Returns all PlayerHolderAssociations found for a HolderName.

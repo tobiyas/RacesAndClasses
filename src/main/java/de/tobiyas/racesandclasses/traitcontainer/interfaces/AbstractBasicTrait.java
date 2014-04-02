@@ -454,7 +454,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(player == null) return true;
 		
 		String playerName = player.getName();
-		int playerLevel = plugin.getPlayerManager().getPlayerLevelManager(playerName).getCurrentLevel();
+		int playerLevel = plugin.getPlayerManager().getPlayerLevelManager(player).getCurrentLevel();
 		if(playerLevel < minimumLevel || playerLevel > maximumLevel) return false;
 		
 		Biome currentBiome = player.getLocation().getBlock().getBiome();

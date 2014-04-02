@@ -56,16 +56,16 @@ public class Listener_WandAndBowEquip implements Listener {
 			boolean newMatIsWand = isWand(player, mat);
 
 			if(newMatIsWand){
-				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() > 0){
-					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell().toString();
+				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getSpellAmount() > 0){
+					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell().toString();
 					LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
 							"current_spell", currentActiveSpell);
 				}
 			}
 			
 			if(mat == Material.BOW){
-				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getNumberOfArrowTypes() > 0){
-					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getCurrentArrow().getDisplayName();
+				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player).getNumberOfArrowTypes() > 0){
+					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player).getCurrentArrow().getDisplayName();
 					LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
 							"current_arrow", currentArrow);
 				}
@@ -81,17 +81,15 @@ public class Listener_WandAndBowEquip implements Listener {
 	 * @return true if he has, false otherwise.
 	 */
 	private boolean isWand(Player player, Material mat) {
-		String playerName = player.getName();
-		
 		Set<Material> wands = new HashSet<Material>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
 		if(classHolder != null){
 			wands.addAll(classHolder.getAdditionalWandMaterials());
 		}
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(raceHolder != null){
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}

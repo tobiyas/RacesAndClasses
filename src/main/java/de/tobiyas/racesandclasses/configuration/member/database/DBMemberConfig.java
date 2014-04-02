@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.member.database;
 
+import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
@@ -25,26 +29,26 @@ public class DBMemberConfig extends MemberConfig {
 	/**
 	 * Creates the super class
 	 * 
-	 * @param player to load / create new.
+	 * @param uuid to load / create new.
 	 */
-	protected DBMemberConfig(String player) {
-		super(player, "playerdata." + player + ".config.");
+	protected DBMemberConfig(UUID uuid) {
+		super(uuid, "playerdata." + uuid + ".config.");
 		
 		configList = new MemberConfigList<ConfigOption>();
 		
 		boolean defaultEnableHealthBar = plugin.getConfigManager().getGeneralConfig().isConfig_enable_healthbar_in_chat();
 		
 		//first load the default values we know already
-		DBConfigOption lifeDisplayEnable = DBConfigOption.loadFromPathOrCreateDefault(player, MemberConfig.lifeDisplayEnable, 
+		DBConfigOption lifeDisplayEnable = DBConfigOption.loadFromPathOrCreateDefault(uuid, MemberConfig.lifeDisplayEnable, 
 				defaultEnableHealthBar, defaultEnableHealthBar, true);
 				
-		DBConfigOption lifeDisplayInterval = DBConfigOption.loadFromPathOrCreateDefault(player, MemberConfig.displayInterval, 60, 60, true);
+		DBConfigOption lifeDisplayInterval = DBConfigOption.loadFromPathOrCreateDefault(uuid, MemberConfig.displayInterval, 60, 60, true);
 		
-		DBConfigOption currentChannel = DBConfigOption.loadFromPathOrCreateDefault(player, MemberConfig.chatChannel, "Global", "Global", true);
+		DBConfigOption currentChannel = DBConfigOption.loadFromPathOrCreateDefault(uuid, MemberConfig.chatChannel, "Global", "Global", true);
 		
-		DBConfigOption informCooldownReady = DBConfigOption.loadFromPathOrCreateDefault(player, MemberConfig.cooldownInformation, true, true, true);
+		DBConfigOption informCooldownReady = DBConfigOption.loadFromPathOrCreateDefault(uuid, MemberConfig.cooldownInformation, true, true, true);
 		
-		DBConfigOption displayType = DBConfigOption.loadFromPathOrCreateDefault(player, "displayType", MemberConfig.displayType, "scoreboard", true);
+		DBConfigOption displayType = DBConfigOption.loadFromPathOrCreateDefault(uuid, "displayType", MemberConfig.displayType, "scoreboard", true);
 		
 		
 		configList.add(lifeDisplayEnable);
@@ -54,7 +58,7 @@ public class DBMemberConfig extends MemberConfig {
 		configList.add(displayType);
 		
 		//Add other vars
-		for(DBConfigOption value : plugin.getDatabase().find(DBConfigOption.class).where().ieq("playerName", player).findList()){
+		for(DBConfigOption value : plugin.getDatabase().find(DBConfigOption.class).where().ieq("playerUUID", uuid.toString()).findList()){
 			if(value == null) continue;
 			
 			if(configList.containsPathName(value.getPath())) continue;
@@ -71,7 +75,7 @@ public class DBMemberConfig extends MemberConfig {
 	 * @param config
 	 */
 	protected DBMemberConfig(MemberConfig config){
-		super(config.getName(), "playerdata." + config.getName() + ".config.");
+		super(config.getPlayerUUID(), "playerdata." + config.getPlayerUUID() + ".config.");
 		
 		configList = new MemberConfigList<ConfigOption>();
 		
@@ -105,8 +109,8 @@ public class DBMemberConfig extends MemberConfig {
 	 * @param player
 	 * @return
 	 */
-	public static DBMemberConfig createMemberConfig(String player){
-		return new DBMemberConfig(player);
+	public static DBMemberConfig createMemberConfig(OfflinePlayer player){
+		return new DBMemberConfig(player.getUniqueId());
 	}
 
 

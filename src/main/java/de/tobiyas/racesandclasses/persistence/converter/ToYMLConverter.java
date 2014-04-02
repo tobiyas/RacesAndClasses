@@ -18,6 +18,9 @@ package de.tobiyas.racesandclasses.persistence.converter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
@@ -70,13 +73,13 @@ public class ToYMLConverter {
 		if(holderAssociations.isEmpty()) return; //early out if none found.
 		
 		for(PlayerHolderAssociation holder : holderAssociations){
-			String playerName = holder.getPlayerName();
+			UUID playerUUID = holder.getPlayerUUID();
 			String race = holder.getRaceName();
 			String clazz = holder.getClassName();
 			
-			YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
-			playerConfig.set("playerdata." + playerName + ".class", clazz);
-			playerConfig.set("playerdata." + playerName + ".race", race);
+			YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+			playerConfig.set("class", clazz);
+			playerConfig.set("race", race);
 			
 			//save the converted data instantaniously.
 			playerConfig.saveAsync();
@@ -101,15 +104,15 @@ public class ToYMLConverter {
 		if(playerGeneral.isEmpty()) return; //early out if none found.
 		
 		for(PlayerSavingContainer container : playerGeneral){
-			String playerName = container.getPlayerName();
+			UUID playerUUID = container.getPlayerUUID();
 			boolean hasGod = container.isHasGod();
 			int level = container.getPlayerLevel();
 			int expOfLevel = container.getPlayerLevelExp();
 			
-			YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
-			playerConfig.set("playerdata." + playerName + ".level.currentLevel", level);
-			playerConfig.set("playerdata." + playerName + ".level.currentLevelEXP", expOfLevel);
-			playerConfig.set("playerdata." + playerName + ".hasGod", hasGod);
+			YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+			playerConfig.set("level.currentLevel", level);
+			playerConfig.set("level.currentLevelEXP", expOfLevel);
+			playerConfig.set("hasGod", hasGod);
 			
 			storage.removePlayerSavingContainer(container);
 		}
@@ -123,8 +126,8 @@ public class ToYMLConverter {
 	private static void convertMemberConfig(PersistenceStorage storage){
 		Set<ConfigOption> playerConfig = new HashSet<ConfigOption>();
 		
-		for(String playerName : YAMLPersistenceProvider.getAllPlayersKnown()){
-			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(playerName);
+		for(OfflinePlayer player : YAMLPersistenceProvider.getAllPlayersKnown()){			
+			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(player.getUniqueId());
 			if(newHolders != null){
 				playerConfig.addAll(newHolders);
 			}

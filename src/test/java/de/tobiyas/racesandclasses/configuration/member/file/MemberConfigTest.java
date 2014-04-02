@@ -36,7 +36,7 @@ import de.tobiyas.utils.tests.generate.server.GenerateBukkitServer;
 
 public class MemberConfigTest {
 
-	private String playerName = "playerName";
+	private String playerName = "playerUUID";
 	
 	private MemberConfig sut;
 	
@@ -59,7 +59,7 @@ public class MemberConfigTest {
 	
 	@Test
 	public void constructor_sets_values_correct(){
-		assertEquals(playerName, sut.getName());
+		assertEquals(playerName, sut.getPlayerUUID());
 	}
 	
 	

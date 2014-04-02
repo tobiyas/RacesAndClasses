@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -67,7 +68,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	/**
 	 * The Map of currently channeling players.
 	 */
-	private static final Map<String, Location> channelingMap = new HashMap<String, Location>();
+	private static final Map<UUID, Location> channelingMap = new HashMap<UUID, Location>();
 	
 	/**
 	 * The Cost of the Spell.
@@ -113,9 +114,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				
 				@Override
 				public void run() {
-					Iterator<Map.Entry<String,Location>> entryIt = channelingMap.entrySet().iterator();
+					Iterator<Map.Entry<UUID,Location>> entryIt = channelingMap.entrySet().iterator();
 					while(entryIt.hasNext()){
-						Map.Entry<String, Location> entry = entryIt.next();
+						Map.Entry<UUID, Location> entry = entryIt.next();
 						Player player = Bukkit.getPlayer(entry.getKey());
 						if(player == null || !player.isOnline() 
 								|| player.getLocation().distanceSquared(entry.getValue()) > 0.5){
@@ -156,7 +157,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		if(!playerHasWandInHand) return false;
 		
 		//check if the Spell is the current selected Spell
-		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return false;
+		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell()) return false;
 		
 		return true;
 	}
@@ -204,7 +205,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if he has, false otherwise.
 	 */
 	public boolean checkWandInHand(Player player) {
-		return plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName())
+		return plugin.getPlayerManager().getSpellManagerOfPlayer(player)
 				.isWandItem(player.getItemInHand());
 	}
 
@@ -245,18 +246,17 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			if(!playerHasWandInHand) return result.setTriggered(false);
 			
 			//check if the Spell is the current selected Spell
-			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell()) return  result.setTriggered(false);
+			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell()) return  result.setTriggered(false);
 			
 			Action action = playerInteractEvent.getAction();
 			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
-				final String playerName = player.getName();
-				if(lastCastMap.containsKey(playerName)){
-					if(System.currentTimeMillis() - lastCastMap.get(playerName) < 100){
+				if(lastCastMap.containsKey(player.getUniqueId())){
+					if(System.currentTimeMillis() - lastCastMap.get(player.getUniqueId()) < 100){
 						//2 casts directly after each other.
 						//lets cancle the second
 						return result.setTriggered(false);
 					}else{
-						lastCastMap.remove(playerName);
+						lastCastMap.remove(player.getUniqueId());
 					}
 					
 				}
@@ -264,14 +264,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				lastCastMap.put(player.getName(), System.currentTimeMillis());
 				
 				if(channelingTime > 0){
-					channelingMap.put(playerName, player.getLocation());
+					channelingMap.put(player.getUniqueId(), player.getLocation());
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 						@Override
 						public void run() {
-							if(channelingMap.containsKey(playerName)){
+							if(channelingMap.containsKey(player.getUniqueId())){
 								magicSpellTriggered(player, result);
 								if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-									plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).removeCost(AbstractMagicSpellTrait.this);
+									plugin.getPlayerManager().getSpellManagerOfPlayer(player).removeCost(AbstractMagicSpellTrait.this);
 								}
 								if(result.isTriggered() && result.isSetCooldownOnPositiveTrigger()){
 									setCooldownIfNeeded(player);
@@ -283,7 +283,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				}else{
 					magicSpellTriggered(player, result);					
 					if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-						plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).removeCost(this);
+						plugin.getPlayerManager().getSpellManagerOfPlayer(player).removeCost(this);
 					}
 				}
 				
@@ -339,11 +339,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @return true if the Spell could be changed, false if not.
 	 */
 	protected boolean changeMagicSpell(Player player){
-		String playerName = player.getName();
+		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getCurrentSpell() == null) return false;
 		
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).getCurrentSpell() == null) return false;
-		
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() == 0){
+		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player).getSpellAmount() == 0){
 			LanguageAPI.sendTranslatedMessage(player, magic_no_spells);
 			return true;
 		}
@@ -352,9 +350,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		
 		MagicSpellTrait nextSpell = null;
 		if(toPrev){
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).changeToPrevSpell();
+			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).changeToPrevSpell();
 		}else{
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(playerName).changeToNextSpell();			
+			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player).changeToNextSpell();			
 		}
 		
 		if(nextSpell != null){

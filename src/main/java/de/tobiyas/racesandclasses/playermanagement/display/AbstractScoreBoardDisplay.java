@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.playermanagement.display;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -57,8 +58,8 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	protected int bukkitTaskId = -1;
 	
 	
-	public AbstractScoreBoardDisplay(String playerName, DisplayInfos displayInfo) {
-		super(playerName, displayInfo);
+	public AbstractScoreBoardDisplay(OfflinePlayer player, DisplayInfos displayInfo) {
+		super(player, displayInfo);
 
 		if(bukkitTaskId < 0 || 
 				!(Bukkit.getScheduler().isCurrentlyRunning(bukkitTaskId) 
@@ -82,7 +83,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 			return;
 		}
 		
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		String objectiveName = ChatColor.YELLOW + SCOREBOARD_OBJECTIVE_NAME + boardAddition;
 		if(player == null || !player.isOnline()){
 			return;
@@ -151,7 +152,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 		fadingTime --;
 
 		if(fadingTime < 0){
-			Player player = Bukkit.getPlayer(playerName);
+			Player player = Bukkit.getPlayer(playerUUID);
 			if(player != null && player.isOnline()){
 				Scoreboard oldBoard = this.oldBoardToStore;
 				Scoreboard currentBoard = player.getScoreboard();

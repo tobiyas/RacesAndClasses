@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -28,7 +30,7 @@ public class PlayerSavingContainer {
 
 	@Id
 	@NotEmpty
-	private String playerName;
+	private UUID playerUUID;
 
 	@NotNull
 	private int playerLevel;
@@ -43,12 +45,12 @@ public class PlayerSavingContainer {
 	/**
 	 * Generates a new Container with default Values.
 	 * 
-	 * @param playerName
+	 * @param playerUUID
 	 * @return
 	 */
-	public static PlayerSavingContainer generateNewContainer(String playerName){
+	public static PlayerSavingContainer generateNewContainer(UUID playerUUID){
 		PlayerSavingContainer container = new PlayerSavingContainer();
-		container.playerName = playerName;
+		container.playerUUID = playerUUID;
 		
 		container.playerLevel = 1;
 		container.playerLevelExp = 1;
@@ -83,14 +85,14 @@ public class PlayerSavingContainer {
 
 
 
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 
 
 
-	public void setPlayerName(String playerName) {
-		this.playerName = playerName;
+	public void setPlayerUUID(UUID playerUUID) {
+		this.playerUUID = playerUUID;
 	}
 
 

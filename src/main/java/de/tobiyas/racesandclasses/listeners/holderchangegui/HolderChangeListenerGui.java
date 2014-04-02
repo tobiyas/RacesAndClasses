@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.holderchangegui;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -67,8 +69,8 @@ public abstract class HolderChangeListenerGui implements Listener {
 		if(! (invClose.getView().getTopInventory().getName()
 				.contains(prefix))) return;
 		
-		String playerName = invClose.getView().getPlayer().getName();
-		Player player = Bukkit.getPlayer(playerName);
+		//safe to use since we only use online players.
+		Player player = Bukkit.getPlayer(invClose.getView().getPlayer().getName());
 		if(player == null) return;
 		
 		//iterate through all items
@@ -93,9 +95,11 @@ public abstract class HolderChangeListenerGui implements Listener {
 		String prefix = manager.getContainerTypeAsString();
 		if(! (event.getView().getTopInventory().getName()
 				.contains(prefix))) return;
+		
+		final Player player = (Player) event.getView().getPlayer();
+		if(player == null) return;
 	
-		String playerName = event.getView().getPlayer().getName();
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(playerName);
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(player);
 		
 		boolean forceReopen = false;
 		if(manager == plugin.getClassManager()){
@@ -108,16 +112,14 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		
 		if(holder == manager.getDefaultHolder() && forceReopen){
-			rescheduleOpening(playerName, 1);
+			rescheduleOpening(player.getUniqueId(), 1);
 			return;
 		}
 		
 		if(manager == plugin.getRaceManager()){
 			boolean openClassSelectionAfterwards = plugin.getConfigManager().getGeneralConfig().isConfig_openClassSelectionAfterRaceSelectionWhenNoClass();
 			if(openClassSelectionAfterwards){
-				final Player player = (Player) event.getView().getPlayer();
-				
-				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(playerName) == plugin.getClassManager().getDefaultHolder();
+				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder();
 				if(hasDefaultClass){
 					final HolderInventory classSelectInventory = new HolderInventory(player, plugin.getClassManager());
 					if(classSelectInventory.getNumberOfHolder() > 0){
@@ -148,6 +150,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 				.contains(prefix))) return;
 		//now we are sure to be in an HolderGUI.
 		
+		Player player = (Player) event.getView().getPlayer();
 		
 		String playerName = event.getView().getPlayer().getName();
 		ItemStack clickedItem = event.getCurrentItem();
@@ -171,7 +174,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 			
 		}
 		
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(playerName);
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(player);
 		HolderPreSelectEvent selectEvent = null;
 		
 		AbstractTraitHolder newHolder= getHolder(clickedItem);
@@ -185,7 +188,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		plugin.getServer().getPluginManager().callEvent(selectEvent);
 		if(selectEvent.isCancelled()){
-			Player player = Bukkit.getPlayer(playerName);
 			if(player != null){
 				player.sendMessage(ChatColor.RED + selectEvent.getCancelMessage());
 				return;
@@ -194,20 +196,18 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		boolean worked = true;
 		if(hasNoHolder){
-			worked = manager.addPlayerToHolder(playerName, newHolder.getName(), true);
+			worked = manager.addPlayerToHolder(player, newHolder.getName(), true);
 		}else{
-			worked = manager.changePlayerHolder(playerName, newHolder.getName(), true);
+			worked = manager.changePlayerHolder(player, newHolder.getName(), true);
 		}
 		
 		if(worked){
-			Player player = Bukkit.getPlayer(playerName);
 			if(player != null){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newHolder.getName() + ChatColor.GREEN + ".");
 				player.closeInventory();
 				player.updateInventory();
 			}
 		}else{
-			Player player = Bukkit.getPlayer(playerName);
 			if(player != null){
 				player.sendMessage(ChatColor.RED + "Did not work. :( .");
 				player.closeInventory();
@@ -239,14 +239,14 @@ public abstract class HolderChangeListenerGui implements Listener {
 	/**
 	 * Schedules a reopen of the Holder in 1 tick
 	 * 
-	 * @param playerName to schedule
+	 * @param playerUUID to schedule
 	 */
-	private void rescheduleOpening(final String playerName, int ticks) {
+	private void rescheduleOpening(final UUID uuid, int ticks) {
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			
 			@Override
 			public void run() {
-				Player player = plugin.getServer().getPlayer(playerName);
+				Player player = plugin.getServer().getPlayer(uuid);
 				if(player != null && player.isOnline()){
 					HolderInventory holderInv = new HolderInventory(player, manager);
 					if(holderInv.getNumberOfHolder() > 0){

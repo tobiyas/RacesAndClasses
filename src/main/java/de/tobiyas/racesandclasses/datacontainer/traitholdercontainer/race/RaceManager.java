@@ -15,7 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
@@ -64,19 +67,19 @@ public class RaceManager extends AbstractHolderManager {
 		Player[] players = Bukkit.getOnlinePlayers();
 
 		for (Player player : players) {
-			String playerName = player.getName();
-			RaceContainer container = (RaceContainer) getHolderOfPlayer(playerName);
+			RaceContainer container = (RaceContainer) getHolderOfPlayer(player);
 			if (container == null) {
-				addPlayerToHolder(playerName, Consts.defaultRace, false);
-				container = (RaceContainer) getHolderOfPlayer(playerName);
+				addPlayerToHolder(player, Consts.defaultRace, false);
+				container = (RaceContainer) getHolderOfPlayer(player);
 			}
 
-			container.editTABListEntry(playerName);
+			container.editTABListEntry(player);
 		}
 
-		for (String playerName : memberList.keySet())
-			if (memberList.get(playerName) == null) {
-				addPlayerToHolder(playerName, Consts.defaultRace, false);
+		for (UUID playerUUID : memberList.keySet())
+			if (memberList.get(playerUUID) == null) {
+				OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+				addPlayerToHolder(player, Consts.defaultRace, false);
 			}
 	}
 
@@ -105,7 +108,7 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean changePlayerHolder(String player, String newHolderName, boolean callEvent){
+	public boolean changePlayerHolder(OfflinePlayer player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
 		String oldRace = getHolderOfPlayer(player).getName();
@@ -115,17 +118,17 @@ public class RaceManager extends AbstractHolderManager {
 		memberList.remove(player);
 		
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		config.set("playerdata." + player + "." + getConfigPrefix(), null);
+		config.set(getConfigPrefix(), null);
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			plugin.getChannelManager().playerLeaveRace(oldRace, Bukkit.getPlayer(player));
+			plugin.getChannelManager().playerLeaveRace(oldRace, player);
 		}
 		
 		return addPlayerToHolder(player, newHolderName, callEvent);
 	}
 	
 	@Override
-	public boolean addPlayerToHolder(String player, String newHolderName, boolean callEvent){		
+	public boolean addPlayerToHolder(OfflinePlayer player, String newHolderName, boolean callEvent){		
 		boolean worked = super.addPlayerToHolder(player, newHolderName, callEvent);
 		if(worked){
 			AbstractTraitHolder holder = getHolderOfPlayer(player);
@@ -134,7 +137,7 @@ public class RaceManager extends AbstractHolderManager {
 			}
 			
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-				plugin.getChannelManager().playerJoinRace(holder.getName(), Bukkit.getPlayer(player));
+				plugin.getChannelManager().playerJoinRace(holder.getName(), player.getPlayer());
 			}
 		}
 		
@@ -164,16 +167,16 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	protected HolderSelectedEvent generateAfterSelectEvent(String player,
+	protected HolderSelectedEvent generateAfterSelectEvent(OfflinePlayer player,
 			AbstractTraitHolder newHolder) {
-		return new AfterRaceSelectedEvent(Bukkit.getPlayer(player), (RaceContainer)newHolder);
+		return new AfterRaceSelectedEvent(player.getPlayer(), (RaceContainer)newHolder);
 	}
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(String player,
+	protected HolderSelectedEvent generateAfterChangeEvent(OfflinePlayer player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new AfterRaceChangedEvent(Bukkit.getPlayer(player), (RaceContainer) newHolder, (RaceContainer) oldHolder);
+		return new AfterRaceChangedEvent(player.getPlayer(), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
 
 	@Override

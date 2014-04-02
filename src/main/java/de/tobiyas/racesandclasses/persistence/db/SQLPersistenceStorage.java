@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
@@ -168,14 +169,14 @@ public class SQLPersistenceStorage implements PersistenceStorage {
                 + " player_level = " + container.getPlayerLevel() + ","
                 + " player_level_exp = " + container.getPlayerLevelExp() + ","
                 + " has_god = " + (container.isHasGod() ? 1 : 0) + ","
-				+ " WHERE player_name = " + container.getPlayerName()
+				+ " WHERE player_name = " + container.getPlayerUUID()
 				
 				+ "IF @@ROWCOUNT=0 "
 				+ "INSERT INTO " + tablePrefix + PLAYER_GENERAL_CONFIG_TABLE_NAME +  " "
 				+ "(player_level, player_level_exp, has_god, player_name)"
 				+ " VALUES('" + container.getPlayerLevel()
 				+ "','" + container.getPlayerLevelExp()
-				+ "','" + container.getPlayerName()
+				+ "','" + container.getPlayerUUID()
 				+ "')";
 		
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_enableDebugOutputs()){
@@ -192,14 +193,14 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 			"UPDATE " + tablePrefix + PLAYER_HOLDER_TABLE_NAME + " SET "
             + " class_name = " + container.getClassName() + ","
             + " race_name = " + container.getRaceName() + ","
-			+ " WHERE player_name = " + container.getPlayerName()
+			+ " WHERE player_name = " + container.getPlayerUUID()
 			
 			+ "IF @@ROWCOUNT=0 "
 			+ "INSERT INTO " + tablePrefix + PLAYER_HOLDER_TABLE_NAME +  " "
 			+ "(class_name, race_name, player_name)"
 			+ " VALUES('" + container.getClassName()
 			+ "','" + container.getRaceName()
-			+ "','" + container.getPlayerName()
+			+ "','" + container.getPlayerUUID()
 			+ "')";
 		
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_enableDebugOutputs()){
@@ -226,7 +227,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
             + " display_name = " + container.getDisplayName() + ","
             + " visible = " + (container.isVisible() ? 1 : 0) + ","
             + " format = " + container.getFormat() + ","
-			+ " WHERE player_name = " + container.getPlayerName()
+			+ " WHERE player_name = " + container.getPlayerUUID()
 			
 			+ "IF @@ROWCOUNT=0 "
 			+ "INSERT INTO " + tablePrefix + PLAYER_CONFIG_TABLE_NAME + " "
@@ -237,7 +238,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 			+ "','" + container.getDisplayName()
 			+ "','" + (container.isVisible() ? 1 : 0)
 			+ "','" + container.getFormat()
-			+ "','" + container.getPlayerName()
+			+ "','" + container.getPlayerUUID()
 			+ "')";
 
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_enableDebugOutputs()){
@@ -290,7 +291,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public PlayerSavingContainer getPlayerContainer(String name) {
+	public PlayerSavingContainer getPlayerContainer(UUID name) {
 		Map<Integer, ArrayList<String>> result = read("Select * FROM " + tablePrefix + PLAYER_GENERAL_CONFIG_TABLE_NAME 
 				+ " WHERE (player_name ='" + name + "')");
 		
@@ -301,7 +302,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 		
 		try{
 			PlayerSavingContainer container = new PlayerSavingContainer();
-			container.setPlayerName(name);
+			container.setPlayerUUID(name);
 
 			container.setHasGod(resultArray.get(1).equals("1") ? true : false);
 			container.setPlayerLevel(Integer.parseInt(resultArray.get(2)));
@@ -317,7 +318,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public PlayerHolderAssociation getPlayerHolderAssociation(String name) {
+	public PlayerHolderAssociation getPlayerHolderAssociation(UUID name) {
 		Map<Integer, ArrayList<String>> result = read("Select * FROM " + tablePrefix + PLAYER_HOLDER_TABLE_NAME 
 				+ " WHERE (player_name ='" + name + "')");
 		
@@ -328,7 +329,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 		
 		try{
 			PlayerHolderAssociation container = new PlayerHolderAssociation();
-			container.setPlayerName(name);
+			container.setPlayerUUID(name);
 
 			container.setRaceName(resultArray.get(1));
 			container.setClassName(resultArray.get(2));
@@ -343,11 +344,11 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByPath(String playerName,
+	public ConfigOption getPlayerMemberConfigEntryByPath(UUID playerUUID,
 			String entryPath) {
 
 		Map<Integer, ArrayList<String>> result = read("Select * FROM " + tablePrefix + PLAYER_CONFIG_TABLE_NAME 
-				+ " WHERE (player_name ='" + playerName + "' AND path ='" + entryPath + "')");
+				+ " WHERE (player_name ='" + playerUUID + "' AND path ='" + entryPath + "')");
 		
 		//early out on no result.
 		if(result == null || result.isEmpty()) return null;
@@ -355,7 +356,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 		ArrayList<String> resultArray = result.get(0);
 		
 		try{
-			DBConfigOption container = new DBConfigOption(playerName);
+			DBConfigOption container = new DBConfigOption(playerUUID);
 			container.setPath(entryPath);
 
 			container.setStringValue(resultArray.get(1));
@@ -376,7 +377,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByName(String playerName,
+	public ConfigOption getPlayerMemberConfigEntryByName(UUID playerName,
 			String entryName) {
 		Map<Integer, ArrayList<String>> result = read("Select * FROM " + tablePrefix + PLAYER_CONFIG_TABLE_NAME 
 				+ " WHERE (player_name ='" + playerName + "' AND display_name ='" + entryName + "')");
@@ -414,7 +415,7 @@ public class SQLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(String playerName) {
+	public List<ConfigOption> getAllConfigOptionsOfPlayer(UUID playerName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

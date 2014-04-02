@@ -139,7 +139,8 @@
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<!-- Remove Tests for the Moment -->
+		<!-- <testSourceDirectory>src/test/java</testSourceDirectory> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

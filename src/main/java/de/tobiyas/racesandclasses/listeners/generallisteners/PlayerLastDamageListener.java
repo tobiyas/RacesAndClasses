@@ -70,7 +70,7 @@ public class PlayerLastDamageListener implements Listener {
 	/**
 	 * Returns the seconds that have passed since the last damage cause.
 	 * 
-	 * @param playerName to check
+	 * @param playerUUID to check
 	 * @return the ticks passed.
 	 */
 	public static int getTimePassedSinceLastDamageInSeconds(String playerName){

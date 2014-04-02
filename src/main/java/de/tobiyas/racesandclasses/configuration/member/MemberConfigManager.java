@@ -16,11 +16,12 @@
 package de.tobiyas.racesandclasses.configuration.member;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
@@ -33,7 +34,7 @@ public class MemberConfigManager {
 	/**
 	 * The config of members: player -> Config 
 	 */
-	private Map<String, MemberConfig> memberConfigs;
+	private Map<UUID, MemberConfig> memberConfigs;
 	
 	
 	/**
@@ -49,7 +50,7 @@ public class MemberConfigManager {
 	 */
 	public MemberConfigManager(){
 		plugin = RacesAndClasses.getPlugin();
-		memberConfigs = new HashMap<String, MemberConfig>();
+		memberConfigs = new HashMap<UUID, MemberConfig>();
 	}
 	
 	
@@ -65,7 +66,7 @@ public class MemberConfigManager {
 	 */
 	@SuppressWarnings("deprecation") //This is async scheduling for performance.
 	public void reload(){
-		memberConfigs = new HashMap<String, MemberConfig>();
+		memberConfigs = new HashMap<UUID, MemberConfig>();
 		shutDown();
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
@@ -92,7 +93,7 @@ public class MemberConfigManager {
 	 * @param player
 	 * @return
 	 */
-	private MemberConfig getCreateNewConfig(String player){
+	private MemberConfig getCreateNewConfig(OfflinePlayer player){
 		if(memberConfigs.containsKey(player)){
 			return memberConfigs.get(player);
 		}
@@ -105,7 +106,7 @@ public class MemberConfigManager {
 			config = MemberConfig.createMemberConfig(player).save();
 		}
 		
-		memberConfigs.put(player, config);
+		memberConfigs.put(player.getUniqueId(), config);
 		return config;
 	}
 	
@@ -113,9 +114,9 @@ public class MemberConfigManager {
 	 * Loads all configs from the playerdata file
 	 */
 	private void loadConfigs(){
-		Set<String> playerList = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());
+		Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
 		
-		for(String player : playerList){
+		for(OfflinePlayer player : players){
 			getCreateNewConfig(player);
 		}
 	}
@@ -124,7 +125,7 @@ public class MemberConfigManager {
 	 * Forces save to all configs
 	 */
 	public void saveConfigs(){
-		for(String player : memberConfigs.keySet()){
+		for(UUID player : memberConfigs.keySet()){
 			MemberConfig config = memberConfigs.get(player);
 			if(config != null) {
 				if(config instanceof DBMemberConfig){
@@ -143,7 +144,7 @@ public class MemberConfigManager {
 	 * @param player to get the config from
 	 * @return
 	 */
-	public MemberConfig getConfigOfPlayer(String player){
+	public MemberConfig getConfigOfPlayer(OfflinePlayer player){
 		return getCreateNewConfig(player);
 	}
 	

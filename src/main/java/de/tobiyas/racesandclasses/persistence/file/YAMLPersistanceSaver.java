@@ -18,11 +18,12 @@ package de.tobiyas.racesandclasses.persistence.file;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class YAMLPeristanceSaver {
+public class YAMLPersistanceSaver {
 
 	
 	/**
@@ -38,9 +39,9 @@ public class YAMLPeristanceSaver {
 			public void run() {
 				YAMLPersistenceProvider.rescanKnownPlayers();
 				
-				Set<String> playerNames = YAMLPersistenceProvider.getAllPlayersKnown();
-				for(String playerName : playerNames){
-					YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+				Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
+				for(OfflinePlayer player : players){
+					YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				}
 			}
 		} ;
@@ -85,10 +86,10 @@ public class YAMLPeristanceSaver {
 			saveEverything();
 			YAMLPersistenceProvider.rescanKnownPlayers();
 			
-			Set<String> playerNames = YAMLPersistenceProvider.getAllPlayersKnown();
-			for(String playerName : playerNames){
+			Set<OfflinePlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
+			for(OfflinePlayer player : players){
 				YAMLConfigExtended config = 
-						YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+						YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				
 				if(config.isDirty()){
 					flushed++;

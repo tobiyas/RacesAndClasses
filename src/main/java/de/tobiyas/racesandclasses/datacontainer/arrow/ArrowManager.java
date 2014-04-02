@@ -17,6 +17,9 @@ package de.tobiyas.racesandclasses.datacontainer.arrow;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
@@ -27,12 +30,12 @@ public class ArrowManager {
 	
 	private ArrayList<AbstractArrow> arrows;
 	private int currentPointer;
-	private String player;
+	private UUID playerUUID;
 	
 	private long eventTime;
 	
-	public ArrowManager(String player){
-		this.player = player;
+	public ArrowManager(UUID playerUUID){
+		this.playerUUID = playerUUID;
 		arrows = new ArrayList<AbstractArrow>();
 		currentPointer = 0;
 		eventTime = 0;
@@ -40,11 +43,11 @@ public class ArrowManager {
 	
 	public void rescanClass(){
 		arrows.clear();
-		if(WorldResolver.isOnDisabledWorld(player)){
+		if(WorldResolver.isOnDisabledWorld(Bukkit.getOfflinePlayer(playerUUID).getPlayer())){
 			return;
 		}
 		
-		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(player);
+		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(Bukkit.getOfflinePlayer(playerUUID));
 		
 		for(Trait arrow : traits){
 			if(arrow instanceof AbstractArrow)

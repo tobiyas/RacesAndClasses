@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,17 +50,15 @@ private int schedulerTaskId = -1;
 			
 			@Override
 			public void run() {
-				for(String playerName : holder.getHolderManager().getAllPlayersOfHolder(holder)){
-					Player player = Bukkit.getPlayer(playerName);
-					
-					if(player == null) return;
-					EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player);
+				for(OfflinePlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
+					if(player == null || !player.isOnline()) return;
+					EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
 					if(!checkRestrictions(fakeEventWrapper) || !canBeTriggered(fakeEventWrapper)) {
-						restrictionsFailed(player);
+						restrictionsFailed(player.getPlayer());
 						return;
 					}
 						
-					if(tickDoneForPlayer(player)){
+					if(tickDoneForPlayer(player.getPlayer())){
 						plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
 					}
 				}

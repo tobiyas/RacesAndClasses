@@ -17,7 +17,9 @@ package de.tobiyas.racesandclasses.commands.chat.channels;
 
 import java.util.Observable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -169,7 +171,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			plugin.getChannelManager().banPlayer(player, args[2], args[1], time);
+			OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().banPlayer(player, target.getUniqueId(), args[1], time);
 			return true;
 		}
 		
@@ -180,7 +188,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			plugin.getChannelManager().unbanPlayer(player, args[2], args[1]);
+			OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().unbanPlayer(player, target.getUniqueId(), args[1]);
 			return true;
 		}
 		
@@ -197,7 +211,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			plugin.getChannelManager().mutePlayer(player, args[2], args[1], time);
+			OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().mutePlayer(player, target.getUniqueId(), args[1], time);
 			return true;
 		}
 		
@@ -208,7 +228,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			plugin.getChannelManager().unmutePlayer(player, args[2], args[1]);
+			OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().unmutePlayer(player, target.getUniqueId(), args[1]);
 			return true;
 		}
 		
@@ -261,8 +287,8 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	
 	
 	private void postChannelInfo(CommandSender sender, String channel){
-		if(channel == ""){
-			channel = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(sender.getName()).getCurrentChannel();
+		if(channel == "" && sender instanceof Player){
+			channel = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer((Player) sender).getCurrentChannel();
 		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + " Channel Information: " + 
@@ -276,9 +302,9 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		sender.sendMessage(ChatColor.YELLOW + "HINT: Format is: " + ChatColor.BLUE + "ChannelName: " + ChatColor.AQUA + "ChannelLevel");
 		for(ChannelLevel level : ChannelLevel.values())
 			for(String channel : plugin.getChannelManager().listAllPublicChannels()){
-				if(plugin.getChannelManager().getChannelLevel(channel) == level){
+				if(plugin.getChannelManager().getChannelLevel(channel) == level && sender instanceof Player){
 					String addition = "";
-					if(plugin.getChannelManager().isMember(sender.getName(), channel)){
+					if(plugin.getChannelManager().isMember(((Player)sender).getUniqueId(), channel)){
 						addition =  ChatColor.YELLOW + "   <-[Joined]";
 					}
 					
@@ -286,7 +312,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				}
 			}
 		
-		this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 1));
+		if(sender instanceof Player) this.notifyObservers(new TutorialStepContainer(((Player)sender).getUniqueId(), TutorialState.channels, 1));
 		this.setChanged();
 	}
 	
@@ -309,7 +335,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		plugin.getChannelManager().leaveChannel(player, channelName, true);
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
 		if(channelName.equalsIgnoreCase(config.getCurrentChannel())){
 				config.setValue(MemberConfig.chatChannel, "Global");
 		}
@@ -361,13 +387,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 		
 		if(level != ChannelLevel.LocalChannel){
-			if(!plugin.getChannelManager().isMember(player.getName(), changeTo)){
+			if(!plugin.getChannelManager().isMember(player.getUniqueId(), changeTo)){
 				player.sendMessage(ChatColor.RED + "You are no member of: " + ChatColor.LIGHT_PURPLE + changeTo);
 				return;
 			}
 		}
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
 		if(config == null){
 			player.sendMessage(ChatColor.RED + "Something gone wrong with your config. Try relogging or ask an Admin.");
 			return;
@@ -377,7 +403,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		player.sendMessage(ChatColor.GREEN + "You now write in the channel: " + ChatColor.AQUA + changeTo);
 		
 		if(changeTo.equalsIgnoreCase("tutorial")){
-			this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.channels, 4));
+			this.notifyObservers(new TutorialStepContainer(player.getUniqueId(), TutorialState.channels, 4));
 			this.setChanged();
 		}
 	}

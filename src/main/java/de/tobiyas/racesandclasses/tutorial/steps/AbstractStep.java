@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.tutorial.steps;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,7 +27,7 @@ import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public abstract class AbstractStep implements StepInterface{
 	
-	protected String playerName;
+	protected UUID playerUUID;
 	protected TutorialPath writeBack;
 	protected boolean finished;
 	
@@ -66,7 +68,7 @@ public abstract class AbstractStep implements StepInterface{
 	}
 	
 	protected void sendMessageToPlayer(String message){
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player != null){
 			if(!message.equalsIgnoreCase("-")){
 				player.sendMessage(ChatColor.YELLOW + "------------------");

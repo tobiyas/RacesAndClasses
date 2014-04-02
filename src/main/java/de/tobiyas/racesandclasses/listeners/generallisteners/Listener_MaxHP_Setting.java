@@ -33,7 +33,6 @@ public class Listener_MaxHP_Setting implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
-		String playerName = event.getPlayer().getName();
-		plugin.getPlayerManager().checkPlayer(playerName);
+		plugin.getPlayerManager().checkPlayer(event.getPlayer());
 	}
 }

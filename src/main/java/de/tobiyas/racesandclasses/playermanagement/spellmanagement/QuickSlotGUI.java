@@ -49,9 +49,8 @@ public class QuickSlotGUI extends BasicSelectionInterface {
 	public QuickSlotGUI(Player player) {
 		super(player, null, "Magic", "Magic", RacesAndClasses.getPlugin());
 
-		String playerName = player.getName();
 		this.plugin = RacesAndClasses.getPlugin();
-		this.manager = plugin.getPlayerManager().getSpellManagerOfPlayer(playerName);
+		this.manager = plugin.getPlayerManager().getSpellManagerOfPlayer(player);
 		
 		redraw();
 	}

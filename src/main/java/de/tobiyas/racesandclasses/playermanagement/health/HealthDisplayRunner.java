@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.playermanagement.health;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -68,15 +69,15 @@ public class HealthDisplayRunner implements Runnable, Observer {
 			display.unregister();
 		}
 		
-		display = DisplayGenerator.generateDisplay(config.getName(), DisplayInfos.HEALTH);
+		display = DisplayGenerator.generateDisplay(Bukkit.getOfflinePlayer(config.getPlayerUUID()), DisplayInfos.HEALTH);
 	}
 
 	@Override
 	public void run() {
 		checkInterval();
 		if(config.getEnableLifeDisplay()){
-			String playerName = config.getName();
-			Player player = Bukkit.getPlayer(playerName);
+			UUID playerUUID = config.getPlayerUUID();
+			Player player = Bukkit.getPlayer(playerUUID);
 			if(player != null && healthContainer != null && 
 				oldValue != healthContainer.getCurrentHealth()){
 					display();

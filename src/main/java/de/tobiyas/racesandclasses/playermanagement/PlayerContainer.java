@@ -15,10 +15,13 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
 
+import java.util.UUID;
+
 import javax.persistence.PersistenceException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -63,7 +66,7 @@ public class PlayerContainer {
 	/**
 	 * The Name of the Player associated with this Container
 	 */
-	private String playerName;
+	private UUID playerUUID;
 	
 	
 	/**
@@ -101,25 +104,25 @@ public class PlayerContainer {
 	 * 
 	 * @param player
 	 */
-	public PlayerContainer(String player){
-		this.playerName = player;
-		this.armorToolManager = new ArmorToolManager(player);
-		this.arrowManager = new ArrowManager(player);
+	public PlayerContainer(UUID playerUUID){
+		this.playerUUID = playerUUID;
+		this.armorToolManager = new ArmorToolManager(playerUUID);
+		this.arrowManager = new ArrowManager(playerUUID);
 		
 		this.hasGod = false;
 		
 		
 		//choose level manager.
 		switch(plugin.getConfigManager().getGeneralConfig().isConfig_useLevelSystem()){
-			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player); break;
-			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player); break;
-			case SkillAPI : this.levelManager = new SkillAPILevelManager(player); break;
+			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(playerUUID); break;
+			case VanillaMC : this.levelManager = new MCPlayerLevelManager(playerUUID); break;
+			case SkillAPI : this.levelManager = new SkillAPILevelManager(playerUUID); break;
 			
 			//if none found (should not happen) the RaC level manager is used.
-			default: this.levelManager = new CustomPlayerLevelManager(player);
+			default: this.levelManager = new CustomPlayerLevelManager(playerUUID);
 		}
 		
-		this.spellManager = new PlayerSpellManager(player);
+		this.spellManager = new PlayerSpellManager(playerUUID);
 		
 		this.maxHealth = 20;
 	}
@@ -134,23 +137,24 @@ public class PlayerContainer {
 	 * @param player to create to.
 	 * @param maxHealth to create with.
 	 */
-	public PlayerContainer(String player, double maxHealth){
+	public PlayerContainer(UUID playerUUID, double maxHealth){
 		this.hasGod = false;
-		this.playerName = player;
+		this.playerUUID = playerUUID;
 		this.maxHealth = maxHealth;
-		this.spellManager = new PlayerSpellManager(player);
+		this.spellManager = new PlayerSpellManager(playerUUID);
 		
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
+		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
 		MemberConfig memberConfig = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
 		if(memberConfig != null){
 			//this should never be null, since it is created if not existent
 			display = new HealthDisplayRunner(memberConfig, this);
 		}
 		
-		arrowManager = new ArrowManager(player);
-		armorToolManager = new ArmorToolManager(player);
-		levelManager = new CustomPlayerLevelManager(playerName);
+		arrowManager = new ArrowManager(playerUUID);
+		armorToolManager = new ArmorToolManager(playerUUID);
+		levelManager = new CustomPlayerLevelManager(playerUUID);
 	}
 	
 	
@@ -183,7 +187,7 @@ public class PlayerContainer {
 	 */
 	public boolean save(boolean saveToDB){
 		if(saveToDB){
-			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(playerName);
+			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(playerUUID);
 			
 			container.setHasGod(hasGod);
 			levelManager.saveTo(container);
@@ -198,10 +202,10 @@ public class PlayerContainer {
 				return false;
 			}
 		}else{
-			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
-			if(!config.isConfigurationSection("playerdata." + playerName))
-				config.createSection("playerdata." + playerName);
-			config.set("playerdata." + playerName + ".hasGod", hasGod);
+			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+			if(!config.isConfigurationSection("playerdata." + playerUUID))
+				config.createSection("playerdata." + playerUUID);
+			config.set("playerdata." + playerUUID + ".hasGod", hasGod);
 			
 			levelManager.save();
 			
@@ -219,12 +223,12 @@ public class PlayerContainer {
 	 * @param player
 	 * @return
 	 */
-	public static PlayerContainer constructFromDB(String player){		
+	public static PlayerContainer constructFromDB(OfflinePlayer player){		
 		try{
-			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerName", player).findUnique();
+			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerUUID", player.getUniqueId().toString()).findUnique();
 			if(container == null) throw new PersistenceException("Not found.");
 			
-			PlayerContainer playerContainer = new PlayerContainer(player, 20).checkStats();
+			PlayerContainer playerContainer = new PlayerContainer(player.getUniqueId(), 20).checkStats();
 			
 			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
 			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
@@ -235,7 +239,7 @@ public class PlayerContainer {
 			
 			return playerContainer.checkStats();
 		}catch(PersistenceException exp){
-			PlayerContainer playerContainer = new PlayerContainer(player, 20);
+			PlayerContainer playerContainer = new PlayerContainer(player.getUniqueId(), 20);
 			playerContainer.checkStats();
 			return playerContainer;
 		}
@@ -249,7 +253,7 @@ public class PlayerContainer {
 	 * @param fromDB true if to load from DB.
 	 * @return the loaded PlayerContainer.
 	 */
-	public static PlayerContainer loadPlayerContainer(String player ,boolean fromDB){
+	public static PlayerContainer loadPlayerContainer(OfflinePlayer player ,boolean fromDB){
 		if(fromDB){
 			return constructFromDB(player);
 		}else{
@@ -265,7 +269,7 @@ public class PlayerContainer {
 	 * @param player to load
 	 * @return the container corresponding to the player.
 	 */
-	public static PlayerContainer constructContainerFromYML(String player){
+	public static PlayerContainer constructContainerFromYML(OfflinePlayer player){
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		config.load();
 		
@@ -300,7 +304,7 @@ public class PlayerContainer {
 			maxHealth = classContainer.modifyToClass(maxHealth);
 		}
 			
-		PlayerContainer container = new PlayerContainer(player, maxHealth).checkStats();
+		PlayerContainer container = new PlayerContainer(player.getUniqueId(), maxHealth).checkStats();
 		boolean hasGod = config.getBoolean("playerdata." + player + ".hasGod");
 		if(hasGod){
 			container.switchGod();
@@ -312,12 +316,12 @@ public class PlayerContainer {
 	 * Checks the Player if he has any Wrong set values and resets the MaxHealth if needed.
 	 */
 	public PlayerContainer checkStats() {
-		final Player player = Bukkit.getPlayer(playerName);
+		final Player player = Bukkit.getPlayer(playerUUID);
 		boolean isOnDisabledWorld = WorldResolver.isOnDisabledWorld(player);
 		boolean keepMaxHPOnDisabledWorld = plugin.getConfigManager().getGeneralConfig().isConfig_keep_max_hp_on_disabled_worlds();
 		
-		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerName);
-		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerName);
+		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
 		
 		if(raceContainer == null || (isOnDisabledWorld && !keepMaxHPOnDisabledWorld)) {
 			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
@@ -341,7 +345,7 @@ public class PlayerContainer {
 		
 		boolean disableHealthMods = plugin.getConfigManager().getGeneralConfig().isConfig_disableHealthMods();
 		if(player != null && player.isOnline() && !disableHealthMods){			
-			Player bukkitPlayer = Bukkit.getPlayer(playerName);
+			Player bukkitPlayer = Bukkit.getPlayer(playerUUID);
 
 			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);
 			if(Math.abs(currentMaxHealth - maxHealth) >= 0.5){
@@ -359,7 +363,7 @@ public class PlayerContainer {
 	 */
 	public void switchGod(){
 		hasGod = !hasGod;
-		Player player = Bukkit.getPlayer(this.playerName);
+		Player player = Bukkit.getPlayer(this.playerUUID);
 		if(player != null && player.isOnline()){
 			if(hasGod){
 				player.sendMessage(ChatColor.GREEN + "God mode toggled.");
@@ -389,7 +393,7 @@ public class PlayerContainer {
 	 * Forces to produce an HP message.
 	 */
 	public void forceHPOut(){
-		Player playerObject = Bukkit.getPlayer(playerName);
+		Player playerObject = Bukkit.getPlayer(playerUUID);
 		if(playerObject == null) return;
 		checkStats();
 		display.forceHPOut();
@@ -403,7 +407,7 @@ public class PlayerContainer {
 	 * @return
 	 */
 	public double getCurrentHealth() {
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player != null && player.isOnline()){
 			double currentHealth = CompatibilityModifier.BukkitPlayer.safeGetHealth(player);
 			return currentHealth;

@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class LevelAPI {
@@ -33,82 +36,177 @@ public class LevelAPI {
 	/**
 	 * Adds a level to the player
 	 * 
-	 * @param playerName to add to 
+	 * @param playerUUID to add to 
+	 * @param levelToAdd to add
+	 * 
+	 * @deprecated use {@link #addLevel(OfflinePlayer, int)} instead
+	 */
+	@Deprecated
+	public static void addLevel(String playerName, int levelToAdd){
+		addLevel(Bukkit.getOfflinePlayer(playerName), levelToAdd);
+	}
+	
+	/**
+	 * Adds a level to the player
+	 * 
+	 * @param playerUUID to add to 
 	 * @param levelToAdd to add
 	 */
-	public static void addLevel(String playerName, int levelToAdd){
-		int currentLevel = getCurrentLevel(playerName);
+	public static void addLevel(OfflinePlayer player, int levelToAdd){
+		int currentLevel = getCurrentLevel(player);
 		int newLevel = currentLevel + levelToAdd;
 		
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(newLevel);
+		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(newLevel);
 	}
 	
 	
 	/**
 	 * Removes a level from the Player
 	 * 
-	 * @param playerName to remove from
+	 * @param playerUUID to remove from
+	 * @param levelToRemove to remove
+	 * 
+	 * @deprecated use #
+	 */
+	@Deprecated
+	public static void removeLevel(String playerName, int levelToRemove){
+		removeLevel(Bukkit.getOfflinePlayer(playerName), levelToRemove);
+	}
+	
+	/**
+	 * Removes a level from the Player
+	 * 
+	 * @param playerUUID to remove from
 	 * @param levelToRemove to remve
 	 */
-	public static void removeLevel(String playerName, int levelToRemove){
-		int currentLevel = getCurrentLevel(playerName);
+	public static void removeLevel(OfflinePlayer player, int levelToRemove){
+		int currentLevel = getCurrentLevel(player);
 		int newLevel = currentLevel - levelToRemove;
 		if(newLevel < 1) newLevel = 1;
 		
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(newLevel);
+		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(newLevel);
 	}
 	
 	
 	/**
 	 * Adds exp to an player
 	 * 
-	 * @param playerName to add to
+	 * @param playerUUID to add to
+	 * @param amount to 
+	 * 
+	 * @deprecated use {@link #addExp(OfflinePlayer, double)} instead
+	 */
+	@Deprecated
+	public static void addExp(String playerName, double amount){
+		addExp(Bukkit.getOfflinePlayer(playerName), amount);
+	}
+	
+	
+	/**
+	 * Adds exp to an player
+	 * 
+	 * @param playerUUID to add to
 	 * @param amount to 
 	 */
-	public static void addExp(String playerName, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).addExp((int)amount);
+	public static void addExp(OfflinePlayer player, double amount){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player).addExp((int)amount);
 	}
 	
 	
 	/**
 	 * Removes the EXP passed from the Player
 	 * 
-	 * @param playerName to remove from
+	 * @param playerUUID to remove from
+	 * @param amount to remove
+	 * 
+	 * @deprecated use {@link #removeExp(OfflinePlayer, double)} instead
+	 */
+	@Deprecated
+	public static void removeExp(String playerName, double amount){
+		removeExp(Bukkit.getOfflinePlayer(playerName), amount);
+	}
+	
+	/**
+	 * Removes the EXP passed from the Player
+	 * 
+	 * @param playerUUID to remove from
 	 * @param amount to remove
 	 */
-	public static void removeExp(String playerName, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).removeExp((int)amount);
+	public static void removeExp(OfflinePlayer player, double amount){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int)amount);
 	}
 	
 	
 	/**
 	 * Returns the current level of the Player 
 	 * 
-	 * @param playerName to get
+	 * @param playerUUID to get
+	 * @return the level of the player
+	 * 
+	 * @deprecated use {@link #getCurrentLevel(OfflinePlayer)} instead
+	 */
+	@Deprecated
+	public static int getCurrentLevel(String playerName){
+		return getCurrentLevel(Bukkit.getOfflinePlayer(playerName));
+	}
+	
+	
+	/**
+	 * Returns the current level of the Player 
+	 * 
+	 * @param playerUUID to get
 	 * @return the level of the player
 	 */
-	public static int getCurrentLevel(String playerName){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(playerName).getCurrentLevel();
+	public static int getCurrentLevel(OfflinePlayer player){
+		return getPlugin().getPlayerManager().getPlayerLevelManager(player).getCurrentLevel();
 	}
+	
 	
 	/**
 	 * sets the current level of the Player 
 	 * 
-	 * @param playerName to get
+	 * @param playerUUID to get
+	 * @param level the level to set
+	 * 
+	 * @deprecated use {@link #setCurrentLevel(OfflinePlayer, int)} instead
+	 */
+	@Deprecated
+	public static void setCurrentLevel(String playerName, int level){
+		setCurrentLevel(Bukkit.getOfflinePlayer(playerName), level);
+	}
+	
+	
+	/**
+	 * sets the current level of the Player 
+	 * 
+	 * @param playerUUID to get
 	 * @param level the level to set
 	 */
-	public static void setCurrentLevel(String playerName, int level){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(level);
+	public static void setCurrentLevel(OfflinePlayer player, int level){
+		getPlugin().getPlayerManager().getPlayerLevelManager(player).setCurrentLevel(level);
 	}
 	
 	/**
 	 * Gets the current exp of the level.
 	 * 
-	 * @param playerName to get from
+	 * @param playerUUID to get from
+	 * 
+	 * @return the current exp of the level
+	 * 
+	 * @deprecated use {@link #getCurrentExpOfLevel(OfflinePlayer)} instead
+	 */
+	public static double getCurrentExpOfLevel(String playerName){
+		return getCurrentExpOfLevel(Bukkit.getOfflinePlayer(playerName));
+	}
+	
+	/**
+	 * Gets the current exp of the level.
+	 * 
+	 * @param playerUUID to get from
 	 * 
 	 * @return the current exp of the level
 	 */
-	public static double getCurrentExpOfLevel(String playerName){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(playerName).getCurrentExpOfLevel();
+	public static double getCurrentExpOfLevel(OfflinePlayer player){
+		return getPlugin().getPlayerManager().getPlayerLevelManager(player).getCurrentExpOfLevel();
 	}
 }

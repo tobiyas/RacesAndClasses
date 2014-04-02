@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -169,7 +168,7 @@ public class EventPlayerResolver {
 
 		//RaC-Plugin Events:		
 		if(event instanceof LevelEvent){
-			return Bukkit.getPlayer(((LevelEvent) event).getPlayerName());
+			return ((LevelEvent) event).getPlayer();
 		}
 		
 		if(event instanceof HolderSelectedEvent){

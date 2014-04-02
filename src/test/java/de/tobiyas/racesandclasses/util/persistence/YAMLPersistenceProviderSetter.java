@@ -15,11 +15,11 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.util.persistence;
 
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider_OLD;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class YAMLPersistenceProviderSetter extends YAMLPersistenceProvider {
+public class YAMLPersistenceProviderSetter extends YAMLPersistenceProvider_OLD {
 
 	
 	public static void setPlayerYAML(String playerName, YAMLConfigExtended config){
@@ -32,11 +32,11 @@ public class YAMLPersistenceProviderSetter extends YAMLPersistenceProvider {
 
 	
 	public static void setRacesYAML(YAMLConfigExtended config){
-		YAMLPersistenceProvider.racesYaml = config;
+		YAMLPersistenceProvider_OLD.racesYaml = config;
 	}
 	
 	
 	public static void setClassesYAML(YAMLConfigExtended config){
-		YAMLPersistenceProvider.classesYaml = config;
+		YAMLPersistenceProvider_OLD.classesYaml = config;
 	}
 }

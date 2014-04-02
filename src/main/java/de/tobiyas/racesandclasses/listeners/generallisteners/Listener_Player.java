@@ -66,27 +66,27 @@ public class Listener_Player implements Listener {
 		final Player player = event.getPlayer();
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
 				&& racesActive){
 			LanguageAPI.sendTranslatedMessage(player, login_no_race_selected);
 			if(container == null){
-				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace, true);
+				plugin.getRaceManager().addPlayerToHolder(player, Consts.defaultRace, true);
 			}
 		}
 		
-		plugin.getPlayerManager().checkPlayer(player.getName());
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		plugin.getPlayerManager().checkPlayer(player);
+		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLogin(player);
 		}
 		
 		if(racesActive){
-			container.editTABListEntry(player.getName());
+			container.editTABListEntry(player);
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
-		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()) == plugin.getRaceManager().getDefaultHolder();
+		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player) == plugin.getRaceManager().getDefaultHolder();
 		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
 		
 		if(playerHasNoRace && forceSelectOfRace && racesActive){
@@ -120,12 +120,12 @@ public class Listener_Player implements Listener {
 		
 		if(orgMsg.charAt(0) == '/') return;
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player);
 		String channel = "Global";
 		
 		if(config != null){
 			channel = config.getCurrentChannel();
-			if(!plugin.getChannelManager().isMember(player.getName(), channel)){
+			if(!plugin.getChannelManager().isMember(player.getUniqueId(), channel)){
 				player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
 									ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
 				

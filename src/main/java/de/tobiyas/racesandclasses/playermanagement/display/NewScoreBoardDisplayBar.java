@@ -26,8 +26,8 @@ import org.bukkit.scoreboard.Scoreboard;
 public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 
 	
-	public NewScoreBoardDisplayBar(String playerName, DisplayInfos displayInfo) {
-		super(playerName, displayInfo);
+	public NewScoreBoardDisplayBar(OfflinePlayer player, DisplayInfos displayInfo) {
+		super(player, displayInfo);
 	}
 
 
@@ -53,11 +53,12 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 			barString = calcForHealth(currentHealth, maxHealth, 7);			
 		}
 		
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline()){
 			return;
 		}
 		
+		//This deprecation is needed to show a false name in Scoreboard.
 		Score score = objective.getScore(Bukkit.getOfflinePlayer(barString));
 		score.setScore((int) Math.ceil(currentHealth));
 	
@@ -67,6 +68,7 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 	@Override
 	protected void removeOldValues(Scoreboard bordOfPlayer) {
 		//should remove all occurences.
+		//This deprecationa are needed to show a false name in Scoreboard.
 		for(OfflinePlayer scorePlayer : bordOfPlayer.getPlayers()){
 			if(scorePlayer.getName().startsWith(this.colorHigh + "|")
 					|| scorePlayer.getName().startsWith(this.colorHigh + "" + this.colorLow + "|")){
@@ -83,7 +85,7 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		super.unregister();
 		
 		if(fadingTime > 0){
-			Player player = Bukkit.getPlayer(playerName);
+			Player player = Bukkit.getPlayer(playerUUID);
 			if(player != null){
 				if(oldBoardToStore != null){
 					player.setScoreboard(oldBoardToStore);

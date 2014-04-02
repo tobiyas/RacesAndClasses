@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.tutorial.steps;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 
 import de.tobiyas.racesandclasses.tutorial.TutorialPath;
@@ -22,8 +24,8 @@ import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class SelectRaceState extends AbstractStep {
 
-	public SelectRaceState(String playerName, TutorialPath writeBack){
-		this.playerName = playerName;
+	public SelectRaceState(UUID playerUUID, TutorialPath writeBack){
+		this.playerUUID = playerUUID;
 		this.writeBack = writeBack;
 		this.currentState = TutorialState.selectRace;
 		

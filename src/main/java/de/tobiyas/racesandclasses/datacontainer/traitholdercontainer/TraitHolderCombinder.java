@@ -18,6 +18,8 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.OfflinePlayer;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
@@ -32,21 +34,21 @@ public class TraitHolderCombinder {
 	/**
 	 * Checks if the player passed has access to the trait passed.
 	 * 
-	 * @param playerName the player to check
+	 * @param playerUUID the player to check
 	 * @param trait to check against
 	 * 
 	 * @return true if the player has access to the trait passed, false otherwise
 	 */
-	public static boolean checkContainer(String playerName, Trait trait){
+	public static boolean checkContainer(OfflinePlayer player, Trait trait){
 		AbstractTraitHolder holder = trait.getTraitHolder();
 		if(holder == null) return true;
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(holder == raceHolder){
 			return true;
 		}
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
 		if(holder == classHolder){
 			return true;
 		}
@@ -58,19 +60,19 @@ public class TraitHolderCombinder {
 	 * Returns a Set of all Traits that a player has.
 	 * This combines Race- + Class-Traits
 	 * 
-	 * @param player to check
+	 * @param offlinePlayer to check
 	 
 	 * @return set of all Traits of player
 	 */
-	public static Set<Trait> getAllTraitsOfPlayer(String player){
+	public static Set<Trait> getAllTraitsOfPlayer(OfflinePlayer offlinePlayer){
 		Set<Trait> traits = new HashSet<Trait>();
 		
-		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(offlinePlayer);
 		if(raceContainer != null){
 			traits.addAll(raceContainer.getTraits());
 		}
 			
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(offlinePlayer);
 		if(classContainer != null){
 			traits.addAll(classContainer.getTraits());
 		}
@@ -86,7 +88,7 @@ public class TraitHolderCombinder {
 	 * 
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getVisibleTraitsOfPlayer(String player){
+	public static Set<Trait> getVisibleTraitsOfPlayer(OfflinePlayer player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
 		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
@@ -108,12 +110,12 @@ public class TraitHolderCombinder {
 	 * 
 	 * It is filtered for doubled Traits and only the strong ones survive. ;)
 	 * 
-	 * @param player to check
+	 * @param offlinePlayer to check
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedTraitsOfPlayer(String player){
-		Set<Trait> traits = getAllTraitsOfPlayer(player);
+	public static Set<Trait> getReducedTraitsOfPlayer(OfflinePlayer offlinePlayer){
+		Set<Trait> traits = getAllTraitsOfPlayer(offlinePlayer);
 		traits = filterForDoubles(traits);
 		return traits;
 	}
@@ -129,7 +131,7 @@ public class TraitHolderCombinder {
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedVisibleTraitsOfPlayer(String player){
+	public static Set<Trait> getReducedVisibleTraitsOfPlayer(OfflinePlayer player){
 		Set<Trait> traits = getVisibleTraitsOfPlayer(player);
 		traits = filterForDoubles(traits);
 		return traits;

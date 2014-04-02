@@ -16,9 +16,11 @@
 package de.tobiyas.racesandclasses.datacontainer.armorandtool;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
@@ -35,22 +37,23 @@ public class ArmorToolManager {
 	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	private HashSet<AbstractItemPermission> itemPerms;
-	private String playerName;
+	private UUID playerUUID;
 	
-	public ArmorToolManager(String playerName){
-		this.playerName = playerName;
+	public ArmorToolManager(UUID playerUUID){
+		this.playerUUID = playerUUID;
 		this.itemPerms = new HashSet<AbstractItemPermission>();
 	}
 	
 	
 	public void rescanPermission(){
 		itemPerms.clear();
-		if(WorldResolver.isOnDisabledWorld(playerName)){
+		OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+		if(!player.isOnline() && WorldResolver.isOnDisabledWorld(player.getPlayer())){
 			itemPerms.add(new AllItemsPermission());
 			return;
 		}
 		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(container != null){
 			for(ItemQuality quality : container.getArmorPerms()){
 				addPerm(quality);
@@ -59,7 +62,7 @@ public class ArmorToolManager {
 			
 		//Add ItemIDs or other here.
 		
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
 		if(classContainer != null){
 			for(ItemQuality quality : classContainer.getArmorPerms()){
 				addPerm(quality);
@@ -125,7 +128,7 @@ public class ArmorToolManager {
 	 * @return the Damage after modification
 	 */
 	public double calcDamageToArmor(double damage, DamageCause cause){
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null){
 			return damage;
 		}
@@ -168,7 +171,7 @@ public class ArmorToolManager {
 	 * @return true if settings is correct. False if something got thrown away.
 	 */
 	public boolean checkArmorNotValidEquiped() {
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null){
 			return true;
 		}

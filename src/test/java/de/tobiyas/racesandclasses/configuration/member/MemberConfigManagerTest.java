@@ -53,7 +53,7 @@ public class MemberConfigManagerTest {
 	
 	@Test
 	public void creating_and_retrieving_config_works(){
-		String testPlayer = "playerName";
+		String testPlayer = "playerUUID";
 		MemberConfig config = sut.getConfigOfPlayer(testPlayer);
 		
 		assertNotNull(config);

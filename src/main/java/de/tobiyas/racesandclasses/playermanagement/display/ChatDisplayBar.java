@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -31,8 +32,8 @@ public class ChatDisplayBar extends AbstractDisplay{
 	 * @param player to display to
 	 * @param displayInfo the type of display to show
 	 */
-	public ChatDisplayBar(String playerName, DisplayInfos displayInfos) {
-		super(playerName, displayInfos);
+	public ChatDisplayBar(OfflinePlayer player, DisplayInfos displayInfos) {
+		super(player, displayInfos);
 	}
 
 	
@@ -58,7 +59,7 @@ public class ChatDisplayBar extends AbstractDisplay{
 		}
 		
 		
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = Bukkit.getPlayer(playerUUID);
 		if(player != null && player.isOnline()){
 			player.sendMessage(displayInfo.getMidValueColor() + displayInfo.getName() + ": " + barString + healthAsNumbers);
 		}

@@ -15,12 +15,14 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
+import org.bukkit.OfflinePlayer;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class SpellScoreBoardDisplay extends AbstractDisplay {
 
-	public SpellScoreBoardDisplay(String playerName, DisplayInfos displayInfo) {
-		super(playerName, displayInfo);
+	public SpellScoreBoardDisplay(OfflinePlayer player, DisplayInfos displayInfo) {
+		super(player, displayInfo);
 
 	
 	}

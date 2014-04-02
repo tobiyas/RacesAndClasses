@@ -19,7 +19,9 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
@@ -54,7 +56,9 @@ public class PlayerDataToSmallFileConverter {
 		while(nameIt.hasNext()){
 			String playerName = nameIt.next();
 			
-			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
+			//needed to convert
+			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			Object subTree = bigDataYML.get("playerdata." + playerName);
 			config.set("playerdata." + playerName, subTree);
 			i++;

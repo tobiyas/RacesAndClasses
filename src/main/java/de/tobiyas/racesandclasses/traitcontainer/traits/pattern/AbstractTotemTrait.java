@@ -217,7 +217,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	/**
 	 * Places to the player.
 	 * 
-	 * @param playerName the player to place to
+	 * @param playerUUID the player to place to
 	 * @param location the location to place at
 	 */
 	protected TraitResults placeTotem(String playerName, Location location){
@@ -242,7 +242,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	/**
 	 * Schedules the romve of a totem.
 	 * 
-	 * @param playerName to remove
+	 * @param playerUUID to remove
 	 */
 	protected void scheduleRemove(final TotemInfos infos){
 		final int bukkitSchedulerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {

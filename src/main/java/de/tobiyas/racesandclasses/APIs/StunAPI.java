@@ -44,7 +44,7 @@ public class StunAPI {
 		/**
 		 * Stuns a player for x Ticks.
 		 * 
-		 * @param playerName to stun
+		 * @param playerUUID to stun
 		 * @param time to stun for
 		 * 
 		 * @return true if worked, false otherwise.
@@ -56,7 +56,7 @@ public class StunAPI {
 		/**
 		 * Stuns a player for x Seconds.
 		 * 
-		 * @param playerName to stun
+		 * @param playerUUID to stun
 		 * @param time to stun for
 		 * 
 		 * @return true if worked, false otherwise.
@@ -102,7 +102,7 @@ public class StunAPI {
 		/**
 		 * Removes the Stun from a player
 		 * 
-		 * @param playerName to remove from
+		 * @param playerUUID to remove from
 		 * 
 		 * @return true if worked, false otherwise
 		 */
