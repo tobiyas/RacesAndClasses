@@ -25,7 +25,7 @@ package de.tobiyas.racesandclasses;
 
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ChannelManager;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ClassManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Config;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ConfigTotal;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.CooldownManager;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ManagerConstructor;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.PlayerManager;
@@ -89,6 +89,7 @@ import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
 import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
+import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
@@ -213,6 +214,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		//We seal the startup away to prevent further erroring afterwards.
 		try{
 			plugin = this;
+			getDebugLogger().enable();
+			getDebugLogger().setAlsoToPlugin(true);
 			
 			VaultHook.init(this);
 			
@@ -239,6 +242,8 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			
 			errored = true;
 			registerAllCommandsAsError();
+			
+			//e.printStackTrace();
 		}
 	}
 	
@@ -259,7 +264,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		setupConfiguration();
 		YAMLPersistanceSaver.start(true);
 		
-		Config.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
+		ConfigTotal.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
 		//copy default traits if non existent and enabled
@@ -462,8 +467,12 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		PersistenceStorageManager.startup();
 		ConverterChecker.checkAllConvertionsNeeded();
 		
+		long currentTime = System.currentTimeMillis();
 		configManager.reload();
 		setupDebugLogger();
+		
+		long timeTaken = System.currentTimeMillis() - currentTime;
+		StartupStatisticCategory.PlayerConfigs.timeInMiliSeconds = timeTaken;
 	}
 	
 	private void setupDebugLogger(){		

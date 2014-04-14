@@ -84,12 +84,15 @@ public class PlayerManager{
 			players = YAMLPersistenceProvider.getAllPlayersKnown();
 		}
 		
-		for(UUID player : players){
-			if(player == null) continue;
+		for(UUID playerUUID : players){
+			if(playerUUID == null) continue;
 			
-			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
+			Player player = Bukkit.getPlayer(playerUUID);
+			if(player == null || !player.isOnline()) continue;
+			
+			PlayerContainer container = PlayerContainer.loadPlayerContainer(playerUUID, useDB);
 			if(container != null){
-				playerData.put(player, container);
+				playerData.put(playerUUID, container);
 			}
 		}
 	}
@@ -132,6 +135,7 @@ public class PlayerManager{
 		return container.getCurrentHealth();
 	}
 	
+	
 	/**
 	 * Rescans the player and creates a new {@link PlayerContainer} if he has none.
 	 *  
@@ -140,6 +144,9 @@ public class PlayerManager{
 	public void checkPlayer(UUID player){
 		PlayerContainer hContainer = playerData.get(player);
 		if(hContainer == null){
+			plugin.getRaceManager().loadIfNotExists(player);
+			plugin.getClassManager().loadIfNotExists(player);
+			
 			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
 			
 			double maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
@@ -159,6 +166,7 @@ public class PlayerManager{
 			hContainer.checkStats();
 		}
 	}
+	
 	
 	/**
 	 * Checks if the ArrowManager of a Player exists and returns it.

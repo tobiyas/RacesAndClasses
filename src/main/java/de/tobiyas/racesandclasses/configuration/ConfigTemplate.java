@@ -109,7 +109,7 @@ public class ConfigTemplate {
 		try {
 			configFile.createNewFile();
 		} catch (IOException e) {
-			plugin.log("Could not create new Config File.");
+			plugin.log("Could not create new ConfigTotal File.");
 			e.printStackTrace();
 		}
 		
@@ -126,7 +126,7 @@ public class ConfigTemplate {
 			out.write(content);
 			out.close();
 		} catch (IOException e) {
-			plugin.log("Error on replacing the Config File");
+			plugin.log("Error on replacing the ConfigTotal File");
 			e.printStackTrace();
 		}
 	}

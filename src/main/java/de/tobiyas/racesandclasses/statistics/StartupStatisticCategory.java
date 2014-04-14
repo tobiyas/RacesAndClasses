@@ -30,7 +30,9 @@ public enum StartupStatisticCategory {
 	PlayerManager,
 	ChannelManager,
 	
-	Config;
+	ConfigTotal,
+	PlayerConfigs,
+	Conversion;
 
 	
 	/**

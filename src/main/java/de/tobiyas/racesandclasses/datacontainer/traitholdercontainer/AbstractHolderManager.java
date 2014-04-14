@@ -105,7 +105,7 @@ public abstract class AbstractHolderManager extends Observable{
 			} catch (HolderParsingException exp) {
 				String errorMessage = "Error: ";
 				if(exp instanceof HolderConfigParseException){
-					errorMessage += "Config of: " + holderName + " is mal formated. Please relook synthax!";
+					errorMessage += "ConfigTotal of: " + holderName + " is mal formated. Please relook synthax!";
 				}else if(exp instanceof HolderTraitParseException){
 					HolderTraitParseException rtpe = (HolderTraitParseException) exp;
 					errorMessage = rtpe.getLocalizedMessage();
@@ -143,17 +143,39 @@ public abstract class AbstractHolderManager extends Observable{
 					memberList.put(holder.getPlayerUUID(), traitHolder);				
 				}
 			}
-		}else{			
+		}else{
 			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
 			Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
 			
-			for(UUID player : players){
-				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-				memberList.put(player, getHolderByName(holderName));
-			}
-		}
+			for(UUID playerUUID : players){
+				Player player = Bukkit.getPlayer(playerUUID);
+				if(player == null || !player.isOnline()) continue;
 				
+				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
+				memberList.put(playerUUID, getHolderByName(holderName));
+			}
+		}			
+	}
+	
+	/**
+	 * Loads the Player passed.
+	 * <br>Only loads if not exist.
+	 * <br>Only loads if not load.
+	 * 
+	 * @param playerUUID to load.
+	 */
+	public void loadIfNotExists(UUID playerUUID){
+		if(memberList.containsKey(playerUUID)) return;
+		
+		String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
+		
+		Player player = Bukkit.getPlayer(playerUUID);
+		if(player == null || !player.isOnline()) return;
+		
+		YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
+		memberList.put(playerUUID, getHolderByName(holderName));
 	}
 	
 	/**
@@ -394,7 +416,7 @@ public abstract class AbstractHolderManager extends Observable{
 	
 	/**
 	 * This method gets starting Holder.
-	 * <br>This is the one specified in the Config or the Default TraitHolder.
+	 * <br>This is the one specified in the ConfigTotal or the Default TraitHolder.
 	 * 
 	 * @return The holder put into (can be null)
 	 */

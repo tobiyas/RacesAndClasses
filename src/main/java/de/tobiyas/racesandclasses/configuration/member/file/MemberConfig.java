@@ -79,7 +79,7 @@ public class MemberConfig extends Observable {
 	}
 	
 	/**
-	 * Constructs a new Member Config for a player.
+	 * Constructs a new Member ConfigTotal for a player.
 	 * It loads from the YAML loaded, if the player is found, and creates a new one if no exists.
 	 * 
 	 * @param playerUUID to create
@@ -137,7 +137,7 @@ public class MemberConfig extends Observable {
 	
 	
 	/**
-	 * Returns the Name of the Player of this Config.
+	 * Returns the Name of the Player of this ConfigTotal.
 	 * 
 	 * @return holder of Configuration.
 	 */
@@ -397,7 +397,7 @@ public class MemberConfig extends Observable {
 
 
 	/**
-	 * Checks if a Config option with the given name is present.
+	 * Checks if a ConfigTotal option with the given name is present.
 	 * Returns true if the name is found as DisplayName
 	 * 
 	 * @param identifier to check for
@@ -409,7 +409,7 @@ public class MemberConfig extends Observable {
 	
 	
 	/**
-	 * Returns all Config entries.
+	 * Returns all ConfigTotal entries.
 	 * This list is a copied list -> Changes will not affect the MemberConfig.
 	 * -> read only.
 	 * 

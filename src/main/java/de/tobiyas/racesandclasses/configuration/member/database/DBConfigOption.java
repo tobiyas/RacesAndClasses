@@ -172,7 +172,7 @@ public class DBConfigOption extends ConfigOption {
 	
 	
 	/**
-	 * Copies from an Config Option
+	 * Copies from an ConfigTotal Option
 	 * 
 	 * @param option to copy
 	 * @return the copied DBConfigOption

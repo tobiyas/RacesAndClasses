@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility;
 
 import java.lang.reflect.Method;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -233,6 +234,9 @@ public class CompatibilityModifier {
 		 * @param player the player to damage
 		 */
 		public static void safeDamage(double damage, Player player) {
+			//if in creative, there is no 
+			if(player.getGameMode() == GameMode.CREATIVE) return;
+			
 			double oldHealth = safeGetHealth(player);
 			double newHealth = oldHealth - damage;
 			

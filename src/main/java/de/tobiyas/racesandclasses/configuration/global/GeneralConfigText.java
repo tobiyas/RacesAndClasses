@@ -15,18 +15,65 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.global;
 
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_channel_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_disable_channel_join_leave_messages;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_race_encryptForOthers;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_whisper_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_cancleGUIExitWhenNoClassPresent_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_change_uplinkInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_gui_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_permissions_usePermissionsForEachClasses;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_takeClassWhenNoClass;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_useRaceClassSelectionMatrix;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_errorUpload;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_writethrough;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disable_health_modifications;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_armor_disableArmorChecking;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_convert_database_on_startup;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_copyDefaultTraitsOnStartup;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_commands;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_also_use_leftclick_in_guis;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_disableAllChatBars;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_disableAllOutputs;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_bar_inChat_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_defaultHealth;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useLevelSystem;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_change_uplinkInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_name;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_tag;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_display_adaptListName;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_drops_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_gui_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_permissions_usePermissionsForEachRace;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_interval;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_takeRaceWhenNoRace;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.tutorials_enable;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.updater_enableAutoUpdates;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.worlds_disableOn;
 import de.tobiyas.racesandclasses.util.consts.Consts;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 
 
 public class GeneralConfigText {
 
 	
 	/**
-	 * The Text of the Global Config
+	 * The Text of the Global ConfigTotal
 	 */
 	public static final String GlobalConfigText = ""
-			+ "#Config for RacesAndClasses\n"
+			+ "#ConfigTotal for RacesAndClasses\n"
 			+ "#TemplateVersion " + Consts.configVersion 
 			+ "\n\n"
 			
@@ -188,11 +235,11 @@ public class GeneralConfigText {
 			+ "# default: true \n"
 			+ general_copyDefaultTraitsOnStartup + ": true\n\n"
 
-			+ "# This tells the Plugin to use the Build in DB service to save data. \n"
-			+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
-			+ "# boolean: true or false\n"
-			+ "# default: true \n"
-			+ general_saving_savePlayerDataToDB + ": false\n\n"
+			//+ "# This tells the Plugin to use the Build in DB service to save data. \n"
+			//+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
+			//+ "# boolean: true or false\n"
+			//+ "# default: true \n"
+			//+ general_saving_savePlayerDataToDB + ": false\n\n"
 			
 			+ "# This tells the plugin to look at conversion at startup.. \n"
 			+ "# If turned to false, no conversion of playerdata will be done on startup!\n"

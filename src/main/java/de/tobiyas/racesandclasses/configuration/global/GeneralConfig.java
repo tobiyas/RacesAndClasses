@@ -177,7 +177,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	private boolean config_disableChatJoinLeaveMessages;
 	
 	/**
-	 * Inits the Config system.
+	 * Inits the ConfigTotal system.
 	 * Also loads the config directly
 	 */
 	public GeneralConfig(){
@@ -187,7 +187,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	}
 	
 	/**
-	 * Checks if the Config need Regeneration.
+	 * Checks if the ConfigTotal need Regeneration.
 	 * 
 	 * @param force if True, the config is Forced to regenerate.
 	 */

@@ -18,7 +18,6 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;

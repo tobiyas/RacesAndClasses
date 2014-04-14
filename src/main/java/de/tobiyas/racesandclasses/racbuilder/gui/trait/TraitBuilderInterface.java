@@ -38,7 +38,7 @@ import de.tobiyas.util.inventorymenu.stats.StatsSelectionInterfaceFactory;
 public class TraitBuilderInterface extends BasicSelectionInterface {
 
 	/**
-	 * The Config map to fill
+	 * The ConfigTotal map to fill
 	 */
 	private final List<TraitConfigOptionContainer> configList;
 	

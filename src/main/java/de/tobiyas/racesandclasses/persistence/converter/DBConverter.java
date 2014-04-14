@@ -31,7 +31,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class DBConverter {
 
 	/**
-	 * The Plugin to call Config stuff on.
+	 * The Plugin to call ConfigTotal stuff on.
 	 */
 	private static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
@@ -238,7 +238,7 @@ public class DBConverter {
 	
 	
 	/**
-	 * Returns the General Config.
+	 * Returns the General ConfigTotal.
 	 * If not load yet, it builds it temporarly.
 	 * 
 	 * @return

@@ -114,7 +114,7 @@ public class DBMemberConfig extends MemberConfig {
 
 
 	/**
-	 * Copies the passed Config and saves it to the DB
+	 * Copies the passed ConfigTotal and saves it to the DB
 	 * 
 	 * @param config
 	 * @return

@@ -27,7 +27,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class RaceToClassConfiguration {
 
 	/**
-	 * The Config file where the Races / Classes selection matrix is found
+	 * The ConfigTotal file where the Races / Classes selection matrix is found
 	 */
 	private YAMLConfigExtended racesClassesSelectionMatrix;
 	

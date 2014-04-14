@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -180,6 +181,35 @@ public class DefaultContainer {
 		classesConfig.createSection("magician.traits.ColdFeetTrait");
 		classesConfig.set("magician.traits.ColdFeetTrait.cost", 5);
 		classesConfig.set("magician.traits.ColdFeetTrait.duration", 10);
+		
+		//Shaman:
+		classesConfig.createSection("shaman");
+		classesConfig.createSection("shaman.config");
+		classesConfig.createSection("shaman.traits");
+		
+		classesConfig.set("shaman.config.classtag", "[Shaman]");
+		classesConfig.set("shaman.config.health", "+1");
+		classesConfig.set("shaman.config.manabonus", 20);
+		
+		classesConfig.createSection("shaman.traits.HealTotemTrait");
+		classesConfig.set("shaman.traits.HealTotemTrait.duration", 10);
+		classesConfig.set("shaman.traits.HealTotemTrait.value", 3);
+		classesConfig.set("shaman.traits.HealTotemTrait.every", 2);
+		
+		classesConfig.createSection("shaman.traits.PotionTotemTrait");
+		classesConfig.set("shaman.traits.PotionTotemTrait.effect", 6);
+		classesConfig.set("shaman.traits.PotionTotemTrait.duration", 10);
+		
+		classesConfig.createSection("shaman.traits.ItemForManaConsumeTrait");
+		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.cooldown", 10);
+		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.item", Material.POTION.name());
+		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.cost", 1);
+		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.value", 10);
+		
+		classesConfig.createSection("shaman.traits.ManaRegenerationTrait");
+		classesConfig.set("shaman.traits.ManaRegenerationTrait.value", 1);
+		classesConfig.set("shaman.traits.ManaRegenerationTrait.time", 5);
+
 		
 		try {
 			classesConfig.save(classFile);

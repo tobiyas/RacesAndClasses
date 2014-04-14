@@ -186,7 +186,7 @@ public class HelpPage {
 	
 
 	/**
-	 * Generates the help for the Config page
+	 * Generates the help for the ConfigTotal page
 	 */
 	private static List<String> page6(){
 		List<String> returnList = new LinkedList<String>();

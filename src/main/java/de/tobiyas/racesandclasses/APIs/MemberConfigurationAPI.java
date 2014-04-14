@@ -40,7 +40,7 @@ public class MemberConfigurationAPI {
 
 		
 		/**
-		 * Sets an Int value to the player Config.
+		 * Sets an Int value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -62,7 +62,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -83,7 +83,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -105,7 +105,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Boolean value to the player Config.
+		 * Sets a Boolean value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -155,7 +155,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets an Int value to the player Config.
+		 * Sets an Int value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -174,7 +174,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -192,7 +192,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -211,7 +211,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Boolean value to the player Config.
+		 * Sets a Boolean value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -264,7 +264,7 @@ public class MemberConfigurationAPI {
 	public static class Get{
 		
 		/**
-		 * Gets an Int value From the player Config.
+		 * Gets an Int value From the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -287,7 +287,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -309,7 +309,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -332,7 +332,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Gets a Boolean value from the player Config.
+		 * Gets a Boolean value from the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -377,7 +377,7 @@ public class MemberConfigurationAPI {
 		//Gets with default Values:
 		
 		/**
-		 * Gets an Int value From the player Config.
+		 * Gets an Int value From the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -401,7 +401,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -424,7 +424,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -448,7 +448,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Gets a Boolean value from the player Config.
+		 * Gets a Boolean value from the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -474,7 +474,7 @@ public class MemberConfigurationAPI {
 		//New ones below
 		
 		/**
-		 * Gets an Int value From the player Config.
+		 * Gets an Int value From the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -497,7 +497,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -519,7 +519,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -542,7 +542,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Gets a Boolean value from the player Config.
+		 * Gets a Boolean value from the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -587,7 +587,7 @@ public class MemberConfigurationAPI {
 		//Gets with default Values:
 		
 		/**
-		 * Gets an Int value From the player Config.
+		 * Gets an Int value From the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -611,7 +611,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Sets a Double value to the player Config.
+		 * Sets a Double value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -634,7 +634,7 @@ public class MemberConfigurationAPI {
 		}
 		
 		/**
-		 * Sets a String value to the player Config.
+		 * Sets a String value to the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 
@@ -658,7 +658,7 @@ public class MemberConfigurationAPI {
 		
 		
 		/**
-		 * Gets a Boolean value from the player Config.
+		 * Gets a Boolean value from the player ConfigTotal.
 		 * If visibleForPlayer is true, the player can see 
 		 * this value when inspection his configuration.
 		 * 

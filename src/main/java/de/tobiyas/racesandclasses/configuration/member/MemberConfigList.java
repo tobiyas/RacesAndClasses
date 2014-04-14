@@ -47,7 +47,7 @@ public class MemberConfigList <T extends ConfigOption> extends LinkedList<T> {
 	}
 
 	/**
-	 * Searches for the Config with the display name passed.
+	 * Searches for the ConfigTotal with the display name passed.
 	 * Returns the correct {@link ConfigOption} or Null if not found.
 	 * 
 	 * @param displayName to search for
@@ -68,7 +68,7 @@ public class MemberConfigList <T extends ConfigOption> extends LinkedList<T> {
 	
 	
 	/**
-	 * Searches for the Config with the path name passed.
+	 * Searches for the ConfigTotal with the path name passed.
 	 * Returns the correct {@link ConfigOption} or Null if not found.
 	 * 
 	 * @param pathName to search for

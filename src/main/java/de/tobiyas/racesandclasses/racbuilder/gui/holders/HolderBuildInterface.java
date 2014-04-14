@@ -107,7 +107,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 				ItemMetaUtils.addStringToLore(traitItem, line);
 			}
 			
-			ItemMetaUtils.addStringToLore(traitItem, "Config:");
+			ItemMetaUtils.addStringToLore(traitItem, "ConfigTotal:");
 			ItemMetaUtils.addStringToLore(traitItem, trait.getPrettyConfiguration());
 			itemsToAdd.add(traitItem);
 		}

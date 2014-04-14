@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.persistence.converter;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 
 public class ConverterChecker {
 
@@ -24,11 +25,11 @@ public class ConverterChecker {
 	 * This checks all the conversions that a RaC System currently needs.
 	 */
 	public static void checkAllConvertionsNeeded(){
+		long timeBefore = System.currentTimeMillis();
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
 		//if we don't want conversions, we don't do it.
 		boolean useConvertion = plugin.getConfigManager().getGeneralConfig().isConfig_convertDatabaseOnStartup();
-		if(!useConvertion) return;
 		
 		//DB is disabled.
 		//boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
@@ -40,6 +41,9 @@ public class ConverterChecker {
 		//second convert Name to UUID
 		YML_OLD_to_NEW_converter.convert();
 		
+		//old the conversion below need something
+		if(!useConvertion) return;
+		
 		
 		//If we use a DB, convert the YML stuff to DB if not happened.
 		/*if(useDB){
@@ -50,5 +54,8 @@ public class ConverterChecker {
 		if(!useDB){
 			ToYMLConverter.convertDBToYML();
 		}*/
+		
+		long timeNeeded = System.currentTimeMillis() - timeBefore;
+		StartupStatisticCategory.Conversion.timeInMiliSeconds = timeNeeded;
 	}
 }

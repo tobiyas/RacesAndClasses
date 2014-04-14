@@ -20,12 +20,12 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 public interface TraitWithRestrictions {
 
 	/**
-	 * The Config-Path to the Min Level to use
+	 * The ConfigTotal-Path to the Min Level to use
 	 */
 	public static final String MIN_LEVEL_PATH = "minLevel";
 	
 	/**
-	 * The Config-Path to the Max Level to use
+	 * The ConfigTotal-Path to the Max Level to use
 	 */
 	public static final String MAX_LEVEL_PATH = "maxLevel";
 	
@@ -132,7 +132,7 @@ public interface TraitWithRestrictions {
 	/**
 	 * The Path to disable uplink Notices
 	 */
-	public static final String DISABLE_UPLINK_NOTICE_PATH = "disableUplinkNotice";
+	public static final String DISABLE_COOLDOWN_NOTICE_PATH = "disableCooldownNotice";
 	
 	
 

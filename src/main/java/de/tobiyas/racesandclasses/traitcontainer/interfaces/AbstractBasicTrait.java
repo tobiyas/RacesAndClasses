@@ -151,9 +151,9 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected long minUplinkShowTime = 3; 
 		
 	/**
-	 * This disables the Uplink notice.
+	 * This disables the Cooldown notice.
 	 */
-	protected boolean disableUplinkNotice = false; 
+	protected boolean disableCooldownNotice = false; 
 	
 	
 	/**
@@ -186,7 +186,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	
 	/**
-	 * The Config of the Trait
+	 * The ConfigTotal of the Trait
 	 */
 	protected Map<String, Object> currentConfig;
 	
@@ -230,7 +230,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = DESCRIPTION_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = MIN_UPLINK_SHOW_PATH, classToExpect = Integer.class, optional = true),
-		@TraitConfigurationField(fieldName = DISABLE_UPLINK_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = DISABLE_COOLDOWN_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
 	})
 	
 	@Override
@@ -394,8 +394,8 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//disable uplink Notice.
-		if(configMap.containsKey(TraitWithRestrictions.DISABLE_UPLINK_NOTICE_PATH)){
-			this.disableUplinkNotice = (Boolean) configMap.get(TraitWithRestrictions.DISABLE_UPLINK_NOTICE_PATH);
+		if(configMap.containsKey(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH)){
+			this.disableCooldownNotice = (Boolean) configMap.get(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH);
 		}
 	}
 	
@@ -574,7 +574,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			if(!triggerButHasUplink(wrapper)){
 				if(notifyTriggeredUplinkTime(wrapper)){
 					//if notices are disabled, we don't need to do anything here.
-					if(disableUplinkNotice) return false;
+					if(disableCooldownNotice) return false;
 					
 					//we still check to not spam players.
 					long lastNotified = uplinkNotifyList.containsKey(playerName)

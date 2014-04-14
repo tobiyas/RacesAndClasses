@@ -201,12 +201,9 @@ public class PlayerContainer {
 			}
 		}else{
 			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
-			if(!config.isConfigurationSection("playerdata." + playerUUID))
-				config.createSection("playerdata." + playerUUID);
-			config.set("playerdata." + playerUUID + ".hasGod", hasGod);
+			config.set("hasGod", hasGod);
 			
 			levelManager.save();
-			
 			return true;			
 		}
 		

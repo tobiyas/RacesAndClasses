@@ -52,7 +52,7 @@ public class ChannelManager {
 	private Map<String, ChannelContainer> channels;
 	
 	/**
-	 * The Config to save the channel settings in
+	 * The ConfigTotal to save the channel settings in
 	 */
 	private YAMLConfigExtended config;
 
@@ -705,19 +705,23 @@ public class ChannelManager {
 	 * @param event to edit
 	 */
 	public void editToChannel(String channel, AsyncPlayerChatEvent event) {
-		Player sender = event.getPlayer();
-		
-		ChannelContainer container = getContainer(channel);
-		if(container == null){
-			if(sender != null){
-				sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
-				event.setCancelled(true);
+		//only format messages that have a message
+		String format = event.getFormat();
+		if(format.contains("%1$s") && format.contains("%2$s")){
+			Player sender = event.getPlayer();
+			
+			ChannelContainer container = getContainer(channel);
+			if(container == null){
+				if(sender != null){
+					sender.sendMessage(ChatColor.RED + "Channel " + ChatColor.AQUA + channel + ChatColor.RED + " was not found.");
+					event.setCancelled(true);
+				}
+				
+				return;
 			}
 			
-			return;
+			container.editEvent(event);
 		}
-		
-		container.editEvent(event);
 	}
 	
 }

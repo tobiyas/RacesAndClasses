@@ -30,7 +30,7 @@ import de.tobiyas.util.inventorymenu.stats.OperatorSelectionInterface;
 public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface {
 
 	/**
-	 * The Config Map path to the health_operator
+	 * The ConfigTotal Map path to the health_operator
 	 */
 	private static final String HEALTH_OPERATOR_PATH = "health_operator";
 	

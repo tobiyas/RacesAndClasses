@@ -455,7 +455,7 @@ public abstract class AbstractHolderBuilder {
 
 
 	/**
-	 * Returns the Config of the holder type
+	 * Returns the ConfigTotal of the holder type
 	 * @return
 	 */
 	protected abstract YAMLConfigExtended getHolderYAMLFile();

@@ -25,6 +25,8 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.login_no_race_selected;
 
+import java.util.Date;
+
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -41,7 +43,9 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 
 public class Listener_Player implements Listener {
@@ -61,11 +65,12 @@ public class Listener_Player implements Listener {
 	}
 	 
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event){
 		final Player player = event.getPlayer();
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
+		plugin.getPlayerManager().checkPlayer(player.getUniqueId());
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
 		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
 				&& racesActive){
@@ -75,7 +80,6 @@ public class Listener_Player implements Listener {
 			}
 		}
 		
-		plugin.getPlayerManager().checkPlayer(player.getUniqueId());
 		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLogin(player.getUniqueId());
@@ -103,6 +107,28 @@ public class Listener_Player implements Listener {
 		}
 	}
 	
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerJoinCheck(PlayerJoinEvent event){
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(event.getPlayer().getUniqueId());
+		if(!config.contains("uuid")){
+			YAMLPersistenceProvider.getLoadedPlayerFile(event.getPlayer().getUniqueId()).set("uuid", event.getPlayer().getUniqueId().toString());			
+		}
+
+		
+		String newName = event.getPlayer().getName();
+		String oldName = config.getString("lastKnownName", "");
+		if(!newName.equals(oldName)){
+			//Name has changed
+			RacesAndClasses.getPlugin().log(oldName + " has changed his name to: " + newName);
+			YAMLPersistenceProvider.getLoadedPlayerFile(event.getPlayer().getUniqueId()).set("lastKnownName", newName);
+		}
+		
+		//set the last online time.
+		YAMLPersistenceProvider.getLoadedPlayerFile(event.getPlayer().getUniqueId()).set("lastOnline", new Date().getTime());
+	}
+	
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
@@ -118,7 +144,8 @@ public class Listener_Player implements Listener {
 		String orgMsg = event.getMessage();
 		Player player = event.getPlayer();
 		
-		if(orgMsg.charAt(0) == '/') return;
+		//check if we have a fake command.
+		if(orgMsg != null && orgMsg.length() > 0 && orgMsg.charAt(0) == '/') return;
 		
 		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
 		String channel = "Global";
@@ -141,7 +168,9 @@ public class Listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerChatLate(AsyncPlayerChatEvent event){
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()) return;
-		if(event.getMessage().charAt(0) == '/') return;
+		
+		String message = event.getMessage();
+		if(message != null && message.length() > 0 && message.charAt(0) == '/') return;
 		
 		String format = event.getFormat();
 		format = format.replace("{msg}", event.getMessage());

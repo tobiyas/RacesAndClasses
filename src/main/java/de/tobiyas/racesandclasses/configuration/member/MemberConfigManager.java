@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
@@ -31,7 +32,7 @@ import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 public class MemberConfigManager {
 
 	/**
-	 * The config of members: player -> Config 
+	 * The config of members: player -> ConfigTotal 
 	 */
 	private Map<UUID, MemberConfig> memberConfigs;
 	
@@ -87,7 +88,7 @@ public class MemberConfigManager {
 	
 	/**
 	 * Creates a new MemberConfig for a player and saves it.
-	 * If the Config of the player is already present, it will be returned instead.
+	 * If the ConfigTotal of the player is already present, it will be returned instead.
 	 * 
 	 * @param player
 	 * @return
@@ -115,8 +116,9 @@ public class MemberConfigManager {
 	private void loadConfigs(){
 		Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
 		
-		for(UUID player : players){
-			getCreateNewConfig(player);
+		for(UUID playerUUID : players){
+			Player player = Bukkit.getPlayer(playerUUID);
+			if(player != null && player.isOnline())	getCreateNewConfig(playerUUID);
 		}
 	}
 	

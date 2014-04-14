@@ -21,6 +21,7 @@ import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChang
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_ManaPotion;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
@@ -72,6 +73,7 @@ public class RaCListenerRegister {
 		new StunCancelListener();
 		new Listener_WandAndBowEquip();
 		new PlayerLastDamageListener();
+		new Listener_ManaPotion();
 	}
 	
 	/**

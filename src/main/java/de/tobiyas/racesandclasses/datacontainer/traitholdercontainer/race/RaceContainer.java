@@ -41,7 +41,7 @@ public class RaceContainer extends AbstractTraitHolder{
 	
 	
 	/**
-	 * Creates a Race Container with the passed Config and the passed name.
+	 * Creates a Race Container with the passed ConfigTotal and the passed name.
 	 * 
 	 * @param config to create with
 	 * @param name to create with

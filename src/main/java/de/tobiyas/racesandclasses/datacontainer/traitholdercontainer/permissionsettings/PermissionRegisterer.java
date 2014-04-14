@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -135,11 +133,10 @@ public class PermissionRegisterer implements Runnable{
 			precreateGroupIfNotExist(groupName);
 			
 			for(String permission : permissions.getPermissions()){
-				
 				if(!vaultPermissions.groupAdd((String)null, permissionSpecificPrefix + groupName, permission)){
 					RacesAndClasses.getPlugin().getDebugLogger().logWarning("Could NOT Register Group: " + permissionSpecificPrefix + groupName 
 							+ " Permission: " + permission + ". Used: " + vaultPermissions.getName());
-				};				
+				};
 			}
 		}
 	}

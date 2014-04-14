@@ -26,12 +26,12 @@ import de.tobiyas.util.inventorymenu.stats.StatType;
 public class TraitConfigOptionContainer {
 
 	/**
-	 * The Name of the Config Option
+	 * The Name of the ConfigTotal Option
 	 */
 	private final String name;
 	
 	/**
-	 * The Type of the Config Option
+	 * The Type of the ConfigTotal Option
 	 */
 	private final StatType type;
 	
@@ -48,7 +48,7 @@ public class TraitConfigOptionContainer {
 	
 
 	/**
-	 * Creates a container for a Trait Config Option
+	 * Creates a container for a Trait ConfigTotal Option
 	 * 
 	 * @param name
 	 */

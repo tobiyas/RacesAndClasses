@@ -82,7 +82,7 @@ public class TraitInventory extends InventoryView {
 			
 			String traitConfig = trait.getPrettyConfiguration();
 			
-			String[] words = {"No", "Config", "Present."};
+			String[] words = {"No", "ConfigTotal", "Present."};
 			if(traitConfig != null){
 				words = traitConfig.split(" ");				
 			}

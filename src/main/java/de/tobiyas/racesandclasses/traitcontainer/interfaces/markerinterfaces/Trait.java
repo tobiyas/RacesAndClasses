@@ -40,7 +40,7 @@ public interface Trait{
 	/**
 	 * This method is called after creation of the Trait.
 	 * <br>The {@link AbstractTraitHolder} is already set to this time.
-	 * <br>The Config is already set.
+	 * <br>The ConfigTotal is already set.
 	 * <br>
 	 * <br>IMPORTATNT: This method has to be annotated with {@link TraitEventsUsed}
 	 * <br>For Example: @TraitEventsUsed(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
@@ -80,20 +80,20 @@ public interface Trait{
 	 * 
 	 * @param map to set the config with.
 	 * 
-	 * @throws throws an Config Exception if something gone wrong with configuring.
+	 * @throws throws an ConfigTotal Exception if something gone wrong with configuring.
 	 */
 	public void setConfiguration(Map<String, Object> configurationMap) throws TraitConfigurationFailedException;
 	
 	
 	/**
-	 * Returns a list of optional Config fields.
+	 * Returns a list of optional ConfigTotal fields.
 	 * 
-	 * @return the List of optional Config Fields.
+	 * @return the List of optional ConfigTotal Fields.
 	 */
 	public List<String> getOptionalConfigFields();
 	
 	/**
-	 * Returns the Config passed in {@link #setConfiguration(Map)}.
+	 * Returns the ConfigTotal passed in {@link #setConfiguration(Map)}.
 	 * 
 	 * @return the map of the config already passed.
 	 */

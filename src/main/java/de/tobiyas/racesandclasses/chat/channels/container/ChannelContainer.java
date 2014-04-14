@@ -226,6 +226,11 @@ public class ChannelContainer extends Observable{
 	public void saveChannel(YAMLConfigExtended config){
 		if(channelLevel == ChannelLevel.LocalChannel) return;
 		
+		List<String> participants = new LinkedList<String>();
+		for(UUID id : this.participants){
+			participants.add(id.toString());
+		}
+		
 		config.load();
 		String channelPre = "channel." + channelLevel.name() + "." + channelName;
 		config.createSection(channelPre);
@@ -347,7 +352,7 @@ public class ChannelContainer extends Observable{
 		if(player != null){
 			int isMuted = muteContainer.isMuted(player.getUniqueId());
 			if(isMuted != -1){
-				String time = getTimeString(isMuted);				
+				String time = getTimeString(isMuted);		
 				sender.sendMessage(ChatColor.RED + "You are muted in this channel for: " + ChatColor.LIGHT_PURPLE + time);
 				return;
 			}
@@ -374,7 +379,7 @@ public class ChannelContainer extends Observable{
 		
 		String modifiedMessage = "";
 		if(sender == null){
-			//TODO fix this: modifiedMessage = modifyMessageToPlayer("CONSOLE", event.getMessage(), event.getFormat());
+			modifiedMessage = modifyMessageToPlayer(null, event.getMessage(), event.getFormat());
 		}else{
 			modifiedMessage = modifyMessageToPlayer(player == null ? null : player.getUniqueId(), event.getMessage(), event.getFormat());
 		}
