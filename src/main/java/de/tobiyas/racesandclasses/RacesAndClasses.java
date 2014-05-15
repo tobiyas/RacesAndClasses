@@ -35,18 +35,30 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Tra
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TutorialManager;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import net.gravitydevelopment.updater.Updater;
 import net.gravitydevelopment.updater.Updater.UpdateType;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.avaje.ebean.EbeanServer;
 
+import de.tobiyas.racesandclasses.addins.spawning.RaceSpawnManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
+import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCast;
@@ -73,6 +85,7 @@ import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.racesandclasses.commands.level.Command_RACLevel;
 import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
+import de.tobiyas.racesandclasses.commands.racespawn.CommandExecutor_RaceSpawn;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
@@ -83,6 +96,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceMa
 import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
@@ -105,7 +119,7 @@ import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.metrics.SendMetrics;
 
 
-public class RacesAndClasses extends UtilsUsingPlugin{
+public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	/**
 	 * Set if currently in testing mode.
 	 */
@@ -183,9 +197,19 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	protected PoisonManager poisonManager;
 	
 	/**
+	 * The race Spawn Manager
+	 */
+	protected RaceSpawnManager raceSpawnManager;
+	
+	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
+	
+	/**
+	 * A list of commands registered.
+	 */
+	protected final List<CommandInterface> commands = new LinkedList<CommandInterface>();
 	
 	
 	
@@ -218,6 +242,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 			getDebugLogger().setAlsoToPlugin(true);
 			
 			VaultHook.init(this);
+			Bukkit.getPluginManager().registerEvents(this, this);
 			
 			description = getDescription();
 			prefix = "[" + description.getName() + "] ";
@@ -287,6 +312,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		cooldownManager = new CooldownManager();
 		stunManager = new StunManager();
 		poisonManager = new PoisonManager();
+		raceSpawnManager = new RaceSpawnManager(this);
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -348,48 +374,138 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		
 		//Poison manager
 		poisonManager.init();
+		
+		//race Spawn Manager
+		raceSpawnManager.load();
 	}
 	
 
 	private void registerCommands(){
 		long currentTime = System.currentTimeMillis();
 		
-		new CommandExecutor_Race();
-		new CommandExecutor_Racechat();
-		new CommandExecutor_RaceHelp();
-		new CommandExecutor_Whisper();
-		new CommandExecutor_TraitList();
-		new CommandExecutor_RaceHeal();
-		new CommandExecutor_RaceConfig();
-		new CommandExecutor_RaceDebug();
-		new CommandExecutor_Class();
-		new CommandExecutor_HP();
-		new CommandExecutor_Channel();
-		new CommandExecutor_RaceGod();
-		new CommandExecutor_BroadCast();
-		new CommandExecutor_LocalChat();
-		new CommandExecutor_PlayerInfo();
-		new CommandExecutor_RacesTutorial();
-		new CommandExecutor_PermissionCheck();
+		commands.clear();
 		
-		new CommandExecutor_RacesReload();
-		new CommandExecutor_RacesVersion();
-		new CommandExecutor_Statistics();
-		new CommandExecutor_ShowTraits();
-		new CommandExecutor_Edit();
-		new CommandExecutor_SaveNow();
+		commands.add(new CommandExecutor_Race());
+		commands.add(new CommandExecutor_Racechat());
+		commands.add(new CommandExecutor_RaceHelp());
+		commands.add(new CommandExecutor_Whisper());
+		commands.add(new CommandExecutor_TraitList());
+		commands.add(new CommandExecutor_RaceHeal());
+		commands.add(new CommandExecutor_RaceConfig());
+		commands.add(new CommandExecutor_RaceDebug());
+		commands.add(new CommandExecutor_Class());
+		commands.add(new CommandExecutor_HP());
+		commands.add(new CommandExecutor_Channel());
+		commands.add(new CommandExecutor_RaceGod());
+		commands.add(new CommandExecutor_BroadCast());
+		commands.add(new CommandExecutor_LocalChat());
+		commands.add(new CommandExecutor_PlayerInfo());
+		commands.add(new CommandExecutor_RacesTutorial());
+		commands.add(new CommandExecutor_PermissionCheck());
 		
-		new CommandExecutor_ForceRace();
-		new CommandExecutor_ForceClass();
-		new CommandExecutor_ConfigRegenerate();
+		commands.add(new CommandExecutor_RacesReload());
+		commands.add(new CommandExecutor_RacesVersion());
+		commands.add(new CommandExecutor_Statistics());
+		commands.add(new CommandExecutor_ShowTraits());
+		commands.add(new CommandExecutor_Edit());
+		commands.add(new CommandExecutor_SaveNow());
 		
-		new Command_RACLevel();
+		commands.add(new CommandExecutor_ForceRace());
+		commands.add(new CommandExecutor_ForceClass());
+		commands.add(new CommandExecutor_ConfigRegenerate());
+		
+		commands.add(new CommandExecutor_RaceSpawn());
+		
+		commands.add(new Command_RACLevel());
+		
+		
+		//remove all disabled commands.
+		List<String> disabledCommands = configManager.getGeneralConfig().getConfig_general_disable_commands();
+		Iterator<CommandInterface> it = commands.iterator();
+		while(it.hasNext()){
+			CommandInterface command = it.next();
+			if(disabledCommands.contains(command.getCommandName().toLowerCase())){
+				it.remove();
+			}
+		}
 		
 		if(System.currentTimeMillis() - currentTime > 1000){
 			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
 		}
 	}
 	
+	
+	
+	@EventHandler
+	public void onCommand(ServerCommandEvent event){
+		if(evalCommand(event.getSender(), event.getCommand())){
+			event.setCommand("");
+		}
+	}
+	
+	
+	@EventHandler
+	public void onCommand(PlayerCommandPreprocessEvent event) {
+		String message = event.getMessage();
+		if(message.startsWith("/")) message = message.substring(1);
+		
+		if(evalCommand(event.getPlayer(), message)){
+			event.setMessage("/");
+			event.setCancelled(true);
+		}
+	}
+	
+	
+	private boolean evalCommand(CommandSender sender, String message){
+		String[] split = message.split(" ");
+		
+		String label = split[0];
+		String[] args = new String[split.length - 1];
+		for(int i = 1; i < split.length; i++) args[i - 1] = split[i];
+		
+		
+		//check if on disabled alias.
+		List<String> disabledAliases = configManager.getGeneralConfig().getConfig_general_disable_aliases();
+		for(String disabled : disabledAliases){
+			if(label.equalsIgnoreCase(disabled)) return false;
+		}
+		
+
+		//check for a hit on name.
+		for(CommandInterface internCommand : commands){
+			if(internCommand.getCommandName().equalsIgnoreCase(label)){
+				if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
+					sender.sendMessage(ChatColor.RED + "On disabled World.");
+					return false;
+				}
+				
+				if(internCommand.onCommand(sender, null, label, args)){
+					return true;
+				}
+			}
+		}
+		
+		//check for a hit on alias.
+		for(CommandInterface internCommand : commands){
+			if(!internCommand.hasAliases()) continue;
+			
+			for(String alias : internCommand.getAliases()){
+				if(alias.equalsIgnoreCase(label)){
+					if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
+						sender.sendMessage(ChatColor.RED + "On disabled World.");
+						return false;
+					}
+					
+					if(internCommand.onCommand(sender, null, label, args)){
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	private void initMetrics(){
 		if(configManager.getGeneralConfig().isConfig_metrics_enabled()){
 			SendMetrics.sendMetrics(this, configManager.getGeneralConfig().isConfig_enableDebugOutputs());
@@ -478,8 +594,6 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 	private void setupDebugLogger(){		
 		if(!configManager.getGeneralConfig().isConfig_enableDebugOutputs()){
 			getDebugLogger().disable();
-		}else{
-			getDebugLogger().shutDown();
 		}
 		
 		if(!configManager.getGeneralConfig().isConfig_enableErrorUpload()){
@@ -525,6 +639,7 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 		getConfigManager().getMemberConfigManager().shutDown();
 		channelManager.saveChannels();
 		tutorialManager.shutDown();
+		raceSpawnManager.save(false);
 		Bukkit.getScheduler().cancelTasks(this);
 		TraitStore.destroyClassLoaders();
 		
@@ -675,6 +790,10 @@ public class RacesAndClasses extends UtilsUsingPlugin{
 
 	public PoisonManager getPoisonManager() {
 		return poisonManager;
+	}
+
+	public RaceSpawnManager getRaceSpawnManager() {
+		return raceSpawnManager;
 	}
 	
 	

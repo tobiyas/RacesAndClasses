@@ -15,54 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.global;
 
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_channel_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_disable_channel_join_leave_messages;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_race_encryptForOthers;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_whisper_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_cancleGUIExitWhenNoClassPresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_permissions_usePermissionsForEachClasses;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_takeClassWhenNoClass;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_useRaceClassSelectionMatrix;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_errorUpload;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_writethrough;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disable_health_modifications;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_armor_disableArmorChecking;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_convert_database_on_startup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_copyDefaultTraitsOnStartup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_commands;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_also_use_leftclick_in_guis;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_disableAllChatBars;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_disableAllOutputs;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_bar_inChat_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_defaultHealth;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useLevelSystem;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_name;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_tag;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_display_adaptListName;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_drops_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_permissions_usePermissionsForEachRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_interval;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_takeRaceWhenNoRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.tutorials_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.updater_enableAutoUpdates;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.worlds_disableOn;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
+
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 
@@ -221,6 +175,31 @@ public class GeneralConfigText {
 			+ "# default: true \n"
 			+ keep_max_hp_on_disabled_worlds + ": true\n\n"
 			
+			//Race-Spawns
+			+ "\n"
+			+ "#############\n"
+			+ "#Race Spawns#\n"
+			+ "#############\n"
+			+ "\n"
+			
+			+ "# This tells if the Race-Spawning Feature is enabled or not.. \n"
+			+ "# If it is enabled, players can get with '/racespawn' to their Race Spawns.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: true \n"
+			+ race_spawns_enabled + ": true\n\n"
+			
+			+ "# When a player dies, he will spawn on his Race Spawn.\n"
+			+ "# If this is set to false, the player NOT spawn to his race spawn.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: false \n"
+			+ race_spawn_when_dead + ": false\n\n"
+			
+			+ "# Tells the cooldown for using /racespawn. \n"
+			+ "# The cooldown is in seconds. 300 -> 6 Minutes. \n"
+			+ "# integer: 0 - high number\n"
+			+ "# default: 300 \n"
+			+ race_spawn_cooldown + ": 300\n\n"
+			
 			
 			//GENERAL
 			+ "\n"
@@ -258,6 +237,22 @@ public class GeneralConfigText {
 			+ "# String list: [command1,command2,...]\n"
 			+ "# default: [] \n"
 			+ general_disable_commands + ": []\n\n"
+			
+			+ "# This tells the plugin to NOT register the following aliases. \n"
+			+ "# This is a list of aliases that are disabled for the plugin.\n"
+			+ "# String list: [alias1,alias2,...]\n"
+			+ "# default: [] \n"
+			+ general_disable_aliases + ": []\n\n"
+			
+			+ "# This is the cooldown between 2 messages when switching to the bow. \n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 10 \n"
+			+ general_cooldown_on_bow_message + ": 10\n\n"
+			
+			+ "# This is the cooldown between 2 messages when switching to the wand. \n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 10 \n"
+			+ general_cooldown_on_wand_message + ": 10\n\n"
 						
 			
 			//GUI
@@ -307,6 +302,9 @@ public class GeneralConfigText {
 			+ "# This is the Generator Polynome of the Level calculation. \n"
 			+ "# String: a string representing a polynome \n"
 			+ "# {level} will be replaced by the level of calculation.\n"
+			+ "# If mcmmo is used as Level System, the Calculation will use McMMO skills.\n"
+			+ "# The Skill name has to be written in {} eg. {digging}.\n"
+			+ "# A valid calculator would be: '{digging} + {excavation} \\ 20'\n"
 			+ "# default: '{level} * {level} * {level} * 1000' \n"
 			+ "# By default, the the next level needs (level^3) * 1000 exp.\n"
 			+ level_mapExpPerLevelCalculationString + ": '{level} * {level} * {level} * 1000'\n\n"
@@ -316,7 +314,8 @@ public class GeneralConfigText {
 			+ "# - RaC: Races and Classes leveling System (currently not usable).\n"
 			+ "# - MC: Minecraft Levels.\n"
 			+ "# - SkillAPI: Leveling System from SkillAPI.\n"
-			+ "# String: RaC or MC or SkillAPI\n"
+			+ "# - mcMMO: Leveling System from McMMO. also check for the calculation String above.\n"
+			+ "# String: RaC or MC or SkillAPI or MCMMO\n"
 			+ "# default: true \n"
 			+ level_useLevelSystem + ": RaC\n\n"
 

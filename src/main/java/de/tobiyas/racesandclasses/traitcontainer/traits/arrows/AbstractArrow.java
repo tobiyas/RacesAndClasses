@@ -236,7 +236,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		}
 		
 	}
-	
+
 	/**
 	 * This is called when a Player shoots an Arrow with this ArrowTrait present
 	 * 

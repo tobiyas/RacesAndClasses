@@ -19,37 +19,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_PlayerInfo implements CommandExecutor {
+public class CommandExecutor_PlayerInfo extends AbstractCommand {
 
 private RacesAndClasses plugin;
 	
 	public CommandExecutor_PlayerInfo(){
+		super("playerinfo");
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "playerinfo";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "playerinfo";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 
-		//TODO think about getting back in
-		//if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceInfo)) return true;
+		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.playerInfos)) return true;
 		
 		Player player = null;
 		if(args.length == 0){

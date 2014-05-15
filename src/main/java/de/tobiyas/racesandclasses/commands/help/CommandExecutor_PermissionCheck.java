@@ -19,15 +19,15 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_PermissionCheck implements CommandExecutor {
+public class CommandExecutor_PermissionCheck extends AbstractCommand {
 
 	/**
 	 * The plugin to call stuff on
@@ -38,16 +38,17 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	 * Creates a CommandExecutor to call when command should be executed.
 	 */
 	public CommandExecutor_PermissionCheck() {
+		super("racpermcheck", new String[]{"rc", "racp"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racpermcheck";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racpermcheck";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	@Override

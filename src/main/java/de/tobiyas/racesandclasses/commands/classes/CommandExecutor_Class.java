@@ -15,17 +15,18 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.classes;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
@@ -36,7 +37,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
-public class CommandExecutor_Class extends Observable implements CommandExecutor {
+public class CommandExecutor_Class extends Observable implements CommandInterface {
 	
 	/**
 	 * The plugin called stuff upon
@@ -50,14 +51,14 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 	public CommandExecutor_Class(){
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "class";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "class";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 		
 		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
@@ -377,5 +378,30 @@ public class CommandExecutor_Class extends Observable implements CommandExecutor
 		}
 		
 	}
+	
+	
+	/**
+	 * Returns the CommandName
+	 */
+	@Override
+	public String getCommandName(){
+		return "class";
+	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		return new LinkedList<String>();
+	}
+
+	@Override
+	public String[] getAliases() {
+		return new String[]{};
+	}
+	
+	@Override
+	public boolean hasAliases() {
+		return false;
+	}
+	
 }

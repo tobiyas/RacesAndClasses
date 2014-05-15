@@ -19,29 +19,30 @@ import java.util.Properties;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_RaceDebug implements CommandExecutor {
+public class CommandExecutor_RaceDebug extends AbstractCommand {
 
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RaceDebug(){
+		super("racedebug", new String[]{"rdebug"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racedebug";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racedebug";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override
@@ -75,11 +76,12 @@ public class CommandExecutor_RaceDebug implements CommandExecutor {
 				try{
 					throw new NullPointerException("useless generated exeption.");
 				}catch(NullPointerException e){
-					plugin.getDebugLogger().logStackTrace(e);
+					String message = "Checking Error writing";
+					plugin.logStackTrace(message, e);
 					sender.sendMessage(ChatColor.GREEN + "Worked!");
 					return true;
 				}
-			}			
+			}
 			
 			sender.sendMessage(ChatColor.RED + "No debug command found for: " + ChatColor.LIGHT_PURPLE + commandString);
 			return true;

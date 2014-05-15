@@ -24,16 +24,16 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_comman
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_ForceRace implements CommandExecutor {
+public class CommandExecutor_ForceRace extends AbstractCommand {
 
 	/**
 	 * The plugin called stuff upon
@@ -42,16 +42,18 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 	
 	
 	public CommandExecutor_ForceRace() {
+		super("racforcerace");
+		
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racforcerace";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racforcerace";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	@Override

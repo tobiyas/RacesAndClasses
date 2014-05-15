@@ -38,50 +38,51 @@ public class YML_OLD_to_NEW_converter {
 		
 		int converted = 0;
 		File[] files = playerDataFolder.listFiles();
-		
-		for(File file : files){
-			if(!file.getName().endsWith(".yml")) continue;
-			
-			//continue, if the UUID is parseable -> We already have parsed it.
-			try{ UUID.fromString(file.getName().replace(".yml", "")); continue; }catch(IllegalArgumentException exp){}
-			
-			YAMLConfigExtended oldConfig = new YAMLConfigExtended(file).load();
-			if(!oldConfig.contains("playerdata")) continue;
-			
-			String playerName = file.getName().replace(".yml", "");
-			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-			if(player == null || player.getUniqueId() == null) {
-				RacesAndClasses.getPlugin().logWarning("Could not find a UUID for: " + playerName + ". We will ignore him.");
-				continue;
-			}
-			
-			
-			UUID playerUUID = player.getUniqueId();			
-			File newPlayerFile = new File(Consts.playerDataPath, playerUUID.toString() + ".yml");
-			//check for already consistency
-			if(newPlayerFile.exists()){
-				RacesAndClasses.getPlugin().logWarning("Wanted to convert Player file of: " + playerName 
-						+ " but already found an UUID file (" + playerUUID.toString() + ") of him. "
-						+ "His old file will be renamed to " + playerName + ".yml_old.");
+		if(files != null && files.length > 0){
+			for(File file : files){
+				if(!file.getName().endsWith(".yml")) continue;
 				
-				file.renameTo(new File(Consts.playerDataPath, playerName + ".yml_old"));
-				file.delete();
-				continue;
+				//continue, if the UUID is parseable -> We already have parsed it.
+				try{ UUID.fromString(file.getName().replace(".yml", "")); continue; }catch(IllegalArgumentException exp){}
+				
+				YAMLConfigExtended oldConfig = new YAMLConfigExtended(file).load();
+				if(!oldConfig.contains("playerdata")) continue;
+				
+				String playerName = file.getName().replace(".yml", "");
+				OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+				if(player == null || player.getUniqueId() == null) {
+					RacesAndClasses.getPlugin().logWarning("Could not find a UUID for: " + playerName + ". We will ignore him.");
+					continue;
+				}
+				
+				
+				UUID playerUUID = player.getUniqueId();			
+				File newPlayerFile = new File(Consts.playerDataPath, playerUUID.toString() + ".yml");
+				//check for already consistency
+				if(newPlayerFile.exists()){
+					RacesAndClasses.getPlugin().logWarning("Wanted to convert Player file of: " + playerName 
+							+ " but already found an UUID file (" + playerUUID.toString() + ") of him. "
+							+ "His old file will be renamed to " + playerName + ".yml_old.");
+					
+					file.renameTo(new File(Consts.playerDataPath, playerName + ".yml_old"));
+					file.delete();
+					continue;
+				}
+	
+				YAMLConfigExtended newConfig = new YAMLConfigExtended(newPlayerFile).load();
+				newConfig.set("lastKnownName", playerName);
+				newConfig.set("uuid", player.getUniqueId().toString());
+				
+				String mainPath = "playerdata." + playerName;
+				for(String child : oldConfig.getChildren(mainPath)){
+					newConfig.set(child, oldConfig.get(mainPath + "." + child));
+				}
+				
+				newConfig.saveAsync();
+				
+				if(!file.delete()) RacesAndClasses.getPlugin().logWarning("Could not delete " + file.getAbsolutePath() + " please delete by hand.");
+				converted++;
 			}
-
-			YAMLConfigExtended newConfig = new YAMLConfigExtended(newPlayerFile).load();
-			newConfig.set("lastKnownName", playerName);
-			newConfig.set("uuid", player.getUniqueId().toString());
-			
-			String mainPath = "playerdata." + playerName;
-			for(String child : oldConfig.getChildren(mainPath)){
-				newConfig.set(child, oldConfig.get(mainPath + "." + child));
-			}
-			
-			newConfig.saveAsync();
-			
-			if(!file.delete()) RacesAndClasses.getPlugin().logWarning("Could not delete " + file.getAbsolutePath() + " please delete by hand.");
-			converted++;
 		}
 		
 		try{ convertDoneFile.createNewFile(); }catch(Exception ignored){}

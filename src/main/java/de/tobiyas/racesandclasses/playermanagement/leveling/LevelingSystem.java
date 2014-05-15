@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
+
 public enum LevelingSystem {
 	/**
 	 * The Inbuild Level System
@@ -25,6 +26,11 @@ public enum LevelingSystem {
 	 * The MC level
 	 */
 	VanillaMC,
+	
+	/**
+	 * The Level of McMMO.
+	 */
+	mcMMO,
 	
 	/**
 	 * SkillAPI is used.
@@ -43,18 +49,13 @@ public enum LevelingSystem {
 		if(toParse == null) return RacesAndClasses;
 		
 		toParse = toParse.toLowerCase();
-		if(toParse.startsWith("r")){
-			return RacesAndClasses;
-		}
+		if(toParse.startsWith("r"))	return RacesAndClasses;
+		if(toParse.startsWith("v") || toParse.equalsIgnoreCase("mc")) return VanillaMC;
+		if(toParse.startsWith("mcm")) return mcMMO;
+		if(toParse.startsWith("s"))	return SkillAPI;
 		
-		if(toParse.startsWith("m")){
-			return VanillaMC;
-		}
-		
-		if(toParse.startsWith("s")){
-			return SkillAPI;
-		}
-		
+		//at least try to parse from names.
+		try{ return LevelingSystem.valueOf(toParse.toUpperCase()); }catch(Throwable exp){}
 		return RacesAndClasses;
 	}
 }

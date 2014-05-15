@@ -17,13 +17,13 @@ package de.tobiyas.racesandclasses.commands.config;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_ConfigRegenerate implements CommandExecutor {
+public class CommandExecutor_ConfigRegenerate extends AbstractCommand {
 
 	/**
 	 * The Plugin to use.
@@ -32,16 +32,18 @@ public class CommandExecutor_ConfigRegenerate implements CommandExecutor {
 	
 	
 	public CommandExecutor_ConfigRegenerate() {
+		super("configregenerate");
+		
 		this.plugin = RacesAndClasses.getPlugin();
 
-		String command = "configregenerate";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "configregenerate";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	

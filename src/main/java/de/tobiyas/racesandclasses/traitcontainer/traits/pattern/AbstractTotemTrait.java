@@ -35,7 +35,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractMagicSpellTrait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
-public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
+public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 
 	/**
 	 * The Duration the totem lasts.
@@ -48,9 +48,9 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 	protected int range = 10;
 	
 	
-	@TraitEventsUsed(registerdClasses = {BlockBreakEvent.class})
+	@TraitEventsUsed(bypassClasses = {BlockBreakEvent.class})
 	@Override
-	public void importTrait() {
+	public void generalInit() {
 	}
 	
 	
@@ -90,7 +90,6 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait {
 		
 		return result;
 	}
-
 
 
 

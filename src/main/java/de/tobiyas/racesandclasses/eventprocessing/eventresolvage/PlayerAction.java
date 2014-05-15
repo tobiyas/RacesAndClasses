@@ -74,6 +74,11 @@ public enum PlayerAction {
 	CHANGE_SPELL, 
 	
 	/**
+	 * The player changes his arrow.
+	 */
+	CHANGE_ARROW,
+	
+	/**
 	 * This indicates the player did nothing.
 	 */
 	NONE,

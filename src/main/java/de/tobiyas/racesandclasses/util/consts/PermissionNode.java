@@ -139,6 +139,11 @@ public class PermissionNode {
 	 */
 	public static final String racEdit = prePlugin + "racedit";
 	
+	/**
+	 * The Permission to Add / Remove / Edit Races.
+	 */
+	public static final String playerInfos = prePlugin + "playerinfos";
+	
 	
 	/**
 	 * The Prefix for Race permissions
@@ -149,4 +154,19 @@ public class PermissionNode {
 	 * The Prefix for Class permissions
 	 */
 	public static final String classPermPre = prePlugin + "classes.";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnCreate = prePlugin + "racespawn.create";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnUseOwn = prePlugin + "racespawn.use.own";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnUseOther = prePlugin + "racespawn.use.other";
 }

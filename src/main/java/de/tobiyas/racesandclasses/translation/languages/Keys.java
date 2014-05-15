@@ -35,6 +35,7 @@ public class Keys {
 	public static final String class_changed_to_other = "class_not_exist";
 	public static final String class_not_exist = "class_not_exist";
 	public static final String cooldown_is_ready_again = "cooldown_is_ready_again";	
+	public static final String cooldown_is_ready_in = "cooldown_is_ready_in";	
 	
 	//d
 	
@@ -114,6 +115,7 @@ public class Keys {
 	public static final String race_not_exist = "race_not_exist";
 	public static final String race_changed_to = "race_changed_to";
 	public static final String race_changed_to_other = "race_changed_to_other";
+	public static final String race_spawn_teleport_success = "race_spawn_teleport_success";
 	public static final String reload_message = "reload_message";
 	
 	//s

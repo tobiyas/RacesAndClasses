@@ -36,6 +36,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 public class Listener_WandAndBowEquip implements Listener {
 
 	private RacesAndClasses plugin;
+	
 
 	public Listener_WandAndBowEquip(){
 		plugin = RacesAndClasses.getPlugin();
@@ -57,17 +58,31 @@ public class Listener_WandAndBowEquip implements Listener {
 
 			if(newMatIsWand){
 				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getSpellAmount() > 0){
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.wand") > 0){
+						return;
+					}
+					
 					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell().toString();
 					LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
 							"current_spell", currentActiveSpell);
+					
+					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_wand_message();
+					plugin.getCooldownManager().setCooldown(player.getName(), "message.wand", time);
 				}
 			}
 			
 			if(mat == Material.BOW){
 				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId()).getNumberOfArrowTypes() > 0){
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.bow") > 0){
+						return;
+					}
+					
 					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId()).getCurrentArrow().getDisplayName();
 					LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
 							"current_arrow", currentArrow);
+					
+					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_bow_message();
+					plugin.getCooldownManager().setCooldown(player.getName(), "message.bow", time);
 				}
 			}
 			

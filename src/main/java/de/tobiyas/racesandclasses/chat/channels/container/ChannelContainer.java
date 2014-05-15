@@ -237,7 +237,7 @@ public class ChannelContainer extends Observable{
 		config.set(channelPre + ".prefix" , channelFormat.getPrefix());
 		config.set(channelPre + ".suffix" , channelFormat.getSuffix());
 		config.set(channelPre + ".channelColor" , channelFormat.getColor());
-		config.set(channelPre + ".members" , participants);
+		if(participants.size() > 0) config.set(channelPre + ".members" , participants);
 		config.set(channelPre + ".channelFormat", channelFormat.getFormat());
 		config.set(channelPre + ".channelPassword", channelPassword);
 		config.set(channelPre + ".channelAdmin", channelAdmin);

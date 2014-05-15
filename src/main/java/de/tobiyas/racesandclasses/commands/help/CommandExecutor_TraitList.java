@@ -19,27 +19,28 @@ import java.util.HashSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 
-public class CommandExecutor_TraitList implements CommandExecutor {
+public class CommandExecutor_TraitList extends AbstractCommand {
 
 	private RacesAndClasses plugin;
 
 	public CommandExecutor_TraitList(){
+		super("traitlist", new String[]{"tlist"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "traitlist";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "traitlist";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override

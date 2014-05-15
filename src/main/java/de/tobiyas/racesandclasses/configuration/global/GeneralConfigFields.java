@@ -58,6 +58,10 @@ public class GeneralConfigFields {
 	public static final String worlds_disableOn = "worlds_disableOn";
 	public static final String keep_max_hp_on_disabled_worlds = "keep_max_hp_on_disabled_worlds";
 	
+	//Race-Spawns
+	public static final String race_spawns_enabled = "race_spawns_enabled";
+	public static final String race_spawn_cooldown = "race_spawn_cooldown";
+	public static final String race_spawn_when_dead = "race_spawn_when_dead";
 	
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
@@ -65,6 +69,9 @@ public class GeneralConfigFields {
 	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	public static final String general_disable_commands = "general_disable_commands";
+	public static final String general_disable_aliases = "general_disable_aliases";
+	public static final String general_cooldown_on_wand_message = "general_cooldown_on_wand_message";
+	public static final String general_cooldown_on_bow_message = "general_cooldown_on_bow_message";
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";

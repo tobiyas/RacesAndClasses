@@ -152,6 +152,7 @@ public class TraitStore {
 						}
 						
 						Collections.addAll(wantedEvents, annotation.registerdClasses());
+						Collections.addAll(wantedEvents, annotation.bypassClasses());
 					}
 				}catch(Exception exp){
 					continue;

@@ -27,6 +27,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -113,8 +114,12 @@ public class Listener_PlayerEquipChange implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent closeEvent){
 		boolean disableArmorCheck = plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
+		
 		if(disableArmorCheck) return;
 		if(closeEvent.getPlayer() == null) return; //empty player is possible
+		
+		//only investigate Player inventory.
+		if(closeEvent.getInventory().getType() != InventoryType.PLAYER) return;
 		
 		String name = closeEvent.getPlayer().getName();
 		Player player = plugin.getServer().getPlayer(name);

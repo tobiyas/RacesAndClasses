@@ -108,6 +108,16 @@ public class RaceAPI {
 		return addPlayerToRace(Bukkit.getPlayer(playerName), raceName);
 	}
 	
+	
+	/**
+	 * Returns the Default Race name.
+	 * 
+	 * @return name of default race.
+	 */
+	public static String getDefaultRaceName(){
+		return plugin.getRaceManager().getDefaultHolder().getName();
+	}
+	
 	/**
 	 * Gives the passed Player a Race.
 	 * If he already has one, the Race is changed to the new one.

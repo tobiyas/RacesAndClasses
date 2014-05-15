@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -49,6 +50,8 @@ public class EventActionResolver {
 			return PlayerAction.INTERACT_ENTITY;
 		}
 		
+		
+		
 		if(event instanceof PlayerInteractEvent){
 			//check player change spell first
 			
@@ -64,6 +67,15 @@ public class EventActionResolver {
 						|| ((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_AIR){
 					
 					return PlayerAction.CAST_SPELL;
+				}
+			}
+			
+			//check if player changes Arrow second.
+			if(itemInHands != null && itemInHands.getType() == Material.BOW){
+				if(((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_BLOCK
+						|| ((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_AIR){
+					
+					return PlayerAction.CHANGE_ARROW;
 				}
 			}
 			

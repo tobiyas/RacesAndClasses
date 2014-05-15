@@ -39,6 +39,7 @@ public class EN_Text {
 			+ class_changed_to + ": '&cYour Class has been changed to: &d%CLASS%&c.'\r\n"
 			+ class_changed_to_other + ": '&aClass of &d%PLAYER%&a changed to: &d%CLASS%&d.'\r\n"
 			+ cooldown_is_ready_again + ": '&d%TRAIT_NAME% + &ais ready again.'\r\n"
+			+ cooldown_is_ready_in + ": '&cYou still have Cooldown. Ready in &d%TIME%&c.'\r\n"
 			
 			//d
 			
@@ -117,6 +118,7 @@ public class EN_Text {
 			+ race_not_exist + ": '&cThe race &d%RACE% &cdoes not exist.'\r\n"
 			+ race_changed_to + ": '&cYour Race has been changed to: &d%RACE%&c.'\r\n"
 			+ race_changed_to_other + ": '&aRace of &d%PLAYER%&a changed to: &d%RACE%&d.'\r\n"
+			+ race_spawn_teleport_success + ": '&aWelcome to the Race Spawn of &d%RACE%&a.'\r\n"
 			+ reload_message + ": '&aReload of &dRaces &adone successfully. Time taken: &d %TIME% &ams'\r\n"
 			
 			//s

@@ -35,6 +35,7 @@ import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
@@ -112,18 +113,22 @@ public class PlayerContainer {
 		
 		
 		//choose level manager.
-		switch(plugin.getConfigManager().getGeneralConfig().isConfig_useLevelSystem()){
+		switch(plugin.getConfigManager().getGeneralConfig().getConfig_useLevelSystem()){
 			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(playerUUID); break;
 			case VanillaMC : this.levelManager = new MCPlayerLevelManager(playerUUID); break;
 			case SkillAPI : this.levelManager = new SkillAPILevelManager(playerUUID); break;
+			case mcMMO : this.levelManager = new McMMOLevelManager(playerUUID); break;
 			
 			//if none found (should not happen) the RaC level manager is used.
 			default: this.levelManager = new CustomPlayerLevelManager(playerUUID);
 		}
 		
 		this.spellManager = new PlayerSpellManager(playerUUID);
-		
 		this.maxHealth = 20;
+		
+		//init the display.
+		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID);
+		this.display = new HealthDisplayRunner(config, this);
 	}
 	
 	
@@ -137,22 +142,8 @@ public class PlayerContainer {
 	 * @param maxHealth to create with.
 	 */
 	public PlayerContainer(UUID playerUUID, double maxHealth){
-		this.hasGod = false;
-		this.playerUUID = playerUUID;
+		this(playerUUID);
 		this.maxHealth = maxHealth;
-		this.spellManager = new PlayerSpellManager(playerUUID);
-		
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		
-		MemberConfig memberConfig = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID);
-		if(memberConfig != null){
-			//this should never be null, since it is created if not existent
-			display = new HealthDisplayRunner(memberConfig, this);
-		}
-		
-		arrowManager = new ArrowManager(playerUUID);
-		armorToolManager = new ArmorToolManager(playerUUID);
-		levelManager = new CustomPlayerLevelManager(playerUUID);
 	}
 	
 	
@@ -393,6 +384,7 @@ public class PlayerContainer {
 		Player playerObject = Bukkit.getPlayer(playerUUID);
 		if(playerObject == null) return;
 		checkStats();
+		
 		display.forceHPOut();
 	}
 

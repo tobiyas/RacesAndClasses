@@ -23,15 +23,15 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.value_0_not_
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 
-public class Command_RACLevel implements CommandExecutor {
+public class Command_RACLevel extends AbstractCommand {
 
 	/**
 	 * The plugin called stuff upon
@@ -43,16 +43,18 @@ public class Command_RACLevel implements CommandExecutor {
 	 * Registers the Command "class" to the plugin.
 	 */
 	public Command_RACLevel(){
+		super("raclevel");
+		
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "raclevel";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "raclevel";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}	
 	
 	@Override

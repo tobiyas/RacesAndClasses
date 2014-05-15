@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.arrow_change;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
 
 import java.util.HashMap;
@@ -35,6 +36,8 @@ import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
@@ -45,6 +48,8 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
+import de.tobiyas.racesandclasses.util.traitutil.TraitBypassCheck;
 
 
 public class TraitEventManager{
@@ -145,7 +150,10 @@ public class TraitEventManager{
 					}
 				}
 				
-				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent){
+				boolean hasBypassForEvent = TraitBypassCheck.hasBypass(trait.getClass(), event.getClass());
+				
+				//check if the Spell is changed.
+				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent && !hasBypassForEvent){
 					//only let the current magic spell continue for interaction events
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell() != magicTrait){
@@ -153,17 +161,33 @@ public class TraitEventManager{
 					}
 				}
 				
+				//check if the Arrow needs changed
+				if(trait instanceof AbstractArrow 
+						&& eventWrapper.getPlayerAction() == PlayerAction.CHANGE_ARROW
+						&& plugin.getPlayerManager().getArrowManagerOfPlayer
+						(player.getUniqueId()).getCurrentArrow() == trait
+						&& !hasBypassForEvent){
+					//not we have a sure Arrow switch.
+					AbstractArrow newArrow = plugin.getPlayerManager().getArrowManagerOfPlayer
+					(player.getUniqueId()).nextArrow();
+					
+					if(newArrow != null && newArrow != trait){
+						LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", newArrow.getDisplayName());
+					}
+					continue;
+				}
+				
 				//Check restrictions before calling.
-				if(player != null && trait instanceof TraitWithRestrictions){
+				if(player != null && trait instanceof TraitWithRestrictions && !hasBypassForEvent){
 					if(!((TraitWithRestrictions) trait).checkRestrictions(eventWrapper)) continue;
 				}
 				
 				//Trait is not interested in the event
-				if(!trait.canBeTriggered(eventWrapper)){
+				if(!hasBypassForEvent && !trait.canBeTriggered(eventWrapper)){
 					continue;
 				}
 					
-				if(trait instanceof MagicSpellTrait){
+				if(trait instanceof MagicSpellTrait && !hasBypassForEvent){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).canCastSpell(magicTrait)){
 						magicTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
@@ -175,6 +199,9 @@ public class TraitEventManager{
 				TraitResults result =  trait.trigger(eventWrapper);
 				if(result.isTriggered()){
 					changedSomething = true;
+					
+					//fire event to event system. To let others see.
+					RacesAndClasses.getPlugin().fireEventToBukkit(new TraitTriggerEvent(eventWrapper, trait));
 					
 					if(trait instanceof TraitWithRestrictions && player != null && result.isSetCooldownOnPositiveTrigger()){
 						TraitWithRestrictions restrictionTrait = (TraitWithRestrictions) trait;

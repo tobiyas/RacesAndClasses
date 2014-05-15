@@ -35,17 +35,18 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exi
 import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -57,20 +58,20 @@ import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 
-public class CommandExecutor_Race extends Observable implements CommandExecutor {
+public class CommandExecutor_Race extends Observable implements CommandInterface {
 	private RacesAndClasses plugin;
 
 	public CommandExecutor_Race(){
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "race";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "race";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 		
 		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
@@ -187,7 +188,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 		
 		//Info to a race
-		if(raceCommand.equalsIgnoreCase("info")){
+		if(raceCommand.equalsIgnoreCase("info")){			
 			Player player = (Player) sender;
 			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId()).getName();
 			
@@ -203,8 +204,10 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		if(raceCommand.equalsIgnoreCase("list")){
 			raceList(sender);
 			
-			this.notifyObservers(new TutorialStepContainer(((Player)sender).getUniqueId(), TutorialState.infoRace));
-			this.setChanged();
+			if(sender instanceof Player){
+				this.notifyObservers(new TutorialStepContainer(((Player)sender).getUniqueId(), TutorialState.infoRace));
+				this.setChanged();
+			}
 			return true;
 		}
 			
@@ -367,7 +370,9 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	
 	private void raceList(CommandSender sender){
 		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		AbstractTraitHolder senderRace = plugin.getRaceManager().getHolderOfPlayer(((Player) sender).getUniqueId());
+		AbstractTraitHolder senderRace = sender instanceof Player ? 
+				plugin.getRaceManager().getHolderOfPlayer(((Player) sender).getUniqueId())
+				: null;
 		
 		if(senderRace == plugin.getRaceManager().getDefaultHolder()){
 			races.add(plugin.getRaceManager().getDefaultHolder().getName());
@@ -383,5 +388,26 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				sender.sendMessage(ChatColor.BLUE + race);
 			}
 		}
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		return new LinkedList<String>();
+	}
+
+	@Override
+	public String getCommandName() {
+		return "race";
+	}
+	
+	@Override
+	public String[] getAliases() {
+		return new String[]{};
+	}
+	
+	@Override
+	public boolean hasAliases() {
+		return false;
 	}
 }
