@@ -24,6 +24,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.persistence.file.YAMLOldDataRemover;
+import de.tobiyas.racesandclasses.persistence.file.YAMLOldDataRemover.RemoveCallback;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -46,7 +48,7 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onCommand(final CommandSender sender, Command command, String label,
 			String[] args) {
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.debug)) return true;
@@ -63,6 +65,28 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 				sender.sendMessage(ChatColor.GREEN + "Profiling Event-Timings. Results in " + ChatColor.LIGHT_PURPLE + 
 									Consts.timingLength + ChatColor.GREEN + " seconds.");
 				new DebugTimingEvents(sender);
+				return true;
+			}
+			
+			if(commandString.equalsIgnoreCase("clearolddata")){
+				if(YAMLOldDataRemover.isRunning()){
+					sender.sendMessage(ChatColor.RED + "Already Running.");
+					return true;
+				}
+				
+				YAMLOldDataRemover.removeOldFilesAsync(new RemoveCallback() {
+					@Override
+					public void cleared(int cleared) {
+						sender.sendMessage(ChatColor.GREEN + "Cleared " + ChatColor.AQUA + cleared 
+								+ ChatColor.GREEN + " unused Player Filed.");
+					}					
+					@Override
+					public void alreadyRunning() {
+						sender.sendMessage(ChatColor.RED + "Already Running.");
+					}
+				});
+				
+				sender.sendMessage(ChatColor.GREEN + "Starting... You will be noticed when finished! This may take a while.");
 				return true;
 			}
 			

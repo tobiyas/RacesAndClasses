@@ -16,13 +16,14 @@
 package de.tobiyas.racesandclasses.listeners.externalchatlistener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class DefaultChatReplacer implements Listener {
@@ -39,51 +40,70 @@ public class DefaultChatReplacer implements Listener {
 	}
 	
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void asyncChatHigh(AsyncPlayerChatEvent event){
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
+			//plugin is already handling chat.
+			return;
+		}
+		
+		replace(event);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void asyncChat(AsyncPlayerChatEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			//plugin is already handling chat.
 			return;
 		}
 		
+		replace(event);
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void asyncChatLow(AsyncPlayerChatEvent event){
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
+			//plugin is already handling chat.
+			return;
+		}
+		
+		replace(event);
+	}
+	
+	
+	private void replace(AsyncPlayerChatEvent event){
 		String format = event.getFormat();
 		if(format == null) return;
 		
 		String raceTag = "";
 		String classTag = "";
 
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getPlayer().getUniqueId());
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		AbstractTraitHolder holder = player.getRace();
 		if(holder != null){
 			raceTag = holder.getTag();
 			if("".equals(raceTag)){
-				raceTag = "[" + holder.getName() + "]";
+				raceTag = "[" + holder.getDisplayName() + "]";
 			}
 		}
 		
-		holder = plugin.getClassManager().getHolderOfPlayer(event.getPlayer().getUniqueId());
+		holder = player.getclass();
 		if(holder != null){
 			classTag = holder.getTag();
 			if("".equals(classTag)){
-				classTag = "[" + holder.getName() + "]";
+				classTag = "[" + holder.getDisplayName() + "]";
 			}
 		}
 		
 		String raceReplacement = "{race}";
-		String raceReplacementRegex = "\\{race\\}";
-
 		String classReplacement = "{class}";
-		String classReplacementRegex = "\\{class\\}";
 		
 	    if (format.contains(raceReplacement)) {
-	      String lastColor = ChatColor.getLastColors(event.getMessage().split(raceReplacementRegex)[0]);
-	      raceTag += lastColor;
-	      format = format.replaceAll(raceReplacementRegex, raceTag);
+	      format = format.replace(raceReplacement, raceTag);
 	    }
 
 	    if (format.contains(classReplacement)) {
-			String lastColor = ChatColor.getLastColors(event.getMessage().split(classReplacementRegex)[0]);
-			classTag += lastColor;
-			format = format.replaceAll(classReplacementRegex, classTag);
+			format = format.replace(classReplacement, classTag);
 	    }
 	    
 	    event.setFormat(format);

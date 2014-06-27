@@ -86,7 +86,7 @@ public abstract class HolderSelectionInterface extends
 	 * Creates a Selection Inventory to Select A Holder.
 	 * 
 	 * @param player
-	 * @param parent
+	 * @param parents
 	 * @param holderManager
 	 */
 	public HolderSelectionInterface(Player player,
@@ -242,7 +242,7 @@ public abstract class HolderSelectionInterface extends
 	/**
 	 * This is called when an Holder is pressed.
 	 * 
-	 * @param holder that is pressed.
+	 * @param holders that is pressed.
 	 */
 	private void holderPressed(HolderItemContainer container){
 		switch(currentState){
@@ -254,7 +254,7 @@ public abstract class HolderSelectionInterface extends
 	/**
 	 * Opens an Edit Frame for the current Holder
 	 * 
-	 * @param holder
+	 * @param holders
 	 */
 	private void editHolder(HolderItemContainer holder){
 		builder = holder.getBuilder();
@@ -264,7 +264,7 @@ public abstract class HolderSelectionInterface extends
 	/**
 	 * Removes the Race
 	 * 
-	 * @param holder
+	 * @param holders
 	 */
 	private void removeHolder(HolderItemContainer holder){
 		holderContainers.remove(holder);
@@ -296,7 +296,7 @@ public abstract class HolderSelectionInterface extends
 	/**
 	 * Generates a {@link AbstractHolderBuilder} for the Holder passed.
 	 * 
-	 * @param holder
+	 * @param holders
 	 * @return
 	 */
 	protected abstract AbstractHolderBuilder generateHolderBuilderFor(AbstractTraitHolder holder);

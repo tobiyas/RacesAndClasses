@@ -23,13 +23,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
@@ -38,7 +38,7 @@ public class TraitInventory extends InventoryView {
 	/**
 	 * The Player this inventory belongs too
 	 */
-	private final Player player;
+	private final RaCPlayer player;
 	
 	/**
 	 * The Inventory to show
@@ -52,16 +52,15 @@ public class TraitInventory extends InventoryView {
 	 * 
 	 * @param player to show.
 	 */
-	public TraitInventory(Player player) {
+	public TraitInventory(RaCPlayer player) {
 		this.player = player;
-		
-		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(player.getUniqueId());
+		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(this.player);
 		
 		int size = traits.size();
 		size = ((size / 9) + 1) * 9;
 		if(size < 27) size = 27;
 		
-		this.traitInventory = Bukkit.createInventory(player, size, "Traits of: " + player.getName());
+		this.traitInventory = Bukkit.createInventory(player.getPlayer(), size, "Traits of: " + this.player.getName());
 		
 		fillInventory(traits);
 	}
@@ -121,13 +120,13 @@ public class TraitInventory extends InventoryView {
 	
 	@Override
 	public Inventory getBottomInventory() {
-		return Bukkit.createInventory(player, 36);
+		return Bukkit.createInventory(player.getPlayer(), 36);
 	}
 
 	
 	@Override
 	public HumanEntity getPlayer() {
-		return player;
+		return player.getPlayer();
 	}
 
 	

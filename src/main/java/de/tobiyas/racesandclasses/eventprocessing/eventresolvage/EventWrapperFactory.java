@@ -23,6 +23,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper.RegainResource;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventActionResolver;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventDamageHealResolver;
@@ -42,6 +44,8 @@ public class EventWrapperFactory {
 	public static EventWrapper buildFromEvent(Event event){
 		Player player = EventPlayerResolver.resolvePlayer(event);
 		if(player == null) return null; //we have no interesting event involving a player
+
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		World world = player.getWorld();
 		PlayerAction action = EventActionResolver.resolveAction(event, player);
@@ -59,7 +63,7 @@ public class EventWrapperFactory {
 		
 		
 		return new EventWrapper(
-				player, 
+				racPlayer, 
 				world, 
 				action, 
 				targetEntity, 
@@ -83,6 +87,20 @@ public class EventWrapperFactory {
 	 * @return the almost empty wrapper
 	 */
 	public static EventWrapper buildOnlyWithplayer(Player player){
-		return new EventWrapper(player, null, PlayerAction.NONE, null, null, -1, null, false, null, null, null);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		if(!racPlayer.isOnline()) return null;
+		return buildOnlyWithplayer(racPlayer);
+	}
+
+	/**
+	 * Builds an Fake event with ONLY a player!
+	 * <br>CAUTION this may break some traits if used incorrectly.
+	 * 
+	 * @param player to generate to
+	 * 
+	 * @return the almost empty wrapper
+	 */
+	public static EventWrapper buildOnlyWithplayer(RaCPlayer player){
+		return new EventWrapper(player, player.getWorld(), PlayerAction.NONE, null, null, -1, null, false, null, null, null);
 	}
 }

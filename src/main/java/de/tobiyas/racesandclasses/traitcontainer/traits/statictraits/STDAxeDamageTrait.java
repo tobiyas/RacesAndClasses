@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
-import java.util.Map;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -24,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -33,6 +30,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 
 public class STDAxeDamageTrait extends AbstractBasicTrait {
 	
@@ -47,21 +45,10 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 	private double ironDmg;
 	private double diamondDmg;
 	
-	private AbstractTraitHolder traitHolder;
-	
 	public STDAxeDamageTrait(){
 	}
 	
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder){
-		this.traitHolder = abstractTraitHolder;
-	}
 	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
-
 	@TraitEventsUsed(registerdClasses = {EntityDamageByEntityEvent.class})
 	@Override
 	public void generalInit() {		
@@ -88,7 +75,7 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) {
+	public void setConfiguration(TraitConfiguration configMap) {
 	}
 
 	@Override	
@@ -143,6 +130,12 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 	
 	@Override
 	public boolean isStackable(){
+		return false;
+	}
+	
+
+	@Override
+	public boolean isVisible() {
 		return false;
 	}
 }

@@ -15,31 +15,30 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.tutorial;
 
-import java.util.UUID;
-
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class TutorialStepContainer {
 
-	private UUID playerUUID;
+	private RaCPlayer player;
 	private TutorialState state;
 	private int step; //0 : finished, 1 : step 1 finished, 2 : step 2 finished, ...
 	
 	
-	public TutorialStepContainer(UUID uuid, TutorialState state, int step){
-		this.playerUUID = uuid;
+	public TutorialStepContainer(RaCPlayer player, TutorialState state, int step){
+		this.player = player;
 		this.state = state;
 		this.step = step;
 	}
 	
-	public TutorialStepContainer(UUID playerUUID, TutorialState state){
-		this.playerUUID = playerUUID;
+	public TutorialStepContainer(RaCPlayer player, TutorialState state){
+		this.player = player;
 		this.state = state;
 		this.step = 1;
 	}
 	
-	public UUID getUUID(){
-		return playerUUID;
+	public RaCPlayer getPlayer(){
+		return player;
 	}
 	
 	public TutorialState getState(){
@@ -56,7 +55,7 @@ public class TutorialStepContainer {
 			return false;
 		
 		TutorialStepContainer otherState = (TutorialStepContainer) obj;
-		if(playerUUID != otherState.getUUID()) return false;
+		if(player != otherState.getPlayer()) return false;
 		if(state != otherState.getState()) return false;
 		if(step != otherState.getStep()) return false;
 		

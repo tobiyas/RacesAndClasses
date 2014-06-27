@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -140,15 +141,15 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public PlayerSavingContainer getPlayerContainer(UUID playerUUID) {
+	public PlayerSavingContainer getPlayerContainer(RaCPlayer player) {
 		PlayerSavingContainer container = new PlayerSavingContainer();
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		
 		int level = config.getInt("level.currentLevel", 1);
 		int expOfLevel = config.getInt("level.currentLevelEXP", 0);
 		boolean hasGod = config.getBoolean("hasGod", false);
 		
-		container.setPlayerUUID(playerUUID);
+		container.setPlayerUUID(player.getUniqueId());
 		container.setPlayerLevel(level);
 		container.setPlayerLevelExp(expOfLevel);
 		container.setHasGod(hasGod);
@@ -157,11 +158,11 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public PlayerHolderAssociation getPlayerHolderAssociation(UUID playerUUID) {
+	public PlayerHolderAssociation getPlayerHolderAssociation(RaCPlayer player) {
 		PlayerHolderAssociation container = new PlayerHolderAssociation();
-		container.setPlayerUUID(playerUUID);
+		container.setPlayerUUID(player.getUniqueId());
 		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		String race = config.getString("race");
 		String clazz = config.getString("class");
 
@@ -172,10 +173,10 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByPath(UUID playerUUID,
+	public ConfigOption getPlayerMemberConfigEntryByPath(RaCPlayer player,
 			String entryPath) {
 		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		String pre = "config";
 		
 		boolean visible = config.getBoolean(pre + "." + entryPath + "." + DEFAULT_VISIBLE_PATH, true);
@@ -183,22 +184,22 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 		Object value = config.get(pre + "." + entryPath + "." + DEFAULT_VALUE_PATH, defaultValue);
 		String displayName = config.getString(pre + "." + entryPath + "." + DEFAULT_DISPLAY_NAME_PATH, entryPath);
 		
-		ConfigOption option = new ConfigOption(entryPath, playerUUID, displayName, value, defaultValue, visible);
+		ConfigOption option = new ConfigOption(entryPath, player, displayName, value, defaultValue, visible);
 		return option;
 	}
 
 	@Override
-	public ConfigOption getPlayerMemberConfigEntryByName(UUID playerUUID,
+	public ConfigOption getPlayerMemberConfigEntryByName(RaCPlayer player,
 			String entryName) {
 
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		String pre = "config";
 		
 		Set<String> allOptions = config.getChildren(pre);
 		for(String option : allOptions){
 			String displayName = config.getString(pre + "." + option + "." + DEFAULT_DISPLAY_NAME_PATH, "");
 			if(entryName.equals(displayName)){
-				return getPlayerMemberConfigEntryByPath(playerUUID, option);
+				return getPlayerMemberConfigEntryByPath(player, option);
 			}
 		}
 		
@@ -231,13 +232,13 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	}
 
 	@Override
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(UUID playerUUID) {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+	public List<ConfigOption> getAllConfigOptionsOfPlayer(RaCPlayer player) {
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		Set<String> allOptions = config.getChildren("config");
 		
 		List<ConfigOption> containers = new LinkedList<ConfigOption>();
 		for(String option : allOptions){
-			ConfigOption container = getPlayerMemberConfigEntryByPath(playerUUID, option);
+			ConfigOption container = getPlayerMemberConfigEntryByPath(player, option);
 			containers.add(container);
 		}
 		
@@ -247,10 +248,10 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 	@Override
 	public List<PlayerHolderAssociation> getAllPlayerHolderAssociationsForHolder(
 			String holderName) {
-		Set<UUID> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		List<PlayerHolderAssociation> containers = new LinkedList<PlayerHolderAssociation>();
-		for(UUID player : allPlayers){
+		for(RaCPlayer player : allPlayers){
 			PlayerHolderAssociation container = getPlayerHolderAssociation(player);
 			if(holderName.equals(container.getRaceName())
 					|| holderName.equals(container.getClassName())){
@@ -279,10 +280,10 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 
 	@Override
 	public List<PlayerSavingContainer> getAllPlayerSavingContainers() {
-		Set<UUID> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> allPlayers = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		List<PlayerSavingContainer> containers = new LinkedList<PlayerSavingContainer>();
-		for(UUID player : allPlayers){
+		for(RaCPlayer player : allPlayers){
 			PlayerSavingContainer container = getPlayerContainer(player);
 			containers.add(container);
 		}

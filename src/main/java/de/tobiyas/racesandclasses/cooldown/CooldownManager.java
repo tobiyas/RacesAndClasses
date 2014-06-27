@@ -108,7 +108,7 @@ public class CooldownManager {
 	/**
 	 * Returns a List of all cooldown names the player has at this moment.
 	 * 
-	 * @param playerUUID to check
+	 * @param player to check
 	 * @return 
 	 */
 	public List<String> getAllCooldownsOfPlayer(String playerName) {

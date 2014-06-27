@@ -21,6 +21,9 @@ public class YML_OLD_to_NEW_converter {
 	public static void convert(){
 		File playerDataFolder = new File(Consts.playerDataPath);
 		
+		//if we have an old version we can NOT convert!
+		try{ Bukkit.getPlayer(UUID.randomUUID()); } catch(Throwable exp){ return; }
+		
 		//check if convertion really needed.
 		File convertDoneFile = new File(playerDataFolder, "uuid-transform.done");
 		if(convertDoneFile.exists()) return;

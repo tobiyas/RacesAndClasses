@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
 import de.tobiyas.racesandclasses.translation.Translator;
 import de.tobiyas.racesandclasses.translation.exception.TranslationNotFoundException;
@@ -130,5 +131,42 @@ public class LanguageAPI {
 	 */
 	public static void sendTranslatedMessage(CommandSender sender, String tag){
 		sendTranslatedMessage(sender, tag, new HashMap<String, String>());
+	}
+
+	
+	//BELOW support for RaCPlayer.
+	
+	/**
+	 * Translates a messages and sends it to the passed sender.
+	 * 
+	 * @param player to send to
+	 * @param tag to translate
+	 * @param replacements to replace
+	 */
+	public static void sendTranslatedMessage(RaCPlayer player, String tag, Map<String, String> replacements){
+		sendTranslatedMessage(player.getPlayer(), tag, replacements);
+	}
+	
+	/**
+	 * Translates a messages and sends it to the passed sender.
+	 * 
+	 * @param player to send to
+	 * @param tag to translate
+	 * @param arg The Map to replace: {arg1, replacement1, arg2, replacement2, ....}
+	 */
+	public static void sendTranslatedMessage(RaCPlayer player, String tag, String... arg){
+		Map<String, String> replacements = HashMapUtils.generateStringStringMap(arg);
+		sendTranslatedMessage(player, tag, replacements);
+	}
+	
+	/**
+	 * Translates a messages and sends it to the passed sender.
+	 * <br>No replacements here!
+	 * 
+	 * @param player to send to
+	 * @param tag to translate
+	 */
+	public static void sendTranslatedMessage(RaCPlayer player, String tag){
+		sendTranslatedMessage(player, tag, new HashMap<String, String>());
 	}
 }

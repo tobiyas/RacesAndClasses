@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +23,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -41,8 +41,8 @@ public class RaceReminder implements Runnable {
 	public void run() {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_activate_reminder()){
 			AbstractTraitHolder defaultContainer = plugin.getRaceManager().getDefaultHolder();
-			List<UUID> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
-			for(UUID player : list){
+			List<RaCPlayer> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
+			for(RaCPlayer player : list){
 				if(player == null){
 					continue;
 				}
@@ -59,7 +59,7 @@ public class RaceReminder implements Runnable {
 	 * @param player
 	 * @return
 	 */
-	private boolean hasAnyRacePermission(UUID player) {
+	private boolean hasAnyRacePermission(RaCPlayer player) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()) return true;
 		
 		String name = null;
@@ -91,17 +91,16 @@ public class RaceReminder implements Runnable {
 	 * 
 	 * @param player
 	 */
-	private void postSelectRace(UUID player){
+	private void postSelectRace(RaCPlayer player){
 		if(!hasAnyRacePermission(player)) return;
 		
-		Player realPlayer = Bukkit.getPlayer(player);
-		if(realPlayer != null){
-			realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: You have not selected a race.");
+		if(player != null){
+			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: You have not selected a race.");
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_tutorials_enable()){
-				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: If you want to use the Tutorial, use " + ChatColor.LIGHT_PURPLE + "/racestutorial start");
+				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: If you want to use the Tutorial, use " + ChatColor.LIGHT_PURPLE + "/racestutorial start");
 			}else{
-				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select <racename> " + ChatColor.YELLOW + "to select a race.");
-				realPlayer.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
+				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select <racename> " + ChatColor.YELLOW + "to select a race.");
+				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
 			}
 		}
 	}

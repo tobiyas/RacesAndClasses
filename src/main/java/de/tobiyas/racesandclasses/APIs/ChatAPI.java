@@ -15,10 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
-import org.bukkit.entity.Player;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 
 public class ChatAPI {
@@ -60,10 +59,10 @@ public class ChatAPI {
 	 * If notifyOthers is set to true, others in the channel will be notified to the player's join.
 	 * 
 	 * @param channelName
-	 * @param playerUUID
+	 * @param player
 	 */
-	public static void addPlayerToChannel(String channelName, Player player, boolean notifyOthers){
-		plugin.getChannelManager().joinChannel(player.getUniqueId(), channelName, "", notifyOthers);
+	public static void addPlayerToChannel(String channelName, RaCPlayer player, boolean notifyOthers){
+		plugin.getChannelManager().joinChannel(player, channelName, "", notifyOthers);
 	}
 	
 	
@@ -71,9 +70,9 @@ public class ChatAPI {
 	 * Removes a Player from the channel name passed.
 	 * 
 	 * @param channelName
-	 * @param playerUUID
+	 * @param player
 	 */
-	public static void removePlayerFromChannel(String channelName, Player player, boolean notifyOthers){
-		plugin.getChannelManager().leaveChannel(player.getUniqueId(), channelName, notifyOthers);
+	public static void removePlayerFromChannel(String channelName, RaCPlayer player, boolean notifyOthers){
+		plugin.getChannelManager().leaveChannel(player, channelName, notifyOthers);
 	}
 }

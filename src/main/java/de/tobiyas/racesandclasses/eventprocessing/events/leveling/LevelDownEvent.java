@@ -15,9 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
-import java.util.UUID;
-
 import org.bukkit.event.HandlerList;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class LevelDownEvent extends LevelEvent {
 
@@ -39,12 +39,12 @@ public class LevelDownEvent extends LevelEvent {
 	/**
 	 * Indicates the Player has done a Level down.
 	 * 
-	 * @param playerUUID that leveled.
+	 * @param player that leveled.
 	 * @param fromLevel the Level the Player was before
 	 * @param toLevel the Level the Player is afterwards.
 	 */
-	public LevelDownEvent(UUID playerUUID, int fromLevel, int toLevel) {
-		super(playerUUID);
+	public LevelDownEvent(RaCPlayer player, int fromLevel, int toLevel) {
+		super(player);
 		
 		this.fromLevel = fromLevel;
 		this.toLevel = toLevel;

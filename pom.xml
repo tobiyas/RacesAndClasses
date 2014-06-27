@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>RacesAndClasses</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<name>RacesAndClasses</name>
 	<description>Races and Classes plugin for Craftbukkit</description>
 
@@ -27,7 +27,7 @@
 		<powermock.version>1.4.12</powermock.version>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>RaC</utilsAddition>
-		<bukkit.version>1.7.9-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.7.9-R0.3-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->
@@ -98,6 +98,15 @@
            <version>1.0</version>
            <scope>system</scope>
            <systemPath>${basedir}/libs/Chat/Herochat.jar</systemPath>
+        </dependency>
+		
+		<!-- Heroes -->
+		<dependency>
+           <groupId>com.dthielke</groupId>
+           <artifactId>Heroes</artifactId>
+           <version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${basedir}/libs/Misc/Heroes.jar</systemPath>
         </dependency>
 
 		

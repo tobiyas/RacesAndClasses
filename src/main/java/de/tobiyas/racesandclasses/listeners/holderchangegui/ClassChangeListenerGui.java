@@ -15,8 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.holderchangegui;
 
-import org.bukkit.Bukkit;
-
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
@@ -32,16 +31,18 @@ public class ClassChangeListenerGui extends HolderChangeListenerGui {
 
 	
 	@Override
-	protected HolderPreSelectEvent generateHolderSelectEvent(String playerName,
+	protected HolderPreSelectEvent generateHolderSelectEvent(RaCPlayer player,
 			AbstractTraitHolder newHolder) {
-		return new PreClassSelectEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder);
+		
+		return new PreClassSelectEvent(player.getPlayer(), (ClassContainer) newHolder);
 	}
 
 	
 	@Override
-	protected HolderPreSelectEvent generateHolderChangeEvent(String playerName,
+	protected HolderPreSelectEvent generateHolderChangeEvent(RaCPlayer player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new PreClassChangeEvent(Bukkit.getPlayer(playerName), (ClassContainer) newHolder, (ClassContainer) oldHolder);
+		
+		return new PreClassChangeEvent(player.getPlayer(), (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}
 	
 }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -26,6 +25,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.world.WorldEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class WorldResolver {
 
@@ -103,12 +104,21 @@ public class WorldResolver {
 	}
 	
 	/**
+	 * Checks if the passed Player is on a disabled world.
+	 * 
+	 * @param player to check.
+	 */
+	public static boolean isOnDisabledWorld(RaCPlayer player) {
+		return isOnDisabledWorld(player.getPlayer());
+	}
+	
+	/**
 	 * Checks if the passed Player associated to the player name is on a disabled world.
 	 * 
-	 * @param playerUUID to check.
+	 * @param player to check.
 	 */
 	public static boolean isOnDisabledWorld(String playerName){
-		Player player = Bukkit.getPlayer(playerName);
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(playerName);
 		return isOnDisabledWorld(player);
 	}
 }

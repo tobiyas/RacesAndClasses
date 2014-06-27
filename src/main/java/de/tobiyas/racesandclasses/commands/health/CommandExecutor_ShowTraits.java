@@ -27,6 +27,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.traitgui.TraitInventory;
 
 public class CommandExecutor_ShowTraits extends AbstractCommand {
@@ -71,7 +73,8 @@ public class CommandExecutor_ShowTraits extends AbstractCommand {
 			}
 		}
 		
-		TraitInventory inventory = new TraitInventory(playerToSearch);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(playerToSearch);
+		TraitInventory inventory = new TraitInventory(racPlayer);
 		player.openInventory(inventory);
 		
 		LanguageAPI.sendTranslatedMessage(sender, open_traits,

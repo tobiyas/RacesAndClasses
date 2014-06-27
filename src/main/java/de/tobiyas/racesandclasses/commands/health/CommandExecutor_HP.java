@@ -25,6 +25,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class CommandExecutor_HP extends AbstractCommand {
 
@@ -54,14 +56,14 @@ public class CommandExecutor_HP extends AbstractCommand {
 			return true;
 		}
 		
-		Player player = (Player) sender;
-		if(!plugin.getPlayerManager().displayHealth(player.getUniqueId())){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+		if(!racPlayer.displayHealth()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found)
 					.build());
 		}
 		
-		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getManaManager().outputManaToPlayer();
-		plugin.getPlayerManager().getPlayerLevelManager(player.getUniqueId()).forceDisplay();
+		racPlayer.getManaManager().outputManaToPlayer();
+		plugin.getPlayerManager().getPlayerLevelManager(racPlayer).forceDisplay();
 		return true;
 	}
 

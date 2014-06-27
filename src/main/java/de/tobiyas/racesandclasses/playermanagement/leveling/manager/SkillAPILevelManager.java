@@ -15,14 +15,11 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import com.sucy.skill.SkillAPI;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
@@ -34,7 +31,7 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	/**
 	 * The Playername to this levelsystem.
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
 	
 	/**
@@ -51,8 +48,8 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	/**
 	 * Sets up the Plugin.
 	 */
-	public SkillAPILevelManager(UUID playerUUID) {
-		this.playerUUID = playerUUID;
+	public SkillAPILevelManager(RaCPlayer player) {
+		this.player = player;
 		
 		rescanDisplay();
 	}
@@ -61,22 +58,18 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public int getCurrentLevel() {
 		if(!isSkillAPIPresent()) return 1;
-		
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
 		return getSkillAPI().getPlayer(player.getName()).getLevel();
 	}
 
 	@Override
 	public int getCurrentExpOfLevel() {
 		if(!isSkillAPIPresent()) return 1;
-
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
 		return getSkillAPI().getPlayer(player.getName()).getExp();
 	}
 
 	@Override
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayer() {
+		return player;
 	}
 
 	@Override
@@ -92,8 +85,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public boolean addExp(int exp) {
 		if(!isSkillAPIPresent()) return false;
-		
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
 		getSkillAPI().getPlayer(player.getName()).giveExp(exp);
 		return true;
 	}
@@ -101,8 +92,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public boolean removeExp(int exp) {
 		if(!isSkillAPIPresent()) return false;
-		
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
 		getSkillAPI().getPlayer(player.getName()).loseExp(exp);
 		return true;
 	}
@@ -135,7 +124,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 
 	@Override
 	public void forceDisplay() {
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline()) return;
 		
 		expDisplay.display(getCurrentExpOfLevel(), getSkillAPI().getPlayer(player.getName()).getExpToNextLevel());
@@ -151,8 +139,8 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 			expDisplay.unregister();
 		}
 		
-		expDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL);
+		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
+		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
 	}
 
 	@Override

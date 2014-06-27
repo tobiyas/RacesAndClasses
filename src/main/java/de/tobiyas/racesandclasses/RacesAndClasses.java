@@ -93,6 +93,7 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
@@ -200,6 +201,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 * The race Spawn Manager
 	 */
 	protected RaceSpawnManager raceSpawnManager;
+	
+	/**
+	 * The Hots Manger
+	 */
+	protected HotsManager hotsManager;
 	
 	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
@@ -476,7 +482,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			if(internCommand.getCommandName().equalsIgnoreCase(label)){
 				if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
 					sender.sendMessage(ChatColor.RED + "On disabled World.");
-					return false;
+					return true;
 				}
 				
 				if(internCommand.onCommand(sender, null, label, args)){
@@ -493,7 +499,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 				if(alias.equalsIgnoreCase(label)){
 					if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
 						sender.sendMessage(ChatColor.RED + "On disabled World.");
-						return false;
+						return true;
 					}
 					
 					if(internCommand.onCommand(sender, null, label, args)){
@@ -794,6 +800,17 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 	public RaceSpawnManager getRaceSpawnManager() {
 		return raceSpawnManager;
+	}
+
+	/**
+	 * This gets the HotsManager of the Plugin.
+	 * <br>It's loaded over an Lazy init.
+	 * 
+	 * @return {@link HotsManager}
+	 */
+	public HotsManager getHotsManager() {
+		if(hotsManager == null) hotsManager = new HotsManager();
+		return hotsManager;
 	}
 	
 	

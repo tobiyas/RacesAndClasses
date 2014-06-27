@@ -27,6 +27,8 @@ import org.bukkit.event.Listener;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundException;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
@@ -70,10 +72,12 @@ public class ClassChangeSelectionListener implements Listener {
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaceClassSelectionMatrix()){
 			Player playerSelecting = event.getPlayer();
-			String className = event.getClassToSelect().getName();
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(playerSelecting);
 			
-			AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(playerSelecting.getUniqueId());
-			String raceName = holder.getName();
+			String className = event.getClassToSelect().getDisplayName();
+			
+			AbstractTraitHolder holder = player.getRace();
+			String raceName = holder.getDisplayName();
 			
 			//check if the Race can select the class passed.
 			try{
@@ -97,7 +101,7 @@ public class ClassChangeSelectionListener implements Listener {
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForClasses()){
 			Player player = event.getPlayer();
-			String className = event.getClassToSelect().getName();
+			String className = event.getClassToSelect().getDisplayName();
 			
 			String permissionNode = PermissionNode.classPermPre + className;
 			if(!plugin.getPermissionManager().checkPermissionsSilent(player, permissionNode)){
@@ -137,6 +141,7 @@ public class ClassChangeSelectionListener implements Listener {
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		
-		plugin.getPlayerManager().displayHealth(selectEvent.getPlayer().getUniqueId());
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
+		plugin.getPlayerManager().displayHealth(player);
 	}
 }

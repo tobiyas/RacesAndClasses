@@ -27,19 +27,7 @@ public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
 	protected String operation;
 	
 	
-	@Override
-	public void setTraitHolder(AbstractTraitHolder traitHolder){
-		this.traitHolder = traitHolder;
-	}
-	
-	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
-	
 
-	
 	/**
 	 * Calculates the new value by evaluating the operation
 	 * to the old damage value

@@ -15,11 +15,12 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class MemberConfigurationAPI {
 
@@ -46,7 +47,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -68,7 +69,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identidier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -89,7 +90,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identidier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -111,7 +112,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identidier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -130,7 +131,7 @@ public class MemberConfigurationAPI {
 		 * Sets the object to the specific Player. If not found, a new one is created.
 		 * If stored value can not be stored, because it is not supported, false is returned.
 		 * 
-		 * @param playerUUID to save to
+		 * @param player to save to
 		 * @param identifier as display name
 		 * @param value to save
 		 * @param visibleForPlayer if the player can see it
@@ -141,7 +142,8 @@ public class MemberConfigurationAPI {
 		 */
 		@Deprecated
 		private static boolean setValueToPlayer(String playerName, String identifier, Object value, boolean visibleForPlayer){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getPlayer(playerName).getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(playerName);
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				return false;
 			}
@@ -198,7 +200,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identidier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -217,7 +219,7 @@ public class MemberConfigurationAPI {
 		 * 
 		 * If it is false, he can't see it.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identidier the route to the key
 		 * @param value the value to set.
 		 * @param visibleForPlayer if the player can see this value.
@@ -233,7 +235,7 @@ public class MemberConfigurationAPI {
 		 * Sets the object to the specific Player. If not found, a new one is created.
 		 * If stored value can not be stored, because it is not supported, false is returned.
 		 * 
-		 * @param playerUUID to save to
+		 * @param player to save to
 		 * @param identifier as display name
 		 * @param value to save
 		 * @param visibleForPlayer if the player can see it
@@ -241,7 +243,8 @@ public class MemberConfigurationAPI {
 		 * @return true if worked, false otherwise
 		 */
 		private static boolean setValueToPlayer(Player player, String identifier, Object value, boolean visibleForPlayer){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				return false;
 			}
@@ -271,7 +274,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns {@link Integer#MIN_VALUE} if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * 
 		 * @return the Integer value looked for, or {@link Integer#MIN_VALUE} if not found
@@ -294,7 +297,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns {@link Double#MIN_VALUE} if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * 
 		 * @return the Double looked for, or {@link Double#MIN_VALUE} if not found.
@@ -316,7 +319,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Return "" (empty String) if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * 
 		 * @return the String looked for, or "" if not found.
@@ -339,7 +342,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns false if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * 
 		 * @return the boolean looked for, false if not found
@@ -358,14 +361,15 @@ public class MemberConfigurationAPI {
 		 * Gets the Object stored for a specific player.
 		 * Returns the default Value if not found. Null as default is supported.
 		 * 
-		 * @param playerUUID to get the value from
+		 * @param player to get the value from
 		 * @param identifier to search for
 		 * @param defaultValue to return if not worked
 		 * 
 		 * @return the searched Value or the defaultValue if not found.
 		 */
 		private static Object getObjectFromPlayer(String playerName, String identifier, Object defaultValue){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(Bukkit.getPlayer(playerName).getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(playerName);
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null || !config.containsValue(identifier)){
 				return defaultValue;
 			}
@@ -384,7 +388,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns default Value if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * @param defaultValue returned if not found
 		 * 
@@ -408,7 +412,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns default Value if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * @param defaultValue returned if not found
 		 * 
@@ -431,7 +435,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns default Value if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * @param defaultValue returned if not found
 		 * 
@@ -455,7 +459,7 @@ public class MemberConfigurationAPI {
 		 * If it is false, he can't see it.
 		 * Returns default Value if not found.
 		 * 
-		 * @param playerUUID the player to change the config.
+		 * @param player the player to change the config.
 		 * @param identifier the route to the key.
 		 * @param defaultValue returned if not found
 		 * 
@@ -575,7 +579,8 @@ public class MemberConfigurationAPI {
 		 * @return the searched Value or the defaultValue if not found.
 		 */
 		private static Object getObjectFromPlayer(Player player, String identifier, Object defaultValue){
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null || !config.containsValue(identifier)){
 				return defaultValue;
 			}

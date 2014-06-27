@@ -15,16 +15,16 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import java.util.UUID;
-
 import org.bukkit.ChatColor;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public abstract class AbstractDisplay implements Display{
 
 	/**
 	 * The player that this display belongs to
 	 */
-	protected UUID playerUUID;
+	protected RaCPlayer player;
 	
 	/**
 	 * The Color indicating a HIGH amount of left Resource
@@ -53,8 +53,8 @@ public abstract class AbstractDisplay implements Display{
 	 * 
 	 * @param player to display to
 	 */
-	public AbstractDisplay(UUID player, DisplayInfos displayInfo) {
-		this.playerUUID = player;
+	public AbstractDisplay(RaCPlayer player, DisplayInfos displayInfo) {
+		this.player = player;
 		this.displayInfo = displayInfo;
 		
 		changeColorsToInfo();

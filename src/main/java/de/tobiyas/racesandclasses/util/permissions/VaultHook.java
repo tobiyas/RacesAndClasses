@@ -281,14 +281,12 @@ public class VaultHook extends Permission implements Listener {
 	 * @param racesAndClasses to register to.
 	 * @return
 	 */
-	public static VaultHook init(RacesAndClasses racesAndClasses) {
+	public static void init(RacesAndClasses racesAndClasses) {
 		//if vault is not present, we can't use it.
-		if(Bukkit.getPluginManager().getPlugin("Vault") == null) return null;
+		if(Bukkit.getPluginManager().getPlugin("Vault") == null) return;
 		
-		if(hook != null){
+		if(hook == null){
 			hook = new VaultHook(racesAndClasses);
 		}
-		
-		return hook;
 	}
 }

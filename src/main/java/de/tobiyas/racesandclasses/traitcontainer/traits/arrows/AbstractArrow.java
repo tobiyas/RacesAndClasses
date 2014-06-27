@@ -37,6 +37,8 @@ import org.bukkit.metadata.MetadataValue;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
@@ -45,6 +47,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 
 
 public abstract class AbstractArrow extends AbstractBasicTrait {
@@ -65,15 +68,14 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 				event instanceof ProjectileHitEvent ||
 				event instanceof EntityDamageByEntityEvent)) return false;
 		
+		RaCPlayer player = wrapper.getPlayer();
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){
 			PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 			if(!(Eevent.getAction() == Action.LEFT_CLICK_AIR || Eevent.getAction() == Action.LEFT_CLICK_BLOCK)) return false;
 
-			Player player = Eevent.getPlayer();
 			if(!isThisArrow(player)) return false;
-			
-			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
 			if(player.getItemInHand().getType() != Material.BOW) return false;
 	
 			return true;
@@ -83,8 +85,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		if(event instanceof EntityShootBowEvent){
 			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
-			Player player = (Player) Eevent.getEntity();
-			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;			
+			if(!TraitHolderCombinder.checkContainer(player, this)) return false;			
 			if(!isThisArrow(player)) return false;
 			
 			return true;
@@ -97,14 +98,9 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			if(CompatibilityModifier.Shooter.getShooter(Eevent.getEntity()) == null) return false;
 			
 			Arrow arrow = (Arrow) Eevent.getEntity();
-			if(CompatibilityModifier.Shooter.getShooter(arrow).getType() != EntityType.PLAYER) return false;
-			
-			Player player = (Player) CompatibilityModifier.Shooter.getShooter(arrow);
-			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
-
-			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
 			List<MetadataValue> metaValues = arrow.getMetadata(ARROW_META_KEY);
-			
+			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
+
 			boolean found = false;
 			for(MetadataValue value : metaValues){
 				if(getName().equals(value.value())){
@@ -114,8 +110,14 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			}
 			
 			if(!found) return false;
+			if(CompatibilityModifier.Shooter.getShooter(arrow).getType() != EntityType.PLAYER) return false;
 			
-			if(!isThisArrow(player)) return false;
+			RaCPlayer realPlayer = RaCPlayerManager.get().getPlayer((Player) CompatibilityModifier.Shooter.getShooter(arrow));
+			if(!TraitHolderCombinder.checkContainer(realPlayer, this)) return false;
+
+			
+			
+			if(!isThisArrow(realPlayer)) return false;
 			
 			return true;
 		}
@@ -134,8 +136,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			if(Eevent.getEntity() == shooter && realArrow.getTicksLived() < 10)
 				return false;
 
-			Player player = (Player) shooter;
-			if(!TraitHolderCombinder.checkContainer(player.getUniqueId(), this)) return false;
+			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
 			
 			if(realArrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
 			List<MetadataValue> metaValues = realArrow.getMetadata(ARROW_META_KEY);
@@ -150,6 +151,8 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 			
 			if(!found) return false;
 			
+			//you can not hit your allies.
+			if(EnemyChecker.areAllies(realArrow, Eevent.getEntity())) return false;
 			if(!isThisArrow(player)) return false;
 
 			return true;
@@ -164,8 +167,8 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	 * @param player to check
 	 * @return true if active, false if not.
 	 */
-	private boolean isThisArrow(Player player){
-		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId());
+	private boolean isThisArrow(RaCPlayer player){
+		ArrowManager arrowManager = player.getArrowManager();
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return false;
 		return true;
@@ -183,8 +186,7 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		TraitResults result = new TraitResults();
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){
-			PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
-			changeArrowType(Eevent.getPlayer());
+			changeArrowType(eventWrapper.getPlayer());
 			return result.setTriggered(false);
 		}
 			
@@ -225,8 +227,8 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	/**
 	 * Changes to the next arrow.
 	 */
-	protected void changeArrowType(Player player){
-		ArrowManager arrowManager = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getUniqueId());
+	protected void changeArrowType(RaCPlayer player){
+		ArrowManager arrowManager = player.getArrowManager();
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return;
 		
@@ -325,6 +327,14 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		})
 	@Override
 	public void generalInit() {
+	}
+
+	
+	@Override
+	public boolean notifyTriggeredUplinkTime(EventWrapper wrapper) {
+		if(wrapper.getPlayer().getArrowManager().getCurrentArrow() != this) return false;
+		
+		return super.notifyTriggeredUplinkTime(wrapper);
 	}
 	
 	

@@ -140,9 +140,19 @@ public class PermissionNode {
 	public static final String racEdit = prePlugin + "racedit";
 	
 	/**
-	 * The Permission to Add / Remove / Edit Races.
+	 * The Permission to use /playerifo
 	 */
-	public static final String playerInfos = prePlugin + "playerinfos";
+	public static final String playerInfos = prePlugin + "playerinfos.command";
+	
+	/**
+	 * The Permission to show location on /playerinfo
+	 */
+	public static final String playerInfosLocation = prePlugin + "playerinfos.location";
+	
+	/**
+	 * The Permission to show Others on /playerinfo
+	 */
+	public static final String playerInfosOthers = prePlugin + "playerinfos.others";
 	
 	
 	/**

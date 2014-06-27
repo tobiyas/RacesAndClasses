@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 ;
@@ -28,7 +30,7 @@ public class BanContainer {
 	/**
 	 * Map of all banned players to how long they are banned.
 	 */
-	private HashMap<UUID, Integer> banned = new HashMap<UUID, Integer>();
+	private final HashMap<RaCPlayer, Integer> banned = new HashMap<RaCPlayer, Integer>();
 
 	public BanContainer() {
 	}
@@ -44,9 +46,10 @@ public class BanContainer {
 		for (String player : bannedPlayers) {
 			try{
 				UUID id = UUID.fromString(player);
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(id);
 				
 				int time = config.getInt(channelPre + ".banned." + player);
-				banned.put(id, time);
+				banned.put(racPlayer, time);
 			}catch(IllegalArgumentException exp){ continue; }
 		}
 	}
@@ -59,10 +62,10 @@ public class BanContainer {
 	 * Returns if banning worked. If it worked, true is returned.
 	 * If the player is already banned, false is returned.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @param time
 	 */
-	public boolean banPlayer(UUID player, int time) {
+	public boolean banPlayer(RaCPlayer player, int time) {
 		if (!banned.containsKey(player)) {
 			banned.put(player, time);
 			return true;
@@ -77,9 +80,9 @@ public class BanContainer {
 	 * Returns true if unbanning worked.
 	 * Returns false if the Player was not found.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 */
-	public boolean unbanPlayer(UUID player) {
+	public boolean unbanPlayer(RaCPlayer player) {
 		return banned.remove(player) != null;
 	}
 
@@ -91,9 +94,9 @@ public class BanContainer {
 	 * @param channelPre
 	 */
 	public void saveContainer(YAMLConfigExtended config, String channelPre) {
-		for (UUID name : banned.keySet()) {
+		for (RaCPlayer name : banned.keySet()) {
 			int time = banned.get(name);
-			config.set(channelPre + ".banned." + name, time);
+			config.set(channelPre + ".banned." + name.getUniqueId(), time);
 		}
 		
 		if(banned.keySet().size() == 0){
@@ -107,10 +110,10 @@ public class BanContainer {
 	 * Returns the time still banned.
 	 * If not found, returns -1.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @return
 	 */
-	public int isBanned(UUID player) {
+	public int isBanned(RaCPlayer player) {
 		return banned.containsKey(player) ? banned.get(player) : -1;
 	}
 
@@ -120,7 +123,7 @@ public class BanContainer {
 	 * 
 	 */
 	public void tick() {
-		for (UUID name : banned.keySet()) {
+		for (RaCPlayer name : banned.keySet()) {
 			int duration = banned.get(name);
 			if (duration == Integer.MAX_VALUE){
 				continue;

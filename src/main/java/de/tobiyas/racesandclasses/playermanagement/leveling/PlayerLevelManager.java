@@ -15,8 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
-import java.util.UUID;
-
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 
 public interface PlayerLevelManager {
@@ -38,9 +37,9 @@ public interface PlayerLevelManager {
 	
 	
 	/**
-	 * @return the playerUUID
+	 * @return the player
 	 */
-	public UUID getPlayerUUID();
+	public RaCPlayer getPlayer();
 	
 	
 	/**

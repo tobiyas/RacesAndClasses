@@ -29,7 +29,7 @@ public class LevelPackage {
 	
 	
 	/**
-	 * This is a holder for a Level.
+	 * This is a holders for a Level.
 	 * It contains the level + the Max EXP of the Level.
 	 * 
 	 * WARNING: The maxEXP and level can never be smaller than 1.

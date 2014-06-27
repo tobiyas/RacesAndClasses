@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -91,10 +92,13 @@ public class CommandExecutor_PermissionCheck extends AbstractCommand {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getRaceManager().getHolderByName(holderName);
 			
-			boolean senderContained = (sender instanceof Player) ? holder.containsPlayer(((Player) sender).getUniqueId()) : false;
+			boolean senderContained = (sender instanceof Player) ? 
+					holder.containsPlayer(RaCPlayerManager.get().getPlayer(((Player) sender))) : 
+					false;
+			
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.racePermPre + holderName);
 			
-			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
+			sender.sendMessage(ChatColor.BLUE + holder.getDisplayName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
 		
@@ -116,10 +120,13 @@ public class CommandExecutor_PermissionCheck extends AbstractCommand {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderByName(holderName);
 			
-			boolean senderContained = (sender instanceof Player) ? holder.containsPlayer(((Player)sender).getUniqueId()) : false;
+			boolean senderContained = (sender instanceof Player) ? 
+					holder.containsPlayer(RaCPlayerManager.get().getPlayer(((Player) sender))) : 
+					false;
+					
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.classPermPre + holderName);
 			
-			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
+			sender.sendMessage(ChatColor.BLUE + holder.getDisplayName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
 		

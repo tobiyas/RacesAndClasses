@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permission
 
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import net.milkbowl.vault.permission.Permission;
 
@@ -28,6 +27,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class PermissionRegisterer implements Runnable{
@@ -40,7 +40,7 @@ public class PermissionRegisterer implements Runnable{
 	/**
 	 * The Member config to set the Permissions to
 	 */
-	private final Map<UUID, AbstractTraitHolder> memberList;
+	private final Map<RaCPlayer, AbstractTraitHolder> memberList;
 	
 	/**
 	 * The prefix of the Permissions
@@ -59,7 +59,7 @@ public class PermissionRegisterer implements Runnable{
 	private static String permissionSpecificPrefix = "";
 	
 	
-	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<UUID, AbstractTraitHolder> memberList, String typeName){
+	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<RaCPlayer, AbstractTraitHolder> memberList, String typeName){
 		this.traitHolderList = traitHolderList;
 		this.memberList = memberList;
 		this.typeName = typeName;
@@ -166,20 +166,13 @@ public class PermissionRegisterer implements Runnable{
 	private void giveMembersAccessToGroups() {
 		if(memberList == null || memberList.isEmpty()) return;
 		
-		for(UUID member : memberList.keySet()){
+		for(RaCPlayer member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
 			if(holder == null) continue;
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			
-			String name = null;
-			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
-				if(offlinePlayer.getUniqueId().equals(member)){
-					name = offlinePlayer.getName();
-					break;
-				}
-			}
-			
+			String name = member.getName();
 			if(name == null) continue;
 			
 			
@@ -246,27 +239,17 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from all groups with the passed prefix.
 	 * This only works if Vault is active.
 	 */
-	public static void removePlayer(UUID player, String prefix) {
+	public static void removePlayer(RaCPlayer player, String prefix) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){
-			String name = null;
-			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
-				if(offlinePlayer.getUniqueId().equals(player)){
-					name = offlinePlayer.getName();
-					break;
-				}
-			}
-			
-			if(name == null) return;
-			
-			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, name);
+		if(vaultPermissions != null){			
+			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player.getName());
 			if(groupNames == null) return; //nothing to do
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null, name, permissionSpecificPrefix + groupName);
+					vaultPermissions.playerRemoveGroup((String)null,  player.getName(), permissionSpecificPrefix + groupName);
 				}
 			}
 		}
@@ -277,22 +260,12 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from the group.
 	 * This only works if Vault is active.
 	 */
-	public static void addPlayer(UUID player, String groupName) {
+	public static void addPlayer(RaCPlayer player, String groupName) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){
-			String name = null;
-			for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
-				if(offlinePlayer.getUniqueId().equals(player)){
-					name = offlinePlayer.getName();
-					break;
-				}
-			}
-			
-			if(name == null) return;
-			
-			vaultPermissions.playerAddGroup((String) null, name, permissionSpecificPrefix + groupName);
+		if(vaultPermissions != null){	
+			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
 		}
 	}
 

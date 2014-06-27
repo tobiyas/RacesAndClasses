@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
@@ -40,7 +40,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractHolderManager extends Observable{
 
-	protected Map<UUID, AbstractTraitHolder> memberList;
+	protected Map<RaCPlayer, AbstractTraitHolder> memberList;
 	protected Set<AbstractTraitHolder> traitHolderList;
 	protected YAMLConfigExtended traitHolderConfig;	
 	
@@ -48,7 +48,7 @@ public abstract class AbstractHolderManager extends Observable{
 	
 	
 	/**
-	 * Creation of the holder with it's paths to save / load from / to
+	 * Creation of the holders with it's paths to save / load from / to
 	 * 
 	 * @param memberPath
 	 * @param traitHolderConfigPath
@@ -58,7 +58,7 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		this.traitHolderConfig = new YAMLConfigExtended(traitHolderConfigPath);
 	
-		memberList = new HashMap<UUID, AbstractTraitHolder>();
+		memberList = new HashMap<RaCPlayer, AbstractTraitHolder>();
 		traitHolderList = new HashSet<AbstractTraitHolder>();
 	}
 	
@@ -95,17 +95,22 @@ public abstract class AbstractHolderManager extends Observable{
 			return;
 		}
 		
+		//1st step. Load basic structure.
 		for(String holderName : traitHolderConfig.getRootChildren()){
-			try{
-				AbstractTraitHolder container = generateTraitHolderAndLoad(traitHolderConfig, holderName);
+				AbstractTraitHolder container = generateTraitHolder(traitHolderConfig, holderName);
 				if(container != null){
 					traitHolderList.add(container);
 				}
-				
+		}
+		
+		//2nd step. load Holder.
+		for(AbstractTraitHolder holder : traitHolderList){
+			try{
+				holder.load();
 			} catch (HolderParsingException exp) {
 				String errorMessage = "Error: ";
 				if(exp instanceof HolderConfigParseException){
-					errorMessage += "ConfigTotal of: " + holderName + " is mal formated. Please relook synthax!";
+					errorMessage += "ConfigTotal of: " + holder.getConfigNodeName() + " is mal formated. Please relook synthax!";
 				}else if(exp instanceof HolderTraitParseException){
 					HolderTraitParseException rtpe = (HolderTraitParseException) exp;
 					errorMessage = rtpe.getLocalizedMessage();
@@ -114,46 +119,51 @@ public abstract class AbstractHolderManager extends Observable{
 				plugin.log(errorMessage);
 			}
 		}
+		
+		//3rd step. Read parents.
+		for(AbstractTraitHolder holder : traitHolderList){
+			holder.readParents();
+		}
 	}
 
 	/**
 	 * Generates the correct {@link AbstractTraitHolder} for the config and the name.
 	 * 
 	 * @param traitHolderConfig
-	 * @param holderName
+	 * @param configNodeName
 	 * @return
 	 */
-	protected abstract AbstractTraitHolder generateTraitHolderAndLoad(
-			YAMLConfigExtended traitHolderConfig, String holderName) throws HolderParsingException;
+	protected abstract AbstractTraitHolder generateTraitHolder(
+			YAMLConfigExtended traitHolderConfig, String holderName);
 
 	
 	/**
 	 * Reads the Members from PlayerData or DB.
 	 */
 	protected void readMemberList(){
-		memberList = new HashMap<UUID, AbstractTraitHolder>();
+		memberList = new HashMap<RaCPlayer, AbstractTraitHolder>();
 
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
 			for(AbstractTraitHolder traitHolder : traitHolderList){
 				if(traitHolder == null) continue;
 				
 				List<PlayerHolderAssociation> holderList = plugin.getDatabase().find(PlayerHolderAssociation.class).where()
-						.ieq(getDBFieldName(), traitHolder.getName()).findList();
+						.ieq(getDBFieldName(), traitHolder.getDisplayName()).findList();
 				for(PlayerHolderAssociation holder : holderList){
-					memberList.put(holder.getPlayerUUID(), traitHolder);				
+					RaCPlayer player = RaCPlayerManager.get().getPlayer(holder.getPlayerUUID());
+					memberList.put(player, traitHolder);				
 				}
 			}
 		}else{
-			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
-			Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
+			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getDisplayName();
+			Set<RaCPlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
 			
-			for(UUID playerUUID : players){
-				Player player = Bukkit.getPlayer(playerUUID);
+			for(RaCPlayer player : players){
 				if(player == null || !player.isOnline()) continue;
 				
-				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-				memberList.put(playerUUID, getHolderByName(holderName));
+				memberList.put(player, getHolderByName(holderName));
 			}
 		}			
 	}
@@ -163,19 +173,17 @@ public abstract class AbstractHolderManager extends Observable{
 	 * <br>Only loads if not exist.
 	 * <br>Only loads if not load.
 	 * 
-	 * @param playerUUID to load.
+	 * @param player to load.
 	 */
-	public void loadIfNotExists(UUID playerUUID){
-		if(memberList.containsKey(playerUUID)) return;
+	public void loadIfNotExists(RaCPlayer player){
+		if(memberList.containsKey(player)) return;
 		
-		String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getName();
-		
-		Player player = Bukkit.getPlayer(playerUUID);
+		String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getDisplayName();
 		if(player == null || !player.isOnline()) return;
 		
-		YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player.getUniqueId());
 		String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-		memberList.put(playerUUID, getHolderByName(holderName));
+		memberList.put(player, getHolderByName(holderName));
 	}
 	
 	/**
@@ -189,15 +197,15 @@ public abstract class AbstractHolderManager extends Observable{
 	
 	/**
 	 * Adds a player name to the member list.
-	 * Any previous holder is overwritten.
+	 * Any previous holders is overwritten.
 	 * True is returned, if it worked.
-	 * If the holder name does not exist, false is returned.
+	 * If the holders name does not exist, false is returned.
 	 *
 	 * @param player to add
 	 * @param potentialHolder to add the player to
 	 * @return if it worked
 	 */
-	public boolean addPlayerToHolder(UUID player, String potentialHolder, boolean callAfterEvent){
+	public boolean addPlayerToHolder(RaCPlayer player, String potentialHolder, boolean callAfterEvent){
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
 		
@@ -228,7 +236,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectedEvent generateAfterSelectEvent(UUID player, AbstractTraitHolder newHolder);
+	protected abstract HolderSelectedEvent generateAfterSelectEvent(RaCPlayer player, AbstractTraitHolder newHolder);
 
 	
 	/**
@@ -240,29 +248,29 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectedEvent generateAfterChangeEvent(UUID player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
+	protected abstract HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**
 	 * Saves the new Holder to the DB or YAML
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @param newHolder
 	 */
-	private void saveNewHolderToDB(UUID player, AbstractTraitHolder newHolder, boolean rescanAfter){
+	private void saveNewHolderToDB(RaCPlayer player, AbstractTraitHolder newHolder, boolean rescanAfter){
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 		String newHolderName = "";
 		if(newHolder != null){
-			newHolderName = newHolder.getName();			
+			newHolderName = newHolder.getDisplayName();			
 		}
 		
 		if(useDB){
-			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("playerUUID", player.toString()).findUnique();
+			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("player", player.toString()).findUnique();
 			if(container == null){
 				container = new PlayerHolderAssociation();
-				container.setPlayerUUID(player);
+				container.setPlayerUUID(player.getUniqueId());
 				container.setClassName(null);
-				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getName());
+				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getDisplayName());
 			}
 			
 			saveContainerToDBField(container, newHolderName);
@@ -287,15 +295,15 @@ public abstract class AbstractHolderManager extends Observable{
 	 * Saves all containers.
 	 */
 	public void saveAll(){
-		for(Map.Entry<UUID, AbstractTraitHolder> entry : memberList.entrySet()){
-			UUID playerUUID = entry.getKey();
+		for(Map.Entry<RaCPlayer, AbstractTraitHolder> entry : memberList.entrySet()){
+			RaCPlayer player = entry.getKey();
 			AbstractTraitHolder holder = entry.getValue();
 			if(holder == null){
 				holder = getDefaultHolder();
 				entry.setValue(getDefaultHolder());
 			}
 			
-			saveNewHolderToDB(playerUUID, holder, false);
+			saveNewHolderToDB(player, holder, false);
 		}
 	}
 	
@@ -319,10 +327,9 @@ public abstract class AbstractHolderManager extends Observable{
 	 * Resets the movement speed of a Player.
 	 * The Player is identified by the name.
 	 * 
-	 * @param playerUUID to set the speed
+	 * @param player to set the speed
 	 */
-	private void resetPlayerMovementSpeed(UUID playerUUID){
-		Player player = Bukkit.getPlayer(playerUUID);
+	private void resetPlayerMovementSpeed(RaCPlayer player){
 		if(player != null && player.isOnline()){
 			player.getPlayer().setWalkSpeed(0.2f);
 		}
@@ -334,12 +341,14 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * Null if none found.
 	 * 
-	 * @param holderName
+	 * @param configNodeName
 	 * @return
 	 */
 	public AbstractTraitHolder getHolderByName(String holderName){
+		if(holderName == null) return getDefaultHolder();
+		
 		for(AbstractTraitHolder holder : traitHolderList){
-			if(holder.getName().equalsIgnoreCase(holderName)){
+			if(holder.getDisplayName().equalsIgnoreCase(holderName)){
 				return holder;
 			}
 		}
@@ -365,7 +374,7 @@ public abstract class AbstractHolderManager extends Observable{
 	 * 
 	 * @return true if worked, false otherwise
 	 */
-	public boolean changePlayerHolder(UUID player, String newHolderName, boolean callEvent){
+	public boolean changePlayerHolder(RaCPlayer player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
 		AbstractTraitHolder oldHolder = getHolderOfPlayer(player);
@@ -376,7 +385,7 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
 			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			memberConfig.set("playerdata." + player + "." + getConfigPrefix(), null);
+			memberConfig.set(getConfigPrefix(), null);
 		}
 		
 		boolean worked = addPlayerToHolder(player, newHolderName, false);
@@ -394,20 +403,20 @@ public abstract class AbstractHolderManager extends Observable{
 	 * Returns the Holder that is associated to a player.
 	 * 
 	 * If the player is not registered, a defaultHolder is returned.
-	 * The Player gets the default holder linked if he has none.
+	 * The Player gets the default holders linked if he has none.
 	 * 
 	 * @see #getDefaultHolder()
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @return
 	 */
-	public AbstractTraitHolder getHolderOfPlayer(UUID playerUUID){
-		if(playerUUID == null) return null;
+	public AbstractTraitHolder getHolderOfPlayer(RaCPlayer player){
+		if(player == null) return null;
 		
-		AbstractTraitHolder holder = memberList.get(playerUUID);
+		AbstractTraitHolder holder = memberList.get(player);
 		if(holder == null){
 			holder = getStartingHolder();
-			memberList.put(playerUUID, holder);
+			memberList.put(player, holder);
 		}
 		
 		return holder;
@@ -418,13 +427,13 @@ public abstract class AbstractHolderManager extends Observable{
 	 * This method gets starting Holder.
 	 * <br>This is the one specified in the ConfigTotal or the Default TraitHolder.
 	 * 
-	 * @return The holder put into (can be null)
+	 * @return The holders put into (can be null)
 	 */
 	protected abstract AbstractTraitHolder getStartingHolder();
 	
 	
 	/**
-	 * Returns the default holder for the Manager
+	 * Returns the default holders for the Manager
 	 * 
 	 * @return
 	 */
@@ -439,27 +448,27 @@ public abstract class AbstractHolderManager extends Observable{
 	public List<String> getAllHolderNames(){
 		List<String> holderNameList = new LinkedList<String>();
 		for(AbstractTraitHolder holder : traitHolderList){
-			holderNameList.add(holder.getName());
+			holderNameList.add(holder.getDisplayName());
 		}
 		
 		return holderNameList;
 	}
 	
 	/**
-	 * Returns all players of a holder
+	 * Returns all players of a holders
 	 * 
 	 * if null is passed, an empty list is returnemd is returned.
 	 * 
-	 * @param holderName
+	 * @param configNodeName
 	 * @return
 	 */
-	public List<UUID> getAllPlayersOfHolder(AbstractTraitHolder holder) {
+	public List<RaCPlayer> getAllPlayersOfHolder(AbstractTraitHolder holder) {
 		if(holder == null){
-			return new LinkedList<UUID>();
+			return new LinkedList<RaCPlayer>();
 		}
 
-		List<UUID> holderMemberList = new LinkedList<UUID>();
-		for(UUID playerUUID : memberList.keySet()){
+		List<RaCPlayer> holderMemberList = new LinkedList<RaCPlayer>();
+		for(RaCPlayer playerUUID : memberList.keySet()){
 			AbstractTraitHolder toCheckAgainst = memberList.get(playerUUID);
 			if(holder.equals(toCheckAgainst)){
 				holderMemberList.add(playerUUID);
@@ -479,7 +488,7 @@ public abstract class AbstractHolderManager extends Observable{
 
 		for (AbstractTraitHolder container : traitHolderList) {
 			if (!container.equals(getDefaultHolder())) {
-				holderList.add(container.getName());
+				holderList.add(container.getDisplayName());
 			}			
 		}
 

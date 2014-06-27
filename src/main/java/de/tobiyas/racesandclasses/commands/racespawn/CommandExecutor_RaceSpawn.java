@@ -23,6 +23,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -87,8 +89,9 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		
 		//to other spawn
 		if(args.length == 1){
-			AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
-			String own = holder.getName();
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			AbstractTraitHolder holder = racPlayer.getRace();
+			String own = holder.getDisplayName();
 			String wanted = args[0];
 			
 			if(checkCooldown(player)) return true;
@@ -157,10 +160,11 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 	 * @return if worked or not.
 	 */
 	private boolean sendPlayerToOwnSpawn(Player player){
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		AbstractTraitHolder holder = racPlayer.getRace();
 		if(holder == null) return false;
 		
-		return sendPlayerToSpawn(player, holder.getName());
+		return sendPlayerToSpawn(player, holder.getDisplayName());
 	}
 
 }

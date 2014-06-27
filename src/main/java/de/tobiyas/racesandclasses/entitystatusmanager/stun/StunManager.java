@@ -31,6 +31,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.eventprocessing.events.stun.PlayerStunnedEvent;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class StunManager {
@@ -161,7 +163,7 @@ public class StunManager {
 	 * 
 	 * @return if it worked.
 	 */
-	public boolean stunEntity(Entity entity, int time){
+	public boolean stunEntity(Entity stunner, Entity entity, int time){
 		if(entity == null || time <= 0){
 			return false;
 		}
@@ -170,6 +172,20 @@ public class StunManager {
 		if(restTime > time){
 			return false;
 		}else{
+			
+			//Check for cancled Damage. This indicates Imun.
+			if(stunner != null){
+				if(EnemyChecker.areAllies(stunner, entity)) return false;
+			}
+			
+			if(entity instanceof Player){
+				PlayerStunnedEvent event = new PlayerStunnedEvent((Player)entity, time);
+				plugin.fireEventToBukkit(event);
+				
+				if(event.isCancelled() || event.getTimeInTicks() <= 0) return false;
+				time = event.getTimeInTicks();
+			}
+			
 			StunOptions stunOptions = new StunOptions();
 			stunOptions.stunLocation = entity.getLocation();
 			stunOptions.timeRemaining = time;

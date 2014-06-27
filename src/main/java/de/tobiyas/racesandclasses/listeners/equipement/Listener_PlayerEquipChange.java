@@ -33,7 +33,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
 import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 import de.tobiyas.racesandclasses.util.items.ArmorContainer;
@@ -42,7 +45,7 @@ import de.tobiyas.racesandclasses.util.items.ItemUtils.ArmorSlot;
 
 public class Listener_PlayerEquipChange implements Listener {
 
-	private Map<String, ArmorContainer> inventoryCache;
+	private Map<RaCPlayer, ArmorContainer> inventoryCache;
 	
 	/**
 	 * The plugin to register to
@@ -57,7 +60,7 @@ public class Listener_PlayerEquipChange implements Listener {
 	public Listener_PlayerEquipChange(){
 		plugin = RacesAndClasses.getPlugin();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		inventoryCache = new HashMap<String, ArmorContainer>();
+		inventoryCache = new HashMap<RaCPlayer, ArmorContainer>();
 	}
 	
 	
@@ -90,6 +93,7 @@ public class Listener_PlayerEquipChange implements Listener {
 		boolean disableArmorCheck = plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
 		if(disableArmorCheck) return;
 		
+		
 		InventoryHolder invHolder = inventEvent.getInventory().getHolder();
 		if(invHolder == null || !(invHolder instanceof HumanEntity)){
 			//empty player is possible
@@ -97,19 +101,16 @@ public class Listener_PlayerEquipChange implements Listener {
 		}
 		
 		HumanEntity holder = (HumanEntity) invHolder;
-		String name = holder.getName();
+		if(!(holder instanceof Player)) return;
 		
-		Player player = plugin.getServer().getPlayer(name);
-		if(player == null){
-			return;
-		}
-		
-		if(!inventoryCache.containsKey(name)){
-			inventoryCache.put(name, new ArmorContainer(player.getInventory()));
+		RaCPlayer player = RaCPlayerManager.get().getPlayer((Player) holder);
+		boolean onDisabledWorld = WorldResolver.isOnDisabledWorld(player);
+		if(onDisabledWorld) return;
+				
+		if(!inventoryCache.containsKey(player.getName())){
+			inventoryCache.put(player, new ArmorContainer(player.getPlayer().getInventory()));
 		}
 	}
-	
-	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent closeEvent){
@@ -119,33 +120,31 @@ public class Listener_PlayerEquipChange implements Listener {
 		if(closeEvent.getPlayer() == null) return; //empty player is possible
 		
 		//only investigate Player inventory.
-		if(closeEvent.getInventory().getType() != InventoryType.PLAYER) return;
+		if(closeEvent.getView().getBottomInventory().getType() != InventoryType.PLAYER) return;
 		
-		String name = closeEvent.getPlayer().getName();
-		Player player = plugin.getServer().getPlayer(name);
+		HumanEntity humanEntity = closeEvent.getPlayer();
+		if(!(humanEntity instanceof Player)) return;
 		
-		ArmorContainer oldCache = inventoryCache.get(name);
-		if(oldCache == null){
-			return;
-		}
+		RaCPlayer player = RaCPlayerManager.get().getPlayer((Player)humanEntity);
+		ArmorContainer oldCache = inventoryCache.get(player);
 		
-		if(player == null){
-			inventoryCache.remove(name);
-			return;
-		}
+		if(oldCache == null) return;
+		
+		boolean onDisabledWorld = WorldResolver.isOnDisabledWorld(player);
+		if(onDisabledWorld) return;
 		
 		List<ItemStack> changed = oldCache.stillSame(closeEvent.getPlayer().getInventory());
 		for(ItemStack change : changed){
-			PlayerEquipsArmorEvent event = new PlayerEquipsArmorEvent(player, change);
+			PlayerEquipsArmorEvent event = new PlayerEquipsArmorEvent(player.getPlayer(), change);
 			TraitEventManager.fireEvent(event);
 			
 			if(event.isCancelled()) {
 				removeArmor(player, change);
-				InventoryResync.resync(player);
+				InventoryResync.resync(player.getPlayer());
 			}
 		}
 		
-		inventoryCache.remove(name);
+		inventoryCache.remove(player);
 	}
 
 	/**
@@ -154,7 +153,8 @@ public class Listener_PlayerEquipChange implements Listener {
 	 * @param player
 	 * @param change
 	 */
-	private void removeArmor(Player player, ItemStack change) {
+	private void removeArmor(RaCPlayer racPlayer, ItemStack change) {
+		Player player = racPlayer.getPlayer();
 		ArmorSlot slot = ItemUtils.getItemSlotEquiping(change);
 		if(!player.getInventory().addItem(change).isEmpty()){
 			player.getWorld().dropItem(player.getLocation(), change);

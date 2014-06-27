@@ -22,11 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.converter.DBConverter;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.chat.WordParsing;
@@ -47,7 +47,7 @@ public class MemberConfig extends Observable {
 	/**
 	 * The player this config belongs
 	 */
-	protected UUID playerUUID;
+	protected RaCPlayer player;
 	
 	/**
 	 * The Configuration of the player as List
@@ -73,36 +73,36 @@ public class MemberConfig extends Observable {
 	 * @param player
 	 * @param configPre
 	 */
-	protected MemberConfig(UUID playerUUID, String configPre){
+	protected MemberConfig(RaCPlayer player, String configPre){
 		this.configPre = configPre;
-		this.playerUUID = playerUUID;
+		this.player = player;
 	}
 	
 	/**
 	 * Constructs a new Member ConfigTotal for a player.
 	 * It loads from the YAML loaded, if the player is found, and creates a new one if no exists.
 	 * 
-	 * @param playerUUID to create
+	 * @param player to create
 	 */
-	protected MemberConfig(UUID playerUUID){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
-		this.playerUUID = playerUUID;
+	protected MemberConfig(RaCPlayer player){
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		this.player = player;
 		configList = new MemberConfigList<ConfigOption>();
-		configPre = "playerdata." + playerUUID + ".config";
+		configPre = "config";
 		
 		boolean defaultEnableHealthBar = DBConverter.getGeneralConfig().isConfig_enable_healthbar_in_chat();
 
 		
 		//first load the default values we know already
-		ConfigOption lifeDisplayEnable = ConfigOption.loadFromPathOrCreateDefault(configPre, playerUUID, "lifeDisplayEnable", MemberConfig.lifeDisplayEnable, defaultEnableHealthBar, true);
+		ConfigOption lifeDisplayEnable = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "lifeDisplayEnable", MemberConfig.lifeDisplayEnable, defaultEnableHealthBar, true);
 		
-		ConfigOption lifeDisplayInterval = ConfigOption.loadFromPathOrCreateDefault(configPre, playerUUID, "lifeDisplayInterval", MemberConfig.displayInterval, 60, true);
+		ConfigOption lifeDisplayInterval = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "lifeDisplayInterval", MemberConfig.displayInterval, 60, true);
 		
-		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(configPre, playerUUID, "channelsCurrent", MemberConfig.chatChannel, "Global", true);
+		ConfigOption currentChannel = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "channelsCurrent", MemberConfig.chatChannel, "Global", true);
 		
-		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(configPre, playerUUID, "cooldownInform", MemberConfig.cooldownInformation, true, true);
+		ConfigOption informCooldownReady = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "cooldownInform", MemberConfig.cooldownInformation, true, true);
 
-		ConfigOption displayType = ConfigOption.loadFromPathOrCreateDefault(configPre, playerUUID, "displayType", MemberConfig.displayType, "scoreboard", true);
+		ConfigOption displayType = ConfigOption.loadFromPathOrCreateDefault(configPre, player, "displayType", MemberConfig.displayType, "scoreboard", true);
 		
 		configList.add(lifeDisplayEnable);
 		configList.add(lifeDisplayInterval);
@@ -115,9 +115,9 @@ public class MemberConfig extends Observable {
 		for(String value : config.getChildren(configPre)){
 			if(configList.containsPathName(value)) continue;
 			
-			if(ConfigOption.isInValidFormat(configPre, playerUUID, value)){
+			if(ConfigOption.isInValidFormat(configPre, player, value)){
 				try{
-					ConfigOption option = ConfigOption.loadFromPath(configPre, playerUUID, value);
+					ConfigOption option = ConfigOption.loadFromPath(configPre, player, value);
 					configList.add(option);
 				}catch(IOException exp){}
 			}
@@ -131,7 +131,7 @@ public class MemberConfig extends Observable {
 	 * @param player2
 	 * @return
 	 */
-	public static MemberConfig createMemberConfig(UUID player){
+	public static MemberConfig createMemberConfig(RaCPlayer player){
 		return new MemberConfig(player);
 	}
 	
@@ -139,10 +139,10 @@ public class MemberConfig extends Observable {
 	/**
 	 * Returns the Name of the Player of this ConfigTotal.
 	 * 
-	 * @return holder of Configuration.
+	 * @return holders of Configuration.
 	 */
-	public UUID getPlayerUUID(){
-		return playerUUID;
+	public RaCPlayer getPlayer(){
+		return player;
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class MemberConfig extends Observable {
 			return false;
 		}
 		
-		option = new ConfigOption(path, playerUUID, displayName, value, defaultValue, visible);
+		option = new ConfigOption(path, player, displayName, value, defaultValue, visible);
 		if(option.getFormat() == SaveFormat.UNKNOWN){
 			return false;
 		}

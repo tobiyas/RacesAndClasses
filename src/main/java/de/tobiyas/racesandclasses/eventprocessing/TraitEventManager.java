@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
@@ -61,6 +62,9 @@ public class TraitEventManager{
 	private HashMap<Class<?>, Set<Trait>> traitList;
 	private HashMap<Integer, Long> eventIDs;
 	
+	private int errorsPerMin = 0;
+	private boolean spamPreventionActive = false;
+	
 	
 	private List<String> registeredEventsAsName = new LinkedList<String>();
 
@@ -75,6 +79,13 @@ public class TraitEventManager{
 		traitList = new HashMap<Class<?>, Set<Trait>>();
 		eventIDs = new HashMap<Integer, Long>();
 		new DoubleEventRemover(this);
+		
+		Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
+			@Override
+			public void run() {
+				errorsPerMin = 0;
+			}
+		}, 20 * 60, 20 * 60);
 	}
 	
 	/**
@@ -133,7 +144,7 @@ public class TraitEventManager{
 				}
 				
 				//Player player = trait.getReleventPlayer(event); //TODO check
-				Player player = eventWrapper.getPlayer();
+				RaCPlayer player = eventWrapper.getPlayer();
 				
 				//Check if Static Trait -> Always interested!
 				//Check if Player has Trait.
@@ -143,7 +154,7 @@ public class TraitEventManager{
 						continue;
 					}else{
 						if(!(trait.getClass().isAnnotationPresent(BypassHolderCheck.class))){
-							if(!TraitHolderCombinder.getReducedTraitsOfPlayer(player.getUniqueId()).contains(trait)){
+							if(!TraitHolderCombinder.getReducedTraitsOfPlayer(player).contains(trait)){
 								continue;
 							}
 						}	
@@ -156,7 +167,7 @@ public class TraitEventManager{
 				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent && !hasBypassForEvent){
 					//only let the current magic spell continue for interaction events
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
-					if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell() != magicTrait){
+					if(player.getSpellManager().getCurrentSpell() != magicTrait){
 						continue;
 					}
 				}
@@ -164,18 +175,17 @@ public class TraitEventManager{
 				//check if the Arrow needs changed
 				if(trait instanceof AbstractArrow 
 						&& eventWrapper.getPlayerAction() == PlayerAction.CHANGE_ARROW
-						&& plugin.getPlayerManager().getArrowManagerOfPlayer
-						(player.getUniqueId()).getCurrentArrow() == trait
+						&& player.getArrowManager().getCurrentArrow() == trait
 						&& !hasBypassForEvent){
 					//not we have a sure Arrow switch.
-					AbstractArrow newArrow = plugin.getPlayerManager().getArrowManagerOfPlayer
-					(player.getUniqueId()).nextArrow();
+					AbstractArrow newArrow = player.getArrowManager().nextArrow();
 					
 					if(newArrow != null && newArrow != trait){
-						LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", newArrow.getDisplayName());
+						LanguageAPI.sendTranslatedMessage(player.getPlayer(), arrow_change, "trait_name", newArrow.getDisplayName());
 					}
 					continue;
 				}
+
 				
 				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions && !hasBypassForEvent){
@@ -189,7 +199,7 @@ public class TraitEventManager{
 					
 				if(trait instanceof MagicSpellTrait && !hasBypassForEvent){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
-					if(!plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).canCastSpell(magicTrait)){
+					if(!player.getSpellManager().canCastSpell(magicTrait)){
 						magicTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
 						continue;
 					}
@@ -221,9 +231,20 @@ public class TraitEventManager{
 					}
 				}
 			}catch(Exception e){
-				String holderName = trait.getTraitHolder()==null ? "static" : trait.getTraitHolder().getName();
+				//spam prevention is active.
+				if(spamPreventionActive) return changedSomething;
+				errorsPerMin++;
 				
-				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of holder: " + 
+				//more than 20 Errors / min = spam prevention.
+				if(errorsPerMin > 20){
+					spamPreventionActive = true;
+					plugin.log("Getting too many Errors for Trait Events! "
+							+ "Spam preventions is suppressing them all to save your log from beeing flooded!");
+				}
+				
+				String holderName = trait.getTraitHolders()==null ? "static" : trait.getTraitHolders().toString();
+				
+				plugin.getDebugLogger().logError("Error while executing trait: " + trait.getName() + " of holders: " + 
 						holderName + " event was: " + event.getEventName() + " Error was: " + e.getLocalizedMessage());
 				plugin.getDebugLogger().logStackTrace(e);
 			}finally{

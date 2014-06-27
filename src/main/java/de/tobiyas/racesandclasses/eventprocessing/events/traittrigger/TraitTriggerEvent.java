@@ -68,7 +68,7 @@ public class TraitTriggerEvent extends Event {
 	 */
 	public TraitTriggerEvent(EventWrapper wrapper, Trait trait){
 		this.trait = trait;
-		this.player = wrapper.getPlayer();
+		this.player = wrapper.getPlayer().getPlayer();
 		this.world = wrapper.getWorld();
 	}
 	    

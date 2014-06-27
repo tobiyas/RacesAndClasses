@@ -21,6 +21,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class Listener_MaxHP_Setting implements Listener {
 	
@@ -33,6 +35,7 @@ public class Listener_MaxHP_Setting implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
-		plugin.getPlayerManager().checkPlayer(event.getPlayer().getUniqueId());
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		plugin.getPlayerManager().checkPlayer(racPlayer);
 	}
 }

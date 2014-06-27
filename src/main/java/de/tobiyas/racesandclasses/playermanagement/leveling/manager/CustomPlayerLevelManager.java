@@ -17,10 +17,12 @@ package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
@@ -51,7 +53,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	/**
 	 * The player this levelManager belongs to
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
 	
 	/**
@@ -79,10 +81,10 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	/**
 	 * Creates a LevelManager for the Player.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 */
-	public CustomPlayerLevelManager(UUID playerUUID) {
-		this.playerUUID = playerUUID;
+	public CustomPlayerLevelManager(RaCPlayer player) {
+		this.player = player;
 		
 		this.currentLevel = 1;
 		this.currentExpOfLevel = 0;
@@ -99,14 +101,14 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			expDisplay.unregister();
 		}
 		
-		expDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL);
+		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
+		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
 	}
 	
 	
 	@Override
 	public void reloadFromYaml(){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -136,20 +138,30 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 
 
 	@Override
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayer() {
+		return player;
 	}
 	
 	
 	@Override
 	public void setCurrentLevel(int level) {
+		int oldLevel = currentLevel;
 		this.currentLevel = level;
+		checkLevelChanged();
+		
+		if(oldLevel != currentLevel){
+			RacesAndClasses.getPlugin().fireEventToBukkit( 
+					(oldLevel < currentExpOfLevel) 
+					? new LevelUpEvent(player, oldLevel, currentLevel)
+					: new LevelDownEvent(player, oldLevel, level) );
+		}
 	}
 
 
 	@Override
 	public void setCurrentExpOfLevel(int currentExpOfLevel) {
 		this.currentExpOfLevel = currentExpOfLevel;
+		checkLevelChanged();
 	}
 
 
@@ -165,7 +177,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	
 	@Override
 	public boolean addExp(int exp){
-		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(playerUUID, exp);
+		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -195,13 +207,15 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			currentLevel++;
 			currentExpOfLevel -= levelPack.getMaxEXP();
 			
-			Bukkit.getPluginManager().callEvent(new LevelUpEvent(playerUUID, currentLevel, currentLevel + 1));
+			Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, currentLevel, currentLevel + 1));
 			
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
 		
 		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
 		levelDisplay.display(currentLevel, currentLevel);
+		
+		redrawMCLevelBar();
 		return true;
 	}
 	
@@ -209,7 +223,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	
 	@Override
 	public boolean removeExp(int exp){		
-		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(playerUUID, exp);
+		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -235,7 +249,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		currentExpOfLevel -= exp;
 		
 		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
-		while(currentExpOfLevel <= 0){
+		while(currentExpOfLevel < 0){
 			if(currentLevel == 1) {
 				currentExpOfLevel = 0;
 				return true;
@@ -244,20 +258,22 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			currentLevel--;
 			currentExpOfLevel += levelPack.getMaxEXP();
 			
-			Bukkit.getPluginManager().callEvent(new LevelDownEvent(playerUUID, currentLevel + 1, currentLevel));
+			Bukkit.getPluginManager().callEvent(new LevelDownEvent(player, currentLevel + 1, currentLevel));
 			
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
 		}
 		
 		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
 		levelDisplay.display(currentLevel, currentLevel);
+		
+		redrawMCLevelBar();
 		return true;
 	}
 
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		if(!config.getValidLoad()){
 			return;
 		}
@@ -296,5 +312,17 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		toRemove -= getCurrentExpOfLevel();
 		return toRemove > 0;
 	}
+
 	
+	private void redrawMCLevelBar(){
+		if(!RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_gui_level_useMCLevelBar()) return;
+		if(!player.isOnline()) return;
+		
+		Player realPlayer = player.getPlayer();
+		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
+		double percent = (double)getCurrentExpOfLevel() / (double)levelPack.getMaxEXP();
+		
+		realPlayer.setExp((float)percent);
+		realPlayer.setLevel(getCurrentLevel());
+	}
 }

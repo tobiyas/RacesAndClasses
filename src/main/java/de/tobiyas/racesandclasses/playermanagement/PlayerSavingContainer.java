@@ -24,6 +24,8 @@ import javax.persistence.Table;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+
 @Entity
 @Table(name="_player_general_infos")
 public class PlayerSavingContainer {
@@ -45,12 +47,12 @@ public class PlayerSavingContainer {
 	/**
 	 * Generates a new Container with default Values.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @return
 	 */
-	public static PlayerSavingContainer generateNewContainer(UUID playerUUID){
+	public static PlayerSavingContainer generateNewContainer(RaCPlayer player){
 		PlayerSavingContainer container = new PlayerSavingContainer();
-		container.playerUUID = playerUUID;
+		container.playerUUID = player.getUniqueId();
 		
 		container.playerLevel = 1;
 		container.playerLevelExp = 1;

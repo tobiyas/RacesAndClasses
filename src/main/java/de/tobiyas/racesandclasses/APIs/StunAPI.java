@@ -44,7 +44,7 @@ public class StunAPI {
 		/**
 		 * Stuns a player for x Ticks.
 		 * 
-		 * @param playerUUID to stun
+		 * @param player to stun
 		 * @param time to stun for
 		 * 
 		 * @return true if worked, false otherwise.
@@ -56,7 +56,7 @@ public class StunAPI {
 		/**
 		 * Stuns a player for x Seconds.
 		 * 
-		 * @param playerUUID to stun
+		 * @param player to stun
 		 * @param time to stun for
 		 * 
 		 * @return true if worked, false otherwise.
@@ -78,7 +78,7 @@ public class StunAPI {
 				return false;
 			}
 			
-			return getStunManager().stunEntity(player, time); 
+			return getStunManager().stunEntity(null, player, time); 
 		}
 	
 		/**
@@ -94,7 +94,35 @@ public class StunAPI {
 				return false;
 			}
 			
-			return getStunManager().stunEntity(player, time * 20); 
+			return getStunManager().stunEntity(null, player, time * 20); 
+		}
+		
+		/**
+		 * Stuns a player for x Ticks.
+		 * 
+		 * @param player to stun
+		 * @param time to stun for
+		 * 
+		 * @return true if worked, false otherwise.
+		 */
+		public static boolean stunPlayerForTicks(Entity stunner, Player player, int time){
+			if(player == null || time <= 0){
+				return false;
+			}
+			
+			return getStunManager().stunEntity(stunner, player, time); 
+		}
+		
+		/**
+		 * Stuns a player for x Seconds.
+		 * 
+		 * @param player to stun
+		 * @param time to stun for
+		 * 
+		 * @return true if worked, false otherwise.
+		 */
+		public static boolean stunPlayerForSeconds(Entity stunner,Player player, int time){
+			return stunPlayerForTicks(stunner, player, time * 20);
 		}
 		
 		
@@ -102,7 +130,7 @@ public class StunAPI {
 		/**
 		 * Removes the Stun from a player
 		 * 
-		 * @param playerUUID to remove from
+		 * @param player to remove from
 		 * 
 		 * @return true if worked, false otherwise
 		 */
@@ -175,7 +203,7 @@ public class StunAPI {
 				return false;
 			}
 			
-			return getStunManager().stunEntity(entity, time); 
+			return getStunManager().stunEntity(null, entity, time); 
 		}
 		
 		/**
@@ -191,7 +219,36 @@ public class StunAPI {
 				return false;
 			}
 			
-			return getStunManager().stunEntity(entity, time * 20); 
+			return getStunManager().stunEntity(null, entity, time * 20); 
+		}
+		
+		
+		/**
+		 * Stuns an Entity for x Ticks.
+		 * 
+		 * @param entity to stun
+		 * @param time to stun for
+		 * 
+		 * @return true if worked, false otherwise.
+		 */
+		public static boolean stunEntityForTicks(Entity stunner,Entity entity, int time){
+			if(entity == null || time <= 0){
+				return false;
+			}
+			
+			return getStunManager().stunEntity(stunner, entity, time); 
+		}
+		
+		/**
+		 * Stuns an Entity for x Seconds.
+		 * 
+		 * @param entity to stun
+		 * @param time to stun for
+		 * 
+		 * @return true if worked, false otherwise.
+		 */
+		public static boolean stunEntityForSeconds(Entity stunner,Entity entity, int time){
+			return stunEntityForTicks(stunner, entity, time * 20);
 		}
 		
 		

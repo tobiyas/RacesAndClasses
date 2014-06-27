@@ -131,7 +131,7 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 	public PlayerSavingContainer getPlayerContainer(UUID player) {
 		try {
 			return ebeanServer.find(PlayerSavingContainer.class).where()
-					.ieq("playerUUID", player.toString()).findUnique();
+					.ieq("player", player.toString()).findUnique();
 		} catch (Exception exp) {
 			return null;
 		}
@@ -141,7 +141,7 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 	public PlayerHolderAssociation getPlayerHolderAssociation(UUID player) {
 		try {
 			return ebeanServer.find(PlayerHolderAssociation.class).where()
-					.ieq("playerUUID", player.toString()).findUnique();
+					.ieq("player", player.toString()).findUnique();
 		} catch (Exception exp) {
 			return null;
 		}
@@ -152,7 +152,7 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 			String entryName) {
 		try {
 			return ebeanServer.find(DBConfigOption.class).where()
-					.ieq("playerUUID", player.toString()).ieq("path", entryName)
+					.ieq("player", player.toString()).ieq("path", entryName)
 					.findUnique();
 		} catch (Exception exp) {
 			return null;
@@ -164,7 +164,7 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 			String entryName) {
 		try {
 			return ebeanServer.find(DBConfigOption.class).where()
-					.ieq("playerUUID", player.toString())
+					.ieq("player", player.toString())
 					.ieq("displayName", entryName).findUnique();
 		} catch (Exception exp) {
 			return null;
@@ -186,7 +186,7 @@ public class EBeanPersistenceStorage implements PersistenceStorage {
 		try {
 			List<DBConfigOption> options = ebeanServer
 					.find(DBConfigOption.class).where()
-					.ieq("playerUUID", player.toString()).findList();
+					.ieq("player", player.toString()).findList();
 
 			List<ConfigOption> convertedOptions = new LinkedList<ConfigOption>(
 					options);

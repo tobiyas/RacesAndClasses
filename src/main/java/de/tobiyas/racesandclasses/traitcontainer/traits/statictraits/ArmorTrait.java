@@ -17,16 +17,13 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.armor_not_allowed;
 
-import java.util.Map;
-
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -36,27 +33,17 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 
 public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
-	protected AbstractTraitHolder traitHolder;
-
 	@TraitEventsUsed(registerdClasses = {PlayerEquipsArmorEvent.class})
 	@Override
 	public void generalInit(){
 	}
-	
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder){
-		this.traitHolder = abstractTraitHolder;
-	}
-	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
+
 
 	@Override
 	public String getName() {
@@ -71,7 +58,7 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 
 	@TraitConfigurationNeeded()
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) {
+	public void setConfiguration(TraitConfiguration configMap) {
 	}
 
 	@Override	
@@ -80,13 +67,13 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 		if(!(event instanceof PlayerEquipsArmorEvent)) return TraitResults.False();
 		
 		PlayerEquipsArmorEvent playerEquipEvent = (PlayerEquipsArmorEvent) event;
-		Player player = (Player) playerEquipEvent.getPlayer();
+		RaCPlayer player = eventWrapper.getPlayer();
 		if(player == null) return TraitResults.False();
 
 		ItemStack armorItem = playerEquipEvent.getArmorItem();
 		if(armorItem == null) return TraitResults.False();
 		
-		if(!plugin.getPlayerManager().getArmorToolManagerOfPlayer(player.getUniqueId()).hasPermissionForItem(armorItem)){ 
+		if(!player.getArmorManager().hasPermissionForItem(armorItem)){ 
 			String matName = getMaterialName(armorItem.getType());
 			LanguageAPI.sendTranslatedMessage(player, armor_not_allowed, "material", matName);
 			playerEquipEvent.setCancelled(true);
@@ -135,5 +122,10 @@ public class ArmorTrait extends AbstractBasicTrait implements StaticTrait{
 	@Override
 	public String getDisplayName() {
 		return getName();
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return false;
 	}
 }

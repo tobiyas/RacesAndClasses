@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.traitcontainer.traits.resistance;
 
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -24,7 +23,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
@@ -35,13 +33,13 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ResistanceInterface;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
 
 public abstract class AbstractResistance extends AbstractBasicTrait implements ResistanceInterface {
 
 	protected List<DamageCause> resistances;
-	protected AbstractTraitHolder traitHolder;
 	
 	protected double value;
 	protected String operation = "";
@@ -49,16 +47,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	
 	@Override
 	public abstract String getName();
-
-	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder){
-		this.traitHolder = abstractTraitHolder;
-	}
 	
-	@Override
-	public AbstractTraitHolder getTraitHolder(){
-		return traitHolder;
-	}
 
 	@Override
 	protected String getPrettyConfigIntern(){
@@ -70,7 +59,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		@TraitConfigurationField(fieldName = "value", classToExpect = Double.class)
 	})
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		operation = (String) configMap.get("operation");
 		value = (Double) configMap.get("value");
@@ -86,8 +75,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 		
 		Entity entity = Eevent.getEntity();
 		if(!(entity instanceof Player)) return result.setTriggered(false);
-		Player player = (Player) entity;
-		if(TraitHolderCombinder.checkContainer(player.getUniqueId(), this)){
+		if(TraitHolderCombinder.checkContainer(eventWrapper.getPlayer(), this)){
 			if(getResistanceTypes().contains(Eevent.getCause())){
 				
 				//If there is damage * 0, cancel the Event to show no damage effect.

@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -30,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.listeners.quickslot.QuickSlotListener;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 
@@ -46,11 +46,11 @@ public class QuickSlotGUI extends BasicSelectionInterface {
 	private final RacesAndClasses plugin;
 	
 	
-	public QuickSlotGUI(Player player) {
-		super(player, null, "Magic", "Magic", RacesAndClasses.getPlugin());
+	public QuickSlotGUI(RaCPlayer player) {
+		super(player.getPlayer(), null, "Magic", "Magic", RacesAndClasses.getPlugin());
 
 		this.plugin = RacesAndClasses.getPlugin();
-		this.manager = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId());
+		this.manager = player.getSpellManager();
 		
 		redraw();
 	}

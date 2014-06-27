@@ -22,11 +22,11 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -36,12 +36,12 @@ public class TutorialManager implements Observer{
 	private boolean enabled;
 	
 	private RacesAndClasses plugin;
-	private HashMap<UUID, TutorialPath> tutorialStates;
+	private HashMap<RaCPlayer, TutorialPath> tutorialStates;
 	
 	
 	public TutorialManager(){
 		plugin = RacesAndClasses.getPlugin();
-		tutorialStates = new HashMap<UUID, TutorialPath>();
+		tutorialStates = new HashMap<RaCPlayer, TutorialPath>();
 		enabled = true;
 	}
 	
@@ -55,25 +55,27 @@ public class TutorialManager implements Observer{
 		for(String name : config.getChildren("states")){
 			UUID id = null;
 			try{ id = UUID.fromString(name); }catch(IllegalArgumentException exp){ continue; }
+			
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
 
 			String stateName = config.getString("states." + name + ".stateName");
 			TutorialState state = TutorialState.getState(stateName);
 			int stateValue = config.getInt("states." + name + ".stateValue");
 			
-			TutorialPath path = new TutorialPath(id, true);
+			TutorialPath path = new TutorialPath(player, true);
 			path.setState(state);
 			
 			if(stateValue != 1)
 				path.setStateStep(stateValue);
 			path.activate();
-			tutorialStates.put(id, path);
+			tutorialStates.put(player, path);
 		}
 	}
 	
 	private void save(){
 		YAMLConfigExtended config = checkFileExists();
 		
-		for(UUID player : tutorialStates.keySet()){
+		for(RaCPlayer player : tutorialStates.keySet()){
 			TutorialPath path = tutorialStates.get(player);
 			path.save(config);
 		}
@@ -106,17 +108,17 @@ public class TutorialManager implements Observer{
 		if(!(potentialContainer instanceof TutorialStepContainer))
 			return;
 		TutorialStepContainer container = (TutorialStepContainer) potentialContainer;
-		UUID playerUUID = container.getUUID();
+		RaCPlayer playerUUID = container.getPlayer();
 		
 		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null){
 			if(container.getState() == TutorialState.start)
-				createNew(container.getUUID());
+				createNew(container.getPlayer());
 		}else
 			path.handle(container);
 	}
 	
-	private void createNew(UUID player){
+	private void createNew(RaCPlayer player){
 		synchronized(tutorialStates){
 			if(tutorialStates.get(player) == null)
 				tutorialStates.put(player, new TutorialPath(player));
@@ -127,7 +129,7 @@ public class TutorialManager implements Observer{
 	
 	//handle statics to intern
 	
-	private boolean skipIntern(UUID playerUUID){
+	private boolean skipIntern(RaCPlayer playerUUID){
 		TutorialPath path = tutorialStates.get(playerUUID);
 		if(path == null)
 			return false;
@@ -135,7 +137,7 @@ public class TutorialManager implements Observer{
 		return path.skip();
 	}
 	
-	private boolean startIntern(UUID player){
+	private boolean startIntern(RaCPlayer player){
 		TutorialPath path = tutorialStates.get(player);
 		if(path != null)
 			tutorialStates.remove(player);
@@ -144,47 +146,46 @@ public class TutorialManager implements Observer{
 		return true;
 	}
 	
-	private boolean stopIntern(UUID playerUUID){
-		OfflinePlayer player = Bukkit.getPlayer(playerUUID);
-		TutorialPath path = tutorialStates.get(playerUUID);
+	private boolean stopIntern(RaCPlayer player){
+		TutorialPath path = tutorialStates.get(player);
 		if(path == null){
 			if(player != null && player.isOnline())
 				player.getPlayer().sendMessage(ChatColor.RED + "No active Tutorial.");
 			return false;
 		}
 		
-		removePerson(playerUUID);
+		removePerson(player);
 		return path.stop();
 	}
 	
-	private void removePerson(UUID playerUUID){
+	private void removePerson(RaCPlayer player){
 		YAMLConfigExtended config = checkFileExists();
 		if(config.getValidLoad() == false)
 			return;
 		
-		config.set("states." + playerUUID, 0);
-		config.set("states." + playerUUID, null);
+		config.set("states." + player.getUniqueId(), 0);
+		config.set("states." + player.getUniqueId(), null);
 		config.save();
 	}
 	
-	private boolean resetIntern(UUID playerUUID){
-		TutorialPath path = tutorialStates.get(playerUUID);
+	private boolean resetIntern(RaCPlayer player){
+		TutorialPath path = tutorialStates.get(player);
 		if(path == null)
 			return false;
 		
 		return path.reset();
 	}
 	
-	private boolean repostIntern(UUID playerUUID){
-		TutorialPath path = tutorialStates.get(playerUUID);
+	private boolean repostIntern(RaCPlayer player){
+		TutorialPath path = tutorialStates.get(player);
 		if(path == null)
 			return false;
 		
 		return path.repostState();
 	}
 	
-	private boolean setStateIntern(UUID playerUUID, String state){
-		TutorialPath path = tutorialStates.get(playerUUID);
+	private boolean setStateIntern(RaCPlayer player, String state){
+		TutorialPath path = tutorialStates.get(player);
 		if(path == null)
 			return false;
 		
@@ -211,46 +212,46 @@ public class TutorialManager implements Observer{
 	
 	//direct Handles
 	
-	public boolean skip(UUID playerUUID){
+	public boolean skip(RaCPlayer player){
 		if(!isActive())
 			return false;
 		
-		return skipIntern(playerUUID);
+		return skipIntern(player);
 	}
 		
-	public boolean start(UUID playerUUID){
+	public boolean start(RaCPlayer player){
 		if(!isActive())
 			return false;
 		
-		return startIntern(playerUUID);
+		return startIntern(player);
 	}
 		
-	public boolean stop(UUID playerUUID){
+	public boolean stop(RaCPlayer player){
 		if(!isActive())
 			return false;
 		
-		return stopIntern(playerUUID);
+		return stopIntern(player);
 	}
 		
-	public boolean reset(UUID playerUUID){
+	public boolean reset(RaCPlayer player){
 		if(!isActive())
 			return false;
 		
-		return resetIntern(playerUUID);
-	}
-	
-	public boolean repost(UUID playerUUID){
-		if(!isActive())
-			return false;
-		
-		return repostIntern(playerUUID);
+		return resetIntern(player);
 	}
 	
-	public boolean setState(UUID playerUUID, String state){
+	public boolean repost(RaCPlayer player){
 		if(!isActive())
 			return false;
 		
-		return setStateIntern(playerUUID, state);
+		return repostIntern(player);
+	}
+	
+	public boolean setState(RaCPlayer player, String state){
+		if(!isActive())
+			return false;
+		
+		return setStateIntern(player, state);
 	}
 	
 	
@@ -276,12 +277,12 @@ public class TutorialManager implements Observer{
 	}
 	
 	//writeback
-	public void unregister(UUID playerUUID){
+	public void unregister(RaCPlayer player){
 		if(!isActive())
 			return;
 		
 		synchronized(tutorialStates){
-			tutorialStates.remove(playerUUID);
+			tutorialStates.remove(player);
 		}
 	}
 	

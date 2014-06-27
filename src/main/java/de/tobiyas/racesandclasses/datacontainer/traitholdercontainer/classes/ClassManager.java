@@ -15,16 +15,11 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
@@ -42,9 +37,8 @@ public class ClassManager extends AbstractHolderManager{
 	
 
 	@Override
-	protected AbstractTraitHolder generateTraitHolderAndLoad(
-			YAMLConfigExtended traitHolderConfig, String holderName)
-			throws HolderParsingException {
+	protected AbstractTraitHolder generateTraitHolder(
+			YAMLConfigExtended traitHolderConfig, String holderName) {
 		
 		return ClassContainer.loadClass(traitHolderConfig, holderName);
 	}
@@ -58,8 +52,11 @@ public class ClassManager extends AbstractHolderManager{
 
 	@Override
 	public AbstractTraitHolder getDefaultHolder() {
-		//no default class needed
-		return null;
+		String className = plugin.getConfigManager().getGeneralConfig().getConfig_takeClassWhenNoClass();
+		if(className == null || className.isEmpty()) return null;
+		
+		AbstractTraitHolder container = getHolderByName(className);
+		return container;
 	}
 
 
@@ -96,18 +93,16 @@ public class ClassManager extends AbstractHolderManager{
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterSelectEvent(UUID player,
+	protected HolderSelectedEvent generateAfterSelectEvent(RaCPlayer player,
 			AbstractTraitHolder newHolder) {
-		Player realplayer = Bukkit.getPlayer(player);
-		return new AfterClassSelectedEvent(realplayer, (ClassContainer)newHolder);
+		return new AfterClassSelectedEvent(player.getPlayer(), (ClassContainer)newHolder);
 	}
 
 
 	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(UUID player,
+	protected HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player,
 			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		Player realplayer = Bukkit.getPlayer(player);
-		return new AfterClassChangedEvent(realplayer, (ClassContainer) newHolder, (ClassContainer) oldHolder);
+		return new AfterClassChangedEvent(player.getPlayer(), (ClassContainer) newHolder, (ClassContainer) oldHolder);
 	}
 	
 	@Override

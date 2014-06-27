@@ -69,12 +69,12 @@ public class TraitStore {
 	
 	/**
 	 * Constructs a trait for the passed name.
-	 * It is important, that traitName and holder are NEVER null!
+	 * It is important, that traitName and holders are NEVER null!
 	 * 
 	 * If something gone Wrong while initialization, null is returned.
 	 * 
 	 * @param traitName of the trait
-	 * @param holder of Trait
+	 * @param holders of Trait
 	 * @return the constructed Trait or null
 	 */
 	public static Trait buildTraitByName(String traitName, AbstractTraitHolder holder){
@@ -105,10 +105,10 @@ public class TraitStore {
 	}
 	
 	/**
-	 * Builds a Trait and sets his holder to the one wanted.
+	 * Builds a Trait and sets his holders to the one wanted.
 	 * 
 	 * @param traitName
-	 * @param holder
+	 * @param holders
 	 * @return
 	 * @throws Exception
 	 */
@@ -123,7 +123,7 @@ public class TraitStore {
 			throw new TraitNotFoundException(traitName);
 		}
 		
-		trait.setTraitHolder(holder);
+		trait.addTraitHolder(holder);
 		
 		return trait;
 	}
@@ -311,7 +311,7 @@ public class TraitStore {
 	}
 
 	/**
-	 * Builds a static trait with NO holder.
+	 * Builds a static trait with NO holders.
 	 * 
 	 * @param string
 	 */

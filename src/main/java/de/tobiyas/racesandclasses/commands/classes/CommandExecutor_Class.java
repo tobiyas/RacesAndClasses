@@ -27,12 +27,15 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -82,9 +85,10 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		//Info on certain class
 		if(potentialCommand.equalsIgnoreCase("info")){
 			AbstractTraitHolder classHolder = null;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
 			
 			if(args.length < 2){
-				classHolder = plugin.getClassManager().getHolderOfPlayer(((Player) sender).getUniqueId());
+				classHolder = racPlayer.getclass();
 				if(classHolder == null){
 					LanguageAPI.sendTranslatedMessage(sender,"no_class_selected_use_info");
 					return true;
@@ -108,7 +112,8 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			list(sender);
 			
 			if(sender instanceof Player){
-				this.notifyObservers(new TutorialStepContainer(((Player)sender).getUniqueId(), TutorialState.infoClass));
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoClass));
 				this.setChanged();
 			}
 			return true;
@@ -122,14 +127,15 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.selectClass)) return true;
 
 			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
 				
-				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
+				AbstractTraitHolder currentClass = racPlayer.getclass();
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender,"already_have_class",
-							"clasname", currentClass.getName());
+							"clasname", currentClass.getDisplayName());
 					return true;
 				}
 				
@@ -149,7 +155,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holder", "Class");
+						"holders", "Class");
 				return true;
 			}
 			
@@ -160,7 +166,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			
 			String potentialClass = args[1];
 			if(select(player, potentialClass)){
-				this.notifyObservers(new TutorialStepContainer(player.getUniqueId(), TutorialState.selectClass));
+				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.selectClass));
 				this.setChanged();
 			}
 			
@@ -173,11 +179,11 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.changeClass)) return true;
 
 			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useClassGUIToSelect();
 			if(useGUI){
-				
-				AbstractTraitHolder currentClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
+				AbstractTraitHolder currentClass = racPlayer.getclass();
 				if(currentClass == plugin.getClassManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, "no_class_on_change");
 					return true;
@@ -199,7 +205,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holder", "Class");
+						"holders", "Class");
 				return true;
 			}
 			
@@ -257,7 +263,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		player.sendMessage(ChatColor.YELLOW + "ClassHealth: " 
 				+ ChatColor.LIGHT_PURPLE + classContainer.getClassHealthModify()
 				+ classContainer.getClassHealthModValue());
-		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getName());
+		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
 		
 		double mana = classContainer.getManaBonus();
@@ -286,8 +292,9 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			return;
 		}
 		
-		AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(((Player)player ).getUniqueId());
-		String nameOfOwnClass = holder != null ? holder.getName() : "";
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) player);
+		AbstractTraitHolder holder = racPlayer.getclass();
+		String nameOfOwnClass = holder != null ? holder.getDisplayName() : "";
 		
 		for(String classe : classes ){
 			if(classe.equalsIgnoreCase(nameOfOwnClass)){
@@ -302,6 +309,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 	}
 	
 	private boolean select(Player player, String potentialClass){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		potentialClass = potentialClass.toLowerCase();
 		
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
@@ -321,25 +329,27 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		}
 		
 		
-		AbstractTraitHolder currentHolder = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
-		if(currentHolder == null){	
-			if(plugin.getClassManager().addPlayerToHolder(player.getUniqueId(), potentialClass, true)){
+		AbstractTraitHolder currentHolder = racPlayer.getclass();
+		AbstractTraitHolder defaultHolder = plugin.getClassManager().getDefaultHolder();
+		if(currentHolder == defaultHolder){
+			if(plugin.getClassManager().addPlayerToHolder(racPlayer, potentialClass, true)){
 				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
-						"class", potentialClass);
+						"class", classContainer.getDisplayName());
 				return true;
 			}
 			
 			return false;
 		}else{
-			LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
-					"class", classContainer.getName());
+			LanguageAPI.sendTranslatedMessage(player, Keys.already_have_class,
+					"class", classContainer.getDisplayName());
 			return false;
 		}
 	}
 	
 	private void change(Player player, String potentialClass){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeClass)) return;
-		ClassContainer oldClassContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
+		ClassContainer oldClassContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(racPlayer);
 		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
@@ -354,9 +364,9 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		}
 		
 		if(oldClassContainer != null){
-			if(potentialClass.equalsIgnoreCase(oldClassContainer.getName())){
+			if(potentialClass.equalsIgnoreCase(oldClassContainer.getDisplayName())){
 				LanguageAPI.sendTranslatedMessage(player, "change_to_same_holder",
-						"holder", oldClassContainer.getName());
+						"holders", oldClassContainer.getDisplayName());
 				return;
 			}
 			
@@ -368,7 +378,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				return;
 			}
 			
-			if(plugin.getClassManager().changePlayerHolder(player.getUniqueId(), potentialClass, true)){
+			if(plugin.getClassManager().changePlayerHolder(racPlayer, potentialClass, true)){
 				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
 						"class", potentialClass);
 			}else{

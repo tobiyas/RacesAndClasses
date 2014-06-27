@@ -15,13 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.chat;
 
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 
@@ -55,9 +52,7 @@ public class ChatFormatter{
 		return format;
 	}
 	
-	public String format(UUID player, String msg, String forceFormat, boolean replaceMessage){
-		Player realPlayer = player == null ? null : Bukkit.getPlayer(player);
-		
+	public String format(RaCPlayer player, String msg, String forceFormat, boolean replaceMessage){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		
@@ -70,15 +65,9 @@ public class ChatFormatter{
 			realName = "CONSOLE";
 			world = "None";
 		}else{
-			if(realPlayer == null){
-				displayName = "UNKNOWN";
-				realName = "UNKNOWN";
-				world = "UNKNOWN";
-			}else{
-				displayName = realPlayer.getPlayer().getDisplayName();
-				realName = realPlayer.getName();
-				world = realPlayer.getPlayer().getWorld().getName();				
-			}
+			displayName = player.getDisplayName();
+			realName = player.getName();
+			world = player.getWorld().getName();
 		}
 		
 		String messageFormat = "";
@@ -94,23 +83,19 @@ public class ChatFormatter{
 		}
 		
 		//default: {color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{color}"), color);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{nick}"), name);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{prefix}"), prefix);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{suffix}"), suffix);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{sender}"), displayName);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{realname}"), realName);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{race}"), raceTag);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{world}"), world);
-		messageFormat = messageFormat.replaceAll(Pattern.quote("{channeltype}"), level.name());
-		messageFormat = decodeColor(messageFormat);
-		if(replaceMessage) messageFormat = messageFormat.replaceAll(Pattern.quote("{msg}"), msg);
+		messageFormat = messageFormat.replace("{color}", color);
+		messageFormat = messageFormat.replace("{nick}", name);
+		messageFormat = messageFormat.replace("{prefix}", prefix);
+		messageFormat = messageFormat.replace("{suffix}", suffix);
+		messageFormat = messageFormat.replace("{sender}", displayName);
+		messageFormat = messageFormat.replace("{realname}", realName);
+		messageFormat = messageFormat.replace("{race}", raceTag);
+		messageFormat = messageFormat.replace("{world}", world);
+		messageFormat = messageFormat.replace("{channeltype}", level.name());
+		messageFormat = ChatColor.translateAlternateColorCodes('&', messageFormat);
+		if(replaceMessage) messageFormat = messageFormat.replace("{msg}", msg);
 		
 		return messageFormat;
-	}
-	
-	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
 
 	public ChannelLevel getLevel() {

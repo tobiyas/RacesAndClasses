@@ -38,7 +38,7 @@ public class HelpPage {
 	 * If the page number is > {@link #pages} ({@value #pages}), page 1 is printed.
 	 * 
 	 * @param page the page number to be sent
-	 * @param playerUUID to check for Permission
+	 * @param player to check for Permission
 	 */
 	public static List<String> getPageContent(String playerName, int page){
 		switch(page){
@@ -202,7 +202,7 @@ public class HelpPage {
 	/**
 	 * Generates the help for the General page
 	 * 
-	 * @param playerUUID this is needed to check against permissions
+	 * @param player this is needed to check against permissions
 	 */
 	private static List<String> page7(String playerName){
 		List<String> returnList = new LinkedList<String>();

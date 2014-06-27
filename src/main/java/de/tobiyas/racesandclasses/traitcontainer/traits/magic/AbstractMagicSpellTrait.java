@@ -29,14 +29,16 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -46,7 +48,9 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.util.naming.MCPrettyName;
 
@@ -117,7 +121,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 					Iterator<Map.Entry<UUID,Location>> entryIt = channelingMap.entrySet().iterator();
 					while(entryIt.hasNext()){
 						Map.Entry<UUID, Location> entry = entryIt.next();
-						Player player = Bukkit.getPlayer(entry.getKey());
+						RaCPlayer player = RaCPlayerManager.get().getPlayer(entry.getKey());
 						if(player == null || !player.isOnline() 
 								|| player.getLocation().distanceSquared(entry.getValue()) > 0.5){
 							entryIt.remove();
@@ -149,7 +153,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		PlayerAction action = wrapper.getPlayerAction();
 		if(!(action == PlayerAction.CAST_SPELL || action == PlayerAction.CHANGE_SPELL)) return false;
 		
-		Player player = wrapper.getPlayer();
+		RaCPlayer player = wrapper.getPlayer();
 		
 		boolean playerHasWandInHand = checkWandInHand(player);
 		
@@ -157,7 +161,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		if(!playerHasWandInHand) return false;
 		
 		//check if the Spell is the current selected Spell
-		if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell()) return false;
+		if(this != player.getSpellManager().getCurrentSpell()) return false;
 		
 		return true;
 	}
@@ -204,9 +208,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @param player to check
 	 * @return true if he has, false otherwise.
 	 */
-	public boolean checkWandInHand(Player player) {
-		return plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId())
-				.isWandItem(player.getItemInHand());
+	public boolean checkWandInHand(RaCPlayer player) {
+		ItemStack holding = player.getPlayer().getItemInHand();		
+		return player.getSpellManager().isWandItem(holding);
 	}
 
 
@@ -239,14 +243,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 		
 		if(event instanceof PlayerInteractEvent){
 			PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
-			final Player player = playerInteractEvent.getPlayer();
+			final RaCPlayer player = eventWrapper.getPlayer();
 			
 			boolean playerHasWandInHand = checkWandInHand(player);
 			//early out for not wand in hand.
 			if(!playerHasWandInHand) return result.setTriggered(false);
 			
 			//check if the Spell is the current selected Spell
-			if(this != plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell()) return  result.setTriggered(false);
+			if(this != player.getSpellManager().getCurrentSpell()) return  result.setTriggered(false);
 			
 			Action action = playerInteractEvent.getAction();
 			if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
@@ -271,7 +275,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 							if(channelingMap.containsKey(player.getUniqueId())){
 								magicSpellTriggered(player, result);
 								if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-									plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(AbstractMagicSpellTrait.this);
+									player.getSpellManager().removeCost(AbstractMagicSpellTrait.this);
 								}
 								if(result.isTriggered() && result.isSetCooldownOnPositiveTrigger()){
 									setCooldownIfNeeded(player);
@@ -283,7 +287,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 				}else{
 					magicSpellTriggered(player, result);					
 					if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
-						plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(this);
+						player.getSpellManager().removeCost(this);
 					}
 				}
 				
@@ -304,7 +308,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * 
 	 * @param player to set
 	 */
-	protected void setCooldownIfNeeded(Player player) {
+	protected void setCooldownIfNeeded(RaCPlayer player) {
 		String playerName = player.getName();
 		String cooldownName = "trait." + getDisplayName();
 		
@@ -338,21 +342,21 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * 
 	 * @return true if the Spell could be changed, false if not.
 	 */
-	protected boolean changeMagicSpell(Player player){
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getCurrentSpell() == null) return false;
+	public boolean changeMagicSpell(RaCPlayer player){
+		if(player.getSpellManager().getCurrentSpell() == null) return false;
 		
-		if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).getSpellAmount() == 0){
-			LanguageAPI.sendTranslatedMessage(player, magic_no_spells);
+		if(player.getSpellManager().getSpellAmount() == 0){
+			LanguageAPI.sendTranslatedMessage(player.getPlayer(), magic_no_spells);
 			return true;
 		}
 
-		boolean toPrev = player.isSneaking();
+		boolean toPrev = player.getPlayer().isSneaking();
 		
 		MagicSpellTrait nextSpell = null;
 		if(toPrev){
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).changeToPrevSpell();
+			nextSpell = player.getSpellManager().changeToPrevSpell();
 		}else{
-			nextSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).changeToNextSpell();			
+			nextSpell = player.getSpellManager().changeToNextSpell();
 		}
 		
 		if(nextSpell != null){
@@ -364,7 +368,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 							: nextSpell.getCostType().name();
 			String newSpellName = ((Trait)nextSpell).getDisplayName();
 							
-			LanguageAPI.sendTranslatedMessage(player, magic_change_spells, 
+			LanguageAPI.sendTranslatedMessage(player.getPlayer(), magic_change_spells, 
 					"trait_name", newSpellName,
 					"cost", costName, 
 					"cost_type", costTypeString
@@ -383,7 +387,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * @param player the Player triggering the spell.
 	 * @param result to modify
 	 */
-	protected abstract void magicSpellTriggered(Player player, TraitResults result);
+	protected abstract void magicSpellTriggered(RaCPlayer player, TraitResults result);
 	
 	
 	//This is just for Mana + CostType
@@ -394,7 +398,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Double.class, optional = true)
 		})
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
 		if(configMap.containsKey(COST_PATH)){
@@ -449,11 +453,20 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 
 	@Override
 	public boolean isStackable(){
-		return false;
+		return true;
 	}
 	
 	@Override
 	public boolean needsCostCheck(EventWrapper wrapper){
 		return wrapper.getEvent() instanceof PlayerInteractEvent;
+	}
+	
+	@Override
+	public void triggerButHasRestriction(TraitRestriction restriction,
+			EventWrapper wrapper) {
+		
+		if(wrapper.getPlayerAction() == PlayerAction.CHANGE_SPELL){
+			changeMagicSpell(wrapper.getPlayer());
+		}
 	}
 }

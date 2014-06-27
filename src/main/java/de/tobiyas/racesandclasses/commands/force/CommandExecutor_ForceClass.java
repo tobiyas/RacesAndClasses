@@ -20,14 +20,14 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.class_not_ex
 import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -75,7 +75,8 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 		String playerToChange = args[0];
 		String newClass = args[1];
 		
-		if(Bukkit.getPlayer(playerToChange) == null){
+		RaCPlayer toChange = RaCPlayerManager.get().getPlayer(playerToChange);
+		if(toChange == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", playerToChange);
 			return true;
@@ -88,11 +89,10 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 			return true;
 		}
 		
-		Player toChange = Bukkit.getPlayer(playerToChange);
-		if(classManager.getHolderOfPlayer(toChange.getUniqueId()) == classManager.getDefaultHolder()){
-			classManager.addPlayerToHolder(toChange.getUniqueId(), newClass, true);
+		if(classManager.getHolderOfPlayer(toChange) == classManager.getDefaultHolder()){
+			classManager.addPlayerToHolder(toChange, newClass, true);
 		}else{
-			classManager.changePlayerHolder(toChange.getUniqueId(), newClass, true);
+			classManager.changePlayerHolder(toChange, newClass, true);
 		}
 		
 		if(toChange.isOnline()){

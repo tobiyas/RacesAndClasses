@@ -24,15 +24,21 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractMagicSpellTrait;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
+import de.tobiyas.racesandclasses.util.friend.TargetType;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
@@ -46,6 +52,11 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	 * The Range of the Totem.
 	 */
 	protected int range = 10;
+	
+	/**
+	 * The Target of this totem.
+	 */
+	protected TargetType target = TargetType.ALL;
 	
 	
 	@TraitEventsUsed(bypassClasses = {BlockBreakEvent.class})
@@ -113,12 +124,11 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	 * The Map of currently active Totems.
 	 * <br>We assume a player can only have a totem once at a Time.
 	 */
-	protected final Map<String, TotemInfos> activedTotems = new HashMap<String, TotemInfos>();
+	protected final Map<RaCPlayer, TotemInfos> activedTotems = new HashMap<RaCPlayer, TotemInfos>();
 	
 
 	@Override
-	protected void magicSpellTriggered(Player player, TraitResults result) {
-		String playerName = player.getName();
+	protected void magicSpellTriggered(RaCPlayer player, TraitResults result) {
 		Location location = getLocationNear(player);
 		
 		if(location == null){
@@ -127,7 +137,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 			return;
 		}
 		
-		result.copyFrom(placeTotem(playerName, location));
+		result.copyFrom(placeTotem(player, location));
 	}
 
 	
@@ -144,7 +154,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	 * 
 	 * @return a location near the player.
 	 */
-	private Location getLocationNear(Player player) {
+	private Location getLocationNear(RaCPlayer player) {
 		Location base = player.getLocation().clone();
 
 		List<Location> free = new LinkedList<Location>();
@@ -183,11 +193,12 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 			@TraitConfigurationField(fieldName = "bottomBlock", classToExpect = Material.class, optional = true),			
 			@TraitConfigurationField(fieldName = "upperBlock", classToExpect = Material.class, optional = true),
 			@TraitConfigurationField(fieldName = "range", classToExpect = Integer.class, optional = true),
-			@TraitConfigurationField(fieldName = "tickEvery", classToExpect = Integer.class, optional = true)
+			@TraitConfigurationField(fieldName = "tickEvery", classToExpect = Integer.class, optional = true),
+			@TraitConfigurationField(fieldName = "target", classToExpect = String.class, optional = true)
 		}
 	)
 	@Override
-	public void setConfiguration(Map<String, Object> configMap)
+	public void setConfiguration(TraitConfiguration configMap)
 			throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
@@ -210,29 +221,36 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 		if(configMap.containsKey("range")){
 			range = (Integer) configMap.get("range");
 		}
+		
+		if(configMap.containsKey("target")){
+			String target = configMap.getAsString("target").toLowerCase();
+			if(target.startsWith("all")) this.target = TargetType.ALL;
+			if(target.startsWith("fr") || target.startsWith("ally")) this.target = TargetType.FRIEND;
+			if(target.startsWith("e") || target.startsWith("fe")) this.target = TargetType.ENEMY;
+		}
 	}
 
 	
 	/**
 	 * Places to the player.
 	 * 
-	 * @param playerUUID the player to place to
+	 * @param player the player to place to
 	 * @param location the location to place at
 	 */
-	protected TraitResults placeTotem(String playerName, Location location){
+	protected TraitResults placeTotem(RaCPlayer player, Location location){
 		Location bottomLocation = location.clone();
 		Location topLocation = location.clone().add(0, 1, 0);
 		
 		TotemInfos infos = new TotemInfos();
 		infos.bottomLocation = bottomLocation.clone();
 		infos.topLocation = topLocation.clone();
-		infos.playerName = playerName;
+		infos.owner = player;
 		
 		
 		bottomLocation.getBlock().setType(bottomMaterial);
 		topLocation.getBlock().setType(topMaterial);
 		
-		activedTotems.put(playerName, infos);
+		activedTotems.put(player, infos);
 		scheduleRemove(infos);
 		return TraitResults.True();
 	}
@@ -241,7 +259,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	/**
 	 * Schedules the romve of a totem.
 	 * 
-	 * @param playerUUID to remove
+	 * @param player to remove
 	 */
 	protected void scheduleRemove(final TotemInfos infos){
 		final int bukkitSchedulerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -265,7 +283,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	/**
 	 * The Totem ticks.
 	 * <br>This method CAN be overriden.
-	 * <br>If it is overriden, {@link #tickOn(TotemInfos, Player)} is NOT called any more.
+	 * <br>If it is overriden, {@link #tickOnPlayer(TotemInfos, Player)} is NOT called any more.
 	 * 
 	 * @param infos to the totem.
 	 */
@@ -282,7 +300,36 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 		
 		//tick on all players near.
 		for(Player player : near){
-			tickOn(infos, player);
+			if(target == TargetType.ENEMY){
+				if(!EnemyChecker.areEnemies(infos.getOwner().getPlayer(), player)) continue;
+			}
+
+			if(target == TargetType.FRIEND){
+				if(!EnemyChecker.areAllies(infos.getOwner().getPlayer(), player)) continue;
+			}
+			
+			tickOnPlayer(infos, player);
+		}
+		
+		//now to the Monster ticks.
+		List<LivingEntity> entities = new LinkedList<LivingEntity>();
+		for(Entity entity : loc.getWorld().getEntities()){
+			if(!(entity instanceof LivingEntity)) continue;
+			if(entity.getLocation().distanceSquared(loc) <= squaredRange){
+				entities.add((LivingEntity) entity);
+			}
+		}
+		
+		for(LivingEntity entity : entities){
+			if(target == TargetType.ENEMY){
+				if(!EnemyChecker.areEnemies(infos.getOwner().getPlayer(), entity)) continue;
+			}
+
+			if(target == TargetType.FRIEND){
+				if(!EnemyChecker.areAllies(infos.getOwner().getPlayer(), entity)) continue;
+			}
+			
+			tickOnNonPlayer(infos, entity);
 		}
 		
 	}
@@ -294,7 +341,17 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	 * @param infos of the totem.
 	 * @param player to tick on.
 	 */
-	protected abstract void tickOn(TotemInfos infos, Player player);
+	protected abstract void tickOnPlayer(TotemInfos infos, Player player);
+	
+	
+	/**
+	 * The Totem ticks on a NO player target.
+	 * 
+	 * @param infos of the totem
+	 * @param entity to tick on.
+	 */
+	protected abstract void tickOnNonPlayer(TotemInfos infos, LivingEntity entity);
+	
 	
 	/**
 	 * Removes a placed Totem.
@@ -310,7 +367,7 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 		bottomLocation.getBlock().setType(Material.AIR);
 		topLocation.getBlock().setType(Material.AIR);
 		
-		activedTotems.remove(infos.playerName);
+		activedTotems.remove(infos.owner);
 		Bukkit.getScheduler().cancelTask(infos.bukkitSchedulerID);
 	}
 	
@@ -338,6 +395,22 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 		protected Location topLocation;
 		
 		protected int bukkitSchedulerID;
-		protected String playerName;
+		protected RaCPlayer owner;
+		
+		
+		public Location getBottomLocation() {
+			return bottomLocation.clone();
+		}
+		public Location getTopLocation() {
+			return topLocation.clone();
+		}
+		public int getBukkitSchedulerID() {
+			return bukkitSchedulerID;
+		}
+		public RaCPlayer getOwner() {
+			return owner;
+		}
+		
+		
 	}
 }

@@ -15,30 +15,21 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
 
-import java.util.UUID;
-
-import javax.persistence.PersistenceException;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
-import de.tobiyas.racesandclasses.playermanagement.health.HealthDisplayRunner;
+import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.HeroesLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerContainer {
@@ -47,11 +38,7 @@ public class PlayerContainer {
 	 * The plugin to get the managers from.
 	 */
 	private static RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
-	/**
-	 * The Display to output the HP
-	 */
-	private HealthDisplayRunner display;
+
 	
 	/**
 	 * The ArrowManager of the Player.
@@ -66,17 +53,12 @@ public class PlayerContainer {
 	/**
 	 * The Name of the Player associated with this Container
 	 */
-	private UUID playerUUID;
-	
+	private RaCPlayer player;
 	
 	/**
-	 * The maximal Health of the player.
-	 * 
-	 * NOTICE: This value is calculated by the Plugin.
-	 * It can vary from the real Value. Then another Plugin
-	 * is overwriting this plugin.
+	 * The health manager to use.
 	 */
-	private double maxHealth;
+	protected HealthManager healthManager;
 	
 	/**
 	 * Shows if the Player has God mode.
@@ -104,69 +86,43 @@ public class PlayerContainer {
 	 * 
 	 * @param player
 	 */
-	public PlayerContainer(UUID playerUUID){
-		this.playerUUID = playerUUID;
-		this.armorToolManager = new ArmorToolManager(playerUUID);
-		this.arrowManager = new ArrowManager(playerUUID);
+	public PlayerContainer(RaCPlayer player){
+		this.player = player;
+		this.armorToolManager = new ArmorToolManager(player);
+		this.arrowManager = new ArrowManager(player);
+		this.healthManager = new HealthManager(player);
 		
 		this.hasGod = false;
 		
 		
 		//choose level manager.
 		switch(plugin.getConfigManager().getGeneralConfig().getConfig_useLevelSystem()){
-			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(playerUUID); break;
-			case VanillaMC : this.levelManager = new MCPlayerLevelManager(playerUUID); break;
-			case SkillAPI : this.levelManager = new SkillAPILevelManager(playerUUID); break;
-			case mcMMO : this.levelManager = new McMMOLevelManager(playerUUID); break;
+			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player); break;
+			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player); break;
+			case SkillAPI : this.levelManager = new SkillAPILevelManager(player); break;
+			case mcMMO : this.levelManager = new McMMOLevelManager(player); break;
+			case Heroes : this.levelManager = new HeroesLevelManager(player); break;
 			
 			//if none found (should not happen) the RaC level manager is used.
-			default: this.levelManager = new CustomPlayerLevelManager(playerUUID);
+			default: this.levelManager = new CustomPlayerLevelManager(player);
 		}
 		
-		this.spellManager = new PlayerSpellManager(playerUUID);
-		this.maxHealth = 20;
+		//make sure we reload the file.
+		this.levelManager.reloadFromYaml();
 		
-		//init the display.
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID);
-		this.display = new HealthDisplayRunner(config, this);
+		this.spellManager = new PlayerSpellManager(player);		
 	}
-	
-	
-	/**
-	 * Creates the new Health container of a player.
-	 * 
-	 * NOTICE: The maxHealth value can be overwritten by the Constructor,
-	 * since it is checking the stats of the player.
-	 * 
-	 * @param player to create to.
-	 * @param maxHealth to create with.
-	 */
-	public PlayerContainer(UUID playerUUID, double maxHealth){
-		this(playerUUID);
-		this.maxHealth = maxHealth;
-	}
+
 	
 	
 	/**
 	 * Returns the calculated Max Health of  the player.
 	 * @return
 	 */
-	public double getMaxHealth(){
-		return maxHealth;
+	public HealthManager getHealthManager(){
+		return healthManager;
 	}
-	
-	/**
-	 * Sets the calculated maxHealth of a player.
-	 * 
-	 * NOTICE: It does not set this to the player!
-	 * You need to call {@link #checkStats()} to verify
-	 * everything is set correct.
-	 * 
-	 * @param maxHealth the parameter of the max Health.
-	 */
-	public void setMaxHealth(int maxHealth){
-		this.maxHealth = maxHealth;
-	}
+
 	
 	/**
 	 * Saves the current state of the Container to the player data yml file
@@ -176,23 +132,25 @@ public class PlayerContainer {
 	 */
 	public boolean save(boolean saveToDB){
 		if(saveToDB){
-			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(playerUUID);
-			
-			container.setHasGod(hasGod);
-			levelManager.saveTo(container);
-			
-			try{
-				plugin.getDatabase().save(container);
-				return true;
-			}catch(PersistenceException exp){
-				return false;
-			}catch(Exception exp){
-				plugin.getDebugLogger().logStackTrace(exp);
-				return false;
-			}
+//			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(player);
+//			
+//			container.setHasGod(hasGod);
+//			levelManager.saveTo(container);
+//			
+//			try{
+//				plugin.getDatabase().save(container);
+//				return true;
+//			}catch(PersistenceException exp){
+//				return false;
+//			}catch(Exception exp){
+//				plugin.getDebugLogger().logStackTrace(exp);
+//				return false;
+//			}
+			return false;
 		}else{
-			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(playerUUID);
+			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			config.set("hasGod", hasGod);
+			levelManager.save();
 			
 			levelManager.save();
 			return true;			
@@ -209,27 +167,27 @@ public class PlayerContainer {
 	 * @param player
 	 * @return
 	 */
-	public static PlayerContainer constructFromDB(UUID player){		
-		try{
-			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("playerUUID", player.toString()).findUnique();
-			if(container == null) throw new PersistenceException("Not found.");
-			
-			PlayerContainer playerContainer = new PlayerContainer(player, 20).checkStats();
-			
-			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
-			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
-			
-			if(container.isHasGod()){
-				playerContainer.hasGod = true;
-			}
-			
-			return playerContainer.checkStats();
-		}catch(PersistenceException exp){
-			PlayerContainer playerContainer = new PlayerContainer(player, 20);
-			playerContainer.checkStats();
-			return playerContainer;
-		}
-	}
+//	public static PlayerContainer constructFromDB(RaCPlayer player){
+//		try{
+//			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("player", player.toString()).findUnique();
+//			if(container == null) throw new PersistenceException("Not found.");
+//			
+//			PlayerContainer playerContainer = new PlayerContainer(player).checkStats();
+//			
+//			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
+//			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
+//			
+//			if(container.isHasGod()){
+//				playerContainer.hasGod = true;
+//			}
+//			
+//			return playerContainer.checkStats();
+//		}catch(PersistenceException exp){
+//			PlayerContainer playerContainer = new PlayerContainer(player);
+//			playerContainer.checkStats();
+//			return playerContainer;
+//		}
+//	}
 	
 	
 	/**
@@ -239,12 +197,12 @@ public class PlayerContainer {
 	 * @param fromDB true if to load from DB.
 	 * @return the loaded PlayerContainer.
 	 */
-	public static PlayerContainer loadPlayerContainer(UUID player ,boolean fromDB){
-		if(fromDB){
-			return constructFromDB(player);
-		}else{
+	public static PlayerContainer loadPlayerContainer(RaCPlayer player ,boolean fromDB){
+//		if(fromDB){
+//			return constructFromDB(player);
+//		}else{
 			return constructContainerFromYML(player);
-		}
+//		}
 	}
 	
 	
@@ -255,7 +213,7 @@ public class PlayerContainer {
 	 * @param player to load
 	 * @return the container corresponding to the player.
 	 */
-	public static PlayerContainer constructContainerFromYML(UUID player){
+	public static PlayerContainer constructContainerFromYML(RaCPlayer player){
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		config.load();
 		
@@ -276,21 +234,8 @@ public class PlayerContainer {
 				&& plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder()){
 			plugin.getClassManager().changePlayerHolder(player, savedClass, false);
 		}
-		
-		
-		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
-		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
-		
-		double maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-		if(raceContainer != null){
-			maxHealth = raceContainer.getRaceMaxHealth();
-		}
 			
-		if(classContainer != null){
-			maxHealth = classContainer.modifyToClass(maxHealth);
-		}
-			
-		PlayerContainer container = new PlayerContainer(player, maxHealth).checkStats();
+		PlayerContainer container = new PlayerContainer(player).checkStats();
 		boolean hasGod = config.getBoolean("hasGod");
 		if(hasGod){
 			container.switchGod();
@@ -302,46 +247,15 @@ public class PlayerContainer {
 	 * Checks the Player if he has any Wrong set values and resets the MaxHealth if needed.
 	 */
 	public PlayerContainer checkStats() {
-		final Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline()) return null;
 		
-		boolean isOnDisabledWorld = WorldResolver.isOnDisabledWorld(player);
-		boolean keepMaxHPOnDisabledWorld = plugin.getConfigManager().getGeneralConfig().isConfig_keep_max_hp_on_disabled_worlds();
-		
-		RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
-		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player.getUniqueId());
-		
-		if(raceContainer == null || (isOnDisabledWorld && !keepMaxHPOnDisabledWorld)) {
-			maxHealth = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-		}else{
-			double tempMaxHealth = raceContainer.getRaceMaxHealth();
-			if(tempMaxHealth <= 0) return this;
-			maxHealth = tempMaxHealth;
-		}
-		
-		
-		if(classContainer != null){
-			maxHealth = classContainer.modifyToClass(maxHealth);
-		}
-			
 		arrowManager.rescanClass();
 		armorToolManager.rescanPermission();
 		armorToolManager.checkArmorNotValidEquiped();
+		healthManager.rescanPlayer();
 		
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
-		
-		boolean disableHealthMods = plugin.getConfigManager().getGeneralConfig().isConfig_disableHealthMods();
-		if(player != null && player.isOnline() && !disableHealthMods){			
-			Player bukkitPlayer = Bukkit.getPlayer(playerUUID);
-
-			double currentMaxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(bukkitPlayer);
-			if(Math.abs(currentMaxHealth - maxHealth) >= 0.5){
-				CompatibilityModifier.BukkitPlayer.safeSetMaxHealth(maxHealth, bukkitPlayer);
-			}
-						
-			
-		}
 		
 		return this;
 	}
@@ -351,7 +265,7 @@ public class PlayerContainer {
 	 */
 	public void switchGod(){
 		hasGod = !hasGod;
-		Player player = Bukkit.getPlayer(this.playerUUID);
+		
 		if(player != null && player.isOnline()){
 			if(hasGod){
 				player.sendMessage(ChatColor.GREEN + "God mode toggled.");
@@ -375,34 +289,6 @@ public class PlayerContainer {
 	 */
 	public ArmorToolManager getArmorToolManager(){
 		return armorToolManager;
-	}
-	
-	/**
-	 * Forces to produce an HP message.
-	 */
-	public void forceHPOut(){
-		Player playerObject = Bukkit.getPlayer(playerUUID);
-		if(playerObject == null) return;
-		checkStats();
-		
-		display.forceHPOut();
-	}
-
-
-	/**
-	 * Returns the current Health of the Player
-	 * Note: This is only an Delegation from the Player Object
-	 * 
-	 * @return
-	 */
-	public double getCurrentHealth() {
-		Player player = Bukkit.getPlayer(playerUUID);
-		if(player != null && player.isOnline()){
-			double currentHealth = CompatibilityModifier.BukkitPlayer.safeGetHealth(player);
-			return currentHealth;
-		}
-		
-		return 0;
 	}
 
 	/**
@@ -434,5 +320,4 @@ public class PlayerContainer {
 		return this.levelManager;
 	}
 	
-
 }

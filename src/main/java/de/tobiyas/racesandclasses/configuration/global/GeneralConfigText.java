@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.configuration.global;
 
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
-
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 
@@ -253,7 +252,21 @@ public class GeneralConfigText {
 			+ "# number:  10  20   90   9001 ...."
 			+ "# default: 10 \n"
 			+ general_cooldown_on_wand_message + ": 10\n\n"
+
+			+ "# When removing old data, the days to check. \n"
+			+ "# If a player is not online for that long, his playerfile is removed.\n"
+			+ "# The Value is in Days.\n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 60 \n"
+			+ general_remove_old_data_days + ": 60\n\n"
 						
+			
+			+ "# When removing old data, if to check if the file is empty.\n"
+			+ "# Empty means, that the player has no Race / Class entry.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: true\n"
+			+ general_remove_old_data_check_empty + ": true\n\n"
+			
 			
 			//GUI
 			+ "\n"
@@ -276,6 +289,11 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ gui_disableAllChatBars + ": false\n\n"
+			
+			+ "# If this is activated, the level MC level bar is overwritten as Level Indicator.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_level_useMCLevelBar + ": false\n\n"
 			
 			
 			//MAGIC
@@ -303,8 +321,8 @@ public class GeneralConfigText {
 			+ "# String: a string representing a polynome \n"
 			+ "# {level} will be replaced by the level of calculation.\n"
 			+ "# If mcmmo is used as Level System, the Calculation will use McMMO skills.\n"
-			+ "# The Skill name has to be written in {} eg. {digging}.\n"
-			+ "# A valid calculator would be: '{digging} + {excavation} \\ 20'\n"
+			+ "# The Skill name has to be written in {} eg. {mining}.\n"
+			+ "# A valid calculator would be: '{mining} + {excavation} \\ 20'\n"
 			+ "# default: '{level} * {level} * {level} * 1000' \n"
 			+ "# By default, the the next level needs (level^3) * 1000 exp.\n"
 			+ level_mapExpPerLevelCalculationString + ": '{level} * {level} * {level} * 1000'\n\n"

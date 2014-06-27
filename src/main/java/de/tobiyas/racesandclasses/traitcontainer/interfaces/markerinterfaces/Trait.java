@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
@@ -24,6 +25,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public interface Trait{
@@ -82,7 +84,7 @@ public interface Trait{
 	 * 
 	 * @throws throws an ConfigTotal Exception if something gone wrong with configuring.
 	 */
-	public void setConfiguration(Map<String, Object> configurationMap) throws TraitConfigurationFailedException;
+	public void setConfiguration(TraitConfiguration configurationMap) throws TraitConfigurationFailedException;
 	
 	
 	/**
@@ -97,7 +99,7 @@ public interface Trait{
 	 * 
 	 * @return the map of the config already passed.
 	 */
-	public Map<String, Object> getCurrentconfig();
+	public TraitConfiguration getCurrentconfig();
 	
 	/**
 	 * The general modify that is called, when the event wanted triggered.
@@ -124,14 +126,14 @@ public interface Trait{
 	 * 
 	 * @param abstractTraitHolder
 	 */
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder);
+	public void addTraitHolder(AbstractTraitHolder abstractTraitHolder);
 	
 	
 	/**
-	 * Returns the TraitHolder that this Trait belongs to.
+	 * Returns the TraitHolders that this Trait belongs to.
 	 * @return
 	 */
-	public AbstractTraitHolder getTraitHolder();
+	public Set<AbstractTraitHolder> getTraitHolders();
 
 
 	/**
@@ -164,4 +166,10 @@ public interface Trait{
 	 */
 	public String getDisplayName();
 	
+	/**
+	 * Returns if the Trait is visible.
+	 * 
+	 * @return returns true if visible.
+	 */
+	public boolean isVisible();
 }

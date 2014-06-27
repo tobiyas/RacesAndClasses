@@ -31,6 +31,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class CommandExecutor_RaceConfig extends AbstractCommand {
 
@@ -58,12 +60,12 @@ public class CommandExecutor_RaceConfig extends AbstractCommand {
 			return true;
 		}
 		
-		Player player = (Player) sender;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
 		
 		if(args.length == 0){
 			String your = LanguageAPI.translateIgnoreError("your").build();
-			player.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
+			racPlayer.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;
@@ -73,7 +75,7 @@ public class CommandExecutor_RaceConfig extends AbstractCommand {
 			
 			for(String attribute : configLines.keySet()){
 				String value = String.valueOf(configLines.get(attribute));
-				player.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.AQUA + ": " + ChatColor.BLUE + value);
+				racPlayer.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.AQUA + ": " + ChatColor.BLUE + value);
 			}
 			
 			return true;
@@ -83,7 +85,7 @@ public class CommandExecutor_RaceConfig extends AbstractCommand {
 			String attribute = args[0];
 			String value = args[1];
 			
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getUniqueId());
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;

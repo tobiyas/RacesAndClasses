@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 
@@ -74,8 +76,10 @@ public class CommandExecutor_Racechat extends AbstractCommand {
 			return true;
 		}
 		
-		Player player = (Player) sender;		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player.getUniqueId());
+		Player player = (Player) sender;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
+		AbstractTraitHolder container = racPlayer.getRace();
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
 			LanguageAPI.sendTranslatedMessage(sender,"no_race_selected");
@@ -87,7 +91,7 @@ public class CommandExecutor_Racechat extends AbstractCommand {
 			message += snippet + " ";
 		}
 
-		plugin.getChannelManager().broadcastMessageToChannel(container.getName(), player, message);
+		plugin.getChannelManager().broadcastMessageToChannel(container.getDisplayName(), player, message);
 		return true;
 	}
 }

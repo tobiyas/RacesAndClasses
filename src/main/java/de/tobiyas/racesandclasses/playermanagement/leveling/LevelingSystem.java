@@ -33,6 +33,11 @@ public enum LevelingSystem {
 	mcMMO,
 	
 	/**
+	 * Supporting Heroes Levels.
+	 */
+	Heroes,
+	
+	/**
 	 * SkillAPI is used.
 	 */
 	SkillAPI;
@@ -53,6 +58,7 @@ public enum LevelingSystem {
 		if(toParse.startsWith("v") || toParse.equalsIgnoreCase("mc")) return VanillaMC;
 		if(toParse.startsWith("mcm")) return mcMMO;
 		if(toParse.startsWith("s"))	return SkillAPI;
+		if(toParse.startsWith("h")) return Heroes;
 		
 		//at least try to parse from names.
 		try{ return LevelingSystem.valueOf(toParse.toUpperCase()); }catch(Throwable exp){}

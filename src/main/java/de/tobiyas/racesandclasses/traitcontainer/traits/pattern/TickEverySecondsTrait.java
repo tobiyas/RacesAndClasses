@@ -15,13 +15,11 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 
-import java.util.Map;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -30,6 +28,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class TickEverySecondsTrait extends AbstractBasicTrait {
@@ -50,21 +49,20 @@ private int schedulerTaskId = -1;
 			
 			@Override
 			public void run() {
-				for(UUID playerUUID : holder.getHolderManager().getAllPlayersOfHolder(holder)){
-					Player player = Bukkit.getPlayer(playerUUID);
-					if(player == null || !player.isOnline()) continue;
-					EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
-					if(!checkRestrictions(fakeEventWrapper) || !canBeTriggered(fakeEventWrapper)) {
-						restrictionsFailed(player.getPlayer());
-						return;
-					}
-						
-					if(tickDoneForPlayer(player.getPlayer())){
-						plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
+				for(AbstractTraitHolder holder : holders){
+					for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
+						if(player == null || !player.isOnline()) continue;
+						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
+						if(!checkRestrictions(fakeEventWrapper) || !canBeTriggered(fakeEventWrapper)) {
+							restrictionsFailed(player);
+							return;
+						}
+							
+						if(tickDoneForPlayer(player)){
+							plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
+						}
 					}
 				}
-				
-				
 			}
 		}, seconds * 20, seconds * 20);
 	}
@@ -75,7 +73,7 @@ private int schedulerTaskId = -1;
 	 * 
 	 * @param player to check
 	 */
-	protected void restrictionsFailed(Player player) {}
+	protected void restrictionsFailed(RaCPlayer player) {}
 
 	/**
 	 * Is called when the Tick for the Player is on it's way.
@@ -84,7 +82,7 @@ private int schedulerTaskId = -1;
 	 * 
 	 * @return true if it triggered, false otherwise.
 	 */
-	protected abstract boolean tickDoneForPlayer(Player player);
+	protected abstract boolean tickDoneForPlayer(RaCPlayer player);
 	
 	
 	@Override
@@ -116,7 +114,7 @@ private int schedulerTaskId = -1;
 			reason = "on DayLight";
 		}
 		
-		return " every: " + seconds + " sec for " + reason;
+		return getPrettyConfigurationPre() + " every: " + seconds + " sec for " + reason;
 	}
 	
 	/**
@@ -129,7 +127,7 @@ private int schedulerTaskId = -1;
 			@TraitConfigurationField(fieldName = "seconds", classToExpect = Integer.class, optional = false)
 		})
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
 		seconds = (Integer) configMap.get("seconds");
@@ -160,7 +158,7 @@ private int schedulerTaskId = -1;
 
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper) {
-		Player player = wrapper.getPlayer();
+		RaCPlayer player = wrapper.getPlayer();
 		int lightFromSky = player.getLocation().getBlock().getLightFromSky();
 		if(onlyOnDay){ //TODO fixme
 			if(lightFromSky > 2){

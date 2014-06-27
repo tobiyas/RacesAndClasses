@@ -20,7 +20,6 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_e
 import static de.tobiyas.racesandclasses.translation.languages.Keys.success;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.value_0_not_allowed;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,7 +27,12 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
+import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 
 public class Command_RACLevel extends AbstractCommand {
@@ -61,13 +65,18 @@ public class Command_RACLevel extends AbstractCommand {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
+		if(args.length == 0 && (sender instanceof Player)){
+			postLevel((Player)sender);
+			return true;
+		}
+		
 		if(args.length != 3){
 			pasteHelp(sender);
 			return true;
 		}
 		
 		String subCommand = args[1];
-		Player player = Bukkit.getPlayer(args[0]);
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(args[0]);
 		int value = 0;
 		
 		try{
@@ -77,7 +86,7 @@ public class Command_RACLevel extends AbstractCommand {
 			return true;
 		}
 		
-		PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(player.getUniqueId());
+		PlayerLevelManager manager = player.getLevelManager();
 		if(manager == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", player.getName());
@@ -117,15 +126,36 @@ public class Command_RACLevel extends AbstractCommand {
 	}
 
 	/**
+	 * Posts the level infos to the player.
+	 * 
+	 * @param sender
+	 */
+	private void postLevel(Player player) {
+		RaCPlayer pl = RaCPlayerManager.get().getPlayer(player);
+		
+		int level = LevelAPI.getCurrentLevel(player);
+		int levelExp = (int) LevelAPI.getCurrentExpOfLevel(player);
+		
+		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(level);
+		int maxEXP = levelPack.getMaxEXP();
+
+		pl.sendMessage(ChatColor.YELLOW + "==== Level ====");
+		pl.sendMessage(ChatColor.YELLOW + "Level: " + ChatColor.AQUA + level);
+		pl.sendMessage(ChatColor.YELLOW + "Exp: " + ChatColor.AQUA + levelExp + ChatColor.GRAY + "/" + ChatColor.AQUA + maxEXP);
+	}
+	
+	
+
+	/**
 	 * Paste the help for the Level command
 	 * 
 	 * @param sender to send to
 	 */
 	private void pasteHelp(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "=== RAC Level ===");
-		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerUUID> exp <value>" 
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <player> exp <value>" 
 				+ ChatColor.YELLOW + "  Adds / Removes EXP to player.");
-		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <playerUUID> lvl <value>"
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/raclevel <player> lvl <value>"
 				+ ChatColor.YELLOW + "  Adds / Removes LEVELS to player.");
 	}
 

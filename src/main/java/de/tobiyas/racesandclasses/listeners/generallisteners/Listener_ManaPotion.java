@@ -8,13 +8,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class Listener_ManaPotion implements Listener {
-
-	/**
-	 * The Plugin to use.
-	 */
-	private final RacesAndClasses plugin;
 	
 	private final String MANA_POTION_NAME = "ManaPotion";
 	private final Material potionMat = Material.POTION;
@@ -22,8 +19,6 @@ public class Listener_ManaPotion implements Listener {
 	
 	public Listener_ManaPotion() {
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		this.plugin = plugin;
-		
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -48,7 +43,9 @@ public class Listener_ManaPotion implements Listener {
 		if(mana < 0 ) return;
 		
 		event.setCancelled(true);
-		plugin.getPlayerManager().getSpellManagerOfPlayer(event.getPlayer().getUniqueId()).getManaManager().fillMana(mana);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		racPlayer.getManaManager().fillMana(mana);
+		
 		if(item.getAmount() == 1) event.getPlayer().getInventory().remove(item);
 		if(item.getAmount() > 1) item.setAmount(item.getAmount() - 1);
 	}

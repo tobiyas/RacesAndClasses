@@ -47,7 +47,7 @@ public class HolderInventory extends InventoryView{
 	protected int numberOfHolder;
 	
 	/**
-	 * The player that will select a holder
+	 * The player that will select a holders
 	 */
 	private final Player player;
 	
@@ -112,10 +112,19 @@ public class HolderInventory extends InventoryView{
 			ItemMeta meta = item.getItemMeta();
 			
 			boolean isEmptyTag = holder.getTag() == null || holder.getTag().equals("");
-			meta.setDisplayName(isEmptyTag ? "[" + holder.getName() + "]" : holder.getTag());
+			meta.setDisplayName(isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag());
 			
 			List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
 			
+			if(holder.hasHolderDescription()){
+				String description = holder.getHolderDescription();
+				String[] split = description.split("#n");
+				
+				for(String desc : split){
+					lore.add(ChatColor.translateAlternateColorCodes('&', desc));					
+				}
+			}
+
 			String healthString = getHealthString(holder);
 			if(healthString != null){
 				lore.add(ChatColor.AQUA + "Health: ");
@@ -166,7 +175,7 @@ public class HolderInventory extends InventoryView{
 	/**
 	 * Returns a health String depending on the ContainerType
 	 * 
-	 * @param holder
+	 * @param holders
 	 * @return
 	 */
 	private String getHealthString(AbstractTraitHolder holder) {
@@ -185,10 +194,10 @@ public class HolderInventory extends InventoryView{
 
 
 	/**
-	 * Checks if a player has the Permission for a holder
+	 * Checks if a player has the Permission for a holders
 	 * 
-	 * @param holder to check
-	 * @param manager the manager of the holder to check
+	 * @param holders to check
+	 * @param manager the manager of the holders to check
 	 * @return true if the player has access, false otherwise.
 	 */
 	private boolean hasPermission(AbstractTraitHolder holder, AbstractHolderManager manager) {		

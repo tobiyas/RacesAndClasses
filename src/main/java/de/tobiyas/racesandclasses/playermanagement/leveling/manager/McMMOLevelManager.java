@@ -15,19 +15,17 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import java.util.UUID;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
@@ -39,7 +37,7 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	/**
 	 * The Playername to this levelsystem.
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
 	
 	/**
@@ -60,8 +58,8 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	/**
 	 * Sets up the Plugin.
 	 */
-	public McMMOLevelManager(UUID playerUUID) {
-		this.playerUUID = playerUUID;
+	public McMMOLevelManager(RaCPlayer player) {
+		this.player = player;
 		
 		rescanDisplay();
 		calcString = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
@@ -81,20 +79,10 @@ public class McMMOLevelManager implements PlayerLevelManager {
 
 		return 0;
 	}
-	
-	
-	/**
-	 * Returns the Player Object.
-	 * 
-	 * @return player or Null
-	 */
-	private Player getPlayerObject(){
-		return Bukkit.getPlayer(playerUUID);
-	}
 
 	@Override
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayer() {
+		return player;
 	}
 
 	@Override
@@ -145,7 +133,6 @@ public class McMMOLevelManager implements PlayerLevelManager {
 
 	@Override
 	public void forceDisplay() {
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline()) return;
 		
 		expDisplay.display(0, 1);
@@ -161,8 +148,8 @@ public class McMMOLevelManager implements PlayerLevelManager {
 			expDisplay.unregister();
 		}
 		
-		expDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.LEVEL);
+		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
+		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
 	}
 
 	@Override
@@ -205,6 +192,7 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	 */
 	public static boolean verifyGeneratorStringWorks(String generatorString){
 		try{
+			generatorString = generatorString.toLowerCase();
 			ScriptEngineManager mgr = null;
 			ScriptEngine engine = null;
 			try{
@@ -217,7 +205,8 @@ public class McMMOLevelManager implements PlayerLevelManager {
 			
 		    
 		    for(SkillType type : SkillType.values()){
-		    	generatorString = generatorString.replace("{" + type.getName() + "}", String.valueOf(42));
+		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(42));
+		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(42));
 		    }
 		
 	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	
@@ -253,8 +242,10 @@ public class McMMOLevelManager implements PlayerLevelManager {
 			
 		    
 		    for(SkillType type : SkillType.values()){
-		    	int skillLevel = ExperienceAPI.getLevel(getPlayerObject(), type.name());
-		    	generatorString = generatorString.replace("{" + type.getName() + "}", String.valueOf(skillLevel));
+		    	int skillLevel = ExperienceAPI.getLevel(getPlayer().getPlayer(), type.name());
+		    	
+		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(skillLevel));
+		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(skillLevel));
 		    }
 		
 	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	

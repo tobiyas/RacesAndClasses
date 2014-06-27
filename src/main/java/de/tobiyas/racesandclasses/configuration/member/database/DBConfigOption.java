@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.member.database;
 
-import java.util.UUID;
-
 import javax.persistence.Entity;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
@@ -27,6 +25,7 @@ import com.avaje.ebean.validation.NotEmpty;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 
 @Entity
@@ -50,28 +49,28 @@ public class DBConfigOption extends ConfigOption {
 	/**
 	 * @see ConfigOption
 	 */
-	public DBConfigOption(String path, UUID playerUUID, Object value) {
-		super(path, playerUUID, value);
+	public DBConfigOption(String path, RaCPlayer player, Object value) {
+		super(path, player, value);
 		
 		plugin = RacesAndClasses.getPlugin();
 		
 		this.stringValue = String.valueOf(value);
 		this.stringDefaultValue = String.valueOf(value);
-		this.playerUUID = playerUUID;
+		this.player = player;
 	}
 	
 	
 	/**
 	 * @see ConfigOption
 	 */
-	public DBConfigOption(String path, UUID playerUUID, String displayName, Object value, Object defaultValue, boolean visible) {
-		super(path, playerUUID, displayName, value, defaultValue, visible);
+	public DBConfigOption(String path, RaCPlayer player, String displayName, Object value, Object defaultValue, boolean visible) {
+		super(path, player, displayName, value, defaultValue, visible);
 		
 		plugin = RacesAndClasses.getPlugin();
 		
 		this.stringValue = String.valueOf(value);
 		this.stringDefaultValue = String.valueOf(defaultValue);
-		this.playerUUID = playerUUID;
+		this.player = player;
 	}
 
 	
@@ -90,7 +89,7 @@ public class DBConfigOption extends ConfigOption {
 	 * DB init Constructor.
 	 * DO NOT USE!
 	 */
-	public DBConfigOption(UUID playerName){
+	public DBConfigOption(RaCPlayer playerName){
 		super(playerName);
 		
 		plugin = RacesAndClasses.getPlugin();
@@ -103,11 +102,11 @@ public class DBConfigOption extends ConfigOption {
 	 * 
 	 * @param option
 	 */
-	protected DBConfigOption(ConfigOption option, UUID playerUUID){
+	protected DBConfigOption(ConfigOption option, RaCPlayer player){
 		super(option);
 		
 		plugin = RacesAndClasses.getPlugin();
-		this.playerUUID = playerUUID;
+		this.player = player;
 	}
 	
 	
@@ -118,7 +117,7 @@ public class DBConfigOption extends ConfigOption {
 		//When no saving needed, don't try.
 		
 		try{
-			if(plugin.getDatabase().find(DBConfigOption.class).where().ieq("path", playerUUID + path).findUnique() == null){
+			if(plugin.getDatabase().find(DBConfigOption.class).where().ieq("path", player + path).findUnique() == null){
 				plugin.getDatabase().save(this);
 			}else{
 				plugin.getDatabase().update(this);
@@ -133,8 +132,8 @@ public class DBConfigOption extends ConfigOption {
 	}
 	
 	
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayerUUID() {
+		return player;
 	}
 
 
@@ -145,7 +144,7 @@ public class DBConfigOption extends ConfigOption {
 	 * 
 	 * 
 	 * @param path
-	 * @param playerUUID
+	 * @param player
 	 * @param displayName
 	 * @param value
 	 * @param defaultValue
@@ -153,17 +152,17 @@ public class DBConfigOption extends ConfigOption {
 	 * 
 	 * @return
 	 */
-	public static DBConfigOption loadFromPathOrCreateDefault(UUID playerUUID, String displayName, 
+	public static DBConfigOption loadFromPathOrCreateDefault(RaCPlayer player, String displayName, 
 			Object value, Object defaultValue, boolean defaultVisiblity){
 		
 		EbeanServer dbServer = RacesAndClasses.getPlugin().getDatabase();
 		try{
-			DBConfigOption option = dbServer.find(DBConfigOption.class).where().ieq("path", playerUUID + displayName).findUnique();
+			DBConfigOption option = dbServer.find(DBConfigOption.class).where().ieq("path", player.getUniqueId() + displayName).findUnique();
 			if(option != null) return option;
 			
 			throw new PersistenceException("Value not found.");
 		}catch(PersistenceException exp){
-			DBConfigOption config = new DBConfigOption(displayName, playerUUID, displayName, value, defaultValue, defaultVisiblity);
+			DBConfigOption config = new DBConfigOption(displayName, player, displayName, value, defaultValue, defaultVisiblity);
 			config.save("");
 			return config;
 		}
@@ -180,7 +179,7 @@ public class DBConfigOption extends ConfigOption {
 	public static DBConfigOption copyFrom(ConfigOption option){
 		String path = option.getPath();
 		String displayName = option.getDisplayName();
-		UUID playerUUID = option.getPlayerUUID();
+		RaCPlayer playerUUID = option.getPlayerUUID();
 		
 		Object value = option.getValue();
 		Object defaultValue = option.getDefaultValue();
@@ -193,11 +192,11 @@ public class DBConfigOption extends ConfigOption {
 	/**
 	 * ONLY FOR DB ACCESS!!!!
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 */
-	public void setPlayerName(UUID playerUUID) {
-		if(this.playerUUID != null) return;
-		this.playerUUID = playerUUID;
+	public void setPlayerName(RaCPlayer player) {
+		if(this.player != null) return;
+		this.player = player;
 	}
 	
 	
@@ -208,7 +207,7 @@ public class DBConfigOption extends ConfigOption {
 	
 	@Override
 	public String getPath(){
-		return this.playerUUID + this.path;
+		return this.player + this.path;
 	}
 
 

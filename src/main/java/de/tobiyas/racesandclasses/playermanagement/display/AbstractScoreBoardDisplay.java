@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,6 +23,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 
@@ -59,7 +58,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	protected int bukkitTaskId = -1;
 	
 	
-	public AbstractScoreBoardDisplay(UUID player, DisplayInfos displayInfo) {
+	public AbstractScoreBoardDisplay(RaCPlayer player, DisplayInfos displayInfo) {
 		super(player, displayInfo);
 
 		if(bukkitTaskId < 0 || 
@@ -84,14 +83,13 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 			return;
 		}
 		
-		Player player = Bukkit.getPlayer(playerUUID);
 		String objectiveName = ChatColor.YELLOW + SCOREBOARD_OBJECTIVE_NAME + boardAddition;
 		if(player == null || !player.isOnline()){
 			return;
 		}
 		
 		if(this.boardToShow == null){
-			Scoreboard playerbord = player.getScoreboard();
+			Scoreboard playerbord = player.getPlayer().getScoreboard();
 			if(playerbord.getObjective(objectiveName) != null){
 				this.boardToShow = playerbord;
 			}else{
@@ -114,8 +112,8 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 		removeOldValues(bordOfPlayer);
 		addValues(objective);
 		
-		delayFading(player, 5);
-		player.setScoreboard(bordOfPlayer);
+		delayFading(player.getPlayer(), 5);
+		player.getPlayer().setScoreboard(bordOfPlayer);
 	}
 
 	/**
@@ -153,10 +151,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 		fadingTime --;
 
 		if(fadingTime < 0){
-			Player player = Bukkit.getPlayer(playerUUID);
 			if(player != null && player.isOnline()){
 				Scoreboard oldBoard = this.oldBoardToStore;
-				Scoreboard currentBoard = player.getScoreboard();
+				Scoreboard currentBoard = player.getPlayer().getScoreboard();
 				
 				if(currentBoard != boardToShow){
 					//check again in 2 seconds.
@@ -168,7 +165,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 					oldBoard = Bukkit.getScoreboardManager().getNewScoreboard();
 				}
 				
-				player.setScoreboard(oldBoard);
+				player.getPlayer().setScoreboard(oldBoard);
 			}
 		}
 	}

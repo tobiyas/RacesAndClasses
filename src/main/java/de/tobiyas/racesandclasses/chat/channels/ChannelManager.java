@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,6 +33,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelContainer;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelInvalidException;
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelTicker;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -140,12 +140,11 @@ public class ChannelManager {
 	 * 
 	 * @return true if worked, false otherwise
 	 */
-	public boolean registerChannel(ChannelLevel level, String channelName, UUID player){
+	public boolean registerChannel(ChannelLevel level, String channelName, RaCPlayer player){
 		ChannelContainer container = registerChannel(level, channelName);
 		if(container == null){
-			Player realplayer = Bukkit.getPlayer(player);
-			if(realplayer != null){
-				realplayer.sendMessage(ChatColor.RED + "Channel: " + ChatColor.AQUA + channelName + ChatColor.RED + " already exists.");
+			if(player != null){
+				player.sendMessage(ChatColor.RED + "Channel: " + ChatColor.AQUA + channelName + ChatColor.RED + " already exists.");
 			}
 			
 			return false;
@@ -164,16 +163,15 @@ public class ChannelManager {
 	 * @param channelPassword
 	 * @param player
 	 */
-	public boolean registerChannel(ChannelLevel channelLevel, String channelName, String channelPassword, UUID player) {
+	public boolean registerChannel(ChannelLevel channelLevel, String channelName, String channelPassword, RaCPlayer player) {
 		boolean worked = registerChannel(channelLevel, channelName, player);
 		if(worked){
 			ChannelContainer container = getContainer(channelName);
 			container.setAdmin(player);
 			container.setPassword(channelPassword);
 			
-			Player realPlayer = Bukkit.getPlayer(player);
-			if(realPlayer != null){
-				realPlayer.sendMessage(ChatColor.GREEN + "The channel " + ChatColor.AQUA + channelName + 
+			if(player != null){
+				player.sendMessage(ChatColor.GREEN + "The channel " + ChatColor.AQUA + channelName + 
 								ChatColor.GREEN + " has been created successfully");
 			}
 		}
@@ -357,7 +355,7 @@ public class ChannelManager {
 	 * @param password needed for the channel (if it has one, ignored otherwise)
 	 * @param notify if the player join should be notified.
 	 */
-	public void joinChannel(UUID player, String channelName, String password, boolean notify) {
+	public void joinChannel(RaCPlayer player, String channelName, String password, boolean notify) {
 		ChannelContainer container = getContainer(channelName);
 		if(container == null)
 			return;
@@ -391,12 +389,11 @@ public class ChannelManager {
 	 * @param channelName
 	 * @param notify
 	 */
-	public void leaveChannel(UUID player, String channelName, boolean notify) {
+	public void leaveChannel(RaCPlayer player, String channelName, boolean notify) {
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
 			if(notify){
-				Player realplayer = Bukkit.getPlayer(player);
-				if(realplayer != null) realplayer.sendMessage(ChatColor.RED + "The Channel: " + channelName + " does not exist.");
+				if(player != null) player.sendMessage(ChatColor.RED + "The Channel: " + channelName + " does not exist.");
 			}
 			return;
 		}
@@ -407,11 +404,11 @@ public class ChannelManager {
 	/**
 	 * Checks if a Player (as id) is present in a channel.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @param channelName
 	 * @return if is present, false otherwise
 	 */
-	public boolean isMember(UUID player, String channelName) {
+	public boolean isMember(RaCPlayer player, String channelName) {
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
 			return false;
@@ -435,31 +432,30 @@ public class ChannelManager {
 	 * @param channelName
 	 * @param time
 	 */
-	public void mutePlayer(UUID admin, UUID mutedUUID, String channelName, int time){
-		Player realPlayer = Bukkit.getPlayer(admin);
+	public void mutePlayer(RaCPlayer admin, RaCPlayer mutedRaCPlayer, String channelName, int time){
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "Channel not found.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "Channel not found.");
 			return;
 		}
 		
-		if(!container.checkPermissionMute(realPlayer)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+		if(!container.checkPermissionMute(admin.getPlayer())){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
 			return;
 		}
 		
-		if(!container.isMember(mutedUUID)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+		if(!container.isMember(mutedRaCPlayer)){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
 			return;
 		}
 		
-		if(container.isMuted(mutedUUID)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "The Player is already muted.");
+		if(container.isMuted(mutedRaCPlayer)){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "The Player is already muted.");
 			return;
 		}
 		
-		container.mutePlayer(mutedUUID, time);
-		broadcastMessageToChannel(channelName, null, " Player: " + mutedUUID + " got muted by: " + realPlayer.getDisplayName());
+		container.mutePlayer(mutedRaCPlayer, time);
+		broadcastMessageToChannel(channelName, null, " Player: " + mutedRaCPlayer + " got muted by: " + admin.getDisplayName());
 	}
 	
 	/**
@@ -468,34 +464,33 @@ public class ChannelManager {
 	 * Note: The unmuteing player needs Admin privileges in this channel. 
 	 * 
 	 * @param admin
-	 * @param unmutedUUID
+	 * @param unmutedRaCPlayer
 	 * @param channelName
 	 */
-	public void unmutePlayer(UUID admin, UUID unmutedUUID, String channelName){
-		Player realPlayer = Bukkit.getPlayer(admin);
+	public void unmutePlayer(RaCPlayer admin, RaCPlayer unmutedRaCPlayer, String channelName){
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "Channel not found.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "Channel not found.");
 			return;
 		}
 		
-		if(!container.checkPermissionUnmute(realPlayer)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+		if(!container.checkPermissionUnmute(admin.getPlayer())){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
 			return;
 		}
 		
-		if(!container.isMember(unmutedUUID)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+		if(!container.isMember(unmutedRaCPlayer)){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
 			return;
 		}
 		
-		if(!container.isMuted(unmutedUUID)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "No player with this name is muted.");
+		if(!container.isMuted(unmutedRaCPlayer)){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "No player with this name is muted.");
 			return;
 		}
 		
-		container.unmutePlayer(unmutedUUID);
-		broadcastMessageToChannel(channelName, null, " Player: " + unmutedUUID + " got unmuted by: " + realPlayer.getDisplayName());
+		container.unmutePlayer(unmutedRaCPlayer);
+		broadcastMessageToChannel(channelName, null, " Player: " + unmutedRaCPlayer + " got unmuted by: " + admin.getDisplayName());
 	}
 	
 	/**
@@ -509,30 +504,29 @@ public class ChannelManager {
 	 * @param channelName
 	 * @param time
 	 */
-	public void banPlayer(UUID admin, UUID banName, String channelName, int time){
-		Player realPlayer = Bukkit.getPlayer(admin);
+	public void banPlayer(RaCPlayer admin, RaCPlayer banName, String channelName, int time){
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "Channel not found.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "Channel not found.");
 			return;
 		}
 		
-		if(!container.checkPermissionBann(realPlayer)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+		if(!container.checkPermissionBann(admin.getPlayer())){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
 			return;
 		}
 		
 		if(!container.isMember(banName)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "There is no player with this name in this channel.");
 			return;
 		}
 		
 		if(container.isBanned(banName)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "This Player is already banned from the channel.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "This Player is already banned from the channel.");
 			return;
 		}
 		
-		broadcastMessageToChannel(channelName, null, " Player: " + banName + " got baned from channel by: " + realPlayer.getDisplayName());
+		broadcastMessageToChannel(channelName, null, " Player: " + banName + " got baned from channel by: " + admin.getDisplayName());
 		container.banAndRemovePlayer(banName, time);
 	}
 	
@@ -545,32 +539,30 @@ public class ChannelManager {
 	 * @param unbanName
 	 * @param channelName
 	 */
-	public void unbanPlayer(UUID admin, UUID unbanUUID, String channelName){
-		Player realPlayer = Bukkit.getPlayer(admin);
+	public void unbanPlayer(RaCPlayer admin, RaCPlayer unbanRaCPlayer, String channelName){
 		ChannelContainer container = getContainer(channelName);
 		if(container == null){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "Channel not found.");
+			if(admin != null) admin.sendMessage(ChatColor.RED + "Channel not found.");
 			return;
 		}
 		
-		if(!container.checkPermissionMute(realPlayer)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
+		if(!container.checkPermissionMute(admin.getPlayer())){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "You don't have the permission to do this.");
 			return;
 		}
 		
-		if(!container.isBanned(unbanUUID)){
-			if(realPlayer != null) realPlayer.sendMessage(ChatColor.RED + "No player with this name is banned.");
+		if(!container.isBanned(unbanRaCPlayer)){
+			if(admin != null) admin.sendMessage(ChatColor.RED + "No player with this name is banned.");
 			return;
 		}
 		
-		container.unbanPlayer(unbanUUID);
+		container.unbanPlayer(unbanRaCPlayer);
 		//broadcastMessageToChannel(channelName, null, " Player: " + unbanName + " got unbaned by: " + admin.getDisplayName());
-		if(realPlayer != null) realPlayer.sendMessage(ChatColor.GREEN + "Player: " + ChatColor.LIGHT_PURPLE +  unbanUUID + ChatColor.GREEN +
+		if(admin != null) admin.sendMessage(ChatColor.GREEN + "Player: " + ChatColor.LIGHT_PURPLE +  unbanRaCPlayer + ChatColor.GREEN +
 							" got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
 		
-		Player player = Bukkit.getPlayer(unbanUUID);
-		if(player != null){
-			player.sendMessage(ChatColor.GREEN + "You got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
+		if(unbanRaCPlayer != null){
+			unbanRaCPlayer.sendMessage(ChatColor.GREEN + "You got unbanned from channel: " + ChatColor.LIGHT_PURPLE + channelName);
 		}
 	}
 	
@@ -600,15 +592,13 @@ public class ChannelManager {
 	 * 
 	 * @param player
 	 */
-	public void playerLogin(UUID playerUUID){
-		Player player = Bukkit.getPlayer(playerUUID);
+	public void playerLogin(RaCPlayer player){
+		this.joinChannel(player, "Global", "", true);
+		this.joinChannel(player, player.getWorld().getName(), "", false);
 		
-		this.joinChannel(playerUUID, "Global", "", true);
-		this.joinChannel(playerUUID, player.getWorld().getName(), "", false);
-		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(container != null){
-			this.joinChannel(playerUUID, container.getName(), "", false);
+			this.joinChannel(player, container.getDisplayName(), "", false);
 		}
 	}
 
@@ -617,15 +607,13 @@ public class ChannelManager {
 	 * 
 	 * @param player
 	 */
-	public void playerQuit(UUID playerUUID) {
-		Player player = Bukkit.getPlayer(playerUUID);
-
-		this.leaveChannel(playerUUID, "Global", true);
-		this.leaveChannel(playerUUID, player.getWorld().getName(), false);
+	public void playerQuit(RaCPlayer player) {
+		this.leaveChannel(player, "Global", true);
+		this.leaveChannel(player, player.getWorld().getName(), false);
 		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
+		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		if(container != null){
-			this.leaveChannel(playerUUID, container.getName(), false);
+			this.leaveChannel(player, container.getDisplayName(), false);
 		}
 	}
 
@@ -635,13 +623,12 @@ public class ChannelManager {
 	 * @param oldWorld
 	 * @param player
 	 */
-	public void playerChangedWorld(World oldWorld, UUID playerUUID) {
-		Player player = Bukkit.getPlayer(playerUUID);
+	public void playerChangedWorld(World oldWorld, RaCPlayer player) {
 		World newWorld = player.getWorld();
 		
 		boolean notify = plugin.getConfigManager().getGeneralConfig().isConfig_disableChatJoinLeaveMessages();
-		leaveChannel(playerUUID, oldWorld.getName(), notify);
-		joinChannel(playerUUID, newWorld.getName(), "", notify);
+		leaveChannel(player, oldWorld.getName(), notify);
+		joinChannel(player, newWorld.getName(), "", notify);
 	}
 	
 	
@@ -651,13 +638,13 @@ public class ChannelManager {
 	 * @param oldRace
 	 * @param player
 	 */
-	public void playerLeaveRace(String oldRace, UUID player){
+	public void playerLeaveRace(String oldRace, RaCPlayer player){
 		if(player == null) return;
 		
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(oldRace);
 		if(container == null) return;
 		
-		String raceToLeave = container.getName();		
+		String raceToLeave = container.getDisplayName();		
 		leaveChannel(player, raceToLeave, true);
 	}
 	
@@ -667,13 +654,13 @@ public class ChannelManager {
 	 * @param oldRace
 	 * @param player
 	 */
-	public void playerJoinRace(String newRace, UUID player){
+	public void playerJoinRace(String newRace, RaCPlayer player){
 		if(player == null) return;
 		
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderByName(newRace);
 		if(container == null) return;
 		
-		String raceToLeave = container.getName();		
+		String raceToLeave = container.getDisplayName();		
 		joinChannel(player, raceToLeave, "", true);
 	}
 
@@ -688,13 +675,13 @@ public class ChannelManager {
 	 * @param property
 	 * @param newValue
 	 */
-	public void editChannel(UUID playerUUID, String channel, String property,
+	public void editChannel(RaCPlayer player, String channel, String property,
 			String newValue) {
 		ChannelContainer container = getContainer(channel);
 		if(container == null)
 			return;
 		
-		container.editChannel(playerUUID, property, newValue);
+		container.editChannel(player, property, newValue);
 	}
 
 

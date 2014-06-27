@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,12 +30,11 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.util.collections.CaseInsenesitveMap;
 
 public class TraitConfigParser {
 
 	public static void configureTraitFromYAML(YamlConfiguration config, String traitPath, Trait trait) throws TraitConfigurationFailedException{
-		Map<String, Object> configurationMap = new CaseInsenesitveMap<Object>();
+		TraitConfiguration configurationMap = new TraitConfiguration();
 		
 		try{
 			ConfigurationSection traitConfig = config.getConfigurationSection(traitPath);
@@ -45,7 +43,7 @@ public class TraitConfigParser {
 				
 				//Only use the non null values.
 				if(value != null){
-					configurationMap.put(pathEntry, value);					
+					configurationMap.put(pathEntry, value);
 				}
 			}
 			
@@ -273,7 +271,7 @@ public class TraitConfigParser {
 		
 		while(classTocheck != null && classTocheck != Trait.class){
 			try{
-				Method method = classTocheck.getMethod("setConfiguration", Map.class);
+				Method method = classTocheck.getMethod("setConfiguration", TraitConfiguration.class);
 				if(method == null || !method.isAnnotationPresent(TraitConfigurationNeeded.class)){
 					throw new NoSuchMethodException();
 				}
@@ -309,7 +307,7 @@ public class TraitConfigParser {
 		
 		while(classTocheck != null && classTocheck != Trait.class){
 			try{
-				Method method = classTocheck.getMethod("setConfiguration", Map.class);
+				Method method = classTocheck.getMethod("setConfiguration", TraitConfiguration.class);
 				if(method == null || !method.isAnnotationPresent(TraitConfigurationNeeded.class)){
 					throw new NoSuchMethodException();
 				}

@@ -72,11 +72,14 @@ public class GeneralConfigFields {
 	public static final String general_disable_aliases = "general_disable_aliases";
 	public static final String general_cooldown_on_wand_message = "general_cooldown_on_wand_message";
 	public static final String general_cooldown_on_bow_message = "general_cooldown_on_bow_message";
+	public static final String general_remove_old_data_days = "general_remove_old_data_days";
+	public static final String general_remove_old_data_check_empty = "general_remove_old_data_check_empty";
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
 	public static final String gui_disableAllChatBars = "gui_disableAllChatBars";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
+	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
 
 	
 	//Magic

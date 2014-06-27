@@ -21,6 +21,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
@@ -30,7 +32,7 @@ public class TraitAPI {
 	 * Checks if the player has the Trait with the following Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerUUID to check
+	 * @param player to check
 	 * @param traitName to check
 	 * 
 	 * @return true if has the Trait.
@@ -47,7 +49,7 @@ public class TraitAPI {
 	 * Checks if the player has the Trait with the following Display Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerUUID to check
+	 * @param player to check
 	 * @param displayName to check
 	 * 
 	 * @return true if has the Trait.
@@ -63,7 +65,7 @@ public class TraitAPI {
 	 * Checks if the player has the Trait with the following Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerUUID to check
+	 * @param player to check
 	 * @param traitName to check
 	 * 
 	 * @return true if has the Trait.
@@ -73,7 +75,8 @@ public class TraitAPI {
 		traitName = traitName.replace(" ", "");
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player.getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			
@@ -93,7 +96,7 @@ public class TraitAPI {
 	 * Checks if the player has the Trait with the following Display Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerUUID to check
+	 * @param player to check
 	 * @param displayName to check
 	 * 
 	 * @return true if has the Trait.
@@ -102,7 +105,8 @@ public class TraitAPI {
 		if(player == null || displayName == null) return false;
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player.getUniqueId());
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			

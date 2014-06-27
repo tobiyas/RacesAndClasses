@@ -31,7 +31,7 @@ public class Keys {
 	//public static final String class = "class"; //java keyword.
 	public static final String channel_propertie = "channel_propertie";
 	public static final String change_to_same_holder = "change_to_same_holder";
-	public static final String class_changed_to = "class_not_exist";
+	public static final String class_changed_to = "class_changed_to";
 	public static final String class_changed_to_other = "class_not_exist";
 	public static final String class_not_exist = "class_not_exist";
 	public static final String cooldown_is_ready_again = "cooldown_is_ready_again";	

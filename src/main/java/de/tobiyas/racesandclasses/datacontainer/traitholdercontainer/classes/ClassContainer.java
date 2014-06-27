@@ -15,16 +15,17 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import java.util.UUID;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
+import de.tobiyas.racesandclasses.playermanagement.health.HealthModifier.HealthModEnum;
 import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
+
 
 public class ClassContainer extends AbstractTraitHolder{
 	
@@ -56,9 +57,10 @@ public class ClassContainer extends AbstractTraitHolder{
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
-			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
-			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.classtag", "[" + holderName + "]"));
-			this.classHealthModValue = evaluateValue(config.getString(holderName + ".config.health", "+0"));
+			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
+			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
+			this.holderTag = ChatColorUtils.decodeColors(config.getString(configNodeName + ".config.classtag", "[" + configNodeName + "]"));
+			this.classHealthModValue = evaluateValue(config.getString(configNodeName + ".config.health", "+0"));
 			
 			readArmor();
 		}catch(Exception exp){
@@ -101,44 +103,37 @@ public class ClassContainer extends AbstractTraitHolder{
 	}
 	
 	/**
-	 * loads a RaceContainer from an YamlConfig
+	 * loads a RaceContainer from an YamlConfig.
+	 * Does not load yet.
 	 * 
 	 * @param config
 	 * @param name
 	 * @return the container
 	 * @throws HolderParsingException 
 	 */
-	public static AbstractTraitHolder loadClass(YAMLConfigExtended config, String name) throws HolderParsingException{
+	public static AbstractTraitHolder loadClass(YAMLConfigExtended config, String name){
 		ClassContainer container = new ClassContainer(config, name);
-		return (ClassContainer) container.load();
+		return (ClassContainer) container;
 	}
 
 	
 	@Override
-	public boolean containsPlayer(UUID player){
+	public boolean containsPlayer(RaCPlayer player){
 		AbstractTraitHolder container = RacesAndClasses.getPlugin().getClassManager().getHolderOfPlayer(player);
 		if(container == null) return false;
-		return container.getName().equals(holderName);
+		return container.getDisplayName().equals(configNodeName);
 	}
 	
 	
-	public double modifyToClass(double maxHealth){
-		return evaluateClassMod(maxHealth);
-	}
-	
-	
-	private double evaluateClassMod(double maxHealth){
+	public double getMaxHealthMod(){
+		HealthModEnum op = HealthModEnum.ADD;
 		char firstChar = classHealthModify.charAt(0);
-		if(firstChar == '+')
-			return maxHealth + classHealthModValue;
+		if(firstChar == '+') op = HealthModEnum.ADD;
+		//if(firstChar == '*') op = HealthModEnum.MULT;
+		if(firstChar == '-') op = HealthModEnum.REMOVE;
+		//if(firstChar == '/') op = HealthModEnum.DIVITE;
 		
-		if(firstChar == '*')
-			return maxHealth * classHealthModValue;
-		
-		if(firstChar == '-')
-			return maxHealth - classHealthModValue;
-		
-		return maxHealth;
+		return op == HealthModEnum.REMOVE ? -classHealthModValue : classHealthModValue;
 	}
 
 

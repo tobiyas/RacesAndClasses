@@ -16,16 +16,12 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
 import java.util.HashSet;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
@@ -63,11 +59,12 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
-			this.manaBonus = config.getDouble(holderName + ".config.manabonus", 0);
-			this.holderTag = ChatColorUtils.decodeColors(config.getString(holderName + ".config.racetag", "[" + holderName + "]"));
-			this.raceMaxHealth = config.getDouble(holderName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
-			this.raceChatColor = config.getString(holderName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
-			this.raceChatFormat = config.getString(holderName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
+			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
+			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
+			this.holderTag = ChatColorUtils.decodeColors(config.getString(configNodeName + ".config.racetag", "[" + configNodeName + "]"));
+			this.raceMaxHealth = config.getDouble(configNodeName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
+			this.raceChatColor = config.getString(configNodeName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
+			this.raceChatFormat = config.getString(configNodeName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
 			
 			readArmor();
 		}catch(Exception exp){
@@ -78,7 +75,7 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	protected void addSTDTraits(){
 		Trait normalArrow = TraitStore.buildTraitByName("NormalArrow", this);
-		normalArrow.setTraitHolder(this);
+		normalArrow.addTraitHolder(this);
 		traits.add(normalArrow);
 	}
 	
@@ -89,16 +86,16 @@ public class RaceContainer extends AbstractTraitHolder{
 	 * @param name
 	 * @return the container
 	 */
-	public static RaceContainer loadRace(YAMLConfigExtended config, String name) throws HolderParsingException{
+	public static RaceContainer loadRace(YAMLConfigExtended config, String name) {
 		RaceContainer container = new RaceContainer(config, name);
-		return (RaceContainer) container.load();
+		return (RaceContainer) container;
 	}
 	
 	@Override
-	public boolean containsPlayer(UUID player){
+	public boolean containsPlayer(RaCPlayer player){
 		AbstractTraitHolder container = RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(player);
 		if(container == null) return false;
-		return container.getName().equals(holderName);
+		return container.getDisplayName().equals(configNodeName);
 	}
 
 	
@@ -107,14 +104,14 @@ public class RaceContainer extends AbstractTraitHolder{
 	}
 
 
-	public void editTABListEntry(UUID playerUUID) {
-		Player player = Bukkit.getPlayer(playerUUID);
+	public void editTABListEntry(RaCPlayer player) {
 		if(player == null) return;
+		
 		if(!RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_adaptListName()) return;
 		String total = holderTag + player.getName();
-		if(total.length() > 16)
-			total = total.substring(0, 15);
-		player.setPlayerListName(total);
+		if(total.length() > 16) total = total.substring(0, 15);
+		
+		player.getPlayer().setPlayerListName(total);
 	}
 	
 	public String getRaceChatColor(){
@@ -161,5 +158,11 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	public AbstractHolderManager getHolderManager() {
 		return RacesAndClasses.getPlugin().getRaceManager();
+	}
+
+
+	@Override
+	public double getMaxHealthMod() {
+		return raceMaxHealth - 20;
 	}
 }

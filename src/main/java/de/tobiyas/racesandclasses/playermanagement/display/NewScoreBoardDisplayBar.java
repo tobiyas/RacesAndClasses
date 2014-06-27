@@ -15,20 +15,19 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 
 public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 
 	
-	public NewScoreBoardDisplayBar(UUID player, DisplayInfos displayInfo) {
+	public NewScoreBoardDisplayBar(RaCPlayer player, DisplayInfos displayInfo) {
 		super(player, displayInfo);
 	}
 
@@ -55,7 +54,6 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 			barString = calcForHealth(currentHealth, maxHealth, 7);			
 		}
 		
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline()){
 			return;
 		}
@@ -87,12 +85,11 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		super.unregister();
 		
 		if(fadingTime > 0){
-			Player player = Bukkit.getPlayer(playerUUID);
 			if(player != null){
 				if(oldBoardToStore != null){
-					player.setScoreboard(oldBoardToStore);
+					player.getPlayer().setScoreboard(oldBoardToStore);
 				}else{
-					player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+					player.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 				}
 			}
 		}

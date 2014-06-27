@@ -20,6 +20,7 @@ import de.tobiyas.racesandclasses.listeners.classchangelistener.ClassChangeSelec
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChange;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
+import de.tobiyas.racesandclasses.listeners.externalchatlistener.VaultChatListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_ManaPotion;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
@@ -84,5 +85,6 @@ public class RaCListenerRegister {
 	public static void registerChatListeners(){
 		new HeroChatListener();
 		new DefaultChatReplacer();
+		new VaultChatListener();
 	}
 }

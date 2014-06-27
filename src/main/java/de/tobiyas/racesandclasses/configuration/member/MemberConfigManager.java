@@ -18,14 +18,13 @@ package de.tobiyas.racesandclasses.configuration.member;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 
 
@@ -34,7 +33,7 @@ public class MemberConfigManager {
 	/**
 	 * The config of members: player -> ConfigTotal 
 	 */
-	private Map<UUID, MemberConfig> memberConfigs;
+	private Map<RaCPlayer, MemberConfig> memberConfigs;
 	
 	
 	/**
@@ -50,7 +49,7 @@ public class MemberConfigManager {
 	 */
 	public MemberConfigManager(){
 		plugin = RacesAndClasses.getPlugin();
-		memberConfigs = new HashMap<UUID, MemberConfig>();
+		memberConfigs = new HashMap<RaCPlayer, MemberConfig>();
 	}
 	
 	
@@ -66,7 +65,7 @@ public class MemberConfigManager {
 	 */
 	@SuppressWarnings("deprecation") //This is async scheduling for performance.
 	public void reload(){
-		memberConfigs = new HashMap<UUID, MemberConfig>();
+		memberConfigs = new HashMap<RaCPlayer, MemberConfig>();
 		shutDown();
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
@@ -93,7 +92,7 @@ public class MemberConfigManager {
 	 * @param player
 	 * @return
 	 */
-	private MemberConfig getCreateNewConfig(UUID player){
+	private MemberConfig getCreateNewConfig(RaCPlayer player){
 		if(memberConfigs.containsKey(player)){
 			return memberConfigs.get(player);
 		}
@@ -114,11 +113,10 @@ public class MemberConfigManager {
 	 * Loads all configs from the playerdata file
 	 */
 	private void loadConfigs(){
-		Set<UUID> players = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
 		
-		for(UUID playerUUID : players){
-			Player player = Bukkit.getPlayer(playerUUID);
-			if(player != null && player.isOnline())	getCreateNewConfig(playerUUID);
+		for(RaCPlayer player : players){
+			if(player != null && player.isOnline())	getCreateNewConfig(player);
 		}
 	}
 	
@@ -126,7 +124,7 @@ public class MemberConfigManager {
 	 * Forces save to all configs
 	 */
 	public void saveConfigs(){
-		for(UUID player : memberConfigs.keySet()){
+		for(RaCPlayer player : memberConfigs.keySet()){
 			MemberConfig config = memberConfigs.get(player);
 			if(config != null) {
 				if(config instanceof DBMemberConfig){
@@ -145,7 +143,7 @@ public class MemberConfigManager {
 	 * @param player to get the config from
 	 * @return
 	 */
-	public MemberConfig getConfigOfPlayer(UUID player){
+	public MemberConfig getConfigOfPlayer(RaCPlayer player){
 		return getCreateNewConfig(player);
 	}
 	

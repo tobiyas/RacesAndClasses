@@ -16,12 +16,12 @@
 package de.tobiyas.racesandclasses.persistence.converter;
 
 import java.util.Set;
-import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -52,7 +52,7 @@ public class DBConverter {
 	 * Removes all Player Entries that are empty.
 	 */
 	private static void deleteOldPlayerData(boolean broadcastSomething) {
-		Set<UUID> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -63,7 +63,7 @@ public class DBConverter {
 			plugin.log("Performing some cleanup...");
 		}
 			
-		for(UUID player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			if(playerData.getChildren("playerdata." + player).size() == 0){
 				playerData.set("playerdata." + player, null);
@@ -81,7 +81,7 @@ public class DBConverter {
 	 * Converts the Player to classes / races Association to the DB.
 	 */
 	public static void convertHolderAssociated(){
-		Set<UUID> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -96,7 +96,7 @@ public class DBConverter {
 		String defaultRaceName = getGeneralConfig().getConfig_defaultRaceName();
 		String defaultClassName = null;
 		
-		for(UUID player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			if(!playerData.contains("race") && !playerData.contains("class")) continue;
 			
@@ -106,12 +106,12 @@ public class DBConverter {
 			PlayerHolderAssociation container = new PlayerHolderAssociation();
 			container.setClassName(className);
 			container.setRaceName(raceName);
-			container.setPlayerUUID(player);
+			container.setPlayerUUID(player.getUniqueId());
 			
 			try{
 				//look if already present.
 				PlayerHolderAssociation presentHolder = plugin.getDatabase().find(PlayerHolderAssociation.class)
-						.where().ieq("playerUUID", player.toString()).findUnique();
+						.where().ieq("player", player.toString()).findUnique();
 				
 				if(presentHolder == null){
 					plugin.getDatabase().save(container);
@@ -141,7 +141,7 @@ public class DBConverter {
 	 * Converts the General Data of Players.
 	 */
 	public static void convertGeneralData(){
-		Set<UUID> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -153,7 +153,7 @@ public class DBConverter {
 		
 		int fourthPercentValue = playerList.size() / 4;
 		
-		for(UUID player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			String pre = "playerdata." + player;
 			
@@ -172,7 +172,7 @@ public class DBConverter {
 			
 			try{
 				PlayerSavingContainer alreadyPlayerContainer = plugin.getDatabase().find(PlayerSavingContainer.class)
-						.where().ieq("playerUUID", player.toString()).findUnique();
+						.where().ieq("player", player.toString()).findUnique();
 				
 				if(alreadyPlayerContainer == null){
 					plugin.getDatabase().save(container);
@@ -200,7 +200,7 @@ public class DBConverter {
 	 * tries to convert the MemberConfig of the Plugin.
 	 */
 	public static void convertMemberConfig(){
-		Set<UUID> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		if(playerList.size() <= 0){
 			return;
 		}
@@ -211,7 +211,7 @@ public class DBConverter {
 		
 		int fourthPercentValue = playerList.size() / 4;
 		
-		for(UUID player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			if(playerData.getChildren("playerdata." + player + ".config").size() <= 0) continue;
 			

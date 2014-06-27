@@ -19,25 +19,23 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 
 public class PlayerSpellManager {
 	
@@ -49,7 +47,7 @@ public class PlayerSpellManager {
 	/**
 	 * The Player this container belongs.
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
 	/**
 	 * The {@link ManaManager} that the player has.
@@ -66,11 +64,11 @@ public class PlayerSpellManager {
 	/**
 	 * Creates a SpellManager with a containing {@link ManaManager}.
 	 * 
-	 * @param playerUUID to create with
+	 * @param player to create with
 	 */
-	public PlayerSpellManager(UUID playerUUID) {
-		this.playerUUID = playerUUID;
-		this.manaManager = new ManaManager(playerUUID);
+	public PlayerSpellManager(RaCPlayer player) {
+		this.player = player;
+		this.manaManager = new ManaManager(player);
 		this.spellList = new RotatableList<MagicSpellTrait>();
 	}
 	
@@ -91,13 +89,12 @@ public class PlayerSpellManager {
 	private void spellRescan(){		
 		List<MagicSpellTrait> spellList = new LinkedList<MagicSpellTrait>();
 		
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline() ||WorldResolver.isOnDisabledWorld(player.getPlayer())){
 			this.spellList.setEntries(spellList);
 			return;
 		}
 		
-		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(playerUUID);
+		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
 		for(Trait trait : traits){
 			if(trait instanceof MagicSpellTrait){
 				spellList.add((MagicSpellTrait) trait);
@@ -113,9 +110,21 @@ public class PlayerSpellManager {
 	 * @return the next Spell.
 	 */
 	public MagicSpellTrait changeToNextSpell(){
-		if(System.currentTimeMillis() - lastEventTime < 100) return null;		
+		if(spellList.size() == 0) return null;
+		if(System.currentTimeMillis() - lastEventTime < 100) return null;
 		lastEventTime = System.currentTimeMillis();
-		return spellList.next();
+		
+		for(int i = 0; i < spellList.size(); i++){
+			MagicSpellTrait next = spellList.next();
+			if(next instanceof TraitWithRestrictions){
+				boolean canUse = ((TraitWithRestrictions) next).isInLevelRange(player.getLevelManager().getCurrentLevel());
+				if(canUse) return next;
+			}else{
+				return next;
+			}
+		}
+		
+		return null;
 	}
 	
 
@@ -125,9 +134,21 @@ public class PlayerSpellManager {
 	 * @return the next Spell.
 	 */
 	public MagicSpellTrait changeToPrevSpell() {
+		if(spellList.size() == 0) return null;
 		if(System.currentTimeMillis() - lastEventTime < 100) return null;
 		lastEventTime = System.currentTimeMillis();
-		return spellList.previous();
+		
+		for(int i = 0; i < spellList.size(); i++){
+			MagicSpellTrait next = spellList.previous();
+			if(next instanceof TraitWithRestrictions){
+				boolean canUse = ((TraitWithRestrictions) next).isInLevelRange(player.getLevelManager().getCurrentLevel());
+				if(canUse) return next;
+			}else{
+				return next;
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -161,19 +182,17 @@ public class PlayerSpellManager {
 	 */
 	public boolean canCastSpell(MagicSpellTrait trait){
 		double cost = trait.getCost();
-		Player player = Bukkit.getPlayer(playerUUID);
 		
 		switch(trait.getCostType()){
-			case HEALTH: return RacesAndClasses.getPlugin().getPlayerManager()
-					.getHealthOfPlayer(playerUUID) > cost;
+			case HEALTH: return player.getHealth() > cost;
 			
 			case MANA: return getManaManager().hasEnoughMana(trait);
 			
-			case ITEM: return player.getInventory().contains(trait.getCastMaterialType(), (int) cost);
+			case ITEM: return player.getPlayer().getInventory().contains(trait.getCastMaterialType(), (int) cost);
 			
-			case HUNGER : return player.getFoodLevel() >= cost;
+			case HUNGER : return player.getPlayer().getFoodLevel() >= cost;
 			
-			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerUUID).canRemove((int)cost);
+			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).canRemove((int)cost);
 			
 			default: return false;
 		}
@@ -185,24 +204,21 @@ public class PlayerSpellManager {
 	 * @param trait to remove the cost from
 	 */
 	public void removeCost(MagicSpellTrait trait) {
-		Player player = Bukkit.getPlayer(playerUUID);
-		
 		switch(trait.getCostType()){
-			case HEALTH: CompatibilityModifier.BukkitPlayer.safeSetHealth(RacesAndClasses.getPlugin()
-					.getPlayerManager().getHealthOfPlayer(playerUUID) - trait.getCost(), player); 
+			case HEALTH: player.getHealthManager().damage(trait.getCost());
 							break;
 			
 			case MANA: getManaManager().playerCastSpell(trait); break;
 			
-			case ITEM: player.getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost())); break;
+			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost())); break;
 			
 			case HUNGER: 
-				int oldFoodLevel = player.getFoodLevel();
+				int oldFoodLevel = player.getPlayer().getFoodLevel();
 				int newFoodLevel = (int) (oldFoodLevel - trait.getCost());
-				player.setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
+				player.getPlayer().setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 				
 			case EXP:
-				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(playerUUID).removeExp((int) trait.getCost());
+				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) trait.getCost());
 		}
 	}
 
@@ -253,13 +269,12 @@ public class PlayerSpellManager {
 		if(currentSpell == null) return false;
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		Player player = Bukkit.getPlayer(playerUUID);
-		@SuppressWarnings("deprecation") //we need this to get the next block
-		List<Block> blocks = player.getLineOfSight(null, 100);
+		@SuppressWarnings("deprecation")
+		List<Block> blocks = player.getPlayer().getLineOfSight(null, 100);
 		Block lookingAt = blocks.iterator().next();
 		ItemStack wandItem = new ItemStack(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		plugin.fireEventIntern(new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, wandItem, 
+		plugin.fireEventIntern(new PlayerInteractEvent(player.getPlayer(), Action.LEFT_CLICK_AIR, wandItem, 
 				lookingAt, BlockFace.UP));
 		return true;
 	}
@@ -274,7 +289,6 @@ public class PlayerSpellManager {
 	 * @return true if the item passed is a wand for the player
 	 */
 	public boolean isWandItem(ItemStack itemInHands){
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null) return false;
 		if(itemInHands == null) return false;
 		
@@ -283,12 +297,12 @@ public class PlayerSpellManager {
 		Set<Material> wands = new HashSet<Material>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerUUID);
+		AbstractTraitHolder classHolder = player.getclass();
 		if(classHolder != null){
 			wands.addAll(classHolder.getAdditionalWandMaterials());
 		}
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerUUID);
+		AbstractTraitHolder raceHolder = player.getRace();
 		if(raceHolder != null){
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}

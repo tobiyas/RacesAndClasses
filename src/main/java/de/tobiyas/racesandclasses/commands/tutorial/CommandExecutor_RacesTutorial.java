@@ -29,6 +29,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class CommandExecutor_RacesTutorial extends AbstractCommand{
@@ -65,6 +67,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 		}
 		
 		Player player = (Player) sender;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		if(args.length == 0){
 			postHelp(player);
@@ -88,7 +91,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 			
-			setState(player, args[1]);
+			setState(racPlayer, args[1]);
 			return true;
 		}
 		
@@ -99,7 +102,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 
-			tutorialStart(player);
+			tutorialStart(racPlayer);
 			return true;
 		}
 		
@@ -109,7 +112,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 			
-			tutorialStop(player);
+			tutorialStop(racPlayer);
 			return true;
 		}
 		
@@ -119,7 +122,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 			
-			tutorialSkip(player);
+			tutorialSkip(racPlayer);
 			return true;
 		}
 		
@@ -129,7 +132,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 			
-			tutorialReset(player);
+			tutorialReset(racPlayer);
 			return true;
 		}
 		
@@ -139,7 +142,7 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 				return true;
 			}
 			
-			tutorialRepost(player);
+			tutorialRepost(racPlayer);
 			return true;
 		}
 		
@@ -158,59 +161,59 @@ public class CommandExecutor_RacesTutorial extends AbstractCommand{
 							" : sets the Tutorial to the given state.");
 	}
 	
-	private void tutorialStart(Player player){
+	private void tutorialStart(RaCPlayer player){
 		if(plugin.getTutorialManager().getCurrentState(player.getName()) != null){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_already_running);
 			return;
 		}
 		
-		if(!plugin.getTutorialManager().start(player.getUniqueId())){
+		if(!plugin.getTutorialManager().start(player)){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
-	private void tutorialStop(Player player){
+	private void tutorialStop(RaCPlayer player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(plugin.getTutorialManager().stop(player.getUniqueId())){
+		if(plugin.getTutorialManager().stop(player)){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_stopped);
 		}else{
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
-	private void tutorialSkip(Player player){
+	private void tutorialSkip(RaCPlayer player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().skip(player.getUniqueId())){
+		if(!plugin.getTutorialManager().skip(player)){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
-	private void tutorialReset(Player player){
+	private void tutorialReset(RaCPlayer player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().reset(player.getUniqueId())){
+		if(!plugin.getTutorialManager().reset(player)){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
-	private void tutorialRepost(Player player){
+	private void tutorialRepost(RaCPlayer player){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().repost(player.getUniqueId())){
+		if(!plugin.getTutorialManager().repost(player)){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_error);
 		}
 	}
 	
-	private void setState(Player player, String state){
+	private void setState(RaCPlayer player, String state){
 		if(!checkHasTutorial(player)) return;
 		
-		if(!plugin.getTutorialManager().setState(player.getUniqueId(), state))
+		if(!plugin.getTutorialManager().setState(player, state))
 			LanguageAPI.sendTranslatedMessage(player, tutorial_no_set_at_this_state);
 	}
 	
-	private boolean checkHasTutorial(Player player){
+	private boolean checkHasTutorial(RaCPlayer player){
 		if(plugin.getTutorialManager().getCurrentState(player.getName()) == null){
 			LanguageAPI.sendTranslatedMessage(player, tutorial_not_running);
 			return false;

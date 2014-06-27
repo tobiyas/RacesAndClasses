@@ -22,7 +22,7 @@ import org.bukkit.event.HandlerList;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 /**
- * This Event is fired when the Holder tries to select / change his holder.
+ * This Event is fired when the Holder tries to select / change his holders.
  * <br>If it is not cancled, it works.
  * 
  * @author Tobiyas
@@ -55,7 +55,7 @@ public class HolderPreSelectEvent extends HolderSelectedEvent implements Cancell
 	protected String cancelMessage;
 	
 	/**
-	 * This event is an indicator to check if the player can select this holder.
+	 * This event is an indicator to check if the player can select this holders.
 	 * 
 	 * @param player to call
 	 * @param holderToSelect to call to
@@ -69,7 +69,7 @@ public class HolderPreSelectEvent extends HolderSelectedEvent implements Cancell
 	}
 	
 	/**
-	 * This event is an indicator to check if the player can select this holder.
+	 * This event is an indicator to check if the player can select this holders.
 	 * 
 	 * @param player to call
 	 * @param holderToSelect to call to

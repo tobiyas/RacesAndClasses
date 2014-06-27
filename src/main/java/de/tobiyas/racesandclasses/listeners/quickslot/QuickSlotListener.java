@@ -28,6 +28,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.QuickSlotGUI;
 
@@ -100,10 +102,11 @@ public class QuickSlotListener implements Listener {
 		
 		String playerName = event.getPlayer().getName();
 		String spellName = event.getItemDrop().getItemStack().getItemMeta().getDisplayName();
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		
 		if(playerName == null || spellName == null) return;
 		
-		PlayerSpellManager manager = plugin.getPlayerManager().getSpellManagerOfPlayer(event.getPlayer().getUniqueId());
+		PlayerSpellManager manager = player.getSpellManager();
 		if(!manager.changeToSpell(spellName.replace(QUICK_ITEM_PRE, ""))) return;
 		if(!manager.tryCastCurrentSpell()) return;
 	}

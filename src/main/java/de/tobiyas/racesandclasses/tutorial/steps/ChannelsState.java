@@ -15,17 +15,16 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.tutorial.steps;
 
-import java.util.UUID;
-
 import org.bukkit.ChatColor;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.tutorial.TutorialPath;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class ChannelsState extends AbstractMoreStepsStep {
 
-	public ChannelsState(UUID playerUUID, TutorialPath writeBack){
-		this.playerUUID = playerUUID;
+	public ChannelsState(RaCPlayer player, TutorialPath writeBack){
+		this.player = player;
 		this.writeBack = writeBack;
 		this.currentState = TutorialState.channels;
 		

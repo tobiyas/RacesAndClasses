@@ -23,27 +23,30 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
 
 public abstract class AbstractBasicTrait implements Trait,
 		TraitWithRestrictions {
@@ -153,13 +156,17 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * This disables the Cooldown notice.
 	 */
-	protected boolean disableCooldownNotice = false; 
-	
+	protected boolean disableCooldownNotice = false;
 	
 	/**
 	 * Tells the Trait can be activated only on certain blocks.
 	 */
 	protected final List<Material> onlyOnBlocks = new LinkedList<Material>();
+	
+	/**
+	 * Tells the Trait can NOT activated be activated on certain blocks.
+	 */
+	protected final List<Material> notOnBlocks = new LinkedList<Material>();
 	
 	/**
 	 * Tells the Trait can be activated while the player sneaks.
@@ -170,6 +177,11 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * Tells the Trait can be activated while the player does NOT sneaks.
 	 */
 	protected boolean onlyWhileNotSneaking = false;
+
+	/**
+	 * The needed Permission for the skill
+	 */
+	protected String neededPermission = "";
 	
 
 	/**
@@ -177,18 +189,22 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected String traitDiscription = "";
 	
+	/**
+	 * If the Trait is visible.
+	 */
+	protected boolean visible = true;
 	
 	
 	/**
-	 * The holder of the Trait.
+	 * The holders of the Trait.
 	 */
-	protected AbstractTraitHolder holder;
+	protected final Set<AbstractTraitHolder> holders = new HashSet<AbstractTraitHolder>();
 	
 	
 	/**
 	 * The ConfigTotal of the Trait
 	 */
-	protected Map<String, Object> currentConfig;
+	protected TraitConfiguration currentConfig;
 	
 	/**
 	 * The map of Uplink that can be notified.
@@ -197,13 +213,13 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 
 	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
-		this.holder = abstractTraitHolder;
+	public void addTraitHolder(AbstractTraitHolder abstractTraitHolder) {
+		this.holders.add(abstractTraitHolder);
 	}
 
 	@Override
-	public AbstractTraitHolder getTraitHolder() {
-		return holder;
+	public Set<AbstractTraitHolder> getTraitHolders() {
+		return holders;
 	}
 
 	
@@ -229,13 +245,25 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = BELOW_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = DESCRIPTION_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = NEEDED_PERMISSION_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = MIN_UPLINK_SHOW_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISABLE_COOLDOWN_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
 	})
 	
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
+		
+		//If a permission is needed
+		if(configMap.containsKey(TraitWithRestrictions.NEEDED_PERMISSION_PATH)){
+			this.neededPermission = configMap.getAsString(TraitWithRestrictions.NEEDED_PERMISSION_PATH);
+		}
+		
+		//checks if the Trait is visible.
+		if(configMap.containsKey(TraitWithRestrictions.VISIBLE_PATH)){
+			this.visible = configMap.getAsBool(TraitWithRestrictions.VISIBLE_PATH);
+		}
+		if(!TraitVisible.isVisible(this)) this.visible = false;
 		
 		//Gets the Cooldown of the Trait.
 		if(configMap.containsKey(TraitWithRestrictions.COOLDOWN_TIME_PATH)){
@@ -325,6 +353,36 @@ public abstract class AbstractBasicTrait implements Trait,
 			}catch(Exception exp){}
 		}
 
+		//Reads the blocks for the trait if present
+		if(configMap.containsKey(TraitWithRestrictions.NOT_ON_BLOCK_PATH)){
+			try{
+				@SuppressWarnings("unchecked")
+				List<String> stringBlocks = (List<String>) configMap.get(TraitWithRestrictions.NOT_ON_BLOCK_PATH);
+				this.notOnBlocks.clear();
+				
+				for(String block : stringBlocks){
+					block = block.toUpperCase();
+					Material type =  null;
+					//try String parsing
+					try{
+						type = Material.valueOf(block);
+					}catch(IllegalArgumentException exp){}
+					
+					//try id parsing
+					if(type == null){
+						try{
+							int id = Integer.parseInt(block);
+							type = Material.getMaterial(id);
+						}catch(NumberFormatException exp){}
+					}
+					
+					if(type != null){
+						notOnBlocks.add(type);
+					}
+				}
+			}catch(Exception exp){}
+		}
+
 		//Reads the Armor for the trait to wear
 		if(configMap.containsKey(TraitWithRestrictions.WEARING_PATH)){
 			try{
@@ -401,7 +459,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 
 	@Override
-	public Map<String, Object> getCurrentconfig(){
+	public TraitConfiguration getCurrentconfig(){
 		return currentConfig;
 	}
 	
@@ -450,69 +508,93 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	@Override
 	public boolean checkRestrictions(EventWrapper wrapper) {
-		Player player = wrapper.getPlayer();
+		RaCPlayer player = wrapper.getPlayer();
 		if(player == null) return true;
 		
+		//players not online will most likely fail everything.
+		if(!player.isOnline()) return false;
+		
 		String playerName = player.getName();
-		int playerLevel = plugin.getPlayerManager().getPlayerLevelManager(player.getUniqueId()).getCurrentLevel();
+		int playerLevel = player.getLevelManager().getCurrentLevel();
 		if(playerLevel < minimumLevel || playerLevel > maximumLevel) return false;
 		
-		Biome currentBiome = player.getLocation().getBlock().getBiome();
+		Location playerLocation = player.getPlayer().getLocation();
+		Block feetBlock = playerLocation.getBlock();
+		Block locBlock = feetBlock.getRelative(BlockFace.DOWN);
+		
+		Material feetType = feetBlock.getType();
+		Material belowFeetType = locBlock.getType();
+
+		Biome currentBiome = locBlock.getBiome();
 		if(!biomes.contains(currentBiome)) return false;
 		
 		//Check if player is in water
 		if(onlyInWater){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			
-			if(feetblock.getType() != Material.WATER && feetblock.getType() != Material.STATIONARY_WATER){
+			if(feetType != Material.WATER && feetType != Material.STATIONARY_WATER){
+				triggerButHasRestriction(TraitRestriction.OnlyInWater, wrapper);
 				return false;
 			}
 		}
 
 		//Sneaking
 		if(onlyWhileSneaking){
-			if(!player.isSneaking()) return false;
+			if(!player.getPlayer().isSneaking()) {
+				triggerButHasRestriction(TraitRestriction.OnlyWhileSneaking, wrapper);
+				return false;
+			}
 		}
 		
 		//Not sneaking
 		if(onlyWhileNotSneaking){
-			if(player.isSneaking()) return false;
+			if(player.getPlayer().isSneaking()) {
+				triggerButHasRestriction(TraitRestriction.OnlyWhileNotSneaking, wrapper);
+				return false;
+			}
 		}
 		
 		//check if player is on land
 		if(onlyOnLand){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			if(feetblock.getType() == Material.WATER || feetblock.getType() == Material.STATIONARY_WATER){
+			if(feetType == Material.WATER || feetType == Material.STATIONARY_WATER){
+				triggerButHasRestriction(TraitRestriction.OnlyOnLand, wrapper);
+				return false;
+			}
+		}
+		
+		//check permission
+		if(!neededPermission.isEmpty()){
+			if(!plugin.getPermissionManager().checkPermissionsSilent(wrapper.getPlayer().getPlayer(), neededPermission)){
+				triggerButHasRestriction(TraitRestriction.NeededPermission, wrapper);
 				return false;
 			}
 		}
 		
 		//check if player is in lava
 		if(onlyInLava){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			
-			if(feetblock.getType() != Material.LAVA && feetblock.getType() != Material.STATIONARY_LAVA){
+			if(feetType != Material.LAVA && feetType != Material.STATIONARY_LAVA){
+				triggerButHasRestriction(TraitRestriction.OnlyInLava, wrapper);
 				return false;
 			}
 		}
 
 		//check if player is on Snow
 		if(onlyOnSnow){
-			Block feetblock = player.getLocation().getBlock();
-			
-			if(!(feetblock.getType() == Material.SNOW || feetblock.getType() == Material.SNOW_BLOCK)){
+			if(!(feetType == Material.SNOW || feetType == Material.SNOW_BLOCK
+					|| belowFeetType == Material.SNOW || belowFeetType == Material.SNOW_BLOCK)){
+				triggerButHasRestriction(TraitRestriction.OnlyOnSnow, wrapper);
 				return false;
 			}
 		}
 		
 		//check if player is in Rain
 		if(onlyInRain){
-			if(!player.getWorld().hasStorm()) return false;
-			Block feetblock = player.getLocation().getBlock();
-			int ownY = feetblock.getY();
-			int highestY = feetblock.getWorld().getHighestBlockYAt(feetblock.getX(), feetblock.getZ());
+			if(!wrapper.getWorld().hasStorm()) return false;
+			int ownY = feetBlock.getY();
+			int highestY = feetBlock.getWorld().getHighestBlockYAt(feetBlock.getX(), feetBlock.getZ());
 			//This means having a roof over oneself
-			if(ownY != highestY) return false;
+			if(ownY != highestY) {
+				triggerButHasRestriction(TraitRestriction.OnlyInRain, wrapper);
+				return false;
+			}
 		}
 		
 		
@@ -521,7 +603,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			boolean found = false;
 			for(Material mat : wearing){
 				found = false;
-				for(ItemStack item : player.getInventory().getArmorContents()){
+				for(ItemStack item : player.getPlayer().getInventory().getArmorContents()){
 					if(item == null) continue;
 					
 					if(mat == item.getType()){
@@ -530,40 +612,61 @@ public abstract class AbstractBasicTrait implements Trait,
 					}
 				}
 				
-				if(!found) return false;
+				if(!found) {
+					triggerButHasRestriction(TraitRestriction.Wearing, wrapper);
+					return false;
+				}
 			}
 		}
 		
 		//check above elevation
 		if(aboveElevation != Integer.MIN_VALUE){
-			Block feetblock = player.getLocation().getBlock();
-			if(feetblock.getY() <= aboveElevation) return false;
+			if(feetBlock.getY() <= aboveElevation) {
+				triggerButHasRestriction(TraitRestriction.AboveLevitation, wrapper);
+				return false;
+			}
 		}
 
 		//check below elevation
 		if(belowElevation != Integer.MAX_VALUE){
-			Block feetblock = player.getLocation().getBlock();
-			if(feetblock.getY() >= belowElevation) return false;
+			if(feetBlock.getY() >= belowElevation) {
+				triggerButHasRestriction(TraitRestriction.BelowLevitation, wrapper);
+				return false;
+			}
 		}
 
 		//check onlyAfterDamaged
 		if(onlyAfterDamaged > 0){
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
-			if(lastDamage > onlyAfterDamaged) return false;
+			if(lastDamage > onlyAfterDamaged) {
+				triggerButHasRestriction(TraitRestriction.OnlyAfterDamage, wrapper);
+				return false;
+			}
 		}
 		
 		//check onlyAfterDamaged
 		if(onlyAfterNotDamaged > 0){
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
-			if(onlyAfterNotDamaged > lastDamage) return false;
+			if(onlyAfterNotDamaged > lastDamage) {
+				triggerButHasRestriction(TraitRestriction.OnlyAfterNotDamage, wrapper);
+				return false;
+			}
 		}
 		
 		//check blocks on
 		if(!onlyOnBlocks.isEmpty()){
-			Block feetblock = player.getLocation().getBlock();
-			Block belowFeetBlock = feetblock.getRelative(BlockFace.DOWN);
-			
-			if(!onlyOnBlocks.contains(belowFeetBlock.getType())) return false;
+			if(!onlyOnBlocks.contains(belowFeetType)) {
+				triggerButHasRestriction(TraitRestriction.OnlyOnBlock, wrapper);
+				return false;
+			}
+		}
+
+		//check blocks on
+		if(!notOnBlocks.isEmpty()){
+			if(notOnBlocks.contains(belowFeetType)) {
+				triggerButHasRestriction(TraitRestriction.NotOnBlock, wrapper);
+				return false;
+			}
 		}
 		
 		//check cooldown
@@ -572,6 +675,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		if(playerUplinkTime > 0){
 			if(!triggerButHasUplink(wrapper)){
+				triggerButHasRestriction(TraitRestriction.Cooldown, wrapper);
 				if(notifyTriggeredUplinkTime(wrapper)){
 					//if notices are disabled, we don't need to do anything here.
 					if(disableCooldownNotice) return false;
@@ -584,7 +688,7 @@ public abstract class AbstractBasicTrait implements Trait,
 					long maxTime = minUplinkShowTime * 1000;		
 							
 					if(new Date().after(new Date(lastNotified + maxTime))){
-						LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
+						LanguageAPI.sendTranslatedMessage(player.getPlayer(), trait_cooldown, 
 								"seconds", String.valueOf(playerUplinkTime),
 								"name", getDisplayName());
 						uplinkNotifyList.put(playerName, new Date().getTime());
@@ -598,17 +702,19 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Only check if we really need. Otherwise we would use resources we don't need
 		if(onlyOnDay || onlyInNight){
 			//Daytime check
-			int hour = ((int) (player.getWorld().getTime() / 1000l) + 8) % 24;
+			int hour = ((int) (wrapper.getWorld().getTime() / 1000l) + 8) % 24;
 			boolean isNight = hour > 18 || hour < 6;
 			boolean isDay = hour > 6 && hour < 18;
 			
 			//Check day
 			if(onlyOnDay && isNight && !onlyInNight){
+				triggerButHasRestriction(TraitRestriction.OnlyOnDay, wrapper);
 				return false;
 			}
 			
 			//Check night
 			if(onlyInNight && isDay && !onlyOnDay){
+				triggerButHasRestriction(TraitRestriction.OnlyInNight, wrapper);
 				return false;
 			}
 		}
@@ -650,5 +756,21 @@ public abstract class AbstractBasicTrait implements Trait,
 		return displayName == null ? getName() : displayName;
 	}
 
+	@Override
+	public boolean isInLevelRange(int level) {
+		if(level < minimumLevel) return false;
+		if(level > maximumLevel) return false;
+		
+		return true;
+	}
+	
+	@Override
+	public boolean isVisible(){
+		return visible;
+	}
+	
+	@Override
+	public void triggerButHasRestriction(TraitRestriction restriction, EventWrapper wrapper){
+	}
 	
 }

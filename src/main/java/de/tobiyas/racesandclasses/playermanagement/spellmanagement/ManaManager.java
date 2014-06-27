@@ -15,14 +15,13 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
@@ -42,13 +41,13 @@ public class ManaManager implements Observer {
 	/**
 	 * The Player this mana Manager belongs.
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
-	
-	/**
-	 * The Maximal Mana the Player contains.
-	 */
-	private double maxMana;
+//	
+//	/**
+//	 * The Maximal Mana the Player contains.
+//	 */
+//	private double maxMana;
 	
 	
 	/**
@@ -61,21 +60,24 @@ public class ManaManager implements Observer {
 	 */
 	private Display manaDisplay;
 	
+	/**
+	 * The Max manas.
+	 */
+	private final Map<String,Double> maxManaBonus = new HashMap<String, Double>();
 	
 	
 	/**
 	 * Generates a new Mana Manager for the Player passed.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 */
-	public ManaManager(UUID playerUUID) {
-		this.playerUUID = playerUUID;
-		this.maxMana = 0;
+	public ManaManager(RaCPlayer player) {
+		this.player = player;
 		this.currentMana = 0;
 		
 		rescanDisplay();
 		
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(playerUUID).addObserver(this);
+		player.getConfig().addObserver(this);
 	}
 	
 	/**
@@ -87,7 +89,7 @@ public class ManaManager implements Observer {
 			manaDisplay.unregister();
 		}
 		
-		manaDisplay = DisplayGenerator.generateDisplay(playerUUID, DisplayInfos.MANA);
+		manaDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.MANA);
 	}
 	
 	
@@ -95,25 +97,23 @@ public class ManaManager implements Observer {
 	 * Rescans the Player and resets the Max Mana if needed.
 	 */
 	public void rescanPlayer(){
-		maxMana = 0;
-		
-		Player player = Bukkit.getPlayer(playerUUID);
 		if(player == null || !player.isOnline() || WorldResolver.isOnDisabledWorld(player)){
 			return;
 		}
 		
-		RaceContainer race = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(playerUUID);
+		RaceContainer race = player.getRace();
 		if(race != null){
-			maxMana += race.getManaBonus();
+			addMaxManaBonus("race", race.getManaBonus());
 		}
 		
-		ClassContainer clazz = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(playerUUID);
+		ClassContainer clazz = player.getclass();
 		if(clazz != null){
-			maxMana += clazz.getManaBonus();
+			addMaxManaBonus("class", clazz.getManaBonus());
 		}
 		
-		if(currentMana > maxMana){
-			currentMana = maxMana;
+		double max = getMaxMana();
+		if(currentMana > max){
+			currentMana = max;
 		}
 		
 		outputManaToPlayer();
@@ -127,13 +127,12 @@ public class ManaManager implements Observer {
 	 * This means his maxMana > 0.
 	 */
 	public void outputManaToPlayer(){
-		if(maxMana <= 0) return;
+		if(getMaxMana() <= 0) return;
 		
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			
 			@Override
 			public void run() {
-				manaDisplay.display(currentMana, maxMana);
+				manaDisplay.display(currentMana, getMaxMana());
 			}
 		}, 1);
 	}
@@ -183,8 +182,8 @@ public class ManaManager implements Observer {
 	 */
 	public double fillMana(double value){
 		currentMana += value;
-		if(currentMana > maxMana){
-			currentMana = maxMana;
+		if(currentMana > getMaxMana()){
+			currentMana = getMaxMana();
 		}
 		
 		outputManaToPlayer();
@@ -228,7 +227,12 @@ public class ManaManager implements Observer {
 	 * @return the maxMana
 	 */
 	public double getMaxMana() {
-		return maxMana;
+		double max = 0;
+		for(Double value : maxManaBonus.values()){
+			max += value;
+		}
+		
+		return max;
 	}
 
 
@@ -238,13 +242,41 @@ public class ManaManager implements Observer {
 	public double getCurrentMana() {
 		return currentMana;
 	}
+	
+	/**
+	 * Adds a max Mana bonus.
+	 * 
+	 * @param key to add
+	 * @param value to add
+	 */
+	public void addMaxManaBonus(String key, double value){
+		maxManaBonus.put(key.toLowerCase(), value);
+	}
+	
+	/**
+	 * Remove a max Mana bonus.
+	 * 
+	 * @param key to remove
+	 */
+	public void removeMaxManaBonus(String key){
+		maxManaBonus.remove(key.toLowerCase());
+	}
+	
+	/**
+	 * Returns all Bonusses.
+	 * 
+	 * @return all Bonuses.
+	 */
+	public Map<String,Double> getAllBonuses(){
+		return maxManaBonus;
+	}
 
 
 	/**
-	 * @return the playerUUID
+	 * @return the player
 	 */
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayer() {
+		return player;
 	}
 	
 	/**
@@ -254,7 +286,7 @@ public class ManaManager implements Observer {
 	 * @return true if filled, false otherwise.
 	 */
 	public boolean isManaFull(){
-		return currentMana >= maxMana;
+		return currentMana >= getMaxMana();
 	}
 
 	@Override

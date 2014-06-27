@@ -29,7 +29,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
@@ -44,7 +45,7 @@ public class EventActionResolver {
 	 * @return the resolved Action
 	 */
 	public static PlayerAction resolveAction(Event event, Player player){
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		if(event instanceof PlayerInteractEntityEvent){
 			return PlayerAction.INTERACT_ENTITY;
@@ -56,7 +57,7 @@ public class EventActionResolver {
 			//check player change spell first
 			
 			ItemStack itemInHands = ((PlayerInteractEvent) event).getItem();
-			if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).isWandItem(itemInHands)){
+			if(racPlayer.getSpellManager().isWandItem(itemInHands)){
 				if(((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_BLOCK
 						|| ((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_AIR){
 					

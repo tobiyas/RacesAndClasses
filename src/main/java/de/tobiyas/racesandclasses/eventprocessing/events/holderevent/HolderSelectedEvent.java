@@ -33,7 +33,7 @@ public abstract class HolderSelectedEvent extends Event{
 	
 	
 	/**
-	 * The holder the player has selected to be
+	 * The holders the player has selected to be
 	 */
 	protected AbstractTraitHolder holderToSelect;
 
@@ -44,9 +44,9 @@ public abstract class HolderSelectedEvent extends Event{
 	
 	
 	/**
-	 * A player has selected a holder.
+	 * A player has selected a holders.
 	 * 
-	 * @param player that selected the holder
+	 * @param player that selected the holders
 	 * @param holderToSelect that was selected
 	 */
 	public HolderSelectedEvent(Player player, AbstractTraitHolder holderToSelect) {
@@ -57,9 +57,9 @@ public abstract class HolderSelectedEvent extends Event{
 	}
 	
 	/**
-	 * A player has selected a holder.
+	 * A player has selected a holders.
 	 * 
-	 * @param player that selected the holder
+	 * @param player that selected the holders
 	 * @param holderToSelect that was selected
 	 * @param if the player should get an Cooldown
 	 */

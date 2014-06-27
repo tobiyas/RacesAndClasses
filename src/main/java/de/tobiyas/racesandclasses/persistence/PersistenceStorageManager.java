@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.persistence;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.persistence.db.EBeanPersistenceStorage;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceStorage;
 
 public class PersistenceStorageManager {
@@ -58,7 +57,8 @@ public class PersistenceStorageManager {
 		}
 		
 		if(useDB){
-			persistence = new EBeanPersistenceStorage();
+			throw new UnsupportedOperationException("DB is not possible!");
+			//persistence = new EBeanPersistenceStorage();
 		}else{
 			persistence = new YAMLPersistenceStorage();
 		}

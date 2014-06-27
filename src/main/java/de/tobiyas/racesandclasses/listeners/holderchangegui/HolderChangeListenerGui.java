@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.holderchangegui;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,6 +28,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
@@ -43,7 +43,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	protected static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	/**
-	 * The holder manager cotroling the holders
+	 * The holders manager cotroling the holders
 	 */
 	protected final AbstractHolderManager manager;
 	
@@ -70,19 +70,19 @@ public abstract class HolderChangeListenerGui implements Listener {
 				.contains(prefix))) return;
 		
 		//safe to use since we only use online players.
-		Player player = Bukkit.getPlayer(invClose.getView().getPlayer().getUniqueId());
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(invClose.getView().getPlayer().getUniqueId());
 		if(player == null) return;
 		
 		//iterate through all items
-		for(ItemStack item : player.getInventory()){
+		for(ItemStack item : player.getPlayer().getInventory()){
 			
-			//lets see if any item is equals to a holder tag.
+			//lets see if any item is equals to a holders tag.
 			if(isHolderItem(item)){
-				player.getInventory().remove(item);
+				player.getPlayer().getInventory().remove(item);
 			}
 		}
 		
-		player.updateInventory();
+		player.getPlayer().updateInventory();
 		//InventoryResync.resync(player);
 	}
 	
@@ -97,9 +97,10 @@ public abstract class HolderChangeListenerGui implements Listener {
 				.contains(prefix))) return;
 		
 		final Player player = (Player) event.getView().getPlayer();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		if(player == null) return;
 	
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(player.getUniqueId());
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(racPlayer);
 		
 		boolean forceReopen = false;
 		if(manager == plugin.getClassManager()){
@@ -112,14 +113,14 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		
 		if(holder == manager.getDefaultHolder() && forceReopen){
-			rescheduleOpening(player.getUniqueId(), 1);
+			rescheduleOpening(racPlayer, 1);
 			return;
 		}
 		
 		if(manager == plugin.getRaceManager()){
 			boolean openClassSelectionAfterwards = plugin.getConfigManager().getGeneralConfig().isConfig_openClassSelectionAfterRaceSelectionWhenNoClass();
 			if(openClassSelectionAfterwards){
-				boolean hasDefaultClass = plugin.getClassManager().getHolderOfPlayer(player.getUniqueId()) == plugin.getClassManager().getDefaultHolder();
+				boolean hasDefaultClass = racPlayer.getclass() == plugin.getClassManager().getDefaultHolder();
 				if(hasDefaultClass){
 					final HolderInventory classSelectInventory = new HolderInventory(player, plugin.getClassManager());
 					if(classSelectInventory.getNumberOfHolder() > 0){
@@ -151,8 +152,8 @@ public abstract class HolderChangeListenerGui implements Listener {
 		//now we are sure to be in an HolderGUI.
 		
 		Player player = (Player) event.getView().getPlayer();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
-		String playerName = event.getView().getPlayer().getName();
 		ItemStack clickedItem = event.getCurrentItem();
 		if(clickedItem == null || clickedItem.getType() == Material.AIR ){
 			event.setCancelled(true);
@@ -174,16 +175,16 @@ public abstract class HolderChangeListenerGui implements Listener {
 			
 		}
 		
-		AbstractTraitHolder holder = manager.getHolderOfPlayer(player.getUniqueId());
+		AbstractTraitHolder holder = manager.getHolderOfPlayer(racPlayer);
 		HolderPreSelectEvent selectEvent = null;
 		
 		AbstractTraitHolder newHolder= getHolder(clickedItem);
 		
 		boolean hasNoHolder = holder == manager.getDefaultHolder();
 		if(hasNoHolder){
-			selectEvent = generateHolderSelectEvent(playerName, newHolder);
+			selectEvent = generateHolderSelectEvent(racPlayer, newHolder);
 		}else{
-			selectEvent = generateHolderChangeEvent(playerName, newHolder, holder);
+			selectEvent = generateHolderChangeEvent(racPlayer, newHolder, holder);
 		}
 		
 		plugin.getServer().getPluginManager().callEvent(selectEvent);
@@ -196,14 +197,14 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		boolean worked = true;
 		if(hasNoHolder){
-			worked = manager.addPlayerToHolder(player.getUniqueId(), newHolder.getName(), true);
+			worked = manager.addPlayerToHolder(racPlayer, newHolder.getDisplayName(), true);
 		}else{
-			worked = manager.changePlayerHolder(player.getUniqueId(), newHolder.getName(), true);
+			worked = manager.changePlayerHolder(racPlayer, newHolder.getDisplayName(), true);
 		}
 		
 		if(worked){
 			if(player != null){
-				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newHolder.getName() + ChatColor.GREEN + ".");
+				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newHolder.getDisplayName() + ChatColor.GREEN + ".");
 				player.closeInventory();
 				player.updateInventory();
 			}
@@ -219,42 +220,41 @@ public abstract class HolderChangeListenerGui implements Listener {
 	}
 	
 	/**
-	 * The player wants to select his holder.
+	 * The player wants to select his holders.
 	 * Generate an Event for that.
 	 * 
 	 * @return
 	 */
-	protected abstract HolderPreSelectEvent generateHolderSelectEvent(String playerName, AbstractTraitHolder newHolder);
+	protected abstract HolderPreSelectEvent generateHolderSelectEvent(RaCPlayer player, AbstractTraitHolder newHolder);
 
 	
 	/**
-	 * The player wants to change his holder.
+	 * The player wants to change his holders.
 	 * Generate an Event for that.
 	 * 
 	 * @return
 	 */
-	protected abstract HolderPreSelectEvent generateHolderChangeEvent(String playerName, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
+	protected abstract HolderPreSelectEvent generateHolderChangeEvent(RaCPlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
 	
 	
 	/**
 	 * Schedules a reopen of the Holder in 1 tick
 	 * 
-	 * @param playerUUID to schedule
+	 * @param player to schedule
 	 */
-	private void rescheduleOpening(final UUID uuid, int ticks) {
+	private void rescheduleOpening(final RaCPlayer player, int ticks) {
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			
 			@Override
 			public void run() {
-				Player player = plugin.getServer().getPlayer(uuid);
 				if(player != null && player.isOnline()){
-					HolderInventory holderInv = new HolderInventory(player, manager);
+					HolderInventory holderInv = new HolderInventory(player.getPlayer(), manager);
 					if(holderInv.getNumberOfHolder() > 0){
-						player.openInventory(holderInv);
+						player.getPlayer().openInventory(holderInv);
 						return;
 					}
 					
-					//No holder to select... So no opening needed.
+					//No holders to select... So no opening needed.
 				}
 			}
 		}, ticks);
@@ -286,11 +286,11 @@ public abstract class HolderChangeListenerGui implements Listener {
 		
 		String itemName = item.getItemMeta().getDisplayName().toLowerCase();
 		
-		//lets see if any item is equals to a holder tag.
+		//lets see if any item is equals to a holders tag.
 		for(String holderName : manager.listAllVisibleHolders()){
 			AbstractTraitHolder holder = manager.getHolderByName(holderName);
 			String holderTag = holder.getTag().toLowerCase();
-			if("".equals(holderTag)) holderTag = holder.getName().toLowerCase();
+			if("".equals(holderTag)) holderTag = holder.getDisplayName().toLowerCase();
 			
 			if(itemName.contains(holderTag)){
 				return holder;

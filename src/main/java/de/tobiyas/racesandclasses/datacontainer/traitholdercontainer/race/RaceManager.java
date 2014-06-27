@@ -15,16 +15,15 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.DefaultContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.reminder.RaceReminder;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
@@ -65,27 +64,28 @@ public class RaceManager extends AbstractHolderManager {
 	private void checkForPossiblyWrongInitialized() {
 		Player[] players = Bukkit.getOnlinePlayers();
 
-		for (Player player : players) {
-			RaceContainer container = (RaceContainer) getHolderOfPlayer(player.getUniqueId());
+		for (Player bPlayer : players) {
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(bPlayer);
+			
+			RaceContainer container = player.getRace();
 			if (container == null) {
-				addPlayerToHolder(player.getUniqueId(), Consts.defaultRace, false);
-				container = (RaceContainer) getHolderOfPlayer(player.getUniqueId());
+				addPlayerToHolder(player, Consts.defaultRace, false);
+				container = player.getRace();
 			}
 
-			container.editTABListEntry(player.getUniqueId());
+			container.editTABListEntry(player);
 		}
 
-		for (UUID playerUUID : memberList.keySet())
-			if (memberList.get(playerUUID) == null) {
-				addPlayerToHolder(playerUUID, Consts.defaultRace, false);
+		for (RaCPlayer player : memberList.keySet())
+			if (memberList.get(player) == null) {
+				addPlayerToHolder(player, Consts.defaultRace, false);
 			}
 	}
 
 
 	@Override
-	protected AbstractTraitHolder generateTraitHolderAndLoad(
-			YAMLConfigExtended traitHolderConfig, String holderName)
-			throws HolderParsingException {
+	protected AbstractTraitHolder generateTraitHolder(
+			YAMLConfigExtended traitHolderConfig, String holderName) {
 		
 		return RaceContainer.loadRace(traitHolderConfig, holderName);
 	}
@@ -106,10 +106,10 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean changePlayerHolder(UUID player, String newHolderName, boolean callEvent){
+	public boolean changePlayerHolder(RaCPlayer player, String newHolderName, boolean callEvent){
 		if(getHolderByName(newHolderName) == null) return false;
 		
-		String oldRace = getHolderOfPlayer(player).getName();
+		String oldRace = getHolderOfPlayer(player).getDisplayName();
 		
 		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
 		
@@ -126,7 +126,7 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	public boolean addPlayerToHolder(UUID player, String newHolderName, boolean callEvent){		
+	public boolean addPlayerToHolder(RaCPlayer player, String newHolderName, boolean callEvent){		
 		boolean worked = super.addPlayerToHolder(player, newHolderName, callEvent);
 		if(worked){
 			AbstractTraitHolder holder = getHolderOfPlayer(player);
@@ -135,7 +135,7 @@ public class RaceManager extends AbstractHolderManager {
 			}
 			
 			if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-				plugin.getChannelManager().playerJoinRace(holder.getName(), player);
+				plugin.getChannelManager().playerJoinRace(holder.getDisplayName(), player);
 			}
 		}
 		
@@ -165,17 +165,12 @@ public class RaceManager extends AbstractHolderManager {
 	}
 	
 	@Override
-	protected HolderSelectedEvent generateAfterSelectEvent(UUID player,
+	protected HolderSelectedEvent generateAfterSelectEvent(RaCPlayer player,
 			AbstractTraitHolder newHolder) {
-		return new AfterRaceSelectedEvent(Bukkit.getPlayer(player), (RaceContainer)newHolder);
+		
+		return new AfterRaceSelectedEvent(player.getPlayer(), (RaceContainer)newHolder);
 	}
 
-
-	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(UUID player,
-			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
-		return new AfterRaceChangedEvent(Bukkit.getPlayer(player), (RaceContainer) newHolder, (RaceContainer) oldHolder);
-	}
 
 	@Override
 	protected AbstractTraitHolder getStartingHolder() {
@@ -187,6 +182,12 @@ public class RaceManager extends AbstractHolderManager {
 		AbstractTraitHolder holder = getHolderByName(race);
 		
 		return holder != null ? holder : getDefaultHolder();
+	}
+
+	@Override
+	protected HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player,
+			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
+		return new AfterRaceChangedEvent(player.getPlayer(), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
 
 }

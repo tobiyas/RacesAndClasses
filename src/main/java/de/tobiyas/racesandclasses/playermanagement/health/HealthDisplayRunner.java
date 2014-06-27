@@ -17,24 +17,22 @@ package de.tobiyas.racesandclasses.playermanagement.health;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
-import de.tobiyas.racesandclasses.playermanagement.PlayerContainer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 
 public class HealthDisplayRunner implements Runnable, Observer {
 	
-	private MemberConfig config;
-	private PlayerContainer healthContainer;
 	private double oldValue;
-	private int oldInterval;
+	private int interval;
+	
+	private final RaCPlayer player;
 	
 	private Display display;
 	
@@ -42,21 +40,16 @@ public class HealthDisplayRunner implements Runnable, Observer {
 	
 	/**
 	 * Inits the HealthDisplaytRunner that shows the Health.
-	 * 
-	 * @param config to load options from
-	 * @param healthContainer to contact with.
 	 */
-	public HealthDisplayRunner(MemberConfig config, PlayerContainer healthContainer){
-		if(config == null) return;
-		this.config = config;
-		this.healthContainer = healthContainer;
-		this.oldValue = healthContainer.getCurrentHealth();
+	public HealthDisplayRunner(RaCPlayer player){
+		this.player = player;
+		this.oldValue = 0;
 		
-		oldInterval = config.getLifeDisplayInterval();
-		scedulerTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, oldInterval, oldInterval);
+		interval = player.getConfig().getLifeDisplayInterval();
+		scedulerTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, interval, interval);
 		
 		rescanDisplay();
-		config.addObserver(this);
+		player.getConfig().addObserver(this);
 	}
 	
 	
@@ -69,25 +62,23 @@ public class HealthDisplayRunner implements Runnable, Observer {
 			display.unregister();
 		}
 		
-		display = DisplayGenerator.generateDisplay(config.getPlayerUUID(), DisplayInfos.HEALTH);
+		display = DisplayGenerator.generateDisplay(player, DisplayInfos.HEALTH);
 	}
 
 	@Override
 	public void run() {
 		checkInterval();
-		if(config.getEnableLifeDisplay()){
-			UUID playerUUID = config.getPlayerUUID();
-			Player player = Bukkit.getPlayer(playerUUID);
-			if(player != null && healthContainer != null && 
-				oldValue != healthContainer.getCurrentHealth()){
+		if(player.getConfig().getEnableLifeDisplay()){
+			if(player != null && oldValue != player.getHealthManager().getCurrentHealth()){
 					display();
 			}
 		}
 	}
 	
+	
 	private void display(){
-		double currentHealth = healthContainer.getCurrentHealth();
-		double maxHealth = healthContainer.getMaxHealth();
+		double currentHealth = player.getHealthManager().getCurrentHealth();
+		double maxHealth = player.getHealthManager().getMaxHealth();
 		
 		display.display(currentHealth, maxHealth);
 		
@@ -95,18 +86,18 @@ public class HealthDisplayRunner implements Runnable, Observer {
 	}
 	
 	private void checkInterval(){
-		int checkInterval = config.getLifeDisplayInterval();
-		if(checkInterval == oldInterval) return;
+		int checkInterval = player.getConfig().getLifeDisplayInterval();
+		if(checkInterval == interval) return;
 		
 		if(checkInterval < 20){
 			checkInterval = 20;
-			config.setValue(MemberConfig.displayInterval, 20);
+			player.getConfig().setValue(MemberConfig.displayInterval, 20);
 		}
 		
-		oldInterval = checkInterval;
+		interval = checkInterval;
 		
 		Bukkit.getScheduler().cancelTask(scedulerTask);
-		scedulerTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, oldInterval, oldInterval);
+		scedulerTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), this, interval, interval);
 	}
 
 

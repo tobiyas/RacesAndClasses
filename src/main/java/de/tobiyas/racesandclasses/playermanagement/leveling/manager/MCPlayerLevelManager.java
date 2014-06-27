@@ -15,11 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
@@ -32,47 +31,47 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	/**
 	 * The Player this level Manager is belonging to.
 	 */
-	private final UUID playerUUID;
+	private final RaCPlayer player;
 	
 	
 	/**
 	 * Creates a default MC Level Manager with MC Player Levels.
 	 * 
-	 * @param playerUUID to create for
+	 * @param player to create for
 	 */
-	public MCPlayerLevelManager(UUID playerID) {
-		this.playerUUID = playerID;
+	public MCPlayerLevelManager(RaCPlayer player) {
+		this.player = player;
 	}
 	
 	
 	@Override
 	public int getCurrentLevel() {
-		return getPlayer().getLevel();
+		return getRealPlayer().getLevel();
 	}
 
 	@Override
 	public int getCurrentExpOfLevel() {
-		return (int) (getPlayer().getExp() * getPlayer().getExpToLevel());
+		return (int) (getRealPlayer().getExp() * getRealPlayer().getExpToLevel());
 	}
 
 	@Override
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public RaCPlayer getPlayer() {
+		return player;
 	}
 
 	@Override
 	public void setCurrentLevel(int level) {
-		getPlayer().setLevel(level);
+		getRealPlayer().setLevel(level);
 	}
 
 	@Override
 	public void setCurrentExpOfLevel(int currentExpOfLevel) {
-		getPlayer().setExp(currentExpOfLevel / getPlayer().getExpToLevel());
+		getRealPlayer().setExp(currentExpOfLevel / getRealPlayer().getExpToLevel());
 	}
 
 	@Override
 	public boolean addExp(int exp) {
-		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(playerUUID, exp);
+		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -84,13 +83,13 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 			return false;
 		}
 		
-		getPlayer().giveExp(exp);
+		getRealPlayer().giveExp(exp);
 		return true;
 	}
 
 	@Override
 	public boolean removeExp(int exp) {
-		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(playerUUID, exp);
+		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
 		if(expEvent.isCancelled()){
@@ -102,30 +101,29 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 			return false;
 		}		
 		
-		int totalExp = getPlayer().getTotalExperience();
+		int totalExp = getRealPlayer().getTotalExperience();
 		int newTotalExp = totalExp - exp;
 		
 		if(newTotalExp < 0) newTotalExp = 0;
-		getPlayer().setTotalExperience(newTotalExp);
+		getRealPlayer().setTotalExperience(newTotalExp);
 		return true;
 	}
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getPlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player.getPlayer());
 		if(!config.getValidLoad()){
 			return;
 		}
 		
-		Player player = getPlayer();
-	
-		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getLevel());
-		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getExp() * player.getExpToLevel()));
+		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getPlayer().getLevel());
+		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getPlayer().getExp() 
+				* player.getPlayer().getExpToLevel()));
 	}
 
 	@Override
 	public void saveTo(PlayerSavingContainer container) {
-		Player player = getPlayer();
+		Player player = getRealPlayer();
 		
 		container.setPlayerLevel(player.getLevel());
 		container.setPlayerLevelExp((int)(player.getExp() * player.getExpToLevel()));
@@ -134,7 +132,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container){
-		Player player = getPlayer();
+		Player player = getRealPlayer();
 		
 		player.setLevel(container.getPlayerLevel());
 		player.setExp(container.getPlayerLevelExp() / player.getExpToLevel());
@@ -146,16 +144,14 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void reloadFromYaml() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(Bukkit.getPlayer(playerUUID));
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		if(!config.getValidLoad()){
 			return;
 		}
 		
-		Player player = getPlayer();
-		
-		player.setLevel(config.getInt("playerdata." + playerUUID + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1));
-		player.setExp(config.getInt("playerdata." + playerUUID + CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 1)
-				/ player.getExpToLevel());
+		player.getPlayer().setLevel(config.getInt(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1));
+		player.getPlayer().setExp(config.getInt(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 1)
+				/ player.getPlayer().getExpToLevel());
 	}
 
 	
@@ -164,8 +160,8 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 * 
 	 * @return
 	 */
-	private Player getPlayer(){
-		return Bukkit.getPlayer(playerUUID);
+	private Player getRealPlayer(){
+		return player.getPlayer();
 	}
 
 

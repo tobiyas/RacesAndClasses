@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
-import de.tobiyas.racesandclasses.persistence.db.EBeanPersistenceStorage;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceStorage;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -36,11 +36,11 @@ public class ToYMLConverter {
 	 * Converts the DB stuff to YML.
 	 */
 	public static void convertDBToYML(){
-		EBeanPersistenceStorage ebeanStorage = new EBeanPersistenceStorage();
-		
-		convertHolderAssociations(ebeanStorage);
-		convertGeneralData(ebeanStorage);
-		convertMemberConfig(ebeanStorage);
+//		EBeanPersistenceStorage ebeanStorage = new EBeanPersistenceStorage();
+//		
+//		convertHolderAssociations(ebeanStorage);
+//		convertGeneralData(ebeanStorage);
+//		convertMemberConfig(ebeanStorage);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class ToYMLConverter {
 	private static void convertMemberConfig(PersistenceStorage storage){
 		Set<ConfigOption> playerConfig = new HashSet<ConfigOption>();
 		
-		for(UUID player : YAMLPersistenceProvider.getAllPlayersKnown()){			
+		for(RaCPlayer player : YAMLPersistenceProvider.getAllPlayersKnown()){
 			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(player);
 			if(newHolders != null){
 				playerConfig.addAll(newHolders);

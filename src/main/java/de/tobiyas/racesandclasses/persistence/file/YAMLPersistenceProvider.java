@@ -25,6 +25,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -55,7 +57,7 @@ public class YAMLPersistenceProvider {
 	/**
 	 * The knownPlayerIDs.
 	 */
-	protected static Set<UUID> knownPlayerIDs;
+	protected static Set<RaCPlayer> knownPlayerIDs;
 	
 	
 
@@ -63,11 +65,25 @@ public class YAMLPersistenceProvider {
 	 * Returns the already loaded Player YAML File.
 	 * This is a lazy load.
 	 * 
-	 * @param playerUUID to load
+	 * @param player to load
 	 * 
 	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
 	 */
 	public static YAMLConfigExtended getLoadedPlayerFile(Player player) {
+		return getLoadedPlayerFile(player.getUniqueId());
+	}
+	
+	
+	
+	/**
+	 * Returns the already loaded Player YAML File.
+	 * This is a lazy load.
+	 * 
+	 * @param player to load
+	 * 
+	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
+	 */
+	public static YAMLConfigExtended getLoadedPlayerFile(RaCPlayer player) {
 		return getLoadedPlayerFile(player.getUniqueId());
 	}
 
@@ -121,12 +137,12 @@ public class YAMLPersistenceProvider {
 	 * 
 	 * @return the known Players.
 	 */
-	public static Set<UUID> getAllPlayersKnown(){
+	public static Set<RaCPlayer> getAllPlayersKnown(){
 		if(knownPlayerIDs == null){
 			rescanKnownPlayers();
 		}
 		
-		return new HashSet<UUID>(knownPlayerIDs);
+		return new HashSet<RaCPlayer>(knownPlayerIDs);
 	}
 	
 	/**
@@ -147,7 +163,7 @@ public class YAMLPersistenceProvider {
 		};
 		
 		if(knownPlayerIDs == null){
-			knownPlayerIDs = new HashSet<UUID>();
+			knownPlayerIDs = new HashSet<RaCPlayer>();
 		}
 		
 		knownPlayerIDs.clear();
@@ -155,7 +171,12 @@ public class YAMLPersistenceProvider {
 		if(playerFileNames == null) return;
 		
 		for(String playerFile : playerFileNames){
-			try{ knownPlayerIDs.add(UUID.fromString(playerFile.replace(".yml", ""))); }catch(IllegalArgumentException exp){ continue; }
+			try{
+				UUID id = UUID.fromString(playerFile.replace(".yml", ""));
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
+				
+				if(player != null) knownPlayerIDs.add(player);
+			}catch(IllegalArgumentException exp){ continue; }
 		}
 	}
 	
@@ -188,7 +209,7 @@ public class YAMLPersistenceProvider {
 	/**
 	 * Creates an offline player and returns the File.
 	 * 
-	 * @param playerUUID to load from.
+	 * @param player to load from.
 	 * 
 	 * @return the loaded file.
 	 */
@@ -223,5 +244,21 @@ public class YAMLPersistenceProvider {
 		rescanKnownPlayers();
 		cacheMiss++;
 		return playerConfig;
+	}
+	
+	
+	/**
+	 * Gets all unloaded Players.
+	 * @return
+	 */
+	public static Set<RaCPlayer> getNotLoadedPlayers(){
+		if(knownPlayerIDs == null) rescanKnownPlayers();
+		
+		Set<RaCPlayer> notLoaded = new HashSet<RaCPlayer>();
+		for(RaCPlayer known : knownPlayerIDs){
+			if(!playerYamls.containsKey(known.getUniqueId())) notLoaded.add(known);
+		}
+		
+		return notLoaded;
 	}
 }

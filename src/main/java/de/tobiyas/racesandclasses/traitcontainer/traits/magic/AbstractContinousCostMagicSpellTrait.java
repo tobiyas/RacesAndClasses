@@ -22,15 +22,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ContinousCostMagicTrait;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public abstract class AbstractContinousCostMagicSpellTrait extends
@@ -64,7 +65,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	}
 
 	@Override
-	public final boolean activate(final Player player) {
+	public final boolean activate(final RaCPlayer player) {
 		if(player == null) return false;
 		if(isActivated(player)) return false;
 		if(!activateIntern(player)) return false;
@@ -95,10 +96,10 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	 * 
 	 * @return true if worked, false otherwise.
 	 */
-	protected abstract boolean activateIntern(Player player);
+	protected abstract boolean activateIntern(RaCPlayer player);
 	
 	@Override
-	public final boolean deactivate(Player player) {
+	public final boolean deactivate(RaCPlayer player) {
 		if(player == null) return false;
 		if(!isActivated(player)) return false;
 		if(!deactivateIntern(player)) return false;
@@ -119,17 +120,17 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	 * 
 	 * @return true if deactivated.
 	 */
-	protected abstract boolean deactivateIntern(Player player);
+	protected abstract boolean deactivateIntern(RaCPlayer player);
 	
 	
 	@Override
-	public final boolean isActivated(Player player) {
+	public final boolean isActivated(RaCPlayer player) {
 		if(player == null) return false;
 		return activePlayersSchedulerMap.containsKey(player.getName());
 	}
 
 	@Override
-	protected final void magicSpellTriggered(Player player, TraitResults result) {
+	protected final void magicSpellTriggered(RaCPlayer player, TraitResults result) {
 		if(everyXSeconds < 1){
 			result.setRemoveCostsAfterTrigger(activate(player));
 			return;
@@ -177,20 +178,20 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	 * 
 	 * @return if worked or not.
 	 */
-	protected final boolean tick(Player player, boolean checkRemoveCost, boolean bypassEverySecondCheck){
+	protected final boolean tick(RaCPlayer player, boolean checkRemoveCost, boolean bypassEverySecondCheck){
 		if(!bypassEverySecondCheck && everyXSeconds <= 0){
 			setCooldownIfNeeded(player);
 			return false;
 		}
 		
-		if(checkRemoveCost && !plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).canCastSpell(this)){
+		if(checkRemoveCost && !player.getSpellManager().canCastSpell(this)){
 			//player does not have enough cost type to use this spell.
 			return false;
 		}
 		
 		boolean worked = tickInternal(player);
 		if(checkRemoveCost && worked){
-			plugin.getPlayerManager().getSpellManagerOfPlayer(player.getUniqueId()).removeCost(this);
+			player.getSpellManager().removeCost(this);
 		}
 		
 		return worked;
@@ -204,7 +205,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	 * 
 	 * @return true if tick works.
 	 */
-	protected abstract boolean tickInternal(Player player);
+	protected abstract boolean tickInternal(RaCPlayer player);
 
 	
 	@TraitConfigurationNeeded(fields = {
@@ -212,7 +213,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional = true)
 	})
 	@Override
-	public void setConfiguration(Map<String, Object> configMap)
+	public void setConfiguration(TraitConfiguration configMap)
 			throws TraitConfigurationFailedException {
 		
 		super.setConfiguration(configMap);

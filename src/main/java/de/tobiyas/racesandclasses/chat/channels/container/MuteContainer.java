@@ -19,11 +19,13 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MuteContainer {
 
-	private HashMap<UUID, Integer> muted = new HashMap<UUID, Integer>();
+	private final HashMap<RaCPlayer, Integer> muted = new HashMap<RaCPlayer, Integer>();
 	
 	public MuteContainer(){
 	}
@@ -33,9 +35,10 @@ public class MuteContainer {
 		for(String player : mutedPlayers){
 			try{
 				UUID id = UUID.fromString(player);
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(id);
 				
 				int time = config.getInt(channelPre + ".muted." + player);
-				muted.put(id, time);
+				muted.put(racPlayer, time);
 			}catch(IllegalArgumentException exp){ continue; }
 		}
 	}
@@ -46,11 +49,11 @@ public class MuteContainer {
 	 * Returns true if the player got muted.
 	 * Returns false if the player is already muted.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @param time
 	 * @return
 	 */
-	public boolean mutePlayer(UUID player, int time){
+	public boolean mutePlayer(RaCPlayer player, int time){
 		if(!muted.containsKey(player)){
 			muted.put(player, time);
 			return true;
@@ -66,9 +69,9 @@ public class MuteContainer {
 	 * Returns false if the player was not found.
 	 * 
 	 * @return
-	 * @param playerUUID
+	 * @param player
 	 */
-	public boolean unmutePlayer(UUID player){
+	public boolean unmutePlayer(RaCPlayer player){
 		return muted.remove(player) != null;
 	}
 	
@@ -80,9 +83,9 @@ public class MuteContainer {
 	 * @param channelPre
 	 */
 	public void saveContainer(YAMLConfigExtended config, String channelPre){
-		for(UUID name : muted.keySet()){
+		for(RaCPlayer name : muted.keySet()){
 			int time = muted.get(name);
-			config.set(channelPre + ".muted." + name, time);
+			config.set(channelPre + ".muted." + name.getUniqueId(), time);
 		}
 		
 		if(muted.keySet().size() == 0){
@@ -96,10 +99,10 @@ public class MuteContainer {
 	 * Returns the time the player is still muted.
 	 * If -1 is returned, the player is NOT muted.
 	 * 
-	 * @param playerUUID
+	 * @param player
 	 * @return
 	 */
-	public int isMuted(UUID player){		
+	public int isMuted(RaCPlayer player){		
 		return muted.containsKey(player) ? muted.get(player) : -1;
 	}
 	
@@ -107,7 +110,7 @@ public class MuteContainer {
 	 * Ticks the container to process unmuting after the time muted.
 	 */
 	public void tick(){
-		for(UUID name : muted.keySet()){
+		for(RaCPlayer name : muted.keySet()){
 			int duration = muted.get(name);
 			if(duration == Integer.MAX_VALUE) continue;
 			duration --;

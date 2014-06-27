@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
-import org.bukkit.entity.Player;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public interface ContinousCostMagicTrait {
 
@@ -33,7 +33,7 @@ public interface ContinousCostMagicTrait {
 	 * @param player the player to activate to
 	 * @return true if activated, false otherwise.
 	 */
-	public boolean activate(Player player);
+	public boolean activate(RaCPlayer player);
 	
 	
 	/**
@@ -42,7 +42,7 @@ public interface ContinousCostMagicTrait {
 	 * @param player the player to deactivate
 	 * @return true if deactivated, false otherwise.
 	 */
-	public boolean deactivate(Player player);
+	public boolean deactivate(RaCPlayer player);
 	
 	
 	/**
@@ -51,5 +51,5 @@ public interface ContinousCostMagicTrait {
 	 * @param player the player to check if active
 	 * @return false if not.
 	 */
-	public boolean isActivated(Player player);
+	public boolean isActivated(RaCPlayer player);
 }

@@ -26,7 +26,7 @@ public class MessageScheduleApi {
 	/**
 	 * Sends a Message to a Player in X seconds.
 	 * 
-	 * @param playerUUID the player to send to
+	 * @param player the player to send to
 	 * @param timeInSeconds in which time to send
 	 * @param message the message to send
 	 */
@@ -48,7 +48,7 @@ public class MessageScheduleApi {
 	/**
 	 * Sends a Message to a Player in X seconds.
 	 * 
-	 * @param playerUUID the player to send to
+	 * @param player the player to send to
 	 * @param timeInSeconds in which time to send
 	 * @param tag to be translated
 	 */
@@ -70,7 +70,7 @@ public class MessageScheduleApi {
 	/**
 	 * Sends a Message to a Player in X seconds.
 	 * 
-	 * @param playerUUID the player to send to
+	 * @param player the player to send to
 	 * @param timeInSeconds in which time to send
 	 * @param tag to be translated
 	 * @param replacements that should be made

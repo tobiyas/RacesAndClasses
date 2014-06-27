@@ -25,6 +25,8 @@ import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Herochat;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class HeroChatListener implements Listener  {
@@ -68,13 +70,14 @@ public class HeroChatListener implements Listener  {
 		
 		String raceTag = "";
 		String classTag = "";
-
-		AbstractTraitHolder holder = plugin.getRaceManager().getHolderOfPlayer(event.getSender().getPlayer().getUniqueId());
+		
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getSender().getPlayer());
+		AbstractTraitHolder holder = player.getRace();
 		if(holder != null){
 			raceTag = holder.getTag();
 		}
 		
-		holder = plugin.getClassManager().getHolderOfPlayer(event.getSender().getPlayer().getUniqueId());
+		holder = player.getclass();
 		if(holder != null){
 			classTag = holder.getTag();
 		}
