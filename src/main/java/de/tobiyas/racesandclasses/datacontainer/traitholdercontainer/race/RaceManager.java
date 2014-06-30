@@ -15,7 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
-import org.bukkit.Bukkit;
+import java.util.Collection;
+
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -32,6 +33,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.A
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class RaceManager extends AbstractHolderManager {
 
@@ -62,7 +64,7 @@ public class RaceManager extends AbstractHolderManager {
 	 * They would not be affected by join events.
 	 */
 	private void checkForPossiblyWrongInitialized() {
-		Player[] players = Bukkit.getOnlinePlayers();
+		Collection<? extends Player> players = PlayerUtils.getOnlinePlayers();
 
 		for (Player bPlayer : players) {
 			RaCPlayer player = RaCPlayerManager.get().getPlayer(bPlayer);

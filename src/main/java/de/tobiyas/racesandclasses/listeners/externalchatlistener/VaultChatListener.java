@@ -13,6 +13,7 @@ import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.RaceAPI;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class VaultChatListener implements Listener{
 
@@ -32,7 +33,7 @@ public class VaultChatListener implements Listener{
 	 * Inits the online players.
 	 */
 	private void initOnline() {
-		for(Player player : Bukkit.getOnlinePlayers()){
+		for(Player player : PlayerUtils.getOnlinePlayers()){
 			initPlayer(player);
 		}
 	}

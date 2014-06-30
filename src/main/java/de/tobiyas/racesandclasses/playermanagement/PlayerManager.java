@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -31,6 +30,7 @@ import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class PlayerManager{
 	
@@ -77,7 +77,7 @@ public class PlayerManager{
 
 		Set<RaCPlayer> players = new HashSet<RaCPlayer>();
 		if(useDB){
-			for(Player online : Bukkit.getOnlinePlayers()){
+			for(Player online : PlayerUtils.getOnlinePlayers()){
 				RaCPlayer player = RaCPlayerManager.get().getPlayer(online);
 				players.add(player);
 			}

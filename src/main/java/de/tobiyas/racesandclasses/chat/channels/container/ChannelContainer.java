@@ -41,6 +41,7 @@ import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class ChannelContainer extends Observable{
 
@@ -403,7 +404,7 @@ public class ChannelContainer extends Observable{
 					return;
 				
 				participants.clear();
-				for(Player player : Bukkit.getOnlinePlayers()){
+				for(Player player : PlayerUtils.getOnlinePlayers()){
 					RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 					participants.add(racPlayer);
 				}

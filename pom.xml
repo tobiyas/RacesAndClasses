@@ -61,13 +61,15 @@
 			<optional>false</optional>
 		</dependency>
 
+		<!-- Since we have disabled tests for now, we don't need this dependency at the moment.
 		<dependency>
 			<groupId>de.tobiyas</groupId>
 			<artifactId>Mockit-Test-Gen</artifactId>
 			<version>1.0.1</version>
 			<scope>test</scope>
 		</dependency>
-
+		-->
+		
 		<!-- Depends from Repos -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
