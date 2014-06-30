@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
+import org.bukkit.ChatColor;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
@@ -22,7 +24,6 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthModifier.HealthModEnum;
-import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -59,7 +60,7 @@ public class ClassContainer extends AbstractTraitHolder{
 		try{
 			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
 			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
-			this.holderTag = ChatColorUtils.decodeColors(config.getString(configNodeName + ".config.classtag", "[" + configNodeName + "]"));
+			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.classtag", "[" + configNodeName + "]"));
 			this.classHealthModValue = evaluateValue(config.getString(configNodeName + ".config.health", "+0"));
 			
 			readArmor();

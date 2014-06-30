@@ -24,7 +24,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -103,7 +102,7 @@ public abstract class AbstractHolderBuilder {
 	 */
 	public AbstractHolderBuilder(AbstractTraitHolder holder) {
 		this.name = holder.getDisplayName();
-		this.holderTag = ChatColorUtils.encodeColors(holder.getTag());
+		this.holderTag = holder.getTag();
 		this.armorPermission = holder.getArmorPermsAsBoolArray();
 		
 		this.traitSet = holder.getVisibleTraits();

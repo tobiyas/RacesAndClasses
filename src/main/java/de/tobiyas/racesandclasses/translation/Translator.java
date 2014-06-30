@@ -20,8 +20,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.ChatColor;
+
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 
 public class Translator {
 
@@ -159,7 +160,7 @@ public class Translator {
 	 * @return this like a builder.
 	 */
 	public Translator decodeColor(){
-		modifiedText = ChatColorUtils.decodeColors(modifiedText);
+		modifiedText = ChatColor.translateAlternateColorCodes('&', modifiedText);
 		return this;
 	}
 }
