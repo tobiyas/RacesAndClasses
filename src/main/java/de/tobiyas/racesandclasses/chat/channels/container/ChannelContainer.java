@@ -65,8 +65,8 @@ public class ChannelContainer extends Observable{
 		this.channelName = channelName;
 		this.channelLevel = level;
 		
-		String prefix = "§f[";
-		String suffix =  "§f]";
+		String prefix = "&f[";
+		String suffix =  "&f]";
 		
 		this.channelPassword = "";
 		participants = new ArrayList<RaCPlayer>();
@@ -100,8 +100,8 @@ public class ChannelContainer extends Observable{
 		config.load();
 		
 		String channelPre = "channel." + level.name() + "." + channelName;
-		String prefix = config.getString(channelPre + ".prefix" , "§f[");
-		String suffix = config.getString(channelPre + ".suffix" , "§f]");
+		String prefix = config.getString(channelPre + ".prefix" , "&f[");
+		String suffix = config.getString(channelPre + ".suffix" , "&f]");
 		
 		//Chanel formating
 		String channelColor = config.getString(channelPre + ".channelColor", plugin.getConfigManager().getChannelConfig().getConfig_channel_default_color());
@@ -244,8 +244,8 @@ public class ChannelContainer extends Observable{
 		config.load();
 		String channelPre = "channel." + channelLevel.name() + "." + channelName;
 		config.createSection(channelPre);
-		config.set(channelPre + ".prefix" , encodeColor(channelFormat.getPrefix()));
-		config.set(channelPre + ".suffix" , encodeColor(channelFormat.getSuffix()));
+		config.set(channelPre + ".prefix" , channelFormat.getPrefix());
+		config.set(channelPre + ".suffix" , channelFormat.getSuffix());
 		config.set(channelPre + ".channelColor" , channelFormat.getColor());
 		if(participants.size() > 0) config.set(channelPre + ".members" , participants);
 		config.set(channelPre + ".channelFormat", channelFormat.getFormat());
@@ -476,14 +476,6 @@ public class ChannelContainer extends Observable{
 		return time;
 	}
 	
-	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
-	}
-	
-	private String encodeColor(String message){
-		return message.replaceAll("(§([a-f0-9]))", "&$2");
-	}
-	
 	public String getChannelName(){
 		return channelName;
 	}
@@ -494,8 +486,8 @@ public class ChannelContainer extends Observable{
 		
 		sender.sendMessage(ChatColor.YELLOW + "ChannelName: " + ChatColor.AQUA + channelName);
 		sender.sendMessage(ChatColor.YELLOW + "ChannelLevel: " + ChatColor.AQUA + channelLevel.name());
-		sender.sendMessage(ChatColor.YELLOW + "ChannelColor: " + decodeColor(channelFormat.getColor()) + "COLOR");
-		sender.sendMessage(ChatColor.YELLOW + "ChannelFormat: " + ChatColor.RESET + encodeColor(channelFormat.getFormat()));
+		sender.sendMessage(ChatColor.YELLOW + "ChannelColor: " + ChatColor.translateAlternateColorCodes('&', channelFormat.getColor()) + "COLOR");
+		sender.sendMessage(ChatColor.YELLOW + "ChannelFormat: " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&',channelFormat.getFormat()));
 		
 		if(player != null && player.getUniqueId().equals(channelAdmin)){
 			sender.sendMessage(ChatColor.YELLOW + "ChannelPassword: " + ChatColor.AQUA + channelPassword);

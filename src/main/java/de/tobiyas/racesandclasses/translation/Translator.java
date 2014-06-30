@@ -74,14 +74,13 @@ public class Translator {
 	 * Checks and replaces Umlauts
 	 */
 	private void replaceUmlauts() {
-		modifiedText = modifiedText
-				.replaceAll("ä", "ae")
-				.replaceAll("Ä", "Ae")
-				.replaceAll("ö", "oe")
-				.replaceAll("Ö", "Oe")
-				.replaceAll("ü", "ue")
-				.replaceAll("Ü", "Ue")
-				.replaceAll("ß", "ss");
+		modifiedText = modifiedText.replace('\u00f6' + "", "<o>")
+			.replace('\u00D6' + "", "<O>")
+			.replace('\u00e4' + "", "<a>")
+			.replace('\u00c4' + "", "<A>")	
+			.replace('\u00fc' + "", "<u>")
+			.replace('\u00dc' + "", "<U>")
+			.replace('\u00df' + "", "<ss>");
 	}
 
 
