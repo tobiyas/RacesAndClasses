@@ -37,10 +37,22 @@
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 
-		<!-- Vault repo -->
+		<!-- Heroes repo -->
+		<repository>
+			<id>heroes-repo</id>
+			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
+		</repository>
+
+		<!-- Vault Repo -->
 		<repository>
 			<id>vault-repo</id>
-			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
+			<url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+		</repository>
+
+		<!-- Own repo -->
+		<repository>
+			<id>tobiyas-repo</id>
+			<url>http://repository-tobiyas.forge.cloudbees.com/snapshot/</url>
 		</repository>
 
 	</repositories>
