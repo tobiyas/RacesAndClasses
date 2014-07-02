@@ -207,7 +207,7 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		
 		//lists all races
 		if(raceCommand.equalsIgnoreCase("list")){
-			raceList((Player)sender);
+			raceList(sender);
 			
 			if(sender instanceof Player){
 				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
