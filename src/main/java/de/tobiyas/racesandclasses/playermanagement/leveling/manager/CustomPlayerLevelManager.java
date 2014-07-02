@@ -325,4 +325,27 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		realPlayer.setExp((float)percent);
 		realPlayer.setLevel(getCurrentLevel());
 	}
+
+	@Override
+	public void addLevel(int value) {
+		if(value <= 0) return;
+		
+		int oldLevel = currentLevel;
+		currentLevel += value;
+		
+		LevelUpEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
+		RacesAndClasses.getPlugin().fireEventToBukkit(event);
+	}
+
+	@Override
+	public void removeLevel(int value) {
+		if(value <= 0) return;
+		
+		int oldLevel = currentLevel;
+		currentLevel -= value;
+		if(currentLevel < 1) currentLevel = 1;
+		
+		LevelUpEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
+		RacesAndClasses.getPlugin().fireEventToBukkit(event);
+	}
 }

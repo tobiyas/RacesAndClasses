@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.listeners;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.listeners.classchangelistener.ClassChangeSelectionListener;
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChange;
+import de.tobiyas.racesandclasses.listeners.equipement.Listener_raceClassRestrictionOnItems;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.VaultChatListener;
@@ -77,6 +78,8 @@ public class RaCListenerRegister {
 		new PlayerLastDamageListener();
 		new Listener_ManaPotion();
 		new Listener_RaceSpawn();
+		
+		new Listener_raceClassRestrictionOnItems();
 	}
 	
 	/**

@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -39,6 +40,7 @@ import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_6;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_7;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedsOtherPlugins;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -255,6 +257,19 @@ public class TraitStore {
 	                    				//We need MC > 1.7 But do not have it.
 	                    				continue;	                    				
 	                    			}
+	                    		}
+	                    		
+	                    		if(clazz.isAnnotationPresent(NeedsOtherPlugins.class)){
+	                    			boolean doBreak = false;
+	                    			for(String pluginName : clazz.getAnnotation(NeedsOtherPlugins.class).neededPlugins()){
+	                    				if(Bukkit.getPluginManager().getPlugin(pluginName) == null) {
+	                    					doBreak = true;
+	                    					break;
+	                    				}
+	                    			}
+	                    			
+	                    			//some depends not found.
+	                    			if(doBreak) continue;
 	                    		}
 	                    		
 	                    		

@@ -3,8 +3,12 @@ package de.tobiyas.racesandclasses.commands;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 
 public abstract class AbstractCommand implements CommandInterface {
 

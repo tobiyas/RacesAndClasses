@@ -81,14 +81,15 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		}
 		
 		String potentialCommand = args[0];
+		boolean isPlayer = sender instanceof Player;
 		
 		//Info on certain class
 		if(potentialCommand.equalsIgnoreCase("info")){
 			AbstractTraitHolder classHolder = null;
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+			RaCPlayer racPlayer = isPlayer ? RaCPlayerManager.get().getPlayer((Player) sender) : null;
 			
 			if(args.length < 2){
-				classHolder = racPlayer.getclass();
+				classHolder = isPlayer ? racPlayer.getclass() : null;
 				if(classHolder == null){
 					LanguageAPI.sendTranslatedMessage(sender,"no_class_selected_use_info");
 					return true;
@@ -292,9 +293,14 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			return;
 		}
 		
-		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) player);
-		AbstractTraitHolder holder = racPlayer.getclass();
-		String nameOfOwnClass = holder != null ? holder.getDisplayName() : "";
+		RaCPlayer racPlayer = null;
+		String nameOfOwnClass = "";
+		
+		if(player instanceof Player){
+			racPlayer = RaCPlayerManager.get().getPlayer((Player) player);
+			AbstractTraitHolder holder = racPlayer.getclass();
+			nameOfOwnClass = holder != null ? holder.getDisplayName() : "";
+		}
 		
 		for(String classe : classes ){
 			if(classe.equalsIgnoreCase(nameOfOwnClass)){

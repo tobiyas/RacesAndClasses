@@ -93,6 +93,7 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		}
 		
 		String raceCommand = args[0];
+		boolean isPlayer = sender instanceof Player;
 			
 		//Select race(only if has no race)
 		if(raceCommand.equalsIgnoreCase("select")){
@@ -193,15 +194,14 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		
 		//Info to a race
 		if(raceCommand.equalsIgnoreCase("info")){			
-			Player player = (Player) sender;
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
-			String inspectedRace = racPlayer.getRace().getDisplayName();
+			RaCPlayer racPlayer = isPlayer ? RaCPlayerManager.get().getPlayer((Player)sender) : null;
+			String inspectedRace = isPlayer ? racPlayer.getRace().getDisplayName() : "";
 			
 			if(args.length > 1){
 				inspectedRace = args[1];
 			}
 			
-			raceInfo(player, inspectedRace);
+			raceInfo(sender, inspectedRace);
 			return true;
 		}
 		
@@ -332,11 +332,16 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		}
 	}
 	
-	private void raceInfo(Player sender, String inspectedRace){
+	private void raceInfo(CommandSender sender, String inspectedRace){
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
 		
-		RaCPlayer player = RaCPlayerManager.get().getPlayer((Player)sender);
-		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+		RaCPlayer player = null;
+		RaceContainer containerOfPlayer = null;
+		if(sender instanceof Player){
+			player = RaCPlayerManager.get().getPlayer((Player)sender);
+			containerOfPlayer = player.getRace();
+		}
+		
 		if(container == null){
 			LanguageAPI.sendTranslatedMessage(sender, race_not_exist,
 					"race", inspectedRace);
@@ -376,11 +381,13 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		}
 	}
 	
-	private void raceList(Player sender){
+	private void raceList(CommandSender sender){
 		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		RaCPlayer player = RaCPlayerManager.get().getPlayer(sender);
 		
-		AbstractTraitHolder senderRace = player.getRace();
+		boolean isPlayer = sender instanceof Player;
+		RaCPlayer player = isPlayer ? RaCPlayerManager.get().getPlayer((Player)sender) : null;
+		
+		AbstractTraitHolder senderRace = isPlayer ? player.getRace() : null;
 		if(senderRace == plugin.getRaceManager().getDefaultHolder()){
 			races.add(plugin.getRaceManager().getDefaultHolder().getDisplayName());
 		}

@@ -45,11 +45,7 @@ public class LevelAPI {
 	 */
 	public static void addLevel(Player orgPlayer, int levelToAdd){
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(orgPlayer);
-		
-		int currentLevel = getCurrentLevel(orgPlayer);
-		int newLevel = currentLevel + levelToAdd;
-		
-		player.getLevelManager().setCurrentLevel(newLevel);
+		player.getLevelManager().addLevel(levelToAdd);
 	}
 	
 	
@@ -73,12 +69,8 @@ public class LevelAPI {
 	 * @param levelToRemove to remve
 	 */
 	public static void removeLevel(Player player, int levelToRemove){
-		int currentLevel = getCurrentLevel(player);
-		int newLevel = currentLevel - levelToRemove;
-		if(newLevel < 1) newLevel = 1;
-		
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
-		racPlayer.getLevelManager().setCurrentLevel(newLevel);
+		racPlayer.getLevelManager().removeLevel(levelToRemove);
 	}
 	
 	

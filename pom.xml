@@ -166,6 +166,16 @@
 			<systemPath>${project.basedir}/libs/Misc/SkillAPI.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- MCCore -->
+		<dependency>
+			<groupId>com.sucy</groupId>
+			<artifactId>mccore</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Misc/MCCore.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
 
 	</dependencies>
 

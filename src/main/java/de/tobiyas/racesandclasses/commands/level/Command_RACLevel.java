@@ -114,8 +114,11 @@ public class Command_RACLevel extends AbstractCommand {
 		}
 		
 		if("lvl".equalsIgnoreCase(subCommand)){
-			int newLevel = manager.getCurrentLevel() + value;
-			manager.setCurrentLevel(newLevel);
+			if(value > 0){
+				manager.addLevel(value);
+			}else{
+				manager.removeLevel(-value);
+			}
 			
 			LanguageAPI.sendTranslatedMessage(sender, success);
 			return true;

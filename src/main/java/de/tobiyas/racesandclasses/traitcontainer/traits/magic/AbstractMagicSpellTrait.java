@@ -53,6 +53,8 @@ import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.util.naming.MCPrettyName;
+import de.tobiyas.util.vollotile.ParticleEffects;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait implements MagicSpellTrait {
 
@@ -62,6 +64,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	public static final String ITEM_TYPE_PATH= "item";
 	
 	public static final String CHANNELING_PATH = "channeling";
+	public static final String PARTICLE_ON_CAST_PATH = "particleOnCast";
 	
 	
 	/**
@@ -108,6 +111,11 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 	 * The ID of the scheduler.
 	 */
 	private int bukkitSchedulerID = -1;
+	
+	/**
+	 * If the Trait should use particles.
+	 */
+	protected boolean useParticles = true;
 
 	
 	@TraitEventsUsed(registerdClasses = {PlayerInteractEvent.class})
@@ -288,6 +296,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 					magicSpellTriggered(player, result);					
 					if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
 						player.getSpellManager().removeCost(this);
+						if(useParticles){
+							
+							VollotileCodeManager.getVollotileCode().sendParticleEffectToAll(
+									ParticleEffects.MOB_SPELL, 
+									player.getLocation().add(0, 1, 0), 
+									0, 
+									10);
+						}
 					}
 				}
 				
@@ -395,18 +411,19 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class, optional = true),
 			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = Material.class, optional = true),
-			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Double.class, optional = true)
+			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Double.class, optional = true),
+			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Boolean.class, optional = true)			
 		})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
 		if(configMap.containsKey(COST_PATH)){
-			cost = (Double) configMap.get(COST_PATH);
+			cost = configMap.getAsDouble(COST_PATH);
 		}
 		
 		if(configMap.containsKey(COST_TYPE_PATH)){
-			String costTypeName = (String) configMap.get(COST_TYPE_PATH);
+			String costTypeName = configMap.getAsString(COST_TYPE_PATH);
 			costType = CostType.tryParse(costTypeName);
 			if(costType == null){
 				throw new TraitConfigurationFailedException(getName() + " is incorrect configured. costType could not be read.");
@@ -417,7 +434,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured. 'costType' was ITEM but no Item is specified at 'item'.");
 				}
 				
-				materialForCasting = (Material) configMap.get(ITEM_TYPE_PATH);
+				materialForCasting = configMap.getAsMaterial(ITEM_TYPE_PATH);
 				if(materialForCasting == null){
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
 							+ " 'costType' was ITEM but the item read is not an Item. Items are CAPITAL. "
@@ -425,11 +442,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 							+ "Alternative use an ItemID.");
 				}
 			}
-			
+		}
+		
+		if(configMap.containsKey(PARTICLE_ON_CAST_PATH)){
+			useParticles = configMap.getAsBool(PARTICLE_ON_CAST_PATH);
 		}
 		
 		if(configMap.containsKey(CHANNELING_PATH)){
-			channelingTime = (Double) configMap.get(CHANNELING_PATH);
+			channelingTime = configMap.getAsDouble(CHANNELING_PATH);
 		}
 	}
 

@@ -32,7 +32,6 @@ public class CommandExecutor_EmptyCommand implements CommandExecutor {
 		try{
 			plugin.getCommand(commandName).setExecutor(this);
 		}catch(Exception e){
-			plugin.log("ERROR: Could not register command " + commandName + ".");
 		}
 
 	}

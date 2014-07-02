@@ -38,20 +38,13 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import net.gravitydevelopment.updater.Updater;
 import net.gravitydevelopment.updater.Updater.UpdateType;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.avaje.ebean.EbeanServer;
@@ -86,6 +79,7 @@ import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.racesandclasses.commands.level.Command_RACLevel;
 import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.racespawn.CommandExecutor_RaceSpawn;
+import de.tobiyas.racesandclasses.commands.reflect.CommandMap;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
 import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
@@ -97,7 +91,6 @@ import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
-import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
@@ -248,7 +241,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			getDebugLogger().setAlsoToPlugin(true);
 			
 			VaultHook.init(this);
-			Bukkit.getPluginManager().registerEvents(this, this);
+			//Bukkit.getPluginManager().registerEvents(this, this);
 			
 			description = getDescription();
 			prefix = "[" + description.getName() + "] ";
@@ -435,83 +428,13 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			}
 		}
 		
+		CommandMap.registerCommands(commands, this);		
 		if(System.currentTimeMillis() - currentTime > 1000){
 			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
 		}
 	}
 	
 	
-	
-	@EventHandler
-	public void onCommand(ServerCommandEvent event){
-		if(evalCommand(event.getSender(), event.getCommand())){
-			event.setCommand("");
-		}
-	}
-	
-	
-	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent event) {
-		String message = event.getMessage();
-		if(message.startsWith("/")) message = message.substring(1);
-		
-		if(evalCommand(event.getPlayer(), message)){
-			event.setMessage("/");
-			event.setCancelled(true);
-		}
-	}
-	
-	
-	private boolean evalCommand(CommandSender sender, String message){
-		String[] split = message.split(" ");
-		
-		String label = split[0];
-		String[] args = new String[split.length - 1];
-		for(int i = 1; i < split.length; i++) args[i - 1] = split[i];
-		
-		
-		//check if on disabled alias.
-		List<String> disabledAliases = configManager.getGeneralConfig().getConfig_general_disable_aliases();
-		for(String disabled : disabledAliases){
-			if(label.equalsIgnoreCase(disabled)) return false;
-		}
-		
-
-		//check for a hit on name.
-		for(CommandInterface internCommand : commands){
-			if(internCommand.getCommandName().equalsIgnoreCase(label)){
-				if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
-					sender.sendMessage(ChatColor.RED + "On disabled World.");
-					return true;
-				}
-				
-				if(internCommand.onCommand(sender, null, label, args)){
-					return true;
-				}
-			}
-		}
-		
-		//check for a hit on alias.
-		for(CommandInterface internCommand : commands){
-			if(!internCommand.hasAliases()) continue;
-			
-			for(String alias : internCommand.getAliases()){
-				if(alias.equalsIgnoreCase(label)){
-					if(sender instanceof Player && WorldResolver.isOnDisabledWorld((Player)sender)) {
-						sender.sendMessage(ChatColor.RED + "On disabled World.");
-						return true;
-					}
-					
-					if(internCommand.onCommand(sender, null, label, args)){
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
-
 	private void initMetrics(){
 		if(configManager.getGeneralConfig().isConfig_metrics_enabled()){
 			SendMetrics.sendMetrics(this, configManager.getGeneralConfig().isConfig_enableDebugOutputs());
@@ -609,10 +532,10 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		getDebugLogger().setAlsoToPlugin(true);
 	}
 	
+	
 	private void registerAllCommandsAsError() {
-		Set<String> commands = plugin.getDescription().getCommands().keySet();
-		for(String command : commands){
-			new CommandExecutor_EmptyCommand(command);
+		for(CommandInterface command : this.commands){
+			new CommandExecutor_EmptyCommand(command.getCommandName());
 		}
 	}
 

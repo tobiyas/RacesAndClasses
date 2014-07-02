@@ -173,4 +173,16 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 			return (SkillAPI) Bukkit.getPluginManager().getPlugin("SkillAPI");
 		}catch(Throwable exp){ return null; }
 	}
+
+
+	@Override
+	public void addLevel(int value) {
+		getSkillAPI().getPlayer(player.getPlayer()).levelUp(value);
+	}
+
+
+	@Override
+	public void removeLevel(int value) {
+		//TODO don't know how... :(
+	}
 }

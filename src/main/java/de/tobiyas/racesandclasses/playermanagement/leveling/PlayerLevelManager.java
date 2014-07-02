@@ -132,4 +132,22 @@ public interface PlayerLevelManager {
 	 */
 	public boolean canRemove(int toRemove);
 
+
+	/**
+	 * Adds a level to the player.
+	 * <br>Must be positive
+	 * 
+	 * @param value to add.
+	 */
+	public void addLevel(int value);
+	
+	/**
+	 * Removes a level from the player.
+	 * <br>Must be positive.
+	 * <br>Can not go below 1.
+	 * 
+	 * @param value to remove.
+	 */
+	public void removeLevel(int value);
+
 }

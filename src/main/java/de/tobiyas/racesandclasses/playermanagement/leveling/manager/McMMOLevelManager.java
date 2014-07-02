@@ -257,4 +257,14 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	    	return 1;
 	    }
 	}
+
+
+	@Override
+	public void addLevel(int value) {
+	}
+
+
+	@Override
+	public void removeLevel(int value) {
+	}
 }

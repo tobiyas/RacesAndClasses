@@ -123,4 +123,14 @@ public class HeroesLevelManager implements PlayerLevelManager {
 		return getHeroes().getCharacterManager().getHero(player.getPlayer());
 	}
 
+
+	@Override
+	public void addLevel(int value) {
+	}
+
+
+	@Override
+	public void removeLevel(int value) {
+	}
+
 }

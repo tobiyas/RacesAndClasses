@@ -176,5 +176,18 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 		toRemove -= getCurrentExpOfLevel();
 		return toRemove > 0;
 	}
+
+
+	@Override
+	public void addLevel(int value) {
+		getRealPlayer().giveExpLevels(value);
+	}
+
+
+	@Override
+	public void removeLevel(int value) {
+		int newLevel = Math.max(0, getCurrentLevel() - value);
+		setCurrentLevel(newLevel);
+	}
 	
 }
