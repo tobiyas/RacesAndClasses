@@ -248,17 +248,39 @@ public class YAMLPersistenceProvider {
 	
 	
 	/**
-	 * Gets all unloaded Players.
+	 * Gets all not loaded Player file names.
+	 * <br> This container the .yml ending!
 	 * @return
 	 */
-	public static Set<RaCPlayer> getNotLoadedPlayers(){
+	public static Set<String> getNotLoadedPlayers(){
 		if(knownPlayerIDs == null) rescanKnownPlayers();
 		
-		Set<RaCPlayer> notLoaded = new HashSet<RaCPlayer>();
-		for(RaCPlayer known : knownPlayerIDs){
-			if(!playerYamls.containsKey(known.getUniqueId())) notLoaded.add(known);
+		File playerFolder = new File(Consts.playerDataPath);
+		FilenameFilter filter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				if(name.startsWith("playerData")){
+					return false;
+				}
+				
+				return name.endsWith(".yml");
+			}
+		};
+		
+		Set<String> toReturn = new HashSet<String>();
+		String[] playerFileNames = playerFolder.list(filter);
+		if(playerFileNames == null) return toReturn;
+		
+		for(String playerFile : playerFileNames){
+			try{
+				UUID id = UUID.fromString(playerFile.replace(".yml", ""));
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
+				
+				if(player == null) toReturn.add(playerFile);
+			}catch(IllegalArgumentException exp){ continue; }
 		}
 		
-		return notLoaded;
+		return toReturn;
 	}
 }

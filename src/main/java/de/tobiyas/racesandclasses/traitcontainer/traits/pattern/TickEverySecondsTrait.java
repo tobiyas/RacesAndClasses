@@ -130,7 +130,7 @@ private int schedulerTaskId = -1;
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		seconds = (Integer) configMap.get("seconds");
+		seconds = configMap.getAsInt("seconds");
 	}
 
 	@Override	

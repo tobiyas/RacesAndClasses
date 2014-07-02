@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.RaceAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -41,13 +40,13 @@ public class YAMLOldDataRemover {
 		String defaultClassName = ClassAPI.getDefaultClassName();
 		
 		isRemoving = true;
-		Set<RaCPlayer> notLoaded = YAMLPersistenceProvider.getNotLoadedPlayers();
+		Set<String> notLoaded = YAMLPersistenceProvider.getNotLoadedPlayers();
 		long terminationDate = System.currentTimeMillis() - (DELETE_RANGE * oldDays);
 		boolean checkEmpty = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_general_remove_old_data_check_empty();
 		
 		int removed = 0;
-		for(RaCPlayer player : notLoaded){
-			File playerFile = new File(Consts.playerDataPath, player.getUniqueId() + ".yml");
+		for(String name : notLoaded){
+			File playerFile = new File(Consts.playerDataPath, name);
 			if(playerFile.exists()){
 				YAMLConfigExtended temp = new YAMLConfigExtended(playerFile).load();
 				long lastLogin = temp.getLong("lastOnline", 0);

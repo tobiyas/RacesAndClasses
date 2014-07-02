@@ -412,7 +412,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = Material.class, optional = true),
 			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Double.class, optional = true),
-			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Boolean.class, optional = true)			
+			@TraitConfigurationField(fieldName = PARTICLE_ON_CAST_PATH, classToExpect = Boolean.class, optional = true)			
 		})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
