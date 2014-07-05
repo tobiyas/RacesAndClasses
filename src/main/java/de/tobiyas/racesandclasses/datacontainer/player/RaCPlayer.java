@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.datacontainer.player;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
@@ -253,6 +255,39 @@ public class RaCPlayer {
 		}catch(Throwable exp) { return false; }
 	}
 	
+	
+	
+	/**
+	 * Checks if the Player has Permission for this permission.
+	 * 
+	 * @param permission to check
+	 * 
+	 * @return true if has, false if not.
+	 */
+	public boolean hasPermission(String permission){
+		if(isOnline()){
+			return plugin.getPermissionManager().checkPermissionsSilent(getPlayer(), permission);
+		}else{
+			return plugin.getPermissionManager().checkPermissionsSilent(playerName, permission);
+		}
+	}
+	
+
+	/**
+	 * Sends a translated Message via the Translation API.
+	 */
+	public void sendTranslatedMessage(String tag) {
+		if(!isOnline()) return;
+		LanguageAPI.sendTranslatedMessage(getPlayer(), tag);
+	}
+	
+	/**
+	 * Sends a translated Message via the Translation API.
+	 */
+	public void sendTranslatedMessage(String tag, Map<String,String> replacements) {
+		if(!isOnline()) return;
+		LanguageAPI.sendTranslatedMessage(getPlayer(), tag, replacements);
+	}
 	
 	
 	

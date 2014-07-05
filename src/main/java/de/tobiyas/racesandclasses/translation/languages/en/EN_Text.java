@@ -53,6 +53,7 @@ public class EN_Text {
 			//h
 			+ healed + ": '&aYou have been healed.'\r\n"
 			+ healed_other + ": '&aYou have healed: &d%PLAYER%&a.'\r\n"
+			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			
 			//i
 			

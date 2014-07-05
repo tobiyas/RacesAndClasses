@@ -172,4 +172,12 @@ public interface Trait{
 	 * @return returns true if visible.
 	 */
 	public boolean isVisible();
+
+
+	/**
+	 * Returns true if the Trait is bindable.
+	 * 
+	 * @return false if not bindable.
+	 */
+	public boolean isBindable();
 }

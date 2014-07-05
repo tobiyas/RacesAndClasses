@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class RaCPlayerManager {
 
@@ -100,8 +101,7 @@ public class RaCPlayerManager {
 			}
 		}
 		
-		//this is not wanted to be used!
-		Player player = Bukkit.getPlayer(playerName);
+		Player player = PlayerUtils.getPlayer(playerName);
 		if(player == null) return null;
 		
 		RaCPlayer neu = createNew(player);

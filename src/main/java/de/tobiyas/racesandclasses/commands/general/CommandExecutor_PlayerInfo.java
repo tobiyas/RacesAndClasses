@@ -76,7 +76,7 @@ private RacesAndClasses plugin;
 			return true;
 		}
 		
-		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		AbstractTraitHolder raceContainer = racPlayer.getRace();
 		AbstractTraitHolder classContainer = racPlayer.getclass();
 		

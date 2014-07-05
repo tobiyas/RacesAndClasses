@@ -489,4 +489,17 @@ public abstract class AbstractMagicSpellTrait extends AbstractBasicTrait impleme
 			changeMagicSpell(wrapper.getPlayer());
 		}
 	}
+	
+	
+	@Override
+	public boolean isBindable() {
+		return true;
+	}
+	
+
+	@Override
+	protected void bindCastIntern(RaCPlayer player) {
+		player.getSpellManager().changeToSpell(getDisplayName());
+		player.getSpellManager().tryCastCurrentSpell();
+	}
 }

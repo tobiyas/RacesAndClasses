@@ -106,7 +106,7 @@ public class PermissionRegisterer implements Runnable{
 				//This is VERY inefficient!
 				
 				for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
-					vaultPermissions.playerRemoveGroup((String)null, offlinePlayer.getName(), 
+					vaultPermissions.playerRemoveGroup((String)null, offlinePlayer, 
 							permissionSpecificPrefix + groupName);
 				}
 				

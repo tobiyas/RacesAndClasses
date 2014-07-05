@@ -772,5 +772,31 @@ public abstract class AbstractBasicTrait implements Trait,
 	@Override
 	public void triggerButHasRestriction(TraitRestriction restriction, EventWrapper wrapper){
 	}
+
 	
+	/**
+	 * This is ment to be overriden!
+	 */
+	@Override
+	public boolean isBindable() {
+		return false;
+	}
+	
+	/**
+	 * This is indicating that a player uses the bound 
+	 * @param using the player that is using this Trait.
+	 */
+	public final void bindCast(RaCPlayer using){
+		if(!isBindable()) return;
+		if(!using.isOnline()) return;
+		bindCastIntern(using);
+	}
+	
+	/**
+	 * Ment to be overriten.
+	 * @param player
+	 */
+	protected void bindCastIntern(RaCPlayer player){
+		
+	}
 }

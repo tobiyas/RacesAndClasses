@@ -47,15 +47,10 @@ public class Keys {
 	//g
 	
 	//h
-	
-	//i
-	
-	//j
-	
-	//h
 	public static final String healed = "healed";
 	public static final String healed_other = "healed_other";
 	public static final String healed_by = "healed_by";
+	public static final String held_item_not_air = "held_item_not_air";
 	
 	//i
 	

@@ -246,7 +246,14 @@ public class PlayerSpellManager {
 		for(int i = 0; i < spellList.size(); i++){
 			MagicSpellTrait spell = spellList.currentEntry();
 			if(spell instanceof AbstractBasicTrait){
+				//first check Display name
 				String name = ((AbstractBasicTrait) spell).getDisplayName();
+				if(name.equalsIgnoreCase(spellName)){
+					return true;
+				}
+				
+				//second check Trait Name.
+				name = ((AbstractBasicTrait) spell).getName();
 				if(name.equalsIgnoreCase(spellName)){
 					return true;
 				}
