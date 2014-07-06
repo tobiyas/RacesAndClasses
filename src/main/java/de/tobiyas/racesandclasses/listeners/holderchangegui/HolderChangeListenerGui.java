@@ -83,7 +83,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 		}
 		
 		player.getPlayer().updateInventory();
-		//InventoryResync.resync(player);
 	}
 	
 	

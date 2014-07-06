@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
+package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +28,12 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.World
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
-public class ManaManager implements Observer {
+public class OwnManaManager implements Observer, ManaManager {
 
 	/**
 	 * The Plugin to call Stuff on
@@ -42,13 +44,6 @@ public class ManaManager implements Observer {
 	 * The Player this mana Manager belongs.
 	 */
 	private final RaCPlayer player;
-	
-//	
-//	/**
-//	 * The Maximal Mana the Player contains.
-//	 */
-//	private double maxMana;
-	
 	
 	/**
 	 * The current Mana the Player contains.
@@ -65,19 +60,30 @@ public class ManaManager implements Observer {
 	 */
 	private final Map<String,Double> maxManaBonus = new HashMap<String, Double>();
 	
+	/**
+	 * The Food bar runnable to use.
+	 */
+	private final ManaFoodBarRunner foodBar;
+	
+	
 	
 	/**
 	 * Generates a new Mana Manager for the Player passed.
 	 * 
 	 * @param player
 	 */
-	public ManaManager(RaCPlayer player) {
+	public OwnManaManager(RaCPlayer player) {
 		this.player = player;
 		this.currentMana = 0;
 		
 		rescanDisplay();
 		
 		player.getConfig().addObserver(this);
+		foodBar = new ManaFoodBarRunner(this);
+		
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()){
+			foodBar.start();
+		}
 	}
 	
 	/**
@@ -93,9 +99,10 @@ public class ManaManager implements Observer {
 	}
 	
 	
-	/**
-	 * Rescans the Player and resets the Max Mana if needed.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#rescanPlayer()
 	 */
+	@Override
 	public void rescanPlayer(){
 		if(player == null || !player.isOnline() || WorldResolver.isOnDisabledWorld(player)){
 			return;
@@ -120,12 +127,10 @@ public class ManaManager implements Observer {
 	}
 
 	
-	/**
-	 * Displays the Mana to the Player
-	 * 
-	 * This is only displayed if the Player HAS Mana.
-	 * This means his maxMana > 0.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#outputManaToPlayer()
 	 */
+	@Override
 	public void outputManaToPlayer(){
 		if(getMaxMana() <= 0) return;
 		
@@ -137,16 +142,10 @@ public class ManaManager implements Observer {
 		}, 1);
 	}
 	
-	/**
-	 * A player tries to cast a spell.
-	 * Returns true if the spell may be casted.
-	 * Returns false if the player does not have enough Mana.
-	 * 
-	 * When Mana is used, the Mana is removed from the mana Pool.
-	 * 
-	 * @param spellToCast to cast
-	 * @return true if spell cast is permitted, false otherwise.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#playerCastSpell(de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait)
 	 */
+	@Override
 	public boolean playerCastSpell(MagicSpellTrait spellToCast){
 		if(!hasEnoughMana(spellToCast)) return false;
 		
@@ -157,29 +156,20 @@ public class ManaManager implements Observer {
 	
 	
 	
-	/**
-	 * Checks if the Player has enough Mana for the Spell.
-	 * 
-	 * WARNING: Only returns true if the Spell actually needs Mana!
-	 * 
-	 * @param spell to check
-	 * @return true if has enough Mana, false if not, or no Mana spell.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#hasEnoughMana(de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait)
 	 */
+	@Override
 	public boolean hasEnoughMana(MagicSpellTrait spell){
 		if(spell.getCostType() != CostType.MANA) return false;
 		return hasEnoughMana(spell.getCost());
 	}
 	
 	
-	/**
-	 * Fills the current Mana Pool of the player by a specific Value.
-	 * It returns the resulting current mana Pool.
-	 * 
-	 * If the Mana Pool exceeds it's max size, it is filled but not overfilled.
-	 * 
-	 * @param value to fill
-	 * @return the Current Mana Pool size aftert filling.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#fillMana(double)
 	 */
+	@Override
 	public double fillMana(double value){
 		currentMana += value;
 		if(currentMana > getMaxMana()){
@@ -191,15 +181,10 @@ public class ManaManager implements Observer {
 	}
 	
 	
-	/**
-	 * Drowns the current Mana Pool of the player by a specific Value.
-	 * It returns the resulting current mana Pool.
-	 * 
-	 * If the Mana Pool exceeds to be empty (0), it is emptied but will not be negative.
-	 * 
-	 * @param value to drown
-	 * @return the Current Mana Pool size after drowning.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#drownMana(double)
 	 */
+	@Override
 	public double drownMana(double value){
 		currentMana -= value;
 		if(currentMana < 0){
@@ -211,21 +196,20 @@ public class ManaManager implements Observer {
 	}
 
 	
-	/**
-	 * Checks if the Player has enough Mana.
-	 * 
-	 * @param manaNeeded the mana needed.
-	 * @return true if has enough, false if not.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#hasEnoughMana(double)
 	 */
+	@Override
 	public boolean hasEnoughMana(double manaNeeded){
 		return currentMana - manaNeeded >= 0;
 	}
 	
 	
 
-	/**
-	 * @return the maxMana
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getMaxMana()
 	 */
+	@Override
 	public double getMaxMana() {
 		double max = 0;
 		for(Double value : maxManaBonus.values()){
@@ -236,55 +220,51 @@ public class ManaManager implements Observer {
 	}
 
 
-	/**
-	 * @return the currentMana
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getCurrentMana()
 	 */
+	@Override
 	public double getCurrentMana() {
 		return currentMana;
 	}
 	
-	/**
-	 * Adds a max Mana bonus.
-	 * 
-	 * @param key to add
-	 * @param value to add
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#addMaxManaBonus(java.lang.String, double)
 	 */
+	@Override
 	public void addMaxManaBonus(String key, double value){
 		maxManaBonus.put(key.toLowerCase(), value);
 	}
 	
-	/**
-	 * Remove a max Mana bonus.
-	 * 
-	 * @param key to remove
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#removeMaxManaBonus(java.lang.String)
 	 */
+	@Override
 	public void removeMaxManaBonus(String key){
 		maxManaBonus.remove(key.toLowerCase());
 	}
 	
-	/**
-	 * Returns all Bonusses.
-	 * 
-	 * @return all Bonuses.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getAllBonuses()
 	 */
+	@Override
 	public Map<String,Double> getAllBonuses(){
 		return maxManaBonus;
 	}
 
 
-	/**
-	 * @return the player
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getPlayer()
 	 */
+	@Override
 	public RaCPlayer getPlayer() {
 		return player;
 	}
 	
-	/**
-	 * Returns if the Mana of this player is
-	 * fully filled.
-	 * 
-	 * @return true if filled, false otherwise.
+	/* (non-Javadoc)
+	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#isManaFull()
 	 */
+	@Override
 	public boolean isManaFull(){
 		return currentMana >= getMaxMana();
 	}

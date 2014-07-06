@@ -32,6 +32,8 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.OwnManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -50,7 +52,7 @@ public class PlayerSpellManager {
 	private final RaCPlayer player;
 	
 	/**
-	 * The {@link ManaManager} that the player has.
+	 * The {@link OwnManaManager} that the player has.
 	 */
 	protected final ManaManager manaManager;
 	
@@ -62,13 +64,14 @@ public class PlayerSpellManager {
 	
 	
 	/**
-	 * Creates a SpellManager with a containing {@link ManaManager}.
+	 * Creates a SpellManager with a containing {@link OwnManaManager}.
 	 * 
 	 * @param player to create with
 	 */
 	public PlayerSpellManager(RaCPlayer player) {
 		this.player = player;
-		this.manaManager = new ManaManager(player);
+		
+		this.manaManager = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_manaManagerType().generate(player);
 		this.spellList = new RotatableList<MagicSpellTrait>();
 	}
 	
@@ -152,10 +155,10 @@ public class PlayerSpellManager {
 	}
 	
 	/**
-	 * Returns the {@link ManaManager} to check Spell casting or
+	 * Returns the {@link OwnManaManager} to check Spell casting or
 	 * Mana Capabilities.
 	 * 
-	 * @return the ManaManager of the Player
+	 * @return the OwnManaManager of the Player
 	 */
 	public ManaManager getManaManager(){
 		return manaManager;

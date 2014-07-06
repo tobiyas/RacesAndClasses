@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.configuration.global;
 
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
+
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 
@@ -260,12 +261,12 @@ public class GeneralConfigText {
 			+ "# default: 60 \n"
 			+ general_remove_old_data_days + ": 60\n\n"
 						
-			
 			+ "# When removing old data, if to check if the file is empty.\n"
 			+ "# Empty means, that the player has no Race / Class entry.\n"
 			+ "# boolean: true or false\n"
 			+ "# default: true\n"
 			+ general_remove_old_data_check_empty + ": true\n\n"
+			
 			
 			
 			//GUI
@@ -294,6 +295,16 @@ public class GeneralConfigText {
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ gui_level_useMCLevelBar + ": false\n\n"
+			
+			+ "# If this is activated, the Mana will be displayed in the Food bar.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_useFoodManaBar + ": false\n\n"
+			
+			+ "# The Mana Manager to use. This is the Mana System present and in use for this plugin.\n"
+			+ "# This can be: RaC or MagicSpells\n"
+			+ "# default: RaC \n"
+			+ gui_manaManagerType + ": 'RaC'\n\n"
 			
 			
 			//MAGIC

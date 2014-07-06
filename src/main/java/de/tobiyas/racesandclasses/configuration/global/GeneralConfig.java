@@ -37,6 +37,7 @@ import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManagerType;
 
  
  public class GeneralConfig{
@@ -142,7 +143,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 
 	private int config_general_remove_old_data_days;
 	private boolean config_general_remove_old_data_check_empty;
-	
+	private boolean config_useFoodManaBar;
+	private ManaManagerType config_manaManagerType;
 	
 	
 	/**
@@ -220,6 +222,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 		
 		config.addDefault(language_used, "en");
 		config.addDefault(gui_level_useMCLevelBar, false);
+		config.addDefault(gui_useFoodManaBar, false);
 		
 		config.addDefault(worlds_disableOn, Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		config.addDefault(keep_max_hp_on_disabled_worlds, true);
@@ -233,6 +236,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 		config.addDefault(general_cooldown_on_bow_message, 10);
 		config.addDefault(general_remove_old_data_days, 60);
 		config.addDefault(general_remove_old_data_check_empty, true);
+		config.addDefault(gui_manaManagerType, ManaManagerType.RaC.name());
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_disableAllChatBars, false);		
@@ -316,6 +320,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 		config_takeRaceWhenNoRace = config.getString(races_takeRaceWhenNoRace, "");
 		config_enableRaces = config.getBoolean(races_enable, true);
 		config_gui_level_useMCLevelBar = config.getBoolean(gui_level_useMCLevelBar, false);
+		config_useFoodManaBar = config.getBoolean(gui_useFoodManaBar, false);
 		
 		if(config.isString(magic_wandId)){
 			String itemName = config.getString(magic_wandId, "STICK");
@@ -358,6 +363,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 		config_cooldown_on_bow_message = config.getInt(general_cooldown_on_bow_message, 10);
 		
 		config_general_disable_aliases = config.getStringList(general_disable_aliases);
+		config_manaManagerType = ManaManagerType.resolve(config.getString(gui_manaManagerType, ManaManagerType.RaC.name()));
 		
 		if(config_useLevelSystem == LevelingSystem.RacesAndClasses 
 				&& !LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
@@ -646,6 +652,14 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 
 	public boolean isConfig_general_remove_old_data_check_empty() {
 		return config_general_remove_old_data_check_empty;
+	}
+
+	public boolean isConfig_useFoodManaBar() {
+		return config_useFoodManaBar;
+	}
+
+	public ManaManagerType getConfig_manaManagerType() {
+		return config_manaManagerType;
 	}
 	
 }

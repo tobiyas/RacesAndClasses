@@ -22,8 +22,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.Cla
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
-import de.tobiyas.racesandclasses.playermanagement.spellmanagement.ManaManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
@@ -122,7 +122,7 @@ public class RaCPlayer {
 	
 	
 	/**
-	 * Returns the ManaManager of the Player.
+	 * Returns the OwnManaManager of the Player.
 	 * @return
 	 */
 	public ManaManager getManaManager(){

@@ -77,5 +77,11 @@ public class NormalArrow extends AbstractArrow {
 	@Override
 	public void importTrait() {
 	}
+	
+	
+	@Override
+	public boolean isVisible() {
+		return false;
+	}
 
 }

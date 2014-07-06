@@ -177,6 +177,16 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Magic Spells -->
+		<dependency>
+		    <groupId>com.nisovin</groupId>
+		    <artifactId>magicspells</artifactId>
+		    <version>3.2</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/Misc/MagicSpells.jar</systemPath>
+		    <optional>true</optional>
+		</dependency>
+		
 	</dependencies>
 
 	<!-- BUILDING -->

@@ -80,6 +80,8 @@ public class GeneralConfigFields {
 	public static final String gui_disableAllChatBars = "gui_disableAllChatBars";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
+	public static final String gui_useFoodManaBar = "gui_useFoodManaBar";
+	public static final String gui_manaManagerType = "gui_manaManagerType";
 
 	
 	//Magic
