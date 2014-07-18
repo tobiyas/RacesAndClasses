@@ -28,8 +28,8 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.World
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
-import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
@@ -79,11 +79,9 @@ public class OwnManaManager implements Observer, ManaManager {
 		rescanDisplay();
 		
 		player.getConfig().addObserver(this);
-		foodBar = new ManaFoodBarRunner(this);
 		
-		if(plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()){
-			foodBar.start();
-		}
+		foodBar = new ManaFoodBarRunner(this);
+		foodBar.start();
 	}
 	
 	/**

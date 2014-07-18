@@ -28,6 +28,9 @@ public class ConverterChecker {
 		long timeBefore = System.currentTimeMillis();
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
+		//Convert Races / Classes file to smaller ones
+		ConvertRaceClassFilesToSmaller.convert();
+		
 		//if we don't want conversions, we don't do it.
 		boolean useConvertion = plugin.getConfigManager().getGeneralConfig().isConfig_convertDatabaseOnStartup();
 		

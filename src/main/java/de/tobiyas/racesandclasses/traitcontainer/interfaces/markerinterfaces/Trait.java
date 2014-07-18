@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -180,4 +181,12 @@ public interface Trait{
 	 * @return false if not bindable.
 	 */
 	public boolean isBindable();
+	
+	/**
+	 * The Trait gets triggered by the bind action.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public TraitResults triggerOnBind(RaCPlayer player);
 }

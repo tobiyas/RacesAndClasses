@@ -10,7 +10,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaBar;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
@@ -26,23 +25,14 @@ public class MagicSpellsManaManager implements ManaManager {
 	/**
 	 * The runner for the Mana food bar.
 	 */
-	private final ManaFoodBarRunner foodBar;
-	
-	/**
-	 * The plugin to use.
-	 */
-	private final RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
+	private final ManaFoodBarRunner foodBar;	
 	
 	
 	public MagicSpellsManaManager(RaCPlayer player) {
 		this.player = player;
 		
 		foodBar = new ManaFoodBarRunner(this);
-		
-		if(plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()){
-			foodBar.start();
-		}
+		foodBar.start();
 	}
 
 	@Override
@@ -123,8 +113,12 @@ public class MagicSpellsManaManager implements ManaManager {
 	private ManaBar getBar(){
 		try{
 			Method method = MagicSpells.getManaHandler().getClass().getDeclaredMethod("getManaBar", Player.class);
+			method.setAccessible(true);
 			return (ManaBar) method.invoke(MagicSpells.getManaHandler(), player.getPlayer());
-		}catch(Throwable exp){ return null; }
+		}catch(Throwable exp){ 
+			exp.printStackTrace();
+			return null; 
+		}
 	}
 	
 }

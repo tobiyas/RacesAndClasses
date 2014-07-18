@@ -75,13 +75,13 @@ public class Translator {
 	 * Checks and replaces Umlauts
 	 */
 	private void replaceUmlauts() {
-		modifiedText = modifiedText.replace('\u00f6' + "", "<o>")
-			.replace('\u00D6' + "", "<O>")
-			.replace('\u00e4' + "", "<a>")
-			.replace('\u00c4' + "", "<A>")	
-			.replace('\u00fc' + "", "<u>")
-			.replace('\u00dc' + "", "<U>")
-			.replace('\u00df' + "", "<ss>");
+		modifiedText = modifiedText.replace("<o>", '\u00f6' + "")
+			.replace("<O>", '\u00D6' + "")
+			.replace("<a>", '\u00e4' + "")
+			.replace("<A>", '\u00c4' + "")	
+			.replace("<u>", '\u00fc' + "")
+			.replace("<U>", '\u00dc' + "")
+			.replace("<ss>", '\u00df' + "");
 	}
 
 

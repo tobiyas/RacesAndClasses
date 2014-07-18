@@ -30,7 +30,7 @@ public class ClassManager extends AbstractHolderManager{
 
 	
 	public ClassManager(){
-		super(Consts.classesYML);
+		super(Consts.classesYML, "classes");
 		
 		DefaultContainer.createSTDClasses();
 	}

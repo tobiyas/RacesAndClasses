@@ -71,6 +71,8 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		if(!activateIntern(player)) return false;
 		
 		int tickDuration = everyXSeconds <= 0 ? durationInSeconds : everyXSeconds;
+		tickDuration = (int) (tickDuration / getModValue(player));
+		
 		tick(player, true, true);
 		
 		int bukkitID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {

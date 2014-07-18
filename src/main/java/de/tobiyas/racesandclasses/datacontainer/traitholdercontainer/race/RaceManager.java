@@ -38,7 +38,7 @@ import de.tobiyas.util.player.PlayerUtils;
 public class RaceManager extends AbstractHolderManager {
 
 	public RaceManager() {
-		super(Consts.racesYML);
+		super(Consts.racesYML, "races");
 
 		DefaultContainer.createSTDRaces();
 	}

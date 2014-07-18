@@ -26,6 +26,9 @@ public class Keys {
 	
 	//b
 	public static final String bow_selected_message = "bow_selected_message";
+	public static final String buff_activated = "buff_activated";
+	public static final String buff_timeout = "buff_timeout";
+	public static final String buff_used = "buff_used";
 	
 	//c
 	//public static final String class = "class"; //java keyword.
@@ -38,6 +41,7 @@ public class Keys {
 	public static final String cooldown_is_ready_in = "cooldown_is_ready_in";	
 	
 	//d
+	public static final String disabled_region = "disabled_region";
 	
 	//e
 	
@@ -119,6 +123,7 @@ public class Keys {
 	public static final String stun_ended = "stun_ended";
 	public static final String stun_message = "stun_message";
 	public static final String stun_still = "stun_still";	
+	public static final String stun_success = "stun_success";	
 	public static final String success = "success";
 	
 

@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.traitcontainer;
 
 import java.io.File;
 import java.lang.annotation.AnnotationFormatError;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -193,7 +192,7 @@ public class TraitStore {
 		for(File file : possibleTraits){
 			try{
 				loadExternalTrait(file);
-			}catch(Exception exception){
+			}catch(Throwable exception){
 				RacesAndClasses.getPlugin().log("Could not load file: " + file.toString());
 				continue;
 			}
@@ -290,8 +289,7 @@ public class TraitStore {
 	        for(Class<Trait> clazz : clazzArray){
 	        	try{
 					if (clazz != null) {
-						Constructor<?> constructor = clazz.getConstructor();
-						Trait trait = (Trait) constructor.newInstance();
+						Trait trait = clazz.newInstance();
 				        
 						boolean isPresent = trait.getClass().getMethod("importTrait").isAnnotationPresent(TraitInfos.class);
 				        if(isPresent){
@@ -315,13 +313,16 @@ public class TraitStore {
 	        }
 	        
 		}catch (NoClassDefFoundError e) {
-			RacesAndClasses.getPlugin().log("Unable to load " + file.getName() + ". Probably it was written for a previous Races version!");
+			String message = "Unable to load " + file.getName() + ". Probably it was written for a previous Races version!";
+			RacesAndClasses.getPlugin().log(message);
+			RacesAndClasses.getPlugin().logStackTrace(message, e);
 			return;
 		} catch (AnnotationFormatError e){
 			RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
-		} catch (Exception e) {
-			RacesAndClasses.getPlugin().log("The trait " + file.getName() + " failed to load for an unknown reason.");
-			RacesAndClasses.getPlugin().getDebugLogger().logStackTrace(e);
+		} catch (Throwable e) {
+			String message = "The trait " + file.getName() + " failed to load for an unknown reason.";
+			RacesAndClasses.getPlugin().log(message);
+			RacesAndClasses.getPlugin().logStackTrace(message, e);
 		} 
 	}
 

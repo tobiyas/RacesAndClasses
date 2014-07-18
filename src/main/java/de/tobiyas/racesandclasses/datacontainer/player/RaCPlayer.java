@@ -289,6 +289,14 @@ public class RaCPlayer {
 		LanguageAPI.sendTranslatedMessage(getPlayer(), tag, replacements);
 	}
 	
+	/**
+	 * Sends a translated Message via the Translation API.
+	 */
+	public void sendTranslatedMessage(String tag, String... replacements) {
+		if(!isOnline()) return;
+		LanguageAPI.sendTranslatedMessage(getPlayer(), tag, replacements);
+	}
+	
 	
 	
 	////////////////////

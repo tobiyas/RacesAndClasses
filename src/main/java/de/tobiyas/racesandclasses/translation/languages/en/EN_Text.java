@@ -30,6 +30,9 @@ public class EN_Text {
 			
 			//b
 			+ bow_selected_message + ": '&a You have a &dBOW &ain your hand. Use &dLEFT &aClick to change through your arrows. Current arrow: &d%CURRENT_ARROW% &a.'\r\n"
+			+ buff_activated + ": '&a You activated &d%BUFF%&a.'\r\n"
+			+ buff_timeout + ": '&a Buff &d%BUFF% &atimedout.'\r\n"
+			+ buff_used + ": '&a Buff &d%BUFF% &aused.'\r\n"
 			
 			//c
 			+ channel_propertie + ": 'channelPropertie'\r\n"
@@ -42,6 +45,7 @@ public class EN_Text {
 			+ cooldown_is_ready_in + ": '&cYou still have Cooldown. Ready in &d%TIME%&c.'\r\n"
 			
 			//d
+			+ disabled_region + ": '&cYou may not use any Trait here.'\r\n"
 			
 			//e
 			
@@ -128,6 +132,7 @@ public class EN_Text {
 			+ stun_ended + ": ' &cYou are not stunned any more.'\r\n"
 			+ stun_message + ": ' &cYou are stunned for &d %TIME% &cSeconds.'\r\n"
 			+ stun_still + ": ' &cYou are still stunned for &b%TIME% &cSeconds. You can not %ACTION%.'\r\n"
+			+ stun_success + ": '&aYou stunned &d%TARGET%&a.'\r\n"
 			+ success + ": '&aSuccess.'\r\n"
 			
 

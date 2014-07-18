@@ -86,7 +86,7 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 				}
 				
 				double oldDmg = CompatibilityModifier.EntityDamage.safeGetDamage(Eevent);
-				double newDmg = TraitStringUtils.getNewValue(oldDmg, operation, value);
+				double newDmg = TraitStringUtils.getNewValue(oldDmg, operation, modifyToPlayer(eventWrapper.getPlayer(), oldDmg));
 				
 				CompatibilityModifier.EntityDamage.safeSetDamage(newDmg, Eevent);
 				

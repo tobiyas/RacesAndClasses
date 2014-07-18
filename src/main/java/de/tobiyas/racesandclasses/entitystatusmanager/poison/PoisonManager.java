@@ -114,7 +114,7 @@ public class PoisonManager {
 		
 		if(!event.isCancelled()){
 			double newDamage = CompatibilityModifier.EntityDamage.safeGetDamage(event);
-			CompatibilityModifier.LivingEntity.safeDamageEntity(entity, newDamage);
+			CompatibilityModifier.LivingEntity.safeDamageEntityByEntity(entity, null, newDamage);
 		}
 	}
 	

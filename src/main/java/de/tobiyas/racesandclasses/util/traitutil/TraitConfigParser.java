@@ -30,6 +30,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class TraitConfigParser {
 
@@ -103,11 +104,7 @@ public class TraitConfigParser {
 				
 				if(classToExpect == String.class){
 					try{
-						if(toCheck instanceof String){
-							continue;
-						}
-						
-						String value = toCheck.toString();
+						String value = YAMLConfigExtended.replaceUmlauts(toCheck.toString());
 						configurationMap.put(field.fieldName(), value);
 						continue;
 					}catch(Exception exp){
@@ -167,6 +164,7 @@ public class TraitConfigParser {
 						}
 						
 						List<String> stringList = Arrays.asList(toCheck.toString().replaceAll(" ", "").split(","));
+						for(int i = 0; i < stringList.size(); i++) stringList.set(i, YAMLConfigExtended.replaceUmlauts(stringList.get(i)));
 						configurationMap.put(field.fieldName(), stringList);
 						continue;
 					}catch(NumberFormatException exp){

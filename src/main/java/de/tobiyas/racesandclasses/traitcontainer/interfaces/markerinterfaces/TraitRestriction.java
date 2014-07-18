@@ -22,5 +22,6 @@ public enum TraitRestriction {
 	OnlyWhileSneaking,
 	OnlyWhileNotSneaking, 
 	NotOnBlock,
-	NeededPermission
+	NeededPermission, 
+	Costs
 }

@@ -29,6 +29,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class PermissionRegisterer implements Runnable{
 
@@ -120,7 +121,6 @@ public class PermissionRegisterer implements Runnable{
 	 * Registers the TraitHolders as Group when supported
 	 */
 	private void registerTraitHolders() {
-
 		if(traitHolderList == null || traitHolderList.isEmpty()) return;
 		
 		for(AbstractTraitHolder holder : traitHolderList){
@@ -182,10 +182,13 @@ public class PermissionRegisterer implements Runnable{
 			for(String group : groups){
 				if(group.startsWith(permissionSpecificPrefix + typeName)){
 					vaultPermissions.playerRemoveGroup((String) null, name, permissionSpecificPrefix + group);
+					RacesAndClasses.getPlugin().getPermissionManager()
+						.removeSubgroup(PlayerUtils.getOfflinePlayer(name), permissionSpecificPrefix + group);
 				}
 			}
 			
-			vaultPermissions.playerAddGroup((String) null, name, permissionSpecificPrefix + groupName);
+			RacesAndClasses.getPlugin().getPermissionManager()
+				.addSubgroup(PlayerUtils.getOfflinePlayer(name), permissionSpecificPrefix + groupName);
 		}
 	}
 

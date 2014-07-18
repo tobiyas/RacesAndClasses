@@ -52,7 +52,8 @@ import com.avaje.ebean.EbeanServer;
 import de.tobiyas.racesandclasses.addins.spawning.RaceSpawnManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
-import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_BindSkill;
+import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_BindTrait;
+import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_UseTrait;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
 import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCast;
@@ -417,7 +418,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_RaceSpawn());
 		
 		commands.add(new Command_RACLevel());
-		commands.add(new CommandExecutor_BindSkill());
+		commands.add(new CommandExecutor_BindTrait());
+		commands.add(new CommandExecutor_UseTrait());
 		
 		
 		//remove all disabled commands.

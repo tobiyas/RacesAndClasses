@@ -27,7 +27,7 @@
 		<powermock.version>1.4.12</powermock.version>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>RaC</utilsAddition>
-		<bukkit.version>1.7.9-R0.3-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.7.10-R0.1-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->
@@ -55,6 +55,11 @@
 			<url>http://repository-tobiyas.forge.cloudbees.com/snapshot/</url>
 		</repository>
 
+		<!-- SK Repo -->
+		<repository>
+			<id>sk89q</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
 	</repositories>
 
 	<!-- Depends -->
@@ -64,13 +69,6 @@
 			<groupId>de.tobiyas</groupId>
 			<artifactId>Utils</artifactId>
 			<version>${utilsVersion}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-			<optional>false</optional>
 		</dependency>
 
 		<!-- Since we have disabled tests for now, we don't need this dependency at the moment.
@@ -95,8 +93,19 @@
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>VaultAPI</artifactId>
 			<version>1.4</version>
+			<optional>true</optional>
 		</dependency>
 
+		
+		<!-- WorldGuard -->
+		<dependency>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldguard</artifactId>
+			<version>5.9.1-SNAPSHOT</version>
+			<optional>true</optional>
+		</dependency>
+
+				
 		<!-- Local depends -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -157,6 +166,7 @@
 			<optional>true</optional>
 		</dependency>
 		
+		
 		<!-- Skill API -->
 		<dependency>
 			<groupId>com.sucy</groupId>
@@ -184,6 +194,16 @@
 		    <version>3.2</version>
 		    <scope>system</scope>
 		    <systemPath>${project.basedir}/libs/Misc/MagicSpells.jar</systemPath>
+		    <optional>true</optional>
+		</dependency>
+
+		<!-- Towny Chat -->
+		<dependency>
+		    <groupId>com.palmergames.bukkit</groupId>
+		    <artifactId>TownyChat</artifactId>
+		    <version>0.40</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/Chat/TownyChat.jar</systemPath>
 		    <optional>true</optional>
 		</dependency>
 		
@@ -221,7 +241,6 @@
 							<artifactSet>
 								<includes>
 									<include>de.tobiyas:Utils</include>
-									<include>commons-io:commons-io</include>
 								</includes>
 							</artifactSet>
 
@@ -230,10 +249,6 @@
 								<relocation>
 									<pattern>de.tobiyas.util</pattern>
 									<shadedPattern>de.tobiyas.util.v${utilsVersion}${utilsAddition}</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.commons.io</pattern>
-									<shadedPattern>de.tobiyas.util.apache.commons.io</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

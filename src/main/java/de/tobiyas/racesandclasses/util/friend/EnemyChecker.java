@@ -1,16 +1,40 @@
 package de.tobiyas.racesandclasses.util.friend;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.EntityDamageByEntity;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.Shooter;
 
-public class EnemyChecker {
+public class EnemyChecker implements Listener {
 
+	
+	private static EnemyChecker checker;
+	public EnemyChecker() {
+		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void entityDamage(EntityDamageByEntityEvent event){
+		if(event instanceof FriendDetectEvent) {
+			((FriendDetectEvent) event).realCancle = event.isCancelled();
+			event.setCancelled(true);
+		}
+	}
+	public static class FriendDetectEvent extends EntityDamageByEntityEvent{
+		boolean realCancle = false;
+		@SuppressWarnings("deprecation") //still safe.
+		public FriendDetectEvent(Entity damager, Entity damagee) {
+			super(damager, damagee, DamageCause.CUSTOM, 0.1);
+		}
+	}
+	
+	
 	
 	/**
 	 * Checks if the these 2 are Allies.
@@ -21,6 +45,8 @@ public class EnemyChecker {
 	 * @return true if they are allies.
 	 */
 	public static boolean areAllies(Entity attacker, Entity receiver){
+		if(checker == null) checker = new EnemyChecker();
+		
 		if(attacker == null || receiver == null) return false;
 		if(attacker instanceof Projectile){
 			attacker = Shooter.getShooter((Projectile) attacker);
@@ -28,11 +54,15 @@ public class EnemyChecker {
 		}
 		
 		
-		EntityDamageByEntityEvent event = EntityDamageByEntity.safeCreateEvent(attacker, receiver, DamageCause.CUSTOM, 0.1);
+		FriendDetectEvent event = 
+				//CertainVersionChecker.isAbove1_7()
+				new FriendDetectEvent(attacker, receiver);
+				//: EntityDamageByEntity.safeCreateEvent(attacker, receiver, DamageCause.CUSTOM, 0.1);
+				
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 		
 		//only check cancles!
-		return event.isCancelled();
+		return event.realCancle;
 	}
 	
 	/**

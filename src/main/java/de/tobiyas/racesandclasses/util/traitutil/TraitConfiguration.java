@@ -4,7 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.potion.PotionEffectType;
 
+import de.tobiyas.racesandclasses.util.friend.TargetType;
+import de.tobiyas.racesandclasses.vollotile.ParticleContainer;
+import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 import de.tobiyas.util.collections.CaseInsenesitveMap;
 
 public class TraitConfiguration extends CaseInsenesitveMap<Object> {
@@ -132,6 +136,101 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 		}
 		
 		return returnValue;
+	}
+	
+	/**
+	 * Retrieves the Element wanted as Particles.
+	 * 
+	 * @param key to retrieve
+	 * 
+	 * @return the wanted value or null.
+	 */
+	public ParticleEffects getAsParticle(String key){
+		Object obj = get(key);
+		if(obj instanceof String){
+			String stringParticle = (String) obj;
+			if("null".equalsIgnoreCase(stringParticle)
+					|| "none".equalsIgnoreCase(stringParticle)
+					|| stringParticle == null){
+				return null;
+			}else{
+				ParticleEffects realParticle = ParticleEffects.FIREWORKS_SPARK;
+				try{ realParticle = ParticleEffects.valueOf(stringParticle.toUpperCase()); }catch(Throwable exp){}
+				
+				return realParticle;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Retrieves the Element wanted as ParticleContainer.
+	 * 
+	 * @param key to retrieve
+	 * 
+	 * @return the wanted value or null.
+	 */
+	public ParticleContainer getAsParticleContainer(String key){
+		Object obj = get(key);
+		if(obj instanceof String){
+			return ParticleContainer.generate((String) obj);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Retrieves the Element wanted as Target Type.
+	 * 
+	 * @param key to retrieve
+	 * 
+	 * @return the wanted value or null.
+	 */
+	public TargetType getAsTargetType(String key){
+		Object obj = get(key);
+		if(obj instanceof String){
+			String stringTarget = (String) obj;
+			stringTarget = stringTarget.toLowerCase();
+			
+			if(stringTarget.startsWith("ally")) return TargetType.FRIEND;
+			if(stringTarget.startsWith("alli")) return TargetType.FRIEND;
+			if(stringTarget.startsWith("fr")) return TargetType.FRIEND;
+			
+			if(stringTarget.startsWith("a")) return TargetType.ALL;
+			
+			if(stringTarget.startsWith("e")) return TargetType.ENEMY;
+			if(stringTarget.startsWith("fr")) return TargetType.ENEMY;
+			
+			return TargetType.ALL;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Retrieves the Element wanted as Potion Type.
+	 * 
+	 * @param key to retrieve
+	 * 
+	 * @return the wanted value or null.
+	 */
+	@SuppressWarnings("deprecation")
+	public PotionEffectType getAsPotionEffectType(String key){
+		Object obj = get(key);
+		if(obj instanceof PotionEffectType) return (PotionEffectType) obj;
+		if(obj instanceof String){
+			String potionString = (String) obj;
+			return PotionEffectType.getByName(potionString);
+		}
+
+		if(obj instanceof Integer){
+			int potionNumber = (Integer) obj;
+			return PotionEffectType.getById(potionNumber);
+		}
+		
+		return null;
 	}
 	
 	

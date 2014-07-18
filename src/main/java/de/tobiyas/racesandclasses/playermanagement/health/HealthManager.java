@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.playermanagement.health;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -66,7 +67,11 @@ public class HealthManager {
 	 */
 	public double getMaxHealth(){
 		double health = 20;
-		for(Double value : healthMap.values()) health += value;
+		
+		for(Entry<String, Double> entry : healthMap.entrySet()) {
+			health += entry.getValue();
+		}
+		
 		return health;
 	}
 	

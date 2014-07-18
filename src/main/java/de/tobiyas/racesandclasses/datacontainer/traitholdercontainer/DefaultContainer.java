@@ -22,62 +22,61 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class DefaultContainer {
 	
 	public static void createSTDRaces(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		File raceFile = new File(Consts.racesYML);
-		if(raceFile.exists()) return;
-		
-		try {
-			raceFile.createNewFile();
-		} catch (IOException e) {
-			plugin.log("Could not create races.yml");
-			return;
-		}
+		File raceDir = new File(plugin.getDataFolder(), "races");
+		if(!raceDir.exists()) raceDir.mkdirs();
+		else return;
 		
 		plugin.log("No Race file found. Creating new.");
 		
-		YamlConfiguration raceConfig = new YamlConfiguration();
-		raceConfig.createSection("Orc");
-		raceConfig.createSection("Orc.config");
-		raceConfig.createSection("Orc.traits");
+		//orcs
+		YamlConfiguration orcConfig = new YamlConfiguration();
+		File orcFile = new File(raceDir, "orc.yml");
+		orcConfig.createSection("Orc");
+		orcConfig.createSection("Orc.config");
+		orcConfig.createSection("Orc.traits");
 		
-		raceConfig.set("Orc.config.racetag", "[Orc]");
-		raceConfig.set("Orc.config.raceMaxHealth", 30);
-		raceConfig.set("Orc.config.armor", "iron,diamond,chain");
+		orcConfig.set("Orc.config.racetag", "[Orc]");
+		orcConfig.set("Orc.config.raceMaxHealth", 30);
+		orcConfig.set("Orc.config.armor", "iron,diamond,chain");
 		
-		raceConfig.createSection("Orc.traits.DamageReduceTrait");
-		raceConfig.set("Orc.traits.DamageReduceTrait.operation", '*');
-		raceConfig.set("Orc.traits.DamageReduceTrait.value", 0.5);
+		orcConfig.createSection("Orc.traits.DamageReduceTrait");
+		orcConfig.set("Orc.traits.DamageReduceTrait.operation", '*');
+		orcConfig.set("Orc.traits.DamageReduceTrait.value", 0.5);
 		
-		raceConfig.createSection("Orc.traits.BerserkerRageTrait");
-		raceConfig.set("Orc.traits.BerserkerRageTrait.operation", '+');
-		raceConfig.set("Orc.traits.BerserkerRageTrait.value", 1);
-		raceConfig.set("Orc.traits.BerserkerRageTrait.cooldown", 30);
+		orcConfig.createSection("Orc.traits.BerserkerRageTrait");
+		orcConfig.set("Orc.traits.BerserkerRageTrait.operation", '+');
+		orcConfig.set("Orc.traits.BerserkerRageTrait.value", 1);
+		orcConfig.set("Orc.traits.BerserkerRageTrait.cooldown", 30);
 
 		
-		raceConfig.createSection("Elv.config");
-		raceConfig.createSection("Elv.traits");
+		//Elves
+		YamlConfiguration elvesConfig = new YamlConfiguration();
+		File elvesFile = new File(raceDir, "elves.yml");
+		elvesConfig.createSection("Elv.config");
+		elvesConfig.createSection("Elv.traits");
 		
-		raceConfig.set("Elv.config.racetag", "[Elv]");
-		raceConfig.set("Elv.config.raceMaxHealth", 20);
-		raceConfig.set("Elv.config.armor", "leather,gold,chain");
+		elvesConfig.set("Elv.config.racetag", "[Elv]");
+		elvesConfig.set("Elv.config.raceMaxHealth", 20);
+		elvesConfig.set("Elv.config.armor", "leather,gold,chain");
 		
-		raceConfig.createSection("Elv.traits.FallResistanceTrait");
-		raceConfig.set("Elv.traits.FallResistanceTrait.operation", '-');
-		raceConfig.set("Elv.traits.FallResistanceTrait.value", 2);
+		elvesConfig.createSection("Elv.traits.FallResistanceTrait");
+		elvesConfig.set("Elv.traits.FallResistanceTrait.operation", '-');
+		elvesConfig.set("Elv.traits.FallResistanceTrait.value", 2);
 
-		raceConfig.createSection("Elv.traits.SprintTrait");
-		raceConfig.set("Elv.traits.SprintTrait.duration", 10);
-		raceConfig.set("Elv.traits.SprintTrait.value", 3);
-		raceConfig.set("Elv.traits.SprintTrait.cooldown", 60);
+		elvesConfig.createSection("Elv.traits.SprintTrait");
+		elvesConfig.set("Elv.traits.SprintTrait.duration", 10);
+		elvesConfig.set("Elv.traits.SprintTrait.value", 3);
+		elvesConfig.set("Elv.traits.SprintTrait.cooldown", 60);
 		
 		
 		try {
-			raceConfig.save(raceFile);
+			orcConfig.save(orcFile);
+			elvesConfig.save(elvesFile);
 		} catch (IOException e) {
 			plugin.log("Saving STD races.yml failed.");
 			return;
@@ -87,132 +86,136 @@ public class DefaultContainer {
 	
 	public static void createSTDClasses(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		File classFile = new File(Consts.classesYML);
-		if(classFile.exists()) return;
+		File classDir = new File(plugin.getDataFolder(), "classes");
+		if(!classDir.exists()) classDir.mkdirs();
+		else return;
 		
-		try {
-			classFile.createNewFile();
-		} catch (IOException e) {
-			plugin.log("Could not create classes.yml");
-			return;
-		}
-		
-		plugin.log("No Class file found. Creating new.");
-		
-		YamlConfiguration classesConfig = new YamlConfiguration();
+		plugin.log("No Class files found. Creating new.");
 		
 		//Warrior:
-		classesConfig.createSection("warrior");
-		classesConfig.createSection("warrior.config");
-		classesConfig.createSection("warrior.traits");
+		YamlConfiguration warriorConfig = new YamlConfiguration();
+		File warriorFile = new File(classDir, "warrior.yml");
+		warriorConfig.createSection("warrior");
+		warriorConfig.createSection("warrior.config");
+		warriorConfig.createSection("warrior.traits");
 		
-		classesConfig.set("warrior.config.classtag", "[Warrior]");
-		classesConfig.set("warrior.config.health", "+5");
+		warriorConfig.set("warrior.config.classtag", "[Warrior]");
+		warriorConfig.set("warrior.config.health", "+5");
 		
 		
-		classesConfig.createSection("warrior.traits.SwordDamageIncreaseTrait");
-		classesConfig.set("warrior.traits.SwordDamageIncreaseTrait.operation", '+');
-		classesConfig.set("warrior.traits.SwordDamageIncreaseTrait.value", 1);
+		warriorConfig.createSection("warrior.traits.SwordDamageIncreaseTrait");
+		warriorConfig.set("warrior.traits.SwordDamageIncreaseTrait.operation", '+');
+		warriorConfig.set("warrior.traits.SwordDamageIncreaseTrait.value", 1);
 
-		classesConfig.createSection("warrior.traits.AxeDamageIncreaseTrait");
-		classesConfig.set("warrior.traits.AxeDamageIncreaseTrait.operation", '+');
-		classesConfig.set("warrior.traits.AxeDamageIncreaseTrait.value", 1);
+		warriorConfig.createSection("warrior.traits.AxeDamageIncreaseTrait");
+		warriorConfig.set("warrior.traits.AxeDamageIncreaseTrait.operation", '+');
+		warriorConfig.set("warrior.traits.AxeDamageIncreaseTrait.value", 1);
+		
 		
 		//Archer:
-		classesConfig.createSection("archer");
-		classesConfig.createSection("archer.config");
-		classesConfig.createSection("archer.traits");
+		YamlConfiguration archerConfig = new YamlConfiguration();
+		File archerFile = new File(classDir, "archer.yml");
+		archerConfig.createSection("archer");
+		archerConfig.createSection("archer.config");
+		archerConfig.createSection("archer.traits");
 		
-		classesConfig.set("archer.config.classtag", "[Archer]");
-		classesConfig.set("archer.config.health", "+1");
+		archerConfig.set("archer.config.classtag", "[Archer]");
+		archerConfig.set("archer.config.health", "+1");
 		
-		classesConfig.createSection("archer.traits.PoisonArrowTrait");
-		classesConfig.set("archer.traits.PoisonArrowTrait.duration", 10);
-		classesConfig.set("archer.traits.PoisonArrowTrait.totalDamage", 10);
-		classesConfig.set("archer.traits.PoisonArrowTrait.cooldown", 30);
+		archerConfig.createSection("archer.traits.PoisonArrowTrait");
+		archerConfig.set("archer.traits.PoisonArrowTrait.duration", 10);
+		archerConfig.set("archer.traits.PoisonArrowTrait.totalDamage", 10);
+		archerConfig.set("archer.traits.PoisonArrowTrait.cooldown", 30);
 		
-		classesConfig.createSection("archer.traits.FireArrowTrait");
-		classesConfig.set("archer.traits.FireArrowTrait.duration", 10);
-		classesConfig.set("archer.traits.FireArrowTrait.totalDamage", 10);
-		classesConfig.set("archer.traits.FireArrowTrait.cooldown", 30);
+		archerConfig.createSection("archer.traits.FireArrowTrait");
+		archerConfig.set("archer.traits.FireArrowTrait.duration", 10);
+		archerConfig.set("archer.traits.FireArrowTrait.totalDamage", 10);
+		archerConfig.set("archer.traits.FireArrowTrait.cooldown", 30);
 
-		classesConfig.createSection("archer.traits.TeleportArrowTrait");
-		classesConfig.set("archer.traits.TeleportArrowTrait.cooldown", 60);
+		archerConfig.createSection("archer.traits.TeleportArrowTrait");
+		archerConfig.set("archer.traits.TeleportArrowTrait.cooldown", 60);
 		
 		//Magician:
-		classesConfig.createSection("magician");
-		classesConfig.createSection("magician.config");
-		classesConfig.createSection("magician.traits");
+		YamlConfiguration magicianConfig = new YamlConfiguration();
+		File magicianFile = new File(classDir, "magician.yml");
+		magicianConfig.createSection("magician");
+		magicianConfig.createSection("magician.config");
+		magicianConfig.createSection("magician.traits");
 		
-		classesConfig.set("magician.config.classtag", "[Magician]");
-		classesConfig.set("magician.config.health", "-1");
-		classesConfig.set("magician.config.manabonus", 20);
+		magicianConfig.set("magician.config.classtag", "[Magician]");
+		magicianConfig.set("magician.config.health", "-1");
+		magicianConfig.set("magician.config.manabonus", 20);
 		
-		classesConfig.createSection("magician.traits.ManaRegenerationTrait");
-		classesConfig.set("magician.traits.ManaRegenerationTrait.time", 10);
-		classesConfig.set("magician.traits.ManaRegenerationTrait.value", 2);
+		magicianConfig.createSection("magician.traits.ManaRegenerationTrait");
+		magicianConfig.set("magician.traits.ManaRegenerationTrait.time", 10);
+		magicianConfig.set("magician.traits.ManaRegenerationTrait.value", 2);
 		
-		classesConfig.createSection("magician.traits.FireballTrait");
-		classesConfig.set("magician.traits.FireballTrait.cost", 6);
-		classesConfig.set("magician.traits.FireballTrait.cooldown", 10);
+		magicianConfig.createSection("magician.traits.FireballTrait");
+		magicianConfig.set("magician.traits.FireballTrait.cost", 6);
+		magicianConfig.set("magician.traits.FireballTrait.cooldown", 10);
 
-		classesConfig.createSection("magician.traits.ItemForManaConsumeTrait");
-		classesConfig.set("magician.traits.ItemForManaConsumeTrait.cooldown", 10);
-		classesConfig.set("magician.traits.ItemForManaConsumeTrait.item", "WHEAT");
-		classesConfig.set("magician.traits.ItemForManaConsumeTrait.cost", 1);
-		classesConfig.set("magician.traits.ItemForManaConsumeTrait.value", 10);
+		magicianConfig.createSection("magician.traits.ItemForManaConsumeTrait");
+		magicianConfig.set("magician.traits.ItemForManaConsumeTrait.cooldown", 10);
+		magicianConfig.set("magician.traits.ItemForManaConsumeTrait.item", "WHEAT");
+		magicianConfig.set("magician.traits.ItemForManaConsumeTrait.cost", 1);
+		magicianConfig.set("magician.traits.ItemForManaConsumeTrait.value", 10);
 
-		classesConfig.createSection("magician.traits.WallTrait");
-		classesConfig.set("magician.traits.WallTrait.cooldown", 10);
-		classesConfig.set("magician.traits.WallTrait.cost", 5);
-		classesConfig.set("magician.traits.WallTrait.duration", 5);
+		magicianConfig.createSection("magician.traits.WallTrait");
+		magicianConfig.set("magician.traits.WallTrait.cooldown", 10);
+		magicianConfig.set("magician.traits.WallTrait.cost", 5);
+		magicianConfig.set("magician.traits.WallTrait.duration", 5);
 		
-		classesConfig.createSection("magician.traits.ExplosionTrait");
-		classesConfig.set("magician.traits.ExplosionTrait.cooldown", 10);
-		classesConfig.set("magician.traits.ExplosionTrait.cost", 10);
-		classesConfig.set("magician.traits.ExplosionTrait.range", 5);
-		classesConfig.set("magician.traits.ExplosionTrait.damage", 4);
+		magicianConfig.createSection("magician.traits.ExplosionTrait");
+		magicianConfig.set("magician.traits.ExplosionTrait.cooldown", 10);
+		magicianConfig.set("magician.traits.ExplosionTrait.cost", 10);
+		magicianConfig.set("magician.traits.ExplosionTrait.range", 5);
+		magicianConfig.set("magician.traits.ExplosionTrait.damage", 4);
 		
-		classesConfig.createSection("magician.traits.SlowFallTrait");
-		classesConfig.set("magician.traits.SlowFallTrait.cooldown", 10);
-		classesConfig.set("magician.traits.SlowFallTrait.cost", 5);
-		classesConfig.set("magician.traits.SlowFallTrait.duration", 10);
+		magicianConfig.createSection("magician.traits.SlowFallTrait");
+		magicianConfig.set("magician.traits.SlowFallTrait.cooldown", 10);
+		magicianConfig.set("magician.traits.SlowFallTrait.cost", 5);
+		magicianConfig.set("magician.traits.SlowFallTrait.duration", 10);
 		
-		classesConfig.createSection("magician.traits.ColdFeetTrait");
-		classesConfig.set("magician.traits.ColdFeetTrait.cost", 5);
-		classesConfig.set("magician.traits.ColdFeetTrait.duration", 10);
+		magicianConfig.createSection("magician.traits.ColdFeetTrait");
+		magicianConfig.set("magician.traits.ColdFeetTrait.cost", 5);
+		magicianConfig.set("magician.traits.ColdFeetTrait.duration", 10);
 		
 		//Shaman:
-		classesConfig.createSection("shaman");
-		classesConfig.createSection("shaman.config");
-		classesConfig.createSection("shaman.traits");
+		YamlConfiguration shamanConfig = new YamlConfiguration();
+		File shamanFile = new File(classDir, "shaman.yml");
+		shamanConfig.createSection("shaman");
+		shamanConfig.createSection("shaman.config");
+		shamanConfig.createSection("shaman.traits");
 		
-		classesConfig.set("shaman.config.classtag", "[Shaman]");
-		classesConfig.set("shaman.config.health", "+1");
-		classesConfig.set("shaman.config.manabonus", 20);
+		shamanConfig.set("shaman.config.classtag", "[Shaman]");
+		shamanConfig.set("shaman.config.health", "+1");
+		shamanConfig.set("shaman.config.manabonus", 20);
 		
-		classesConfig.createSection("shaman.traits.HealTotemTrait");
-		classesConfig.set("shaman.traits.HealTotemTrait.duration", 10);
-		classesConfig.set("shaman.traits.HealTotemTrait.value", 3);
-		classesConfig.set("shaman.traits.HealTotemTrait.every", 2);
+		shamanConfig.createSection("shaman.traits.HealTotemTrait");
+		shamanConfig.set("shaman.traits.HealTotemTrait.duration", 10);
+		shamanConfig.set("shaman.traits.HealTotemTrait.value", 3);
+		shamanConfig.set("shaman.traits.HealTotemTrait.every", 2);
 		
-		classesConfig.createSection("shaman.traits.PotionTotemTrait");
-		classesConfig.set("shaman.traits.PotionTotemTrait.effect", 6);
-		classesConfig.set("shaman.traits.PotionTotemTrait.duration", 10);
+		shamanConfig.createSection("shaman.traits.PotionTotemTrait");
+		shamanConfig.set("shaman.traits.PotionTotemTrait.effect", 6);
+		shamanConfig.set("shaman.traits.PotionTotemTrait.duration", 10);
 		
-		classesConfig.createSection("shaman.traits.ItemForManaConsumeTrait");
-		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.cooldown", 10);
-		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.item", Material.POTION.name());
-		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.cost", 1);
-		classesConfig.set("shaman.traits.ItemForManaConsumeTrait.value", 10);
+		shamanConfig.createSection("shaman.traits.ItemForManaConsumeTrait");
+		shamanConfig.set("shaman.traits.ItemForManaConsumeTrait.cooldown", 10);
+		shamanConfig.set("shaman.traits.ItemForManaConsumeTrait.item", Material.POTION.name());
+		shamanConfig.set("shaman.traits.ItemForManaConsumeTrait.cost", 1);
+		shamanConfig.set("shaman.traits.ItemForManaConsumeTrait.value", 10);
 		
-		classesConfig.createSection("shaman.traits.ManaRegenerationTrait");
-		classesConfig.set("shaman.traits.ManaRegenerationTrait.value", 1);
-		classesConfig.set("shaman.traits.ManaRegenerationTrait.time", 5);
+		shamanConfig.createSection("shaman.traits.ManaRegenerationTrait");
+		shamanConfig.set("shaman.traits.ManaRegenerationTrait.value", 1);
+		shamanConfig.set("shaman.traits.ManaRegenerationTrait.time", 5);
 
 		
 		try {
-			classesConfig.save(classFile);
+			shamanConfig.save(shamanFile);
+			archerConfig.save(archerFile);
+			magicianConfig.save(magicianFile);
+			warriorConfig.save(warriorFile);
 		} catch (IOException e) {
 			plugin.log("Saving STD classes.yml failed.");
 			return;

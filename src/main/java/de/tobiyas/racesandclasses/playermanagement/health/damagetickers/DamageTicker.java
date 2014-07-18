@@ -138,7 +138,7 @@ public class DamageTicker implements Runnable{
 				}
 				
 				if(target != null && !target.isDead() && value > 0){
-					CompatibilityModifier.LivingEntity.safeDamageEntity(target, value);
+					CompatibilityModifier.LivingEntity.safeDamageEntityByEntity(target, null, value);
 				}
 			}
 		}catch(Exception exp){}	//silent fail

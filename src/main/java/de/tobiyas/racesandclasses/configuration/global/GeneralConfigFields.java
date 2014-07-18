@@ -57,11 +57,15 @@ public class GeneralConfigFields {
 	//Multiworld
 	public static final String worlds_disableOn = "worlds_disableOn";
 	public static final String keep_max_hp_on_disabled_worlds = "keep_max_hp_on_disabled_worlds";
+	public static final String disabled_regions = "disabled_regions";
 	
 	//Race-Spawns
 	public static final String race_spawns_enabled = "race_spawns_enabled";
 	public static final String race_spawn_cooldown = "race_spawn_cooldown";
 	public static final String race_spawn_when_dead = "race_spawn_when_dead";
+	
+	//Food
+	public static final String food_enabled = "food_enabled";
 	
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";

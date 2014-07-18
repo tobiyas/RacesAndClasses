@@ -42,7 +42,9 @@ public abstract class AbstractHolderManager extends Observable{
 
 	protected Map<RaCPlayer, AbstractTraitHolder> memberList;
 	protected Set<AbstractTraitHolder> traitHolderList;
-	protected YAMLConfigExtended traitHolderConfig;	
+	
+	protected final File oldFile;
+	protected final File folder;
 	
 	protected RacesAndClasses plugin;
 	
@@ -53,10 +55,11 @@ public abstract class AbstractHolderManager extends Observable{
 	 * @param memberPath
 	 * @param traitHolderConfigPath
 	 */
-	public AbstractHolderManager(String traitHolderConfigPath){
+	public AbstractHolderManager(String traitHolderConfigPath, String folderName){
 		plugin = RacesAndClasses.getPlugin();
 		
-		this.traitHolderConfig = new YAMLConfigExtended(traitHolderConfigPath);
+		this.folder = new File(RacesAndClasses.getPlugin().getDataFolder(), folderName);
+		this.oldFile = new File(traitHolderConfigPath);
 	
 		memberList = new HashMap<RaCPlayer, AbstractTraitHolder>();
 		traitHolderList = new HashSet<AbstractTraitHolder>();
@@ -86,23 +89,53 @@ public abstract class AbstractHolderManager extends Observable{
 	 * This is the corresponding yml file to the TraitHolder.
 	 */
 	protected void readTraitHolderList(){
-		traitHolderList.clear();
-		traitHolderConfig.load();
+		readTraitHolderListStep1();
+		readTraitHolderListStep2();
+		readTraitHolderListStep3();
+	}
+	
+	
+	protected Set<File> getAllFilesIn(File folder){		
+		Set<File> files = new HashSet<File>();
+		if(!folder.exists()) return files;
 		
-		if(!traitHolderConfig.getValidLoad()){
-			File traitHolderConfigFile = traitHolderConfig.getFileLoadFrom();
-			plugin.log(traitHolderConfigFile.getName() + " could not be loaded correctly.");
-			return;
+		File[] subs = folder.listFiles();
+
+		if(subs == null) return files;
+		for(File file : subs){
+			if(file.isFile()) files.add(file);
+			if(file.isDirectory()) files.addAll(getAllFilesIn(file));
 		}
+		
+		return files;
+	}
+	
+	protected void readTraitHolderListStep1(){
+		traitHolderList.clear();
+		
+		Set<File> files = getAllFilesIn(folder);
+		if(files.isEmpty()) return;
 		
 		//1st step. Load basic structure.
-		for(String holderName : traitHolderConfig.getRootChildren()){
-				AbstractTraitHolder container = generateTraitHolder(traitHolderConfig, holderName);
-				if(container != null){
-					traitHolderList.add(container);
-				}
+		for(File file : files){
+			YAMLConfigExtended config = new YAMLConfigExtended(file).load();
+			//check if we have a valid load.
+			if(!config.getValidLoad()){
+				plugin.log("Could not load " + getConfigPrefix() + " file: " + file.toString());
+				continue;
+			}
+			
+			for(String holderName : config.getRootChildren()){
+					AbstractTraitHolder container = generateTraitHolder(config, holderName);
+					if(container != null){
+						traitHolderList.add(container);
+					}
+			}
 		}
-		
+	}
+	
+	
+	protected void readTraitHolderListStep2(){
 		//2nd step. load Holder.
 		for(AbstractTraitHolder holder : traitHolderList){
 			try{
@@ -120,11 +153,16 @@ public abstract class AbstractHolderManager extends Observable{
 			}
 		}
 		
+	}
+	
+	
+	protected void readTraitHolderListStep3(){
 		//3rd step. Read parents.
 		for(AbstractTraitHolder holder : traitHolderList){
 			holder.readParents();
 		}
 	}
+	
 
 	/**
 	 * Generates the correct {@link AbstractTraitHolder} for the config and the name.

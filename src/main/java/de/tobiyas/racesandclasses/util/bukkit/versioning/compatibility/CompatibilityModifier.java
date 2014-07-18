@@ -120,6 +120,7 @@ public class CompatibilityModifier {
 				}
 			}
 		}
+
 	}
 	
 	public static class BukkitPlayer{
@@ -153,7 +154,7 @@ public class CompatibilityModifier {
 			}
 			
 			
-			if(CertainVersionChecker.isAbove1_6()){				
+			if(CertainVersionChecker.isAbove1_6()){
 				try{ player.setMaxHealth(maxHealth); }catch(Throwable exp){}
 			}else{
 				try{
@@ -293,6 +294,7 @@ public class CompatibilityModifier {
 		 */
 		public static void safeHeal(double healAmount, Player player) {
 			if(player == null) return;
+			if(healAmount <= 0) return;
 			
 			double oldHealth = safeGetHealth(player);
 			double newHealth = oldHealth + healAmount;
@@ -423,6 +425,8 @@ public class CompatibilityModifier {
 		 * 
 		 * @param entity to damage
 		 * @param value to do damage
+		 * 
+		 * @deprecated try to use {@link #safeDamageEntityByEntity(org.bukkit.entity.LivingEntity, org.bukkit.entity.LivingEntity, double)}
 		 */
 		public static void safeDamageEntity(org.bukkit.entity.LivingEntity entity, double value){
 			if(entity == null) return;
@@ -434,6 +438,28 @@ public class CompatibilityModifier {
 				try{
 					Method method = org.bukkit.entity.LivingEntity.class.getMethod("damage", Integer.class);					
 					method.invoke(entity, damage);
+				}catch(Exception exp){}//silent fail
+			}
+		}
+		
+		/**
+		 * Does damage to an entity safely to healthVersions.
+		 * 
+		 * @param entity to damage
+		 * @param value to do damage
+		 */
+		public static void safeDamageEntityByEntity(org.bukkit.entity.LivingEntity entity, 
+				org.bukkit.entity.LivingEntity damager, double value){
+			
+			if(entity == null) return;
+			if(CertainVersionChecker.isAbove1_6()){
+				entity.damage(value, damager);
+			}else{
+				int damage = Math.round((float) value);
+				
+				try{
+					Method method = org.bukkit.entity.LivingEntity.class.getMethod("damage", Integer.class, Entity.class);					
+					method.invoke(entity, damage, damager);
 				}catch(Exception exp){}//silent fail
 			}
 		}
@@ -517,10 +543,10 @@ public class CompatibilityModifier {
 			if(value <= 0) return;
 			
 			if(CertainVersionChecker.isAbove1_6()){
-				entity.setMaxHealth(value);
+				entity.setHealth(value);
 			}else{
 				try{
-					Method method = org.bukkit.entity.LivingEntity.class.getMethod("setMaxHealth", Integer.class);					
+					Method method = org.bukkit.entity.LivingEntity.class.getMethod("setHealth", Integer.class);					
 					method.invoke(entity, (int) value);
 				}catch(Exception exp){}//silent fail
 			}
