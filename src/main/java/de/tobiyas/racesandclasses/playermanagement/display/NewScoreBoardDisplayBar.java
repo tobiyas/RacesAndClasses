@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -35,6 +34,11 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 	protected double currentHealth = 0;
 	protected double maxHealth = 20;
 	
+	/**
+	 * The Last addition.
+	 */
+	protected String oldName = null;
+	
 	@Override
 	public void display(double currentHealth, double maxHealth) {
 		this.currentHealth = currentHealth;
@@ -48,6 +52,11 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 	@Override
 	protected void addValues(Objective objective) {
 		String barString = "";
+		
+		if(oldName != null){
+			objective.getScoreboard().resetScores(Bukkit.getOfflinePlayer(oldName));
+		}
+		
 		if(displayInfo.useName()){
 			barString = displayInfo.getName();
 		}else{
@@ -61,7 +70,8 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		//This deprecation is needed to show a false name in Scoreboard.
 		Score score = objective.getScore(Bukkit.getOfflinePlayer(barString));
 		score.setScore((int) Math.ceil(currentHealth));
-	
+		
+		oldName = barString;
 	}
 
 
@@ -69,13 +79,13 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 	protected void removeOldValues(Scoreboard bordOfPlayer) {
 		//should remove all occurences.
 		//This deprecationa are needed to show a false name in Scoreboard.
-		for(OfflinePlayer scorePlayer : bordOfPlayer.getPlayers()){
+		/*for(OfflinePlayer scorePlayer : bordOfPlayer.getPlayers()){
 			if(scorePlayer.getName().startsWith(this.colorHigh + "|")
 					|| scorePlayer.getName().startsWith(this.colorHigh + "" + this.colorLow + "|")){
 				bordOfPlayer.resetScores(scorePlayer);
 			}
 			
-		}
+		}*/
 	}
 
 

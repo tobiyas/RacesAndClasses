@@ -267,10 +267,25 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 			return true;
 		}
 		
+		if(channelCommand.equalsIgnoreCase("delete")){
+			if(args.length < 2){
+				LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+						"command", "/channel delete <channelname>");
+				return true;
+			}
+			
+			String channel = args[1];
+			channelDelete(racPlayer, channel);
+			return true;
+		}
+		
 		
 		postHelp(player);
 		return true;
 	}
+	
+
+
 	
 	private void postHelp(CommandSender sender){
 		LanguageAPI.sendTranslatedMessage(sender,"wrong_command_use",
@@ -304,6 +319,11 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 		plugin.getChannelManager().postChannelInfo(sender, channel);
 	}
 	
+	
+	
+	private void channelDelete(RaCPlayer racPlayer, String channel) {
+		plugin.getChannelManager().deleteChannel(racPlayer, channel);
+	}
 	
 	private void listChannels(CommandSender sender){
 		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.RED + "Channel-List:" + ChatColor.YELLOW + "=====");

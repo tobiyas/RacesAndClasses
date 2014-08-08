@@ -30,7 +30,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	/**
 	 * The Objective of the Scoreboard.
 	 */
-	protected final String SCOREBOARD_OBJECTIVE_NAME = "RaC";
+	protected final String SCOREBOARD_OBJECTIVE_NAME;
 	
 	/**
 	 * This is an Addition to the board name. It is concatenated to it.
@@ -38,9 +38,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	protected String boardAddition = "";
 	
 	/**
-	 * The Map of ScoreBoards to show.
+	 * The ScoreBoards to use.
 	 */
-	protected Scoreboard boardToShow;
+	protected Scoreboard boardToShow = Bukkit.getScoreboardManager().getNewScoreboard();
 	
 	/**
 	 * The old board stored while the RAC board is shown.
@@ -60,6 +60,10 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	
 	public AbstractScoreBoardDisplay(RaCPlayer player, DisplayInfos displayInfo) {
 		super(player, displayInfo);
+		
+		SCOREBOARD_OBJECTIVE_NAME = ChatColor.translateAlternateColorCodes('&',
+				RacesAndClasses.getPlugin().getConfigManager()
+				.getGeneralConfig().getConfig_gui_scoreboard_name());
 
 		if(bukkitTaskId < 0 || 
 				!(Bukkit.getScheduler().isCurrentlyRunning(bukkitTaskId) 
@@ -83,18 +87,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 			return;
 		}
 		
-		String objectiveName = ChatColor.YELLOW + SCOREBOARD_OBJECTIVE_NAME + boardAddition;
+		String objectiveName = SCOREBOARD_OBJECTIVE_NAME + boardAddition;
 		if(player == null || !player.isOnline()){
 			return;
-		}
-		
-		if(this.boardToShow == null){
-			Scoreboard playerbord = player.getPlayer().getScoreboard();
-			if(playerbord.getObjective(objectiveName) != null){
-				this.boardToShow = playerbord;
-			}else{
-				this.boardToShow = Bukkit.getScoreboardManager().getNewScoreboard();
-			}			
 		}
 		
 		Scoreboard bordOfPlayer = boardToShow;

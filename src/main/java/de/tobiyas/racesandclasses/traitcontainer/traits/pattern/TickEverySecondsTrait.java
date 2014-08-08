@@ -52,12 +52,13 @@ private int schedulerTaskId = -1;
 				for(AbstractTraitHolder holder : holders){
 					for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
 						if(player == null || !player.isOnline()) continue;
+						
 						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
 						if(!checkRestrictions(fakeEventWrapper) || !canBeTriggered(fakeEventWrapper)) {
 							restrictionsFailed(player);
-							return;
+							continue;
 						}
-							
+						
 						if(tickDoneForPlayer(player)){
 							plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
 						}

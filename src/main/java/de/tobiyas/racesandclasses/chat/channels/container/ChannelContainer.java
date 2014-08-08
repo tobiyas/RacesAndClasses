@@ -692,4 +692,15 @@ public class ChannelContainer extends Observable{
 		event.setFormat(format);
 	}
 
+	/**
+	 * Sends an completely unformatted message.
+	 * 
+	 * @param message to send
+	 */
+	public void sendUnformatedMessage(String message) {
+		for(RaCPlayer player : participants){
+			player.sendMessage(message);
+		}
+	}
+
 }

@@ -51,6 +51,8 @@ public class Vollotile {
 	}
 
 
+	private final int MAX_PARTICLE_RANGE = 64*64;
+	
 	
 	/**
 	 * use THIS for RaC Traits.
@@ -65,6 +67,7 @@ public class Vollotile {
 	public void sendOwnParticleEffect(ParticleEffects effect, Location loc,
 			Vector width, float data, int amount, Player player) {
 		if(effect == null) return;
+		if(player.getLocation().distanceSquared(loc) > MAX_PARTICLE_RANGE) return;
 		
 		Effect bukkitEffect = effect.asBukkit();
 		if(bukkitEffect != null){

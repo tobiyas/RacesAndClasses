@@ -37,6 +37,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ChannelManager {
@@ -709,6 +710,22 @@ public class ChannelManager {
 			
 			container.editEvent(event);
 		}
+	}
+
+
+	/**
+	 * Deletes the Channel passed.
+	 * 
+	 * @param deleter who wants to delete the channel
+	 * @param channel to delete
+	 */
+	public void deleteChannel(RaCPlayer deleter, String channel) {
+		ChannelContainer container = getContainer(channel);
+		if(container.getAdmin() != deleter
+				|| !plugin.getPermissionManager().checkPermissions(deleter.getPlayer(), PermissionNode.channel_delete)) return;
+		
+		container.sendUnformatedMessage(ChatColor.YELLOW + "Channel " + container.getChannelName() + " was deleted.");
+		removeChannel(container.getChannelName());
 	}
 	
 }

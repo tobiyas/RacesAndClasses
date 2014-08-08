@@ -252,7 +252,7 @@ public class PermissionRegisterer implements Runnable{
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null,  player.getName(), permissionSpecificPrefix + groupName);
+					vaultPermissions.playerRemoveGroup((String)null,  player.getName(), permissionSpecificPrefix + groupName);						
 				}
 			}
 		}
@@ -264,12 +264,8 @@ public class PermissionRegisterer implements Runnable{
 	 * This only works if Vault is active.
 	 */
 	public static void addPlayer(RaCPlayer player, String groupName) {
-		if(!isVaultActive()) return;
-		
-		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){	
-			vaultPermissions.playerAddGroup((String) null, player.getName(), permissionSpecificPrefix + groupName);
-		}
+		RacesAndClasses.getPlugin().getPermissionManager()
+			.addSubgroup(PlayerUtils.getOfflinePlayer(player.getName()), permissionSpecificPrefix + groupName);
 	}
 
 }

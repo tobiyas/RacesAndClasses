@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -107,6 +108,16 @@ public class RaCPlayer {
 	public Player getPlayer(){
 		if(!hasUUIDSupport()) return PlayerUtils.getPlayer(playerName);
 		return Bukkit.getPlayer(playerUUID);
+	}
+	
+	/**
+	 * Returns a player object for this player.
+	 * 
+	 * @return player or null
+	 */
+	public OfflinePlayer getOfflinePlayer(){
+		if(!hasUUIDSupport()) return PlayerUtils.getPlayer(playerName);
+		return Bukkit.getOfflinePlayer(playerUUID);
 	}
 	
 	
