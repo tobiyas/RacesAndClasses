@@ -1,0 +1,147 @@
+name: RacesAndClasses
+main: de.tobiyas.racesandclasses.RacesAndClasses
+version: 1.0.5
+website: http://dev.bukkit.org/bukkit-mods/racesandclasses/
+author: tobiyas
+loadbefore: [Vault]
+description: >
+             Races and Classes for Players
+commands:
+  race:
+    description: Sets the Race of the player
+    aliases: []
+    usage: |
+           /race <racename>
+  racechat:
+    description: chat for the race
+    aliases: [rc,rchat]
+    usage: |
+           /racechate <message>
+  racehelp:
+    description: help for races
+    aliases: [rhelp,rac,rachelp]
+    usage: |
+           /racehelp <helpstring>
+  whisper:
+    description: whispers a Player
+    aliases: [w]
+    usage: |
+           /whisper <player> <message>
+  traitlist:
+    description: lists all traits
+    aliases: [tlist]
+    usage: |
+           /traitlist
+  raceheal:
+    description: heals a player
+    aliases: [rheal,rh]
+    usage: |
+           /raceheal [PlayerName]
+  raceconfig:
+    description: changes the config of a player
+    aliases: [rconfig]
+    usage: |
+           /raconfig <attribute> <value>
+  racedebug:
+    description: debug stuff
+    aliases: [rdebug]
+    usage: |
+           /racedebug [option] [value]
+  class:
+    description: changes/selectes a class
+    aliases: []
+    usage: |
+           /class <select,change> <classname>
+  playerhealth:
+    description: displays your HP
+    aliases: [hp]
+    usage: |
+           /hp
+  racesreload:
+    description: reloads everything
+    aliases: []
+    usage: |
+           /racereload
+  channel:
+    description: manages channels
+    aliases: []
+    usage: |
+           /channel
+  racegod:
+    description: switches god mode to player
+    aliases: [rgod]
+    usage: |
+           /racegod [playername]
+  globalbroadcast:
+    description: broadcasts a message to all Players in Global channel.
+    aliases: [gbr]
+    usage: |
+           /globalbroadcast <message>
+  localchat:
+    description: sends a message to local chat
+    aliases: [lc,l]
+    usage: |
+           /localchat message
+  racesversion:
+    description: displays the full version of Races
+    aliases: []
+    usage: |
+           /racesversion
+  playerinfo:
+    description: displays info to a player
+    aliases: []
+    usage: |
+           /playerinfo [playername]
+  racestutorial:
+    description: use to handle tutorials.
+    aliases: []
+    usage: |
+           /racestutorial <start/stop/skip/reset/repost>
+  racstatistics:
+    description: displays statistics
+    aliases: [racs]
+    usage: |
+           /racstatistics <trait name>
+  showtraits:
+    description: displays the Traits of a player
+    aliases: [rst]
+    usage: |
+           /showtraits [playername]
+  racpermcheck:
+    description: displays permissions
+    aliases: [racp]
+    usage: |
+           /racpermcheck [subcommand]
+  racedit:
+    description: opens the RaC Edit menu
+    aliases: [racedit]
+    usage: |
+           /racedit
+  racforcerace:
+    description: forces a player to take the race passed
+    usage: |
+           /racforcerace <player Name> <new Race>
+  racforceclass:
+    description: forces a player to take the class passed
+    usage: |
+           /racforceclass <player Name> <new Class>
+  raclevel:
+    description: changes the level of a player
+    usage: |
+           /raclevel <exp,lvl> <playername> <value>
+  resetplayer:
+    description: resets everything for a player.
+    usage: |
+           /resetplayer [Player Name]
+  racsave:
+    description: saves all yml files.
+    usage: |
+           /racsave [-a]  
+  racespawn:
+    description: respawn on the Race Spawn.
+    usage: |
+           /racespawn [set <racename>]
+  configregenerate:
+    description: Forces a Regeneration of the Config.yml
+    usage: |
+           /configregenerate

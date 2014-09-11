@@ -17,27 +17,29 @@ package de.tobiyas.racesandclasses.commands.debug;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPeristanceSaver;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 
-public class CommandExecutor_SaveNow implements CommandExecutor{
+public class CommandExecutor_SaveNow extends AbstractCommand {
 
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_SaveNow(){
+		super("racsave");
+		
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racsave";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racsave";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override
@@ -53,7 +55,7 @@ public class CommandExecutor_SaveNow implements CommandExecutor{
 		sender.sendMessage(ChatColor.GREEN + "Flushing data to files NOW " 
 				+ ChatColor.LIGHT_PURPLE + (async ? "a" : "") + "synchronusly" 
 				+ ChatColor.GREEN + ".");
-		YAMLPeristanceSaver.flushNow(async, true);
+		YAMLPersistanceSaver.flushNow(async, true);
 		
 		if(!async){
 			long timeTaken = System.currentTimeMillis() - timeBefore;

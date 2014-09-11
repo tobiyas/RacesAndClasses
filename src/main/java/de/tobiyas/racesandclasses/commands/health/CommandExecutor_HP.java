@@ -19,28 +19,31 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.no_healthcon
 import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
-public class CommandExecutor_HP implements CommandExecutor {
+public class CommandExecutor_HP extends AbstractCommand {
 
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_HP(){
+		super("playerhealth", new String[]{"hp"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "playerhealth";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "playerhealth";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override
@@ -53,14 +56,14 @@ public class CommandExecutor_HP implements CommandExecutor {
 			return true;
 		}
 		
-		Player player = (Player) sender;
-		if(!plugin.getPlayerManager().displayHealth(player.getName())){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+		if(!racPlayer.displayHealth()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found)
 					.build());
 		}
 		
-		plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().outputManaToPlayer();
-		plugin.getPlayerManager().getPlayerLevelManager(player.getName()).forceDisplay();
+		racPlayer.getManaManager().outputManaToPlayer();
+		plugin.getPlayerManager().getPlayerLevelManager(racPlayer).forceDisplay();
 		return true;
 	}
 

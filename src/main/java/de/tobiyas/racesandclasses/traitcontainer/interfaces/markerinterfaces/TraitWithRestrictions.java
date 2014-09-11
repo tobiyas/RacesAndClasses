@@ -20,12 +20,12 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 public interface TraitWithRestrictions {
 
 	/**
-	 * The Config-Path to the Min Level to use
+	 * The ConfigTotal-Path to the Min Level to use
 	 */
 	public static final String MIN_LEVEL_PATH = "minLevel";
 	
 	/**
-	 * The Config-Path to the Max Level to use
+	 * The ConfigTotal-Path to the Max Level to use
 	 */
 	public static final String MAX_LEVEL_PATH = "maxLevel";
 	
@@ -104,6 +104,12 @@ public interface TraitWithRestrictions {
 	 */
 	public static final String ONLY_ON_BLOCK_PATH = "onlyOnBlock";
 	
+	
+	/**
+	 * Trait only when standing on a certain block.
+	 */
+	public static final String NOT_ON_BLOCK_PATH = "notOnBlock";
+	
 	/**
 	 * Trait only when above elevation
 	 */
@@ -125,6 +131,11 @@ public interface TraitWithRestrictions {
 	public static final String DESCRIPTION_PATH = "description";
 	
 	/**
+	 * The Path to the Description Name
+	 */
+	public static final String NEEDED_PERMISSION_PATH = "neededPermission";
+	
+	/**
 	 * The Path to the min Uplink showing Name
 	 */
 	public static final String MIN_UPLINK_SHOW_PATH = "minUplinkShow";
@@ -132,10 +143,15 @@ public interface TraitWithRestrictions {
 	/**
 	 * The Path to disable uplink Notices
 	 */
-	public static final String DISABLE_UPLINK_NOTICE_PATH = "disableUplinkNotice";
+	public static final String DISABLE_COOLDOWN_NOTICE_PATH = "disableCooldownNotice";	
 	
-	
+	/**
+	 * The Path to see if the Trait is visible in the lists.
+	 */
+	public static final String VISIBLE_PATH = "visible";	
 
+	
+	
 	/**
 	 * Checks the Restrictions of the Trait
 	 * for a player passed.
@@ -174,5 +190,24 @@ public interface TraitWithRestrictions {
 	 * @return true if should, false if not.
 	 */
 	public boolean notifyTriggeredUplinkTime(EventWrapper wrapper);
+	
+	/**
+	 * checks if the Trait is in level range.
+	 * 
+	 * @param level to check
+	 * 
+	 * @return true if it is, false if not.
+	 */
+	public boolean isInLevelRange(int level);
+	
+	
+	/**
+	 * The Spell triggered but has Restrictions blocking it.
+	 * <br>This is an notice for the Trait if something else needs to be checked that has a bypass.
+	 * 
+	 * @param The restriction that triggered.
+	 * @param wrapper The event that was triggered.
+	 */
+	public void triggerButHasRestriction(TraitRestriction restriction, EventWrapper wrapper);
 	
 }

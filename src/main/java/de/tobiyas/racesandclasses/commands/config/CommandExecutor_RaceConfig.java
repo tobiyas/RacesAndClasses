@@ -24,29 +24,32 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
-public class CommandExecutor_RaceConfig implements CommandExecutor {
+public class CommandExecutor_RaceConfig extends AbstractCommand {
 
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RaceConfig(){
+		super("raceconfig", new String[]{"rconfig"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "raceconfig";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "raceconfig";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	@Override
@@ -57,12 +60,12 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			return true;
 		}
 		
-		Player player = (Player) sender;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
 		
 		if(args.length == 0){
 			String your = LanguageAPI.translateIgnoreError("your").build();
-			player.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+			racPlayer.sendMessage(ChatColor.YELLOW + "=======" + your.toUpperCase() + " CONFIG=======");
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;
@@ -72,7 +75,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			
 			for(String attribute : configLines.keySet()){
 				String value = String.valueOf(configLines.get(attribute));
-				player.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.AQUA + ": " + ChatColor.BLUE + value);
+				racPlayer.sendMessage(ChatColor.LIGHT_PURPLE + attribute + ChatColor.AQUA + ": " + ChatColor.BLUE + value);
 			}
 			
 			return true;
@@ -82,7 +85,7 @@ public class CommandExecutor_RaceConfig implements CommandExecutor {
 			String attribute = args[0];
 			String value = args[1];
 			
-			MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				LanguageAPI.sendTranslatedMessage(sender, member_config_not_found);
 				return true;

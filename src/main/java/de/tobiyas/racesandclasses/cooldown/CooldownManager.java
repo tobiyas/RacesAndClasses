@@ -90,9 +90,9 @@ public class CooldownManager {
 	 * 
 	 * If a value <= 0 is passed, the player with it's cooldownName is removed from the list.
 	 * 
-	 * @param player
-	 * @param cooldownName
-	 * @param time
+	 * @param player to set to
+	 * @param cooldownName to set
+	 * @param time in seconds
 	 */
 	public void setCooldown(String player, String cooldownName, int time){
 		synchronized (cooldownList) {
@@ -108,7 +108,7 @@ public class CooldownManager {
 	/**
 	 * Returns a List of all cooldown names the player has at this moment.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return 
 	 */
 	public List<String> getAllCooldownsOfPlayer(String playerName) {

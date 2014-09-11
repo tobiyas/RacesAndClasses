@@ -15,18 +15,16 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.racechangelistener;
 
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundException;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
@@ -69,11 +67,11 @@ public class RaceChangeSelectionListener implements Listener {
 		if(!event.isCheckPermissions()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_usePermissionsForRaces()){
-			Player player = event.getPlayer();
-			String raceName = event.getRaceToSelect().getName();
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+			String raceName = event.getRaceToSelect().getDisplayName();
 			
 			String permissionNode = PermissionNode.racePermPre + raceName;
-			if(!plugin.getPermissionManager().checkPermissionsSilent(player, permissionNode)){
+			if(!plugin.getPermissionManager().checkPermissionsSilent(player.getPlayer(), permissionNode)){
 				event.setCancelled("You do not have the Permission to select the Race" + raceName);
 			}
 		}
@@ -84,26 +82,17 @@ public class RaceChangeSelectionListener implements Listener {
 		if(event.getRaceToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_useRaceClassSelectionMatrix()){
-			Player playerSelecting = event.getPlayer();
-			String playerName = playerSelecting.getName();
+			RaCPlayer playerSelecting = RaCPlayerManager.get().getPlayer(event.getPlayer());
 			
-			String raceName = event.getRaceToSelect().getName();
+			String raceName = event.getRaceToSelect().getDisplayName();
 			
-			AbstractTraitHolder holder = plugin.getClassManager().getHolderOfPlayer(playerName);
+			AbstractTraitHolder holder = playerSelecting.getclass();
 			if(holder == null) return; //no class -> no restrictions.
-			String className = holder.getName();
+			String className = holder.getDisplayName();
 			
 			//check if the Race can select the class passed.
-			try{
-				List<String> classList = plugin.getConfigManager().getRaceToClassConfig().getClassesValidForRace(raceName);
-				if(classList != null && !classList.contains(className)){
-					event.setCancelled("Your class can not select the race: " + raceName);
-				}
-			}catch(RaceNotFoundException exp){
-				//If no class is found in list,
-				//we assume that there is no limitation.
-			}
-			
+			boolean valid = plugin.getConfigManager().getRaceToClassConfig().isValidCombination(raceName, className);
+			if(!valid) event.setCancelled("Your class can not select the race: " + raceName);
 		}
 	}
 	
@@ -139,9 +128,9 @@ public class RaceChangeSelectionListener implements Listener {
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		
-		String playerName = selectEvent.getPlayer().getName();
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
 		
-		plugin.getPlayerManager().checkPlayer(playerName);
-		plugin.getPlayerManager().displayHealth(playerName);
+		plugin.getPlayerManager().checkPlayer(player);
+		plugin.getPlayerManager().displayHealth(player);
 	}
 }

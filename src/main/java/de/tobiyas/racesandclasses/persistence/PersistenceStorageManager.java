@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.persistence;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.persistence.db.EBeanPersistenceStorage;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceStorage;
 
 public class PersistenceStorageManager {
@@ -49,10 +48,17 @@ public class PersistenceStorageManager {
 	 */
 	private static void initPersistence() {
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		//TODO disable DB completly
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
+		if(useDB){
+			plugin.logWarning("DataBase (with Ebean) is NOT Supported any more! Get an older Version and Convert your data and update again!");
+			plugin.logWarning("Your data will not be stored to DB!");
+			useDB = false;
+		}
 		
 		if(useDB){
-			persistence = new EBeanPersistenceStorage();
+			throw new UnsupportedOperationException("DB is not possible!");
+			//persistence = new EBeanPersistenceStorage();
 		}else{
 			persistence = new YAMLPersistenceStorage();
 		}

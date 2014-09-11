@@ -57,7 +57,15 @@ public class GeneralConfigFields {
 	//Multiworld
 	public static final String worlds_disableOn = "worlds_disableOn";
 	public static final String keep_max_hp_on_disabled_worlds = "keep_max_hp_on_disabled_worlds";
+	public static final String disabled_regions = "disabled_regions";
 	
+	//Race-Spawns
+	public static final String race_spawns_enabled = "race_spawns_enabled";
+	public static final String race_spawn_cooldown = "race_spawn_cooldown";
+	public static final String race_spawn_when_dead = "race_spawn_when_dead";
+	
+	//Food
+	public static final String food_enabled = "food_enabled";
 	
 	//General
 	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
@@ -65,11 +73,20 @@ public class GeneralConfigFields {
 	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	public static final String general_disable_commands = "general_disable_commands";
+	public static final String general_disable_aliases = "general_disable_aliases";
+	public static final String general_cooldown_on_wand_message = "general_cooldown_on_wand_message";
+	public static final String general_cooldown_on_bow_message = "general_cooldown_on_bow_message";
+	public static final String general_remove_old_data_days = "general_remove_old_data_days";
+	public static final String general_remove_old_data_check_empty = "general_remove_old_data_check_empty";
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
 	public static final String gui_disableAllChatBars = "gui_disableAllChatBars";
+	public static final String gui_scoreboard_name = "gui_scoreboard_name";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
+	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
+	public static final String gui_useFoodManaBar = "gui_useFoodManaBar";
+	public static final String gui_manaManagerType = "gui_manaManagerType";
 
 	
 	//Magic
@@ -83,6 +100,7 @@ public class GeneralConfigFields {
 	
 	//Races
 	public static final String races_enable = "races_enable";
+	public static final String races_create_group_for_race = "races_create_group_for_race";
 	public static final String races_remindDefaultRace_enable = "races_remindDefaultRace_enable";
 	public static final String races_remindDefaultRace_interval = "races_remindDefaultRace_interval";
 	public static final String races_display_adaptListName = "races_display_adaptListName";

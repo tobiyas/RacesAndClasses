@@ -19,24 +19,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class PlayerManager{
 	
 	/**
 	 * This is the map of each player's health container
 	 */
-	private HashMap<String, PlayerContainer> playerData;
+	private HashMap<RaCPlayer, PlayerContainer> playerData;
 	
 	/**
 	 * The plugin to access other parts of the Plugin.
@@ -47,7 +48,7 @@ public class PlayerManager{
 	 * Creates a new PlayerManager and resets all values
 	 */
 	public PlayerManager(){
-		playerData = new HashMap<String, PlayerContainer>();
+		playerData = new HashMap<RaCPlayer, PlayerContainer>();
 		plugin = RacesAndClasses.getPlugin();
 	}
 	
@@ -74,18 +75,21 @@ public class PlayerManager{
 	private void loadPlayerContainer(){
 		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
 
-		Set<String> players = new HashSet<String>();
+		Set<RaCPlayer> players = new HashSet<RaCPlayer>();
 		if(useDB){
-			for(Player player : Bukkit.getOnlinePlayers()){
-				players.add(player.getName());
+			for(Player online : PlayerUtils.getOnlinePlayers()){
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(online);
+				players.add(player);
 			}
 		}else{
-			players = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());
+			for(RaCPlayer player : YAMLPersistenceProvider.getAllPlayersKnown()){
+				players.add(player);
+			}
 		}
 		
-		for(String player : players){
-			Player bukkitPlayer = Bukkit.getPlayer(player);
-			if(bukkitPlayer == null || !bukkitPlayer.isOnline()) continue;
+		for(RaCPlayer player : players){
+			if(player == null) continue;
+			if(player == null || !player.isOnline()) continue;
 			
 			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);
 			if(container != null){
@@ -101,108 +105,73 @@ public class PlayerManager{
 	 * 
 	 * @param player to create
 	 */
-	public void addPlayer(String player){
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
-		double maxHealth = 1;
-		
-		if(container == null){
-			maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-		}else{
-			maxHealth = container.getRaceMaxHealth();
-		}
-		
-		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
-		if(classContainer != null){
-			maxHealth = classContainer.modifyToClass(maxHealth);
-		}
-			
-		playerData.put(player, new PlayerContainer(player, maxHealth).checkStats());
+	public void addPlayer(RaCPlayer player){
+		if(playerData.containsKey(player)) return;
+
+		playerData.put(player, new PlayerContainer(player).checkStats());
 	}
 	
-	/**
-	 * This parses the current health of a player.
-	 * NOTICE: It redirects to the bukkit function.
-	 * 
-	 * @param playerName
-	 * @return
-	 */
-	public double getHealthOfPlayer(String playerName){
-		PlayerContainer container = getCreate(playerName, true);
-		if(container == null) return -1;
-		return container.getCurrentHealth();
-	}
 	
 	/**
 	 * Rescans the player and creates a new {@link PlayerContainer} if he has none.
 	 *  
 	 * @param player to check
 	 */
-	public void checkPlayer(String player){
+	public void checkPlayer(RaCPlayer player){
 		PlayerContainer hContainer = playerData.get(player);
 		if(hContainer == null){
-			RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player);
+			plugin.getRaceManager().loadIfNotExists(player);
+			plugin.getClassManager().loadIfNotExists(player);
 			
-			double maxHealth = plugin.getConfigManager().getGeneralConfig().getConfig_defaultHealth();
-			if(container != null){
-				maxHealth = container.getRaceMaxHealth();
-			}
-			
-			ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderOfPlayer(player);
-			if(classContainer != null){
-				maxHealth = classContainer.modifyToClass(maxHealth);
-			}
-			
-			PlayerContainer healthContainer = new PlayerContainer(player, maxHealth);
-			healthContainer.checkStats();
-			playerData.put(player, healthContainer);
-		}else{
-			hContainer.checkStats();
+			hContainer = new PlayerContainer(player);
+			playerData.put(player, hContainer);
 		}
+		
+		hContainer.checkStats();
 	}
+	
 	
 	/**
 	 * Checks if the ArrowManager of a Player exists and returns it.
 	 * If the ArrowManager does not exist, it is created.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return the {@link ArrowManager} of the Player
 	 */
-	public ArrowManager getArrowManagerOfPlayer(String playerName) {
-		return getCreate(playerName, true).getArrowManager();
+	public ArrowManager getArrowManagerOfPlayer(RaCPlayer player) {
+		return getCreate(player, true).getArrowManager();
 	}
 	
 	/**
 	 * Checks if the {@link ArmorToolManager} of a Player exists and returns it.
 	 * If the {@link ArmorToolManager} does not exist, it is created.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return the {@link ArmorToolManager} of the Player
 	 */
-	public ArmorToolManager getArmorToolManagerOfPlayer(String playerName){
-		return getCreate(playerName, true).getArmorToolManager();
+	public ArmorToolManager getArmorToolManagerOfPlayer(RaCPlayer player){
+		return getCreate(player, true).getArmorToolManager();
 	}
 
 	/**
 	 * Forces an HP display output for the player.
 	 * 
-	 * @param playerName to force the output
+	 * @param player to force the output
 	 * @return true, if it worked.
 	 */
-	public boolean displayHealth(String playerName) {
-		PlayerContainer container = getCreate(playerName, true);
-		if(container == null) return false; //this should not happen...
-		container.forceHPOut();
+	public boolean displayHealth(RaCPlayer player) {
+		getHealthManager(player).forceHPOut();
 		return true;
 	}
 
 	/**
 	 * Switches the God Mode of the player.
 	 * 
-	 * @param name to switch
+	 * @param player to switch
 	 * @return true if worked, false if player not found.
 	 */
-	public boolean switchGod(String name) {
-		PlayerContainer container = playerData.get(name);
+	public boolean switchGod(RaCPlayer playerUUID) {
+		PlayerContainer container = playerData.get(playerUUID);
 		if(container != null){
 			container.switchGod();
 			return true;
@@ -211,27 +180,24 @@ public class PlayerManager{
 	}
 
 	/**
-	 * Returns the maximum Health of a Player.
-	 * This should be identical to: {@link Player#getMaxHealth()}
+	 * Returns the HealthManger of the Player
 	 * 
-	 * @param playerName to check
-	 * @return the max health of a player.
+	 * @return health stuff
 	 */
-	public double getMaxHealthOfPlayer(String playerName) {
-		PlayerContainer container = getCreate(playerName, true);
-		if(container == null) return -1;
-		return container.getMaxHealth();
+	public HealthManager getHealthManager(RaCPlayer player){
+		return getCreate(player).getHealthManager();
 	}
+	
 	
 	/**
 	 * Gets the current PlayerContainer of the Player.
 	 * If not found, a new one is created. 
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return the found or new created container.
 	 */
-	private PlayerContainer getCreate(String playerName){
-		return getCreate(playerName, true);
+	private PlayerContainer getCreate(RaCPlayer player){
+		return getCreate(player, true);
 	}
 	
 	/**
@@ -239,15 +205,15 @@ public class PlayerManager{
 	 * If the container is not found, a new one is created 
 	 * if the flag (create) is set to true.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @param create
 	 * @return
 	 */
-	private PlayerContainer getCreate(String playerName, boolean create){
-		PlayerContainer container = playerData.get(playerName);
+	private PlayerContainer getCreate(RaCPlayer player, boolean create){
+		PlayerContainer container = playerData.get(player);
 		if(container == null && create){
-			checkPlayer(playerName);
-			container = playerData.get(playerName);
+			checkPlayer(player);
+			container = playerData.get(player);
 		}
 		
 		return container;
@@ -256,22 +222,22 @@ public class PlayerManager{
 	/**
 	 * Returns if the Player has God mode on.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return true if has god on
 	 */
-	public boolean isGod(String playerName) {
-		PlayerContainer containerOfPlayer = getCreate(playerName);
+	public boolean isGod(RaCPlayer player) {
+		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.isGod();
 	}
 	
 	
 	/**
 	 * Gets the SpellManager of a player.
-	 * @param playerName to get
+	 * @param player to get
 	 * @return the SpellManager of the Player.
 	 */
-	public PlayerSpellManager getSpellManagerOfPlayer(String playerName){
-		PlayerContainer containerOfPlayer = getCreate(playerName);
+	public PlayerSpellManager getSpellManagerOfPlayer(RaCPlayer player){
+		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.getSpellManager();
 	}
 	
@@ -279,11 +245,11 @@ public class PlayerManager{
 	/**
 	 * Returns the PlayerLevelManager of the Player.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @return
 	 */
-	public PlayerLevelManager getPlayerLevelManager(String playerName){
-		PlayerContainer containerOfPlayer = getCreate(playerName);
+	public PlayerLevelManager getPlayerLevelManager(RaCPlayer player){
+		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.getPlayerLevelManager();
 	}
 

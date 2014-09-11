@@ -21,7 +21,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -30,7 +35,7 @@ public class YAMLPersistenceProvider {
 	/**
 	 * The Cached Player YAML files
 	 */
-	protected static Map<String, YAMLConfigExtended> playerYamls = new HashMap<String, YAMLConfigExtended>();
+	protected static Map<UUID, YAMLConfigExtended> playerYamls = new HashMap<UUID, YAMLConfigExtended>();
 	
 	
 	/**
@@ -50,9 +55,9 @@ public class YAMLPersistenceProvider {
 	protected static YAMLConfigExtended channelsYaml;
 	
 	/**
-	 * The knownPlayers.
+	 * The knownPlayerIDs.
 	 */
-	protected static Set<String> knownPlayers;
+	protected static Set<RaCPlayer> knownPlayerIDs;
 	
 	
 
@@ -60,41 +65,26 @@ public class YAMLPersistenceProvider {
 	 * Returns the already loaded Player YAML File.
 	 * This is a lazy load.
 	 * 
-	 * @param playerName to load
+	 * @param player to load
 	 * 
 	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
 	 */
-	public static YAMLConfigExtended getLoadedPlayerFile(String playerName) {
-		if(knownPlayers == null){
-			rescanKnownPlayers();
-		}
-		
-		if(playerYamls.containsKey(playerName)){
-			YAMLConfigExtended playerConfig = playerYamls.get(playerName);
-			if(playerConfig.getValidLoad()){
-				cacheHit++;
-				return playerConfig;
-			}
-			
-			cacheMiss++;
-			return playerConfig.load();
-		}
-		
-		if(knownPlayers.contains(playerName)){
-			YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerName + ".yml")).load();
-			playerYamls.put(playerName, playerConfig);
-			
-			cacheMiss++;
-			return playerConfig;
-		}
-		
-		//Whether in cache, nor known.
-		YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerName + ".yml")).load();
-		playerYamls.put(playerName, playerConfig);
-		
-		rescanKnownPlayers();
-		cacheMiss++;
-		return playerConfig;
+	public static YAMLConfigExtended getLoadedPlayerFile(Player player) {
+		return getLoadedPlayerFile(player.getUniqueId());
+	}
+	
+	
+	
+	/**
+	 * Returns the already loaded Player YAML File.
+	 * This is a lazy load.
+	 * 
+	 * @param player to load
+	 * 
+	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
+	 */
+	public static YAMLConfigExtended getLoadedPlayerFile(RaCPlayer player) {
+		return getLoadedPlayerFile(player.getUniqueId());
 	}
 
 	
@@ -147,12 +137,12 @@ public class YAMLPersistenceProvider {
 	 * 
 	 * @return the known Players.
 	 */
-	public static Set<String> getAllPlayersKnown(){
-		if(knownPlayers == null){
+	public static Set<RaCPlayer> getAllPlayersKnown(){
+		if(knownPlayerIDs == null){
 			rescanKnownPlayers();
 		}
 		
-		return knownPlayers;
+		return new HashSet<RaCPlayer>(knownPlayerIDs);
 	}
 	
 	/**
@@ -172,16 +162,21 @@ public class YAMLPersistenceProvider {
 			}
 		};
 		
-		if(knownPlayers == null){
-			knownPlayers = new HashSet<String>();
+		if(knownPlayerIDs == null){
+			knownPlayerIDs = new HashSet<RaCPlayer>();
 		}
 		
-		knownPlayers.clear();
+		knownPlayerIDs.clear();
 		String[] playerFileNames = playerFolder.list(filter);
 		if(playerFileNames == null) return;
 		
 		for(String playerFile : playerFileNames){
-			knownPlayers.add(playerFile.replace(".yml", ""));
+			try{
+				UUID id = UUID.fromString(playerFile.replace(".yml", ""));
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
+				
+				if(player != null) knownPlayerIDs.add(player);
+			}catch(IllegalArgumentException exp){ continue; }
 		}
 	}
 	
@@ -208,5 +203,84 @@ public class YAMLPersistenceProvider {
 	 */
 	public static int getTotalTries(){
 		return cacheHit + cacheMiss;
+	}
+
+
+	/**
+	 * Creates an offline player and returns the File.
+	 * 
+	 * @param player to load from.
+	 * 
+	 * @return the loaded file.
+	 */
+	public static YAMLConfigExtended getLoadedPlayerFile(UUID playerUUID) {
+		if(knownPlayerIDs == null){
+			rescanKnownPlayers();
+		}
+		
+		if(playerYamls.containsKey(playerUUID)){
+			YAMLConfigExtended playerConfig = playerYamls.get(playerUUID);
+			if(playerConfig.getValidLoad()){
+				cacheHit++;
+				return playerConfig;
+			}
+			
+			cacheMiss++;
+			return playerConfig.load();
+		}
+		
+		if(knownPlayerIDs.contains(playerUUID)){
+			YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerUUID.toString() + ".yml")).load();
+			playerYamls.put(playerUUID, playerConfig);
+			
+			cacheMiss++;
+			return playerConfig;
+		}
+		
+		//Whether in cache, nor known.
+		YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerUUID.toString() + ".yml")).load();
+		playerYamls.put(playerUUID, playerConfig);
+		
+		rescanKnownPlayers();
+		cacheMiss++;
+		return playerConfig;
+	}
+	
+	
+	/**
+	 * Gets all not loaded Player file names.
+	 * <br> This container the .yml ending!
+	 * @return
+	 */
+	public static Set<String> getNotLoadedPlayers(){
+		if(knownPlayerIDs == null) rescanKnownPlayers();
+		
+		File playerFolder = new File(Consts.playerDataPath);
+		FilenameFilter filter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				if(name.startsWith("playerData")){
+					return false;
+				}
+				
+				return name.endsWith(".yml");
+			}
+		};
+		
+		Set<String> toReturn = new HashSet<String>();
+		String[] playerFileNames = playerFolder.list(filter);
+		if(playerFileNames == null) return toReturn;
+		
+		for(String playerFile : playerFileNames){
+			try{
+				UUID id = UUID.fromString(playerFile.replace(".yml", ""));
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
+				
+				if(player == null) toReturn.add(playerFile);
+			}catch(IllegalArgumentException exp){ continue; }
+		}
+		
+		return toReturn;
 	}
 }

@@ -27,7 +27,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class RaceToClassConfiguration {
 
 	/**
-	 * The Config file where the Races / Classes selection matrix is found
+	 * The ConfigTotal file where the Races / Classes selection matrix is found
 	 */
 	private YAMLConfigExtended racesClassesSelectionMatrix;
 	
@@ -102,6 +102,34 @@ public class RaceToClassConfiguration {
 		}
 		
 		return selectionMatrix.get(raceName);
+	}
+	
+	/**
+	 * Checks if the combination passed is valid.
+	 * 
+	 * @param raceName the race to search for
+	 * @param className the class to search for
+	 * 
+	 */
+	public boolean isValidCombination(String raceName, String className) {
+		raceName = raceName.toLowerCase();
+		className = className.toLowerCase();
+		
+		for(String orgRaceMatrix : selectionMatrix.keySet()){
+			String raceMatrix = orgRaceMatrix.toLowerCase();
+			if(raceMatrix.equals(raceName)){
+				for(String classMatrix : selectionMatrix.get(orgRaceMatrix)){
+					classMatrix = classMatrix.toLowerCase();
+					if(classMatrix.equals(className)) return true;
+				}
+				
+				//class not found in race matrix
+				return false;
+			}
+		}
+		
+		//race not found in matrix
+		return true;
 	}
 
 }

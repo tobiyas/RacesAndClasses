@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.configuration.member.database;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class DBMemberConfig extends MemberConfig {
 
@@ -25,10 +26,10 @@ public class DBMemberConfig extends MemberConfig {
 	/**
 	 * Creates the super class
 	 * 
-	 * @param player to load / create new.
+	 * @param uuid to load / create new.
 	 */
-	protected DBMemberConfig(String player) {
-		super(player, "playerdata." + player + ".config.");
+	protected DBMemberConfig(RaCPlayer player) {
+		super(player, "config.");
 		
 		configList = new MemberConfigList<ConfigOption>();
 		
@@ -54,7 +55,7 @@ public class DBMemberConfig extends MemberConfig {
 		configList.add(displayType);
 		
 		//Add other vars
-		for(DBConfigOption value : plugin.getDatabase().find(DBConfigOption.class).where().ieq("playerName", player).findList()){
+		for(DBConfigOption value : plugin.getDatabase().find(DBConfigOption.class).where().ieq("player", player.getUniqueId().toString()).findList()){
 			if(value == null) continue;
 			
 			if(configList.containsPathName(value.getPath())) continue;
@@ -71,7 +72,7 @@ public class DBMemberConfig extends MemberConfig {
 	 * @param config
 	 */
 	protected DBMemberConfig(MemberConfig config){
-		super(config.getName(), "playerdata." + config.getName() + ".config.");
+		super(config.getPlayer(), "playerdata." + config.getPlayer() + ".config.");
 		
 		configList = new MemberConfigList<ConfigOption>();
 		
@@ -105,14 +106,14 @@ public class DBMemberConfig extends MemberConfig {
 	 * @param player
 	 * @return
 	 */
-	public static DBMemberConfig createMemberConfig(String player){
+	public static DBMemberConfig createMemberConfig(RaCPlayer player){
 		return new DBMemberConfig(player);
 	}
 
 
 
 	/**
-	 * Copies the passed Config and saves it to the DB
+	 * Copies the passed ConfigTotal and saves it to the DB
 	 * 
 	 * @param config
 	 * @return

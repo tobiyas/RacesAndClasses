@@ -27,7 +27,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class PermissionRegisterer implements Runnable{
 
@@ -39,7 +41,7 @@ public class PermissionRegisterer implements Runnable{
 	/**
 	 * The Member config to set the Permissions to
 	 */
-	private final Map<String, AbstractTraitHolder> memberList;
+	private final Map<RaCPlayer, AbstractTraitHolder> memberList;
 	
 	/**
 	 * The prefix of the Permissions
@@ -58,7 +60,7 @@ public class PermissionRegisterer implements Runnable{
 	private static String permissionSpecificPrefix = "";
 	
 	
-	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<String, AbstractTraitHolder> memberList, String typeName){
+	public PermissionRegisterer(Set<AbstractTraitHolder> traitHolderList, Map<RaCPlayer, AbstractTraitHolder> memberList, String typeName){
 		this.traitHolderList = traitHolderList;
 		this.memberList = memberList;
 		this.typeName = typeName;
@@ -105,7 +107,7 @@ public class PermissionRegisterer implements Runnable{
 				//This is VERY inefficient!
 				
 				for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()){
-					vaultPermissions.playerRemoveGroup((String)null, offlinePlayer.getName(), 
+					vaultPermissions.playerRemoveGroup((String)null, offlinePlayer, 
 							permissionSpecificPrefix + groupName);
 				}
 				
@@ -119,7 +121,6 @@ public class PermissionRegisterer implements Runnable{
 	 * Registers the TraitHolders as Group when supported
 	 */
 	private void registerTraitHolders() {
-
 		if(traitHolderList == null || traitHolderList.isEmpty()) return;
 		
 		for(AbstractTraitHolder holder : traitHolderList){
@@ -132,11 +133,10 @@ public class PermissionRegisterer implements Runnable{
 			precreateGroupIfNotExist(groupName);
 			
 			for(String permission : permissions.getPermissions()){
-				
 				if(!vaultPermissions.groupAdd((String)null, permissionSpecificPrefix + groupName, permission)){
 					RacesAndClasses.getPlugin().getDebugLogger().logWarning("Could NOT Register Group: " + permissionSpecificPrefix + groupName 
 							+ " Permission: " + permission + ". Used: " + vaultPermissions.getName());
-				};				
+				};
 			}
 		}
 	}
@@ -166,22 +166,29 @@ public class PermissionRegisterer implements Runnable{
 	private void giveMembersAccessToGroups() {
 		if(memberList == null || memberList.isEmpty()) return;
 		
-		for(String member : memberList.keySet()){
+		for(RaCPlayer member : memberList.keySet()){
 			AbstractTraitHolder holder = memberList.get(member);
 			if(holder == null) continue;
 			
 			String groupName = holder.getPermissions().getGroupIdentificationName();
 			
-			String[] groups = vaultPermissions.getPlayerGroups((String)null, member);
+			String name = member.getName();
+			if(name == null) continue;
+			
+			
+			String[] groups = vaultPermissions.getPlayerGroups((String)null, name);
 			if(groups == null || groups.length == 0) continue;
 			
 			for(String group : groups){
 				if(group.startsWith(permissionSpecificPrefix + typeName)){
-					vaultPermissions.playerRemoveGroup((String) null, member, permissionSpecificPrefix + group);
+					vaultPermissions.playerRemoveGroup((String) null, name, permissionSpecificPrefix + group);
+					RacesAndClasses.getPlugin().getPermissionManager()
+						.removeSubgroup(PlayerUtils.getOfflinePlayer(name), permissionSpecificPrefix + group);
 				}
 			}
 			
-			vaultPermissions.playerAddGroup((String) null, member, permissionSpecificPrefix + groupName);
+			RacesAndClasses.getPlugin().getPermissionManager()
+				.addSubgroup(PlayerUtils.getOfflinePlayer(name), permissionSpecificPrefix + groupName);
 		}
 	}
 
@@ -235,17 +242,17 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from all groups with the passed prefix.
 	 * This only works if Vault is active.
 	 */
-	public static void removePlayer(String player, String prefix) {
+	public static void removePlayer(RaCPlayer player, String prefix) {
 		if(!isVaultActive()) return;
 		
 		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){
-			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player);
+		if(vaultPermissions != null){			
+			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player.getName());
 			if(groupNames == null) return; //nothing to do
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null, player, permissionSpecificPrefix + groupName);
+					vaultPermissions.playerRemoveGroup((String)null,  player.getName(), permissionSpecificPrefix + groupName);						
 				}
 			}
 		}
@@ -256,13 +263,9 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from the group.
 	 * This only works if Vault is active.
 	 */
-	public static void addPlayer(String player, String groupName) {
-		if(!isVaultActive()) return;
-		
-		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){
-			vaultPermissions.playerAddGroup((String) null, player, permissionSpecificPrefix + groupName);
-		}
+	public static void addPlayer(RaCPlayer player, String groupName) {
+		RacesAndClasses.getPlugin().getPermissionManager()
+			.addSubgroup(PlayerUtils.getOfflinePlayer(player.getName()), permissionSpecificPrefix + groupName);
 	}
 
 }

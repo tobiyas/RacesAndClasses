@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.bukkit.entity.EntityType;
@@ -32,8 +31,9 @@ import org.bukkit.metadata.LazyMetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
@@ -44,6 +44,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.items.CreateDropContainer;
 import de.tobiyas.racesandclasses.util.items.DropContainer;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 
 public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait{
 	
@@ -92,7 +93,7 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) {
+	public void setConfiguration(TraitConfiguration configMap) {
 	}
 	
 	
@@ -143,12 +144,13 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 		modifyItems(items, entity);
 		
 		if(Eevent.getEntity().getMetadata(SPAWNER_KEY).isEmpty()) return TraitResults.False();
-		Player killer = entity.getKiller();
+		Player killerTemp = entity.getKiller();
+		RaCPlayer killer = RaCPlayerManager.get().getPlayer(killerTemp);
+		
 		if(killer != null){
 			int expForLevel = (int) (Eevent.getDroppedExp() / 10d);
 			
-			PlayerLevelManager manager = plugin.getPlayerManager().getPlayerLevelManager(killer.getName());
-			manager.addExp(expForLevel);
+			killer.getLevelManager().addExp(expForLevel);
 		}
 		
 		return TraitResults.True();
@@ -187,6 +189,12 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 
 	@Override
 	public boolean isStackable(){
+		return false;
+	}
+	
+
+	@Override
+	public boolean isVisible() {
 		return false;
 	}
 }

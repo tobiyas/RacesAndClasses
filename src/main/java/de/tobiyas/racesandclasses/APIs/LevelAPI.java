@@ -15,100 +15,212 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class LevelAPI {
-
-
-	/**
-	 * Returns the Plugin
-	 * 
-	 * @return the Plugin
-	 */
-	private static RacesAndClasses getPlugin(){
-		return RacesAndClasses.getPlugin();
-	}
 	
 	
 	/**
 	 * Adds a level to the player
 	 * 
-	 * @param playerName to add to 
+	 * @param player to add to 
+	 * @param levelToAdd to add
+	 * 
+	 * @deprecated use {@link #addLevel(Player, int)} instead
+	 */
+	@Deprecated
+	public static void addLevel(String playerName, int levelToAdd){
+		addLevel(Bukkit.getPlayer(playerName), levelToAdd);
+	}
+	
+	/**
+	 * Adds a level to the player
+	 * 
+	 * @param orgPlayer to add to 
 	 * @param levelToAdd to add
 	 */
-	public static void addLevel(String playerName, int levelToAdd){
-		int currentLevel = getCurrentLevel(playerName);
-		int newLevel = currentLevel + levelToAdd;
-		
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(newLevel);
+	public static void addLevel(Player orgPlayer, int levelToAdd){
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(orgPlayer);
+		player.getLevelManager().addLevel(levelToAdd);
 	}
 	
 	
 	/**
 	 * Removes a level from the Player
 	 * 
-	 * @param playerName to remove from
+	 * @param player to remove from
+	 * @param levelToRemove to remove
+	 * 
+	 * @deprecated use #
+	 */
+	@Deprecated
+	public static void removeLevel(String playerName, int levelToRemove){
+		removeLevel(Bukkit.getPlayer(playerName), levelToRemove);
+	}
+	
+	/**
+	 * Removes a level from the Player
+	 * 
+	 * @param player to remove from
 	 * @param levelToRemove to remve
 	 */
-	public static void removeLevel(String playerName, int levelToRemove){
-		int currentLevel = getCurrentLevel(playerName);
-		int newLevel = currentLevel - levelToRemove;
-		if(newLevel < 1) newLevel = 1;
-		
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(newLevel);
+	public static void removeLevel(Player player, int levelToRemove){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().removeLevel(levelToRemove);
 	}
 	
 	
 	/**
 	 * Adds exp to an player
 	 * 
-	 * @param playerName to add to
+	 * @param player to add to
+	 * @param amount to 
+	 * 
+	 * @deprecated use {@link #addExp(Player, double)} instead
+	 */
+	@Deprecated
+	public static void addExp(String playerName, int amount){
+		addExp(Bukkit.getPlayer(playerName), amount);
+	}
+	
+	
+	/**
+	 * Adds exp to an player
+	 * 
+	 * @param player to add to
 	 * @param amount to 
 	 */
-	public static void addExp(String playerName, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).addExp((int)amount);
+	public static void addExp(Player player, int amount){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().addExp(amount);
 	}
 	
 	
 	/**
 	 * Removes the EXP passed from the Player
 	 * 
-	 * @param playerName to remove from
+	 * @param player to remove from
+	 * @param amount to remove
+	 * 
+	 * @deprecated use {@link #removeExp(Player, double)} instead
+	 */
+	@Deprecated
+	public static void removeExp(String playerName, double amount){
+		removeExp(Bukkit.getPlayer(playerName), amount);
+	}
+	
+	/**
+	 * Removes the EXP passed from the Player
+	 * 
+	 * @param player to remove from
 	 * @param amount to remove
 	 */
-	public static void removeExp(String playerName, double amount){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).removeExp((int)amount);
+	public static void removeExp(Player player, double amount){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().removeExp((int)amount);
 	}
 	
 	
 	/**
 	 * Returns the current level of the Player 
 	 * 
-	 * @param playerName to get
+	 * @param player to get
+	 * @return the level of the player
+	 * 
+	 * @deprecated use {@link #getCurrentLevel(Player)} instead
+	 */
+	@Deprecated
+	public static int getCurrentLevel(String playerName){
+		return getCurrentLevel(Bukkit.getPlayer(playerName));
+	}
+	
+	
+	/**
+	 * Returns the current level of the Player 
+	 * 
+	 * @param player to get
 	 * @return the level of the player
 	 */
-	public static int getCurrentLevel(String playerName){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(playerName).getCurrentLevel();
+	public static int getCurrentLevel(Player player){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		return racPlayer.getLevelManager().getCurrentLevel();
 	}
+	
 	
 	/**
 	 * sets the current level of the Player 
 	 * 
-	 * @param playerName to get
+	 * @param player to get
+	 * @param level the level to set
+	 * 
+	 * @deprecated use {@link #setCurrentLevel(Player, int)} instead
+	 */
+	@Deprecated
+	public static void setCurrentLevel(String playerName, int level){
+		setCurrentLevel(Bukkit.getPlayer(playerName), level);
+	}
+	
+	
+	/**
+	 * sets the current level of the Player 
+	 * 
+	 * @param player to get
 	 * @param level the level to set
 	 */
-	public static void setCurrentLevel(String playerName, int level){
-		getPlugin().getPlayerManager().getPlayerLevelManager(playerName).setCurrentLevel(level);
+	public static void setCurrentLevel(Player player, int level){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().setCurrentLevel(level);
 	}
 	
 	/**
 	 * Gets the current exp of the level.
 	 * 
-	 * @param playerName to get from
+	 * @param player to get from
+	 * 
+	 * @return the current exp of the level
+	 * 
+	 * @deprecated use {@link #getCurrentExpOfLevel(Player)} instead
+	 */
+	public static int getCurrentExpOfLevel(String playerName){
+		return getCurrentExpOfLevel(Bukkit.getPlayer(playerName));
+	}
+	
+	/**
+	 * Gets the current exp of the level.
+	 * 
+	 * @param player to get from
 	 * 
 	 * @return the current exp of the level
 	 */
-	public static double getCurrentExpOfLevel(String playerName){
-		return getPlugin().getPlayerManager().getPlayerLevelManager(playerName).getCurrentExpOfLevel();
+	public static int getCurrentExpOfLevel(Player player){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		return racPlayer.getLevelManager().getCurrentExpOfLevel();
+	}
+	
+	/**
+	 * Sets the current exp of the level.
+	 * 
+	 * @param player to get from
+	 * @param exp the current exp of the level
+	 * 
+	 * @deprecated use {@link #getCurrentExpOfLevel(Player)} instead
+	 */
+	public static void setCurrentExpOfLevel(String playerName, int exp){
+		setCurrentExpOfLevel(Bukkit.getPlayer(playerName), exp);
+	}
+	
+	/**
+	 * Gets the current exp of the level.
+	 * 
+	 * @param player to get from
+	 * @param exp the current exp of the level
+	 */
+	public static void setCurrentExpOfLevel(Player player, int exp){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().setCurrentExpOfLevel(exp);
 	}
 }

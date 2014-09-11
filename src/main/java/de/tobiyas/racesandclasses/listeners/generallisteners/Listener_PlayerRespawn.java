@@ -20,6 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class Listener_PlayerRespawn implements Listener{
 
@@ -31,6 +33,7 @@ public class Listener_PlayerRespawn implements Listener{
 	
 	@EventHandler
 	public void resetPlayerMaxHealthAfterDeath(PlayerRespawnEvent event){
-		plugin.getPlayerManager().checkPlayer(event.getPlayer().getName());
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		plugin.getPlayerManager().checkPlayer(racPlayer);
 	}
 }

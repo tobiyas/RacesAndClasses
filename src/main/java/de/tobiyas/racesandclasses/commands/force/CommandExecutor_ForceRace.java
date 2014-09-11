@@ -22,18 +22,18 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exi
 import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_ForceRace implements CommandExecutor {
+public class CommandExecutor_ForceRace extends AbstractCommand {
 
 	/**
 	 * The plugin called stuff upon
@@ -42,16 +42,18 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 	
 	
 	public CommandExecutor_ForceRace() {
+		super("racforcerace");
+		
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racforcerace";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racforcerace";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	@Override
@@ -75,7 +77,8 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 		String playerToChange = args[0];
 		String newRace = args[1];
 		
-		if(Bukkit.getPlayer(playerToChange) == null){
+		RaCPlayer toChange = RaCPlayerManager.get().getPlayer(playerToChange);
+		if(toChange == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", playerToChange);
 			return true;
@@ -88,15 +91,14 @@ public class CommandExecutor_ForceRace implements CommandExecutor {
 			return true;
 		}
 		
-		if(raceManager.getHolderOfPlayer(playerToChange) == raceManager.getDefaultHolder()){
-			raceManager.addPlayerToHolder(playerToChange, newRace, true);
+		if(raceManager.getHolderOfPlayer(toChange) == raceManager.getDefaultHolder()){
+			raceManager.addPlayerToHolder(toChange, newRace, true);
 		}else{
-			raceManager.changePlayerHolder(playerToChange, newRace, true);
+			raceManager.changePlayerHolder(toChange, newRace, true);
 		}
 		
-		Player player = Bukkit.getPlayer(playerToChange);
-		if(player.isOnline()){
-			LanguageAPI.sendTranslatedMessage(player, race_changed_to,
+		if(toChange.isOnline()){
+			LanguageAPI.sendTranslatedMessage(toChange, race_changed_to,
 					"race", newRace);
 		}
 		

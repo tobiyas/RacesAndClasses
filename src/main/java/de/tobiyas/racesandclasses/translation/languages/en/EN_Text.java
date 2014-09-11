@@ -30,6 +30,9 @@ public class EN_Text {
 			
 			//b
 			+ bow_selected_message + ": '&a You have a &dBOW &ain your hand. Use &dLEFT &aClick to change through your arrows. Current arrow: &d%CURRENT_ARROW% &a.'\r\n"
+			+ buff_activated + ": '&a You activated &d%BUFF%&a.'\r\n"
+			+ buff_timeout + ": '&a Buff &d%BUFF% &atimedout.'\r\n"
+			+ buff_used + ": '&a Buff &d%BUFF% &aused.'\r\n"
 			
 			//c
 			+ channel_propertie + ": 'channelPropertie'\r\n"
@@ -39,8 +42,10 @@ public class EN_Text {
 			+ class_changed_to + ": '&cYour Class has been changed to: &d%CLASS%&c.'\r\n"
 			+ class_changed_to_other + ": '&aClass of &d%PLAYER%&a changed to: &d%CLASS%&d.'\r\n"
 			+ cooldown_is_ready_again + ": '&d%TRAIT_NAME% + &ais ready again.'\r\n"
+			+ cooldown_is_ready_in + ": '&cYou still have Cooldown. Ready in &d%TIME%&c.'\r\n"
 			
 			//d
+			+ disabled_region + ": '&cYou may not use any Trait here.'\r\n"
 			
 			//e
 			
@@ -52,6 +57,7 @@ public class EN_Text {
 			//h
 			+ healed + ": '&aYou have been healed.'\r\n"
 			+ healed_other + ": '&aYou have healed: &d%PLAYER%&a.'\r\n"
+			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			
 			//i
 			
@@ -117,6 +123,7 @@ public class EN_Text {
 			+ race_not_exist + ": '&cThe race &d%RACE% &cdoes not exist.'\r\n"
 			+ race_changed_to + ": '&cYour Race has been changed to: &d%RACE%&c.'\r\n"
 			+ race_changed_to_other + ": '&aRace of &d%PLAYER%&a changed to: &d%RACE%&d.'\r\n"
+			+ race_spawn_teleport_success + ": '&aWelcome to the Race Spawn of &d%RACE%&a.'\r\n"
 			+ reload_message + ": '&aReload of &dRaces &adone successfully. Time taken: &d %TIME% &ams'\r\n"
 			
 			//s
@@ -125,6 +132,7 @@ public class EN_Text {
 			+ stun_ended + ": ' &cYou are not stunned any more.'\r\n"
 			+ stun_message + ": ' &cYou are stunned for &d %TIME% &cSeconds.'\r\n"
 			+ stun_still + ": ' &cYou are still stunned for &b%TIME% &cSeconds. You can not %ACTION%.'\r\n"
+			+ stun_success + ": '&aYou stunned &d%TARGET%&a.'\r\n"
 			+ success + ": '&aSuccess.'\r\n"
 			
 

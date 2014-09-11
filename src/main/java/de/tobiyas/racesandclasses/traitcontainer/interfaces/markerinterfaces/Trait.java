@@ -17,13 +17,16 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public interface Trait{
@@ -40,7 +43,7 @@ public interface Trait{
 	/**
 	 * This method is called after creation of the Trait.
 	 * <br>The {@link AbstractTraitHolder} is already set to this time.
-	 * <br>The Config is already set.
+	 * <br>The ConfigTotal is already set.
 	 * <br>
 	 * <br>IMPORTATNT: This method has to be annotated with {@link TraitEventsUsed}
 	 * <br>For Example: @TraitEventsUsed(registerdClasses = {EntityDamageByEntityDoubleEvent.class})
@@ -80,24 +83,24 @@ public interface Trait{
 	 * 
 	 * @param map to set the config with.
 	 * 
-	 * @throws throws an Config Exception if something gone wrong with configuring.
+	 * @throws throws an ConfigTotal Exception if something gone wrong with configuring.
 	 */
-	public void setConfiguration(Map<String, Object> configurationMap) throws TraitConfigurationFailedException;
+	public void setConfiguration(TraitConfiguration configurationMap) throws TraitConfigurationFailedException;
 	
 	
 	/**
-	 * Returns a list of optional Config fields.
+	 * Returns a list of optional ConfigTotal fields.
 	 * 
-	 * @return the List of optional Config Fields.
+	 * @return the List of optional ConfigTotal Fields.
 	 */
 	public List<String> getOptionalConfigFields();
 	
 	/**
-	 * Returns the Config passed in {@link #setConfiguration(Map)}.
+	 * Returns the ConfigTotal passed in {@link #setConfiguration(Map)}.
 	 * 
 	 * @return the map of the config already passed.
 	 */
-	public Map<String, Object> getCurrentconfig();
+	public TraitConfiguration getCurrentconfig();
 	
 	/**
 	 * The general modify that is called, when the event wanted triggered.
@@ -124,14 +127,14 @@ public interface Trait{
 	 * 
 	 * @param abstractTraitHolder
 	 */
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder);
+	public void addTraitHolder(AbstractTraitHolder abstractTraitHolder);
 	
 	
 	/**
-	 * Returns the TraitHolder that this Trait belongs to.
+	 * Returns the TraitHolders that this Trait belongs to.
 	 * @return
 	 */
-	public AbstractTraitHolder getTraitHolder();
+	public Set<AbstractTraitHolder> getTraitHolders();
 
 
 	/**
@@ -164,4 +167,26 @@ public interface Trait{
 	 */
 	public String getDisplayName();
 	
+	/**
+	 * Returns if the Trait is visible.
+	 * 
+	 * @return returns true if visible.
+	 */
+	public boolean isVisible();
+
+
+	/**
+	 * Returns true if the Trait is bindable.
+	 * 
+	 * @return false if not bindable.
+	 */
+	public boolean isBindable();
+	
+	/**
+	 * The Trait gets triggered by the bind action.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public TraitResults triggerOnBind(RaCPlayer player);
 }

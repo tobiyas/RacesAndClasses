@@ -17,27 +17,29 @@ package de.tobiyas.racesandclasses.commands.help;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
-public class CommandExecutor_RacesVersion implements CommandExecutor{
+public class CommandExecutor_RacesVersion extends AbstractCommand{
 	
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RacesVersion(){
+		super("racesversion");
+		
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racesversion";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racesversion";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	@Override

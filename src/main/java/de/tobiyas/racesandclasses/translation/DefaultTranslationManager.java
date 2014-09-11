@@ -50,11 +50,6 @@ public class DefaultTranslationManager implements TranslationManager {
 		= Arrays.asList(new YAMLConfigExtended().loadSafeFromString(EN_Text.en_language));
 	
 	
-	/**
-	 * Files of the language
-	 */
-	
-	
 	
 	/**
 	 * Reads recursively all .yml files from the
@@ -100,7 +95,7 @@ public class DefaultTranslationManager implements TranslationManager {
 	private static String readFromYAMLList(List<YAMLConfigExtended> configList, String tag){
 		for(YAMLConfigExtended config : configList){
 			if(config.contains(tag)){
-				return String.valueOf(config.get(tag));
+				return config.getString(tag);
 			}
 		}
 		

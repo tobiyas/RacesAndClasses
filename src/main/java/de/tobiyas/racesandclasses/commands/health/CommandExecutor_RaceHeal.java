@@ -22,33 +22,35 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players
 import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_RaceHeal implements CommandExecutor {
+public class CommandExecutor_RaceHeal extends AbstractCommand {
 	
 	private RacesAndClasses plugin;
 	
 	
 	public CommandExecutor_RaceHeal(){
+		super("raceheal", new String[]{"rh", "rheal"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "raceheal";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "raceheal";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	
 	
@@ -84,11 +86,12 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 		if(plugin.getPermissionManager().checkPermissions(sender, PermissionNode.healSelf)){
 			if(sender instanceof Player){
 				Player player = (Player) sender;
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 				
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
 				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
 				
-				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
+				racPlayer.getManaManager().fillMana(10000);
 				
 				LanguageAPI.sendTranslatedMessage(sender, healed);
 			}else{
@@ -107,18 +110,18 @@ public class CommandExecutor_RaceHeal implements CommandExecutor {
 	 */
 	private void healOther(CommandSender sender, String otherName){
 		if(plugin.getPermissionManager().checkPermissions(sender, PermissionNode.healOther)){
-			Player other = Bukkit.getPlayer(otherName);
-			if(other != null && other.isOnline()){
+			RaCPlayer otherRaCPlayer = RaCPlayerManager.get().getPlayer(otherName);
+			if(otherRaCPlayer != null && otherRaCPlayer.isOnline()){
 				Player player = (Player) sender;
-				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(player);
-				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, player);
+				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(otherRaCPlayer.getPlayer());
+				CompatibilityModifier.BukkitPlayer.safeSetHealth(maxHealth, otherRaCPlayer.getPlayer());
 				
-				plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getManaManager().fillMana(10000);
+				otherRaCPlayer.getManaManager().fillMana(10000);
 				
 				LanguageAPI.sendTranslatedMessage(sender, healed_other,
-						"player", other.getName());
+						"player", otherRaCPlayer.getName());
 				
-				LanguageAPI.sendTranslatedMessage(other, healed_by,
+				LanguageAPI.sendTranslatedMessage(otherRaCPlayer, healed_by,
 						"player", player.getName());
 			}else{
 				LanguageAPI.sendTranslatedMessage(sender, player_not_exist,

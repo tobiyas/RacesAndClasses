@@ -17,6 +17,12 @@ package de.tobiyas.racesandclasses.APIs;
 
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
@@ -26,17 +32,51 @@ public class TraitAPI {
 	 * Checks if the player has the Trait with the following Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
+	 * @param traitName to check
+	 * 
+	 * @return true if has the Trait.
+	 * 
+	 * @deprecated use {@link #hasTrait(OfflinePlayer, String)} instead
+	 */
+	@Deprecated
+	public static boolean hasTrait(String playerName, String traitName){
+		return hasTrait(Bukkit.getPlayer(playerName), traitName);
+	}
+
+	
+	/**
+	 * Checks if the player has the Trait with the following Display Name.
+	 * <br>If false, plugin is not found or the Player does not have the Trait.
+	 * 
+	 * @param player to check
+	 * @param displayName to check
+	 * 
+	 * @return true if has the Trait.
+	 * 
+	 * @deprecated use {@link #hasTraitWithDisplayName(OfflinePlayer, String)} instead
+	 */
+	@Deprecated
+	public static boolean hasTraitWithDisplayName(String playerName, String displayName){
+		return hasTraitWithDisplayName(Bukkit.getPlayer(playerName), displayName);
+	}
+	
+	/**
+	 * Checks if the player has the Trait with the following Name.
+	 * <br>If false, plugin is not found or the Player does not have the Trait.
+	 * 
+	 * @param player to check
 	 * @param traitName to check
 	 * 
 	 * @return true if has the Trait.
 	 */
-	public static boolean hasTrait(String playerName, String traitName){
-		if(playerName == null || traitName == null) return false;
+	public static boolean hasTrait(Player player, String traitName){
+		if(player == null || traitName == null) return false;
 		traitName = traitName.replace(" ", "");
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(playerName);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			
@@ -50,22 +90,23 @@ public class TraitAPI {
 			return false;
 		}catch(Throwable exp){ return false; }
 	}
-
+	
 	
 	/**
 	 * Checks if the player has the Trait with the following Display Name.
 	 * <br>If false, plugin is not found or the Player does not have the Trait.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @param displayName to check
 	 * 
 	 * @return true if has the Trait.
 	 */
-	public static boolean hasTraitWithDisplayName(String playerName, String displayName){
-		if(playerName == null || displayName == null) return false;
+	public static boolean hasTraitWithDisplayName(Player player, String displayName){
+		if(player == null || displayName == null) return false;
 		
 		try{
-			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(playerName);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 			//no traits -> doesn't have Trait.
 			if(traits == null || traits.isEmpty()) return false;
 			

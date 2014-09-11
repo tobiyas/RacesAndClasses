@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>RacesAndClasses</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<name>RacesAndClasses</name>
 	<description>Races and Classes plugin for Craftbukkit</description>
 
@@ -27,7 +27,7 @@
 		<powermock.version>1.4.12</powermock.version>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>RaC</utilsAddition>
-		<bukkit.version>1.7.5-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.7.10-R0.1-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->
@@ -37,12 +37,29 @@
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 
-		<!-- Vault repo -->
+		<!-- Heroes repo -->
 		<repository>
-			<id>vault-repo</id>
+			<id>heroes-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
 
+		<!-- Vault Repo -->
+		<repository>
+			<id>vault-repo</id>
+			<url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+		</repository>
+
+		<!-- Own repo -->
+		<repository>
+			<id>tobiyas-repo</id>
+			<url>http://repository-tobiyas.forge.cloudbees.com/snapshot/</url>
+		</repository>
+
+		<!-- SK Repo -->
+		<repository>
+			<id>sk89q</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
 	</repositories>
 
 	<!-- Depends -->
@@ -54,20 +71,15 @@
 			<version>${utilsVersion}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-			<optional>false</optional>
-		</dependency>
-
+		<!-- Since we have disabled tests for now, we don't need this dependency at the moment.
 		<dependency>
 			<groupId>de.tobiyas</groupId>
 			<artifactId>Mockit-Test-Gen</artifactId>
 			<version>1.0.1</version>
 			<scope>test</scope>
 		</dependency>
-
+		-->
+		
 		<!-- Depends from Repos -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
@@ -78,11 +90,22 @@
 
 		<!-- Vault depends for Permissions -->
 		<dependency>
-			<groupId>net.milkbowl</groupId>
-			<artifactId>vault</artifactId>
-			<version>1.2.27</version>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.4</version>
+			<optional>true</optional>
 		</dependency>
 
+		
+		<!-- WorldGuard -->
+		<dependency>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldguard</artifactId>
+			<version>5.9.1-SNAPSHOT</version>
+			<optional>true</optional>
+		</dependency>
+
+				
 		<!-- Local depends -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -97,9 +120,28 @@
            <artifactId>HeroChat</artifactId>
            <version>1.0</version>
            <scope>system</scope>
-           <systemPath>${basedir}/libs/Chat/Herochat.jar</systemPath>
+           <systemPath>${project.basedir}/libs/Chat/HeroChat.jar</systemPath>
+        </dependency>
+		
+		<!-- Heroes -->
+		<dependency>
+           <groupId>com.dthielke</groupId>
+           <artifactId>Heroes</artifactId>
+           <version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${project.basedir}/libs/Misc/Heroes.jar</systemPath>
         </dependency>
 
+		
+		<!-- McMMO -->
+		<dependency>
+			<groupId>com.gmail.nossr50.mcMMO</groupId>
+    		<artifactId>mcMMO</artifactId>
+    		<version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${project.basedir}/libs/Misc/mcMMO.jar</systemPath>
+		</dependency>
+				
 		<!-- Mockito -->
 		<dependency>
 			<groupId>org.powermock</groupId>
@@ -114,14 +156,16 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Group Manager -->
 		<dependency>
 			<groupId>org.anjocaido</groupId>
 			<artifactId>groupmanager</artifactId>
 			<scope>system</scope>
 			<version>1.9.60</version>
-			<systemPath>${basedir}\libs\Permissions\EssentialsGroupManager.jar</systemPath>
+			<systemPath>${project.basedir}/libs/Permissions/EssentialsGroupManager.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
+		
 		
 		<!-- Skill API -->
 		<dependency>
@@ -129,17 +173,48 @@
 			<artifactId>skill</artifactId>
 			<version>1</version>
 			<scope>system</scope>
-			<systemPath>${basedir}\..\Libaries\SkillAPI.jar</systemPath>
+			<systemPath>${project.basedir}/libs/Misc/SkillAPI.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- MCCore -->
+		<dependency>
+			<groupId>com.sucy</groupId>
+			<artifactId>mccore</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Misc/MCCore.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Magic Spells -->
+		<dependency>
+		    <groupId>com.nisovin</groupId>
+		    <artifactId>magicspells</artifactId>
+		    <version>3.2</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/Misc/MagicSpells.jar</systemPath>
+		    <optional>true</optional>
+		</dependency>
+
+		<!-- Towny Chat -->
+		<dependency>
+		    <groupId>com.palmergames.bukkit</groupId>
+		    <artifactId>TownyChat</artifactId>
+		    <version>0.40</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/Chat/TownyChat.jar</systemPath>
+		    <optional>true</optional>
+		</dependency>
+		
 	</dependencies>
 
 	<!-- BUILDING -->
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<!-- Remove Tests for the Moment -->
+		<!-- <testSourceDirectory>src/test/java</testSourceDirectory> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -155,7 +230,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -166,7 +241,6 @@
 							<artifactSet>
 								<includes>
 									<include>de.tobiyas:Utils</include>
-									<include>commons-io:commons-io</include>
 								</includes>
 							</artifactSet>
 
@@ -175,10 +249,6 @@
 								<relocation>
 									<pattern>de.tobiyas.util</pattern>
 									<shadedPattern>de.tobiyas.util.v${utilsVersion}${utilsAddition}</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.commons.io</pattern>
-									<shadedPattern>de.tobiyas.util.apache.commons.io</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

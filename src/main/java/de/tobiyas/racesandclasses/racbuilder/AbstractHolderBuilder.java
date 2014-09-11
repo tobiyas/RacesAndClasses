@@ -18,14 +18,13 @@ package de.tobiyas.racesandclasses.racbuilder;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractHolderBuilder {
@@ -99,11 +98,11 @@ public abstract class AbstractHolderBuilder {
 	/**
 	 * Reads the Values of the Holder passed and sets the values wanted.
 	 * 
-	 * @param holder
+	 * @param holders
 	 */
 	public AbstractHolderBuilder(AbstractTraitHolder holder) {
-		this.name = holder.getName();
-		this.holderTag = ChatColorUtils.encodeColors(holder.getTag());
+		this.name = holder.getDisplayName();
+		this.holderTag = holder.getTag();
 		this.armorPermission = holder.getArmorPermsAsBoolArray();
 		
 		this.traitSet = holder.getVisibleTraits();
@@ -152,7 +151,7 @@ public abstract class AbstractHolderBuilder {
 	 * @param configuration that satisfied the configuration of the Trait.
 	 * @return true if worked, false if not.
 	 */
-	public boolean addTrait(String traitName, Map<String, Object> configuration){
+	public boolean addTrait(String traitName, TraitConfiguration configuration){
 		if(containsTrait(traitName)) removeTrait(traitName);
 		
 		try{
@@ -455,7 +454,7 @@ public abstract class AbstractHolderBuilder {
 
 
 	/**
-	 * Returns the Config of the holder type
+	 * Returns the ConfigTotal of the holders type
 	 * @return
 	 */
 	protected abstract YAMLConfigExtended getHolderYAMLFile();

@@ -18,6 +18,8 @@ package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+
 public class PlayerLostEXPEvent extends LevelEvent implements Cancellable{
 
 private final static HandlerList handlers = new HandlerList();
@@ -39,10 +41,10 @@ private final static HandlerList handlers = new HandlerList();
 	 * Creates the Event with the Player loses the EXP
 	 * and the EXP lost.
 	 * 
-	 * @param player
+	 * @param offlinePlayer
 	 * @param exp
 	 */
-	public PlayerLostEXPEvent(String player, int exp) {
+	public PlayerLostEXPEvent(RaCPlayer player, int exp) {
 		super(player);
 		
 		this.exp = exp;

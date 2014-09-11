@@ -16,15 +16,14 @@
 package de.tobiyas.racesandclasses.eventprocessing.events.traittrigger;
 
 import org.bukkit.World;
-import org.bukkit.event.Cancellable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
-public class TraitTriggerEvent extends Event implements Cancellable{
-	
-	private boolean isCancled = false;
+public class TraitTriggerEvent extends Event {
 	
 	/**
 	 * Some strange list. Whatever it tells...
@@ -42,6 +41,11 @@ public class TraitTriggerEvent extends Event implements Cancellable{
 	 */
 	protected final Trait trait;
 	
+	/**
+	 * The Player that triggered the Event.
+	 */
+	protected final Player player;
+	
 	
 	/**
 	 * This is a custom event fired when a Trait is triggered.
@@ -50,9 +54,22 @@ public class TraitTriggerEvent extends Event implements Cancellable{
 	 * 
 	 * @param world
 	 */
-	public TraitTriggerEvent(Trait trait, World world) {
+	public TraitTriggerEvent(Player player, Trait trait, World world) {
 		this.trait = trait;
 		this.world = world;
+		this.player = player;
+	}
+	
+	
+	/**
+	 * Builds this from a event wrapper.
+	 * 
+	 * @param wrapper to build from
+	 */
+	public TraitTriggerEvent(EventWrapper wrapper, Trait trait){
+		this.trait = trait;
+		this.player = wrapper.getPlayer().getPlayer();
+		this.world = wrapper.getWorld();
 	}
 	    
 
@@ -65,16 +82,10 @@ public class TraitTriggerEvent extends Event implements Cancellable{
 	}
 	
 
-	@Override
-	public boolean isCancelled() {
-		return isCancled;
+	public Player getPlayer() {
+		return player;
 	}
 
-	@Override
-	public void setCancelled(boolean cancel) {
-		isCancled = cancel;		
-	}
-	
 	
 	//needed for custom events.
 	@Override

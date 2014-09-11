@@ -23,31 +23,52 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.ModifierFactory;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.TraitSituationModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
+import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 
 public abstract class AbstractBasicTrait implements Trait,
 		TraitWithRestrictions {
 
+	
+	
+	/**
+	 * The Path to modifiers depending on the levels.
+	 */
+	public static final String MODIFIERS_PATH = "modifiers";	
+
+	/**
+	 * On Cast Particles
+	 */
+	public static final String ON_USE_PARTICLES_PATH = "onUseParticles";	
+	
+	
 	/**
 	 * The plugin to call stuff on.
 	 */
@@ -151,15 +172,19 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected long minUplinkShowTime = 3; 
 		
 	/**
-	 * This disables the Uplink notice.
+	 * This disables the Cooldown notice.
 	 */
-	protected boolean disableUplinkNotice = false; 
-	
+	protected boolean disableCooldownNotice = false;
 	
 	/**
 	 * Tells the Trait can be activated only on certain blocks.
 	 */
 	protected final List<Material> onlyOnBlocks = new LinkedList<Material>();
+	
+	/**
+	 * Tells the Trait can NOT activated be activated on certain blocks.
+	 */
+	protected final List<Material> notOnBlocks = new LinkedList<Material>();
 	
 	/**
 	 * Tells the Trait can be activated while the player sneaks.
@@ -170,6 +195,11 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * Tells the Trait can be activated while the player does NOT sneaks.
 	 */
 	protected boolean onlyWhileNotSneaking = false;
+
+	/**
+	 * The needed Permission for the skill
+	 */
+	protected String neededPermission = "";
 	
 
 	/**
@@ -177,33 +207,47 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected String traitDiscription = "";
 	
+	/**
+	 * If the Trait is visible.
+	 */
+	protected boolean visible = true;
 	
 	
 	/**
-	 * The holder of the Trait.
+	 * The holders of the Trait.
 	 */
-	protected AbstractTraitHolder holder;
+	protected final Set<AbstractTraitHolder> holders = new HashSet<AbstractTraitHolder>();
 	
 	
 	/**
-	 * The Config of the Trait
+	 * The ConfigTotal of the Trait
 	 */
-	protected Map<String, Object> currentConfig;
+	protected TraitConfiguration currentConfig;
+	
+	/**
+	 * The Particle Effect to show on cast
+	 */
+	protected ParticleEffects onUseParticles = ParticleEffects.SPELL;
 	
 	/**
 	 * The map of Uplink that can be notified.
 	 */
 	protected final HashMap<String,Long> uplinkNotifyList = new HashMap<String, Long>();
 	
+	/**
+	 * The Modifiers to use.
+	 */
+	protected final Set<TraitSituationModifier> modifiers = new HashSet<TraitSituationModifier>();
+	
 
 	@Override
-	public void setTraitHolder(AbstractTraitHolder abstractTraitHolder) {
-		this.holder = abstractTraitHolder;
+	public void addTraitHolder(AbstractTraitHolder abstractTraitHolder) {
+		this.holders.add(abstractTraitHolder);
 	}
 
 	@Override
-	public AbstractTraitHolder getTraitHolder() {
-		return holder;
+	public Set<AbstractTraitHolder> getTraitHolders() {
+		return holders;
 	}
 
 	
@@ -229,13 +273,27 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = BELOW_ELEVATION_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISPLAY_NAME_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = DESCRIPTION_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = NEEDED_PERMISSION_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = MIN_UPLINK_SHOW_PATH, classToExpect = Integer.class, optional = true),
-		@TraitConfigurationField(fieldName = DISABLE_UPLINK_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = DISABLE_COOLDOWN_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = MODIFIERS_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
 	})
 	
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) throws TraitConfigurationFailedException {
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
+		
+		//If a permission is needed
+		if(configMap.containsKey(TraitWithRestrictions.NEEDED_PERMISSION_PATH)){
+			this.neededPermission = configMap.getAsString(TraitWithRestrictions.NEEDED_PERMISSION_PATH);
+		}
+		
+		//checks if the Trait is visible.
+		if(configMap.containsKey(TraitWithRestrictions.VISIBLE_PATH)){
+			this.visible = configMap.getAsBool(TraitWithRestrictions.VISIBLE_PATH);
+		}
+		if(!TraitVisible.isVisible(this)) this.visible = false;
 		
 		//Gets the Cooldown of the Trait.
 		if(configMap.containsKey(TraitWithRestrictions.COOLDOWN_TIME_PATH)){
@@ -255,6 +313,11 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Reads the max level for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.MAX_LEVEL_PATH)){
 			this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
+		}
+		
+		//Reads the Particle Effect on Cast
+		if(configMap.containsKey(ON_USE_PARTICLES_PATH)){
+			this.onUseParticles = configMap.getAsParticle(ON_USE_PARTICLES_PATH);
 		}
 		
 		//Reads the only after damage value
@@ -320,6 +383,36 @@ public abstract class AbstractBasicTrait implements Trait,
 					
 					if(type != null){
 						onlyOnBlocks.add(type);
+					}
+				}
+			}catch(Exception exp){}
+		}
+
+		//Reads the blocks for the trait if present
+		if(configMap.containsKey(TraitWithRestrictions.NOT_ON_BLOCK_PATH)){
+			try{
+				@SuppressWarnings("unchecked")
+				List<String> stringBlocks = (List<String>) configMap.get(TraitWithRestrictions.NOT_ON_BLOCK_PATH);
+				this.notOnBlocks.clear();
+				
+				for(String block : stringBlocks){
+					block = block.toUpperCase();
+					Material type =  null;
+					//try String parsing
+					try{
+						type = Material.valueOf(block);
+					}catch(IllegalArgumentException exp){}
+					
+					//try id parsing
+					if(type == null){
+						try{
+							int id = Integer.parseInt(block);
+							type = Material.getMaterial(id);
+						}catch(NumberFormatException exp){}
+					}
+					
+					if(type != null){
+						notOnBlocks.add(type);
 					}
 				}
 			}catch(Exception exp){}
@@ -394,14 +487,97 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//disable uplink Notice.
-		if(configMap.containsKey(TraitWithRestrictions.DISABLE_UPLINK_NOTICE_PATH)){
-			this.disableUplinkNotice = (Boolean) configMap.get(TraitWithRestrictions.DISABLE_UPLINK_NOTICE_PATH);
+		if(configMap.containsKey(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH)){
+			this.disableCooldownNotice = (Boolean) configMap.get(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH);
 		}
+		
+		//read modifiers Path.
+		if(configMap.containsKey(MODIFIERS_PATH)){
+			List<String> mods = configMap.getAsStringList(MODIFIERS_PATH);
+			if(!mods.isEmpty()){
+				for(String toParse : mods){
+					TraitSituationModifier mod = ModifierFactory.generate(toParse);
+					
+					//Give a debug message for wrongly entered mod.
+					if(mod == null){
+						String holders = "";
+						for(AbstractTraitHolder holder : getTraitHolders()) holders += " " + holder.getDisplayName();
+						String message = "Modifier: '" + toParse + "' of Trait: '" + getDisplayName() 
+								+ "' from Holders: '" + holders + "' could not be parsed!";
+						
+						plugin.logWarning(message);
+					}
+					
+					if(mod != null) modifiers.add(mod);
+				}
+			}
+			
+		}
+	}
+	
+	
+	/**
+	 * Modifies the Value passed to the Level Mod.
+	 * 
+	 * @param player to check
+	 * @param value to modify
+	 * 
+	 * @return the modified value
+	 */
+	protected double modifyToPlayer(RaCPlayer player, double value){
+		if(player == null) return value;
+		if(modifiers.isEmpty()) return value;
+
+		for(TraitSituationModifier mod : modifiers){
+			if(mod.canBeApplied(player)) value = mod.apply(value);
+		}
+		
+		return value;
+	}
+	
+
+	/**
+	 * Modifies the Value passed to the Level Mod.
+	 * 
+	 * @param player to check
+	 * @param value to modify
+	 * 
+	 * @return the modified value
+	 */
+	protected int modifyToPlayer(RaCPlayer player, int value){
+		if(player == null) return value;
+		if(modifiers.isEmpty()) return value;
+		
+		for(TraitSituationModifier mod : modifiers){
+			if(mod.canBeApplied(player)) value = mod.apply(value);
+		}
+		
+		return value;
+	}
+	
+	/**
+	 * Modifies the Value passed to the Level Mod.
+	 * 
+	 * @param player to check
+	 * @param value to modify
+	 * 
+	 * @return the modified value
+	 */
+	protected double getModValue(RaCPlayer player){
+		if(player == null) return 1;
+		if(modifiers.isEmpty()) return 1;
+		
+		double value = 1;
+		for(TraitSituationModifier mod : modifiers){
+			if(mod.canBeApplied(player)) value = mod.apply(value);
+		}
+		
+		return value;
 	}
 	
 
 	@Override
-	public Map<String, Object> getCurrentconfig(){
+	public TraitConfiguration getCurrentconfig(){
 		return currentConfig;
 	}
 	
@@ -450,69 +626,97 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	@Override
 	public boolean checkRestrictions(EventWrapper wrapper) {
-		Player player = wrapper.getPlayer();
+		RaCPlayer player = wrapper.getPlayer();
 		if(player == null) return true;
 		
+		//players not online will most likely fail everything.
+		if(!player.isOnline()) return false;
+		
 		String playerName = player.getName();
-		int playerLevel = plugin.getPlayerManager().getPlayerLevelManager(playerName).getCurrentLevel();
+		
+		//check for Level-Range
+		int playerLevel = player.getLevelManager().getCurrentLevel();
 		if(playerLevel < minimumLevel || playerLevel > maximumLevel) return false;
 		
-		Biome currentBiome = player.getLocation().getBlock().getBiome();
+		//Save some generic Block infos.
+		Location playerLocation = player.getPlayer().getLocation();
+		Block feetBlock = playerLocation.getBlock();
+		Block locBlock = feetBlock.getRelative(BlockFace.DOWN);
+		
+		Material feetType = feetBlock.getType();
+		Material belowFeetType = locBlock.getType();
+
+		//check for allowed Biomes
+		Biome currentBiome = locBlock.getBiome();
 		if(!biomes.contains(currentBiome)) return false;
 		
 		//Check if player is in water
 		if(onlyInWater){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			
-			if(feetblock.getType() != Material.WATER && feetblock.getType() != Material.STATIONARY_WATER){
+			if(feetType != Material.WATER && feetType != Material.STATIONARY_WATER){
+				triggerButHasRestriction(TraitRestriction.OnlyInWater, wrapper);
 				return false;
 			}
 		}
 
 		//Sneaking
 		if(onlyWhileSneaking){
-			if(!player.isSneaking()) return false;
+			if(!player.getPlayer().isSneaking()) {
+				triggerButHasRestriction(TraitRestriction.OnlyWhileSneaking, wrapper);
+				return false;
+			}
 		}
 		
 		//Not sneaking
 		if(onlyWhileNotSneaking){
-			if(player.isSneaking()) return false;
+			if(player.getPlayer().isSneaking()) {
+				triggerButHasRestriction(TraitRestriction.OnlyWhileNotSneaking, wrapper);
+				return false;
+			}
 		}
 		
 		//check if player is on land
 		if(onlyOnLand){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			if(feetblock.getType() == Material.WATER || feetblock.getType() == Material.STATIONARY_WATER){
+			if(feetType == Material.WATER || feetType == Material.STATIONARY_WATER){
+				triggerButHasRestriction(TraitRestriction.OnlyOnLand, wrapper);
+				return false;
+			}
+		}
+		
+		//check permission
+		if(!neededPermission.isEmpty()){
+			if(!plugin.getPermissionManager().checkPermissionsSilent(wrapper.getPlayer().getPlayer(), neededPermission)){
+				triggerButHasRestriction(TraitRestriction.NeededPermission, wrapper);
 				return false;
 			}
 		}
 		
 		//check if player is in lava
 		if(onlyInLava){
-			Block feetblock = player.getLocation().getBlock().getRelative(BlockFace.UP);
-			
-			if(feetblock.getType() != Material.LAVA && feetblock.getType() != Material.STATIONARY_LAVA){
+			if(feetType != Material.LAVA && feetType != Material.STATIONARY_LAVA){
+				triggerButHasRestriction(TraitRestriction.OnlyInLava, wrapper);
 				return false;
 			}
 		}
 
 		//check if player is on Snow
 		if(onlyOnSnow){
-			Block feetblock = player.getLocation().getBlock();
-			
-			if(!(feetblock.getType() == Material.SNOW || feetblock.getType() == Material.SNOW_BLOCK)){
+			if(!(feetType == Material.SNOW || feetType == Material.SNOW_BLOCK
+					|| belowFeetType == Material.SNOW || belowFeetType == Material.SNOW_BLOCK)){
+				triggerButHasRestriction(TraitRestriction.OnlyOnSnow, wrapper);
 				return false;
 			}
 		}
 		
 		//check if player is in Rain
 		if(onlyInRain){
-			if(!player.getWorld().hasStorm()) return false;
-			Block feetblock = player.getLocation().getBlock();
-			int ownY = feetblock.getY();
-			int highestY = feetblock.getWorld().getHighestBlockYAt(feetblock.getX(), feetblock.getZ());
+			if(!wrapper.getWorld().hasStorm()) return false;
+			int ownY = feetBlock.getY();
+			int highestY = feetBlock.getWorld().getHighestBlockYAt(feetBlock.getX(), feetBlock.getZ());
 			//This means having a roof over oneself
-			if(ownY != highestY) return false;
+			if(ownY != highestY) {
+				triggerButHasRestriction(TraitRestriction.OnlyInRain, wrapper);
+				return false;
+			}
 		}
 		
 		
@@ -521,7 +725,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			boolean found = false;
 			for(Material mat : wearing){
 				found = false;
-				for(ItemStack item : player.getInventory().getArmorContents()){
+				for(ItemStack item : player.getPlayer().getInventory().getArmorContents()){
 					if(item == null) continue;
 					
 					if(mat == item.getType()){
@@ -530,91 +734,141 @@ public abstract class AbstractBasicTrait implements Trait,
 					}
 				}
 				
-				if(!found) return false;
+				if(!found) {
+					triggerButHasRestriction(TraitRestriction.Wearing, wrapper);
+					return false;
+				}
 			}
 		}
 		
 		//check above elevation
 		if(aboveElevation != Integer.MIN_VALUE){
-			Block feetblock = player.getLocation().getBlock();
-			if(feetblock.getY() <= aboveElevation) return false;
+			if(feetBlock.getY() <= aboveElevation) {
+				triggerButHasRestriction(TraitRestriction.AboveLevitation, wrapper);
+				return false;
+			}
 		}
 
 		//check below elevation
 		if(belowElevation != Integer.MAX_VALUE){
-			Block feetblock = player.getLocation().getBlock();
-			if(feetblock.getY() >= belowElevation) return false;
+			if(feetBlock.getY() >= belowElevation) {
+				triggerButHasRestriction(TraitRestriction.BelowLevitation, wrapper);
+				return false;
+			}
 		}
 
 		//check onlyAfterDamaged
 		if(onlyAfterDamaged > 0){
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
-			if(lastDamage > onlyAfterDamaged) return false;
+			if(lastDamage > onlyAfterDamaged) {
+				triggerButHasRestriction(TraitRestriction.OnlyAfterDamage, wrapper);
+				return false;
+			}
 		}
 		
 		//check onlyAfterDamaged
 		if(onlyAfterNotDamaged > 0){
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
-			if(onlyAfterNotDamaged > lastDamage) return false;
+			if(onlyAfterNotDamaged > lastDamage) {
+				triggerButHasRestriction(TraitRestriction.OnlyAfterNotDamage, wrapper);
+				return false;
+			}
 		}
 		
 		//check blocks on
 		if(!onlyOnBlocks.isEmpty()){
-			Block feetblock = player.getLocation().getBlock();
-			Block belowFeetBlock = feetblock.getRelative(BlockFace.DOWN);
-			
-			if(!onlyOnBlocks.contains(belowFeetBlock.getType())) return false;
+			if(!onlyOnBlocks.contains(belowFeetType)) {
+				triggerButHasRestriction(TraitRestriction.OnlyOnBlock, wrapper);
+				return false;
+			}
+		}
+
+		//check blocks on
+		if(!notOnBlocks.isEmpty()){
+			if(notOnBlocks.contains(belowFeetType)) {
+				triggerButHasRestriction(TraitRestriction.NotOnBlock, wrapper);
+				return false;
+			}
 		}
 		
 		//check cooldown
-		String cooldownName = "trait." + getDisplayName();
-		int playerUplinkTime = plugin.getCooldownManager().stillHasCooldown(playerName, cooldownName);
-		
-		if(playerUplinkTime > 0){
-			if(!triggerButHasUplink(wrapper)){
-				if(notifyTriggeredUplinkTime(wrapper)){
-					//if notices are disabled, we don't need to do anything here.
-					if(disableUplinkNotice) return false;
-					
-					//we still check to not spam players.
-					long lastNotified = uplinkNotifyList.containsKey(playerName)
-							? uplinkNotifyList.get(playerName)
-							: 0;
-					
-					long maxTime = minUplinkShowTime * 1000;		
-							
-					if(new Date().after(new Date(lastNotified + maxTime))){
-						LanguageAPI.sendTranslatedMessage(player, trait_cooldown, 
-								"seconds", String.valueOf(playerUplinkTime),
-								"name", getDisplayName());
-						uplinkNotifyList.put(playerName, new Date().getTime());
+		//only check if the Trait really HAS cooldown!
+		if(cooldownTime > 0){
+			String cooldownName = "trait." + getDisplayName();
+			int playerUplinkTime = CooldownApi.getCooldownOfPlayer(playerName, cooldownName);
+			
+			if(playerUplinkTime > 0){
+				if(!triggerButHasUplink(wrapper)){
+					triggerButHasRestriction(TraitRestriction.Cooldown, wrapper);
+					if(notifyTriggeredUplinkTime(wrapper)){
+						//if notices are disabled, we don't need to do anything here.
+						if(disableCooldownNotice) return false;
+						
+						//we still check to not spam players.
+						long lastNotified = uplinkNotifyList.containsKey(playerName)
+								? uplinkNotifyList.get(playerName)
+								: 0;
+						
+						long maxTime = minUplinkShowTime * 1000;		
+								
+						if(new Date().after(new Date(lastNotified + maxTime))){
+							LanguageAPI.sendTranslatedMessage(player.getPlayer(), trait_cooldown, 
+									"seconds", String.valueOf(playerUplinkTime),
+									"name", getDisplayName());
+							uplinkNotifyList.put(playerName, new Date().getTime());
+						}
 					}
 				}
+				
+				return false;
 			}
-			
-			return false;
 		}
 		
 		//Only check if we really need. Otherwise we would use resources we don't need
 		if(onlyOnDay || onlyInNight){
 			//Daytime check
-			int hour = ((int) (player.getWorld().getTime() / 1000l) + 8) % 24;
+			int hour = ((int) (wrapper.getWorld().getTime() / 1000l) + 8) % 24;
 			boolean isNight = hour > 18 || hour < 6;
 			boolean isDay = hour > 6 && hour < 18;
 			
 			//Check day
 			if(onlyOnDay && isNight && !onlyInNight){
+				triggerButHasRestriction(TraitRestriction.OnlyOnDay, wrapper);
 				return false;
 			}
 			
 			//Check night
 			if(onlyInNight && isDay && !onlyOnDay){
+				triggerButHasRestriction(TraitRestriction.OnlyInNight, wrapper);
 				return false;
 			}
 		}
 		
+		//check for further restrictions.
+		TraitRestriction furtherRestriction = checkForFurtherRestrictions(wrapper);
+		if(furtherRestriction != null){
+			triggerButHasRestriction(furtherRestriction, wrapper);
+			return true;
+		}
+		
 		return true;
 	}
+	
+	
+	/**
+	 * This is ment to be overritten.
+	 * This is called AFTER all other restrictions are Checked.
+	 * If any TraitRestriction is passed, the Trait may NOT be used.
+	 * If null is returned, no restrictions is met.
+	 * 
+	 * @param wrapper to evaluate.
+	 * 
+	 * @return a {@link TraitRestriction} if present or null if not.
+	 */
+	protected TraitRestriction checkForFurtherRestrictions(EventWrapper wrapper){
+		return null;
+	}
+	
 	
 	@Override
 	public boolean isStackable(){
@@ -650,5 +904,55 @@ public abstract class AbstractBasicTrait implements Trait,
 		return displayName == null ? getName() : displayName;
 	}
 
+	@Override
+	public boolean isInLevelRange(int level) {
+		if(level < minimumLevel) return false;
+		if(level > maximumLevel) return false;
+		
+		return true;
+	}
 	
+	@Override
+	public boolean isVisible(){
+		return visible;
+	}
+	
+	@Override
+	public void triggerButHasRestriction(TraitRestriction restriction, EventWrapper wrapper){
+	}
+
+	
+	/**
+	 * This is ment to be overriden!
+	 */
+	@Override
+	public boolean isBindable() {
+		return false;
+	}
+	
+	/**
+	 * This is indicating that a player uses the bound 
+	 * @param using the player that is using this Trait.
+	 */
+	@Override
+	public final TraitResults triggerOnBind(RaCPlayer using){
+		if(!isBindable()) return TraitResults.False();
+		if(!using.isOnline()) return TraitResults.False();
+		
+		if(!this.checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(using))){
+			return TraitResults.False();
+		}
+		
+		return bindCastIntern(using);
+	}
+	
+	/**
+	 * Ment to be overriten.
+	 * Here Preconditions are already checked!
+	 * 
+	 * @param player to cast.
+	 */
+	protected TraitResults bindCastIntern(RaCPlayer player){
+		return TraitResults.False();
+	}
 }

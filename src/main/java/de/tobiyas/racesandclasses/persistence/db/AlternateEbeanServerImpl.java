@@ -42,6 +42,7 @@ import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
 import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.util.consts.Consts;
 
 //This was abstract before!!
 public class AlternateEbeanServerImpl {
@@ -58,6 +59,9 @@ public class AlternateEbeanServerImpl {
      * @param javaPlugin Plugin instancing this database
      */
     public AlternateEbeanServerImpl(JavaPlugin javaPlugin) {
+    	//TODO maybe fix this all
+    	if(Consts.disableBDSupport) return;
+    	
         //Store the JavaPlugin
         this.javaPlugin = javaPlugin;
 

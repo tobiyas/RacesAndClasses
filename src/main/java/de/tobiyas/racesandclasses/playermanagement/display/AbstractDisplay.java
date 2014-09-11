@@ -17,12 +17,14 @@ package de.tobiyas.racesandclasses.playermanagement.display;
 
 import org.bukkit.ChatColor;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+
 public abstract class AbstractDisplay implements Display{
 
 	/**
 	 * The player that this display belongs to
 	 */
-	protected String playerName;
+	protected RaCPlayer player;
 	
 	/**
 	 * The Color indicating a HIGH amount of left Resource
@@ -51,8 +53,8 @@ public abstract class AbstractDisplay implements Display{
 	 * 
 	 * @param player to display to
 	 */
-	public AbstractDisplay(String playerName, DisplayInfos displayInfo) {
-		this.playerName = playerName;
+	public AbstractDisplay(RaCPlayer player, DisplayInfos displayInfo) {
+		this.player = player;
 		this.displayInfo = displayInfo;
 		
 		changeColorsToInfo();

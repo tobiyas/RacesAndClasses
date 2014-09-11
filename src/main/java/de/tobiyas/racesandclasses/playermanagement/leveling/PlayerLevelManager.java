@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 
 public interface PlayerLevelManager {
@@ -36,9 +37,9 @@ public interface PlayerLevelManager {
 	
 	
 	/**
-	 * @return the playerName
+	 * @return the player
 	 */
-	public String getPlayerName();
+	public RaCPlayer getPlayer();
 	
 	
 	/**
@@ -130,5 +131,23 @@ public interface PlayerLevelManager {
 	 * @return true if can be removed.
 	 */
 	public boolean canRemove(int toRemove);
+
+
+	/**
+	 * Adds a level to the player.
+	 * <br>Must be positive
+	 * 
+	 * @param value to add.
+	 */
+	public void addLevel(int value);
+	
+	/**
+	 * Removes a level from the player.
+	 * <br>Must be positive.
+	 * <br>Can not go below 1.
+	 * 
+	 * @param value to remove.
+	 */
+	public void removeLevel(int value);
 
 }

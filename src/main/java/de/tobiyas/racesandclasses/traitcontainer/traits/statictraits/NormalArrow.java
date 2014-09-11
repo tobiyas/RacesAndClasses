@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
-import java.util.Map;
-
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -26,6 +24,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 
 public class NormalArrow extends AbstractArrow {
 	
@@ -49,7 +48,7 @@ public class NormalArrow extends AbstractArrow {
 
 	@TraitConfigurationNeeded
 	@Override
-	public void setConfiguration(Map<String, Object> configMap) {
+	public void setConfiguration(TraitConfiguration configMap) {
 	}
 
 	@Override
@@ -77,6 +76,12 @@ public class NormalArrow extends AbstractArrow {
 	@TraitInfos(category="arrow", traitName="NormalArrowTrait", visible=false)
 	@Override
 	public void importTrait() {
+	}
+	
+	
+	@Override
+	public boolean isVisible() {
+		return false;
 	}
 
 }

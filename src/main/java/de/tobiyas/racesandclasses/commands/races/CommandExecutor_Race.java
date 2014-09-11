@@ -35,17 +35,20 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exi
 import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.CommandInterface;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -57,20 +60,20 @@ import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 
-public class CommandExecutor_Race extends Observable implements CommandExecutor {
+public class CommandExecutor_Race extends Observable implements CommandInterface {
 	private RacesAndClasses plugin;
 
 	public CommandExecutor_Race(){
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "race";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "race";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 		
 		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
@@ -90,20 +93,22 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 		
 		String raceCommand = args[0];
+		boolean isPlayer = sender instanceof Player;
 			
 		//Select race(only if has no race)
 		if(raceCommand.equalsIgnoreCase("select")){
 			if(!checkPlayer(sender)) return true;
 			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 			
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.selectRace)) return true;
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+				AbstractTraitHolder currentRace = racPlayer.getRace();
 				if(currentRace != plugin.getRaceManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, already_have_race,
-							"race", currentRace.getName());
+							"race", currentRace.getDisplayName());
 					
 					return true;
 				}
@@ -125,7 +130,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holder", "Race");
+						"holders", "Race");
 				return true;
 			}
 			
@@ -136,7 +141,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			String potentialRace = args[1];
-			selectRace(player, potentialRace);
+			selectRace(racPlayer, potentialRace);
 			return true;
 		}
 			
@@ -144,12 +149,13 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		if(raceCommand.equalsIgnoreCase("change")){
 			if(!checkPlayer(sender)) return true;
 			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 			
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.changeRace)) return true;
 			
 			boolean useGUI = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
 			if(useGUI){
-				AbstractTraitHolder currentRace = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+				AbstractTraitHolder currentRace = racPlayer.getRace();
 				if(currentRace == plugin.getRaceManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, no_race_selected);
 					return true;
@@ -171,7 +177,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, open_holder,
-						"holder", "Race");
+						"holders", "Race");
 				return true;
 			}
 			
@@ -182,13 +188,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			}
 			
 			String potentialRace = args[1];
-			changeRace(player, potentialRace);
+			changeRace(racPlayer, potentialRace);
 			return true;
 		}
 		
 		//Info to a race
-		if(raceCommand.equalsIgnoreCase("info")){
-			String inspectedRace = plugin.getRaceManager().getHolderOfPlayer(sender.getName()).getName();
+		if(raceCommand.equalsIgnoreCase("info")){			
+			RaCPlayer racPlayer = isPlayer ? RaCPlayerManager.get().getPlayer((Player)sender) : null;
+			String inspectedRace = isPlayer ? racPlayer.getRace().getDisplayName() : "";
 			
 			if(args.length > 1){
 				inspectedRace = args[1];
@@ -202,8 +209,11 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		if(raceCommand.equalsIgnoreCase("list")){
 			raceList(sender);
 			
-			this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.infoRace));
-			this.setChanged();
+			if(sender instanceof Player){
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
+				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoRace));
+				this.setChanged();
+			}
 			return true;
 		}
 			
@@ -240,8 +250,8 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 		}
 	}
 	
-	private void selectRace(Player player, String newRaceName){
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
+	private void selectRace(RaCPlayer player, String newRaceName){
+		RaceContainer container = player.getRace();
 		RaceContainer stdContainer = (RaceContainer) plugin.getRaceManager().getDefaultHolder();
 		if(container == null || container == stdContainer){
 			RaceContainer raceContainer = (RaceContainer) plugin.getRaceManager().getHolderByName(newRaceName);
@@ -258,7 +268,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			PreRaceSelectEvent selectEvent = new PreRaceSelectEvent(player, raceContainer);
+			PreRaceSelectEvent selectEvent = new PreRaceSelectEvent(player.getPlayer(), raceContainer);
 			plugin.fireEventToBukkit(selectEvent);
 			
 			if(selectEvent.isCancelled()){
@@ -266,32 +276,32 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().addPlayerToHolder(player.getName(), newRaceName, true)){
+			if(plugin.getRaceManager().addPlayerToHolder(player, newRaceName, true)){
 				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
 						"race", newRaceName);
 			}
 				
 		}else{
 			LanguageAPI.sendTranslatedMessage(player, already_have_race,
-					"race", container.getName());
+					"race", container.getDisplayName());
 		}
 	}
 	
-	private void changeRace(Player player, String newRace){
-		AbstractTraitHolder oldContainer = plugin.getRaceManager().getHolderOfPlayer(player.getName());
+	private void changeRace(RaCPlayer player, String newRace){
+		AbstractTraitHolder oldContainer = player.getRace();
 		AbstractTraitHolder stdContainer = plugin.getRaceManager().getDefaultHolder();
 		
 		if(oldContainer != null && oldContainer != plugin.getRaceManager().getDefaultHolder()){
-			if(newRace.equalsIgnoreCase(oldContainer.getName())){
+			if(newRace.equalsIgnoreCase(oldContainer.getDisplayName())){
 				player.sendMessage(LanguageAPI.translateIgnoreError(already_are)
-						.replace("holder", oldContainer.getName())
+						.replace("holders", oldContainer.getDisplayName())
 						.build());
 				return;
 			}
 			
 			if(plugin.getRaceManager().getHolderByName(newRace) != null && plugin.getRaceManager().getHolderByName(newRace) == stdContainer){
 				LanguageAPI.sendTranslatedMessage(player, race_not_exist,
-						"race", plugin.getRaceManager().getDefaultHolder().getName());
+						"race", plugin.getRaceManager().getDefaultHolder().getDisplayName());
 				return;
 			}
 			
@@ -302,7 +312,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			PreRaceChangeEvent selectEvent = new PreRaceChangeEvent(player, (RaceContainer) oldContainer, (RaceContainer) newContainer);
+			PreRaceChangeEvent selectEvent = new PreRaceChangeEvent(player.getPlayer(), (RaceContainer) oldContainer, (RaceContainer) newContainer);
 			plugin.fireEventToBukkit(selectEvent);
 			
 			if(selectEvent.isCancelled()){
@@ -310,7 +320,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 				return;
 			}
 			
-			if(plugin.getRaceManager().changePlayerHolder(player.getName(), newRace, true)){
+			if(plugin.getRaceManager().changePlayerHolder(player, newRace, true)){
 				LanguageAPI.sendTranslatedMessage(player, race_changed_to,
 						"race", newRace);
 			}else{
@@ -324,7 +334,14 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	
 	private void raceInfo(CommandSender sender, String inspectedRace){
 		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderByName(inspectedRace);
-		RaceContainer containerOfPlayer = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(sender.getName());
+		
+		RaCPlayer player = null;
+		RaceContainer containerOfPlayer = null;
+		if(sender instanceof Player){
+			player = RaCPlayerManager.get().getPlayer((Player)sender);
+			containerOfPlayer = player.getRace();
+		}
+		
 		if(container == null){
 			LanguageAPI.sendTranslatedMessage(sender, race_not_exist,
 					"race", inspectedRace);
@@ -345,7 +362,7 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 			
 		
 		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getRaceMaxHealth());
-		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getName());
+		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getDisplayName());
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
@@ -366,21 +383,45 @@ public class CommandExecutor_Race extends Observable implements CommandExecutor 
 	
 	private void raceList(CommandSender sender){
 		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		AbstractTraitHolder senderRace = plugin.getRaceManager().getHolderOfPlayer(sender.getName());
 		
+		boolean isPlayer = sender instanceof Player;
+		RaCPlayer player = isPlayer ? RaCPlayerManager.get().getPlayer((Player)sender) : null;
+		
+		AbstractTraitHolder senderRace = isPlayer ? player.getRace() : null;
 		if(senderRace == plugin.getRaceManager().getDefaultHolder()){
-			races.add(plugin.getRaceManager().getDefaultHolder().getName());
+			races.add(plugin.getRaceManager().getDefaultHolder().getDisplayName());
 		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "======LIST OF RACES======");
 		
 		String yourString = LanguageAPI.translateIgnoreError(your_race).build();
 		for(String race : races){
-			if(senderRace != null && race.equals(senderRace.getName())){
+			if(senderRace != null && race.equals(senderRace.getDisplayName())){
 				sender.sendMessage(ChatColor.RED + race + ChatColor.YELLOW + "  <-- " + yourString);
 			}else{	
 				sender.sendMessage(ChatColor.BLUE + race);
 			}
 		}
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		return new LinkedList<String>();
+	}
+
+	@Override
+	public String getCommandName() {
+		return "race";
+	}
+	
+	@Override
+	public String[] getAliases() {
+		return new String[]{};
+	}
+	
+	@Override
+	public boolean hasAliases() {
+		return false;
 	}
 }

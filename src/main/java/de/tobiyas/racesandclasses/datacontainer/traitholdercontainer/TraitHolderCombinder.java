@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitHolderCombinder {
@@ -32,22 +33,22 @@ public class TraitHolderCombinder {
 	/**
 	 * Checks if the player passed has access to the trait passed.
 	 * 
-	 * @param playerName the player to check
+	 * @param playerRaCPlayer the player to check
 	 * @param trait to check against
 	 * 
 	 * @return true if the player has access to the trait passed, false otherwise
 	 */
-	public static boolean checkContainer(String playerName, Trait trait){
-		AbstractTraitHolder holder = trait.getTraitHolder();
-		if(holder == null) return true;
+	public static boolean checkContainer(RaCPlayer player, Trait trait){
+		Set<AbstractTraitHolder> holder = trait.getTraitHolders();
+		if(holder == null || holder.isEmpty()) return true;
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
-		if(holder == raceHolder){
+		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
+		if(holder.contains(raceHolder)){
 			return true;
 		}
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
-		if(holder == classHolder){
+		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
+		if(holder.contains(classHolder)){
 			return true;
 		}
 		
@@ -58,19 +59,19 @@ public class TraitHolderCombinder {
 	 * Returns a Set of all Traits that a player has.
 	 * This combines Race- + Class-Traits
 	 * 
-	 * @param player to check
+	 * @param offlinePlayer to check
 	 
 	 * @return set of all Traits of player
 	 */
-	public static Set<Trait> getAllTraitsOfPlayer(String player){
+	public static Set<Trait> getAllTraitsOfPlayer(RaCPlayer player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
-		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = player.getRace();
 		if(raceContainer != null){
 			traits.addAll(raceContainer.getTraits());
 		}
 			
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = player.getclass();
 		if(classContainer != null){
 			traits.addAll(classContainer.getTraits());
 		}
@@ -86,15 +87,15 @@ public class TraitHolderCombinder {
 	 * 
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getVisibleTraitsOfPlayer(String player){
+	public static Set<Trait> getVisibleTraitsOfPlayer(RaCPlayer player){
 		Set<Trait> traits = new HashSet<Trait>();
 		
-		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = player.getRace();
 		if(raceContainer != null){
 			traits.addAll(raceContainer.getVisibleTraits());
 		}
 		
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = player.getclass();
 		if(classContainer != null){
 			traits.addAll(classContainer.getVisibleTraits());
 		}
@@ -108,12 +109,12 @@ public class TraitHolderCombinder {
 	 * 
 	 * It is filtered for doubled Traits and only the strong ones survive. ;)
 	 * 
-	 * @param player to check
+	 * @param offlinePlayer to check
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedTraitsOfPlayer(String player){
-		Set<Trait> traits = getAllTraitsOfPlayer(player);
+	public static Set<Trait> getReducedTraitsOfPlayer(RaCPlayer offlinePlayer){
+		Set<Trait> traits = getAllTraitsOfPlayer(offlinePlayer);
 		traits = filterForDoubles(traits);
 		return traits;
 	}
@@ -129,7 +130,7 @@ public class TraitHolderCombinder {
 	 *
 	 * @return a set of Traits
 	 */
-	public static Set<Trait> getReducedVisibleTraitsOfPlayer(String player){
+	public static Set<Trait> getReducedVisibleTraitsOfPlayer(RaCPlayer player){
 		Set<Trait> traits = getVisibleTraitsOfPlayer(player);
 		traits = filterForDoubles(traits);
 		return traits;

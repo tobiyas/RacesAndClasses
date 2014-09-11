@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.configuration.member;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,15 +24,16 @@ import org.bukkit.Bukkit;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 
 
 public class MemberConfigManager {
 
 	/**
-	 * The config of members: player -> Config 
+	 * The config of members: player -> ConfigTotal 
 	 */
-	private Map<String, MemberConfig> memberConfigs;
+	private Map<RaCPlayer, MemberConfig> memberConfigs;
 	
 	
 	/**
@@ -49,7 +49,7 @@ public class MemberConfigManager {
 	 */
 	public MemberConfigManager(){
 		plugin = RacesAndClasses.getPlugin();
-		memberConfigs = new HashMap<String, MemberConfig>();
+		memberConfigs = new HashMap<RaCPlayer, MemberConfig>();
 	}
 	
 	
@@ -65,7 +65,7 @@ public class MemberConfigManager {
 	 */
 	@SuppressWarnings("deprecation") //This is async scheduling for performance.
 	public void reload(){
-		memberConfigs = new HashMap<String, MemberConfig>();
+		memberConfigs = new HashMap<RaCPlayer, MemberConfig>();
 		shutDown();
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
@@ -87,12 +87,12 @@ public class MemberConfigManager {
 	
 	/**
 	 * Creates a new MemberConfig for a player and saves it.
-	 * If the Config of the player is already present, it will be returned instead.
+	 * If the ConfigTotal of the player is already present, it will be returned instead.
 	 * 
 	 * @param player
 	 * @return
 	 */
-	private MemberConfig getCreateNewConfig(String player){
+	private MemberConfig getCreateNewConfig(RaCPlayer player){
 		if(memberConfigs.containsKey(player)){
 			return memberConfigs.get(player);
 		}
@@ -113,10 +113,10 @@ public class MemberConfigManager {
 	 * Loads all configs from the playerdata file
 	 */
 	private void loadConfigs(){
-		Set<String> playerList = new HashSet<String>(YAMLPersistenceProvider.getAllPlayersKnown());
+		Set<RaCPlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
 		
-		for(String player : playerList){
-			getCreateNewConfig(player);
+		for(RaCPlayer player : players){
+			if(player != null && player.isOnline())	getCreateNewConfig(player);
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class MemberConfigManager {
 	 * Forces save to all configs
 	 */
 	public void saveConfigs(){
-		for(String player : memberConfigs.keySet()){
+		for(RaCPlayer player : memberConfigs.keySet()){
 			MemberConfig config = memberConfigs.get(player);
 			if(config != null) {
 				if(config instanceof DBMemberConfig){
@@ -143,7 +143,7 @@ public class MemberConfigManager {
 	 * @param player to get the config from
 	 * @return
 	 */
-	public MemberConfig getConfigOfPlayer(String player){
+	public MemberConfig getConfigOfPlayer(RaCPlayer player){
 		return getCreateNewConfig(player);
 	}
 	

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,13 +24,15 @@ import javax.persistence.Table;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+
 @Entity
 @Table(name="_player_general_infos")
 public class PlayerSavingContainer {
 
 	@Id
 	@NotEmpty
-	private String playerName;
+	private UUID playerUUID;
 
 	@NotNull
 	private int playerLevel;
@@ -43,12 +47,12 @@ public class PlayerSavingContainer {
 	/**
 	 * Generates a new Container with default Values.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @return
 	 */
-	public static PlayerSavingContainer generateNewContainer(String playerName){
+	public static PlayerSavingContainer generateNewContainer(RaCPlayer player){
 		PlayerSavingContainer container = new PlayerSavingContainer();
-		container.playerName = playerName;
+		container.playerUUID = player.getUniqueId();
 		
 		container.playerLevel = 1;
 		container.playerLevelExp = 1;
@@ -83,14 +87,14 @@ public class PlayerSavingContainer {
 
 
 
-	public String getPlayerName() {
-		return playerName;
+	public UUID getPlayerUUID() {
+		return playerUUID;
 	}
 
 
 
-	public void setPlayerName(String playerName) {
-		this.playerName = playerName;
+	public void setPlayerUUID(UUID playerUUID) {
+		this.playerUUID = playerUUID;
 	}
 
 

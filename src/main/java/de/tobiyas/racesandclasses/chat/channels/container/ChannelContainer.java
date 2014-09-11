@@ -16,9 +16,12 @@
 package de.tobiyas.racesandclasses.chat.channels.container;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,6 +32,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.ChatFormatter;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
@@ -36,6 +41,7 @@ import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class ChannelContainer extends Observable{
 
@@ -45,11 +51,11 @@ public class ChannelContainer extends Observable{
 	private ChatFormatter channelFormat;
 	
 	private String channelPassword;
-	private String channelAdmin = "";
+	private RaCPlayer channelAdmin = null;
 	
 	private ChannelLevel channelLevel;
 	
-	private ArrayList<String> participants;
+	private ArrayList<RaCPlayer> participants;
 	
 	private MuteContainer muteContainer;
 	private BanContainer banContainer;
@@ -59,11 +65,11 @@ public class ChannelContainer extends Observable{
 		this.channelName = channelName;
 		this.channelLevel = level;
 		
-		String prefix = "§f[";
-		String suffix =  "§f]";
+		String prefix = "&f[";
+		String suffix =  "&f]";
 		
 		this.channelPassword = "";
-		participants = new ArrayList<String>();
+		participants = new ArrayList<RaCPlayer>();
 		muteContainer = new MuteContainer();
 		banContainer = new BanContainer();
 		
@@ -87,15 +93,15 @@ public class ChannelContainer extends Observable{
 	}
 	
 	private ChannelContainer(String channelName, ChannelLevel level, YAMLConfigExtended config){
-		participants = new ArrayList<String>();
+		participants = new ArrayList<RaCPlayer>();
 		this.channelLevel = level;
 		this.channelName = channelName;
 		plugin = RacesAndClasses.getPlugin();
 		config.load();
 		
 		String channelPre = "channel." + level.name() + "." + channelName;
-		String prefix = config.getString(channelPre + ".prefix" , "§f[");
-		String suffix = config.getString(channelPre + ".suffix" , "§f]");
+		String prefix = config.getString(channelPre + ".prefix" , "&f[");
+		String suffix = config.getString(channelPre + ".suffix" , "&f]");
 		
 		//Chanel formating
 		String channelColor = config.getString(channelPre + ".channelColor", plugin.getConfigManager().getChannelConfig().getConfig_channel_default_color());
@@ -110,27 +116,35 @@ public class ChannelContainer extends Observable{
 		}
 			
 		channelPassword = config.getString(channelPre + ".channelPassword", "");
-		channelAdmin = config.getString(channelPre + ".channelAdmin", "");
+		try{ 
+			UUID id = UUID.fromString(config.getString(channelPre + ".channelAdmin", "")); 
+			channelAdmin = RaCPlayerManager.get().getPlayer(id);
+		}catch(IllegalArgumentException exp){}
 		
 		muteContainer = new MuteContainer(config, channelPre);
 		banContainer = new BanContainer(config, channelPre);
 		
 		List<String> tempList = config.getStringList(channelPre + ".members");
-		participants.addAll(tempList);
+		for(String uuid : tempList){
+			try{ 
+				UUID id = UUID.fromString(uuid);
+				RaCPlayer player = RaCPlayerManager.get().getPlayer(id);
+				participants.add(player); 
+			}catch(Throwable exp){}
+		}
 		
 		channelFormat = new ChatFormatter(channelName, channelColor, channelLevel, stdFormat);
 		channelFormat.setPrefix(prefix);
 		channelFormat.setSuffix(suffix);
 		
-		if(!config.getBoolean(channelPre + ".saveLoad", false))
-			rescanPartitions(null);
-		
+		if(!config.getBoolean(channelPre + ".saveLoad", false)) rescanPartitions(null);
 		config.set(channelPre + ".saveLoad", false);
 		config.save();
 		
 		ChannelTicker.registerChannel(this);
-		if(channelName.equalsIgnoreCase("Tutorial"))
+		if(channelName.equalsIgnoreCase("Tutorial")){
 			registerTutorial();
+		}
 	}
 	
 	private void registerTutorial(){
@@ -187,38 +201,45 @@ public class ChannelContainer extends Observable{
 		return channelPassword;
 	}
 	
-	public void banAndRemovePlayer(String playerName, int time){
-		banContainer.banPlayer(playerName, time);
-		if(isMember(playerName)){
-			removePlayerFromChannel(playerName, false);
+	public void banAndRemovePlayer(RaCPlayer player, int time){
+		banContainer.banPlayer(player, time);
+		if(isMember(player)){
+			removePlayerFromChannel(player, false);
 		}
 	}
 	
-	public void unbanPlayer(String playerName){
-		banContainer.unbanPlayer(playerName);
+	public void unbanPlayer(RaCPlayer player){
+		banContainer.unbanPlayer(player);
 	}
 	
-	public void mutePlayer(String playerName, int time){
-		muteContainer.mutePlayer(playerName, time);
+	public void mutePlayer(RaCPlayer player, int time){
+		muteContainer.mutePlayer(player, time);
 	}
 	
-	public void unmutePlayer(String playerName){
-		muteContainer.unmutePlayer(playerName);
+	public void unmutePlayer(RaCPlayer player){
+		muteContainer.unmutePlayer(player);
 	}
 	
-	public void setAdmin(String player){
+	public void setAdmin(RaCPlayer player){
 		if(!participants.contains(player)){
 			participants.add(player);
 		}
+		
 		channelAdmin = player;
 	}
 	
-	public String getAdmin(){
+	public RaCPlayer getAdmin(){
 		return channelAdmin;
 	}
 	
 	public void saveChannel(YAMLConfigExtended config){
 		if(channelLevel == ChannelLevel.LocalChannel) return;
+		
+		List<String> participants = new LinkedList<String>();
+		for(RaCPlayer id : this.participants){
+			if(id == null) continue;
+			participants.add(id.getUniqueId().toString());
+		}
 		
 		config.load();
 		String channelPre = "channel." + channelLevel.name() + "." + channelName;
@@ -226,7 +247,7 @@ public class ChannelContainer extends Observable{
 		config.set(channelPre + ".prefix" , channelFormat.getPrefix());
 		config.set(channelPre + ".suffix" , channelFormat.getSuffix());
 		config.set(channelPre + ".channelColor" , channelFormat.getColor());
-		config.set(channelPre + ".members" , participants);
+		if(participants.size() > 0) config.set(channelPre + ".members" , participants);
 		config.set(channelPre + ".channelFormat", channelFormat.getFormat());
 		config.set(channelPre + ".channelPassword", channelPassword);
 		config.set(channelPre + ".channelAdmin", channelAdmin);
@@ -246,14 +267,13 @@ public class ChannelContainer extends Observable{
 		}
 	}
 	
-	public void addPlayerToChannel(String playerName, String password, boolean notify){
-		Player player = Bukkit.getPlayer(playerName);
-		if(participants.contains(playerName)){ 
+	public void addPlayerToChannel(RaCPlayer player, String password, boolean notify){
+		if(participants.contains(player)){ 
 			player.sendMessage(ChatColor.RED + "You are already member of this channel.");
 			return;
 		}
 		
-		int isBanned = banContainer.isBanned(playerName);
+		int isBanned = banContainer.isBanned(player);
 		if(isBanned != -1){
 			String time = getTimeString(isBanned);
 			player.sendMessage(ChatColor.RED + "You are banned from this channel for: " + ChatColor.LIGHT_PURPLE + time);
@@ -261,9 +281,9 @@ public class ChannelContainer extends Observable{
 		}
 		
 		if(channelLevel == ChannelLevel.RaceChannel){
-			AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
+			AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 			
-			if(container == null || !container.getName().equalsIgnoreCase(channelName)){
+			if(container == null || !container.getDisplayName().equalsIgnoreCase(channelName)){
 				player.sendMessage(ChatColor.RED + "You don't belong to this race.");
 				return;
 			}
@@ -284,21 +304,20 @@ public class ChannelContainer extends Observable{
 			}
 		}
 			
-		participants.add(playerName);
+		participants.add(player);
 		if(player != null){
 			if(notify){
 				String joinMessage = plugin.getConfigManager().getChannelConfig().getConfig_PlayerJoinFormat();
-				sendMessageInChannel(player, "", joinMessage);
+				sendMessageInChannel(player.getPlayer(), "", joinMessage);
 			}
 		}
 		
-		this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.channels, 2));
+		this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 2));
 		this.setChanged();
 	}
 	
-	public void removePlayerFromChannel(String playerName, boolean notify){
-		Player player = Bukkit.getPlayer(playerName);
-		if(!participants.contains(playerName)){
+	public void removePlayerFromChannel(RaCPlayer player, boolean notify){
+		if(!participants.contains(player) && player != null){
 			player.sendMessage(ChatColor.RED + "You are no member of this channel.");
 			return;
 		}
@@ -306,61 +325,75 @@ public class ChannelContainer extends Observable{
 		if(player != null){
 			if(notify){
 				String leaveMessage = plugin.getConfigManager().getChannelConfig().getConfig_PlayerLeaveFormat();
-				sendMessageInChannel(player, "", leaveMessage);
+				sendMessageInChannel(player.getPlayer(), "", leaveMessage);
 			}
 		}
 		
-		participants.remove(playerName);
+		participants.remove(player);
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel){
 			if(participants.size() == 0){
 				plugin.getChannelManager().removeChannel(this.channelName);
 				return;
 			}else{
-				if(playerName.equalsIgnoreCase(channelAdmin)){
-					String oldChannelAdmin = channelAdmin;
-					String newChannelAdmin = participants.get(0);
+				if(player.equals(channelAdmin)){
+					RaCPlayer oldChannelAdmin = channelAdmin;
+					RaCPlayer newChannelAdmin = participants.get(0);
 					setAdmin(newChannelAdmin);
 					sendMessageInChannel(null, "Channel-Admin changed from: " + ChatColor.RED + oldChannelAdmin + " TO " + newChannelAdmin, "");
 				}
 			}
 		}
 		
-		this.notifyObservers(new TutorialStepContainer(playerName, TutorialState.channels, 6));
+		this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 6));
 		this.setChanged();
 	}
 	
-	public ArrayList<String> getAllParticipants(){
+	public ArrayList<RaCPlayer> getAllParticipants(){
 		return participants;
 	}
 	
 	public void sendMessageInChannel(CommandSender sender, String message, String forceFormat){
+		Player player = (sender instanceof Player) ? (Player)sender : null;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
 		if(channelLevel == ChannelLevel.LocalChannel && sender instanceof Player) rescanPartitions((Player) sender);
 
-		if(sender != null){
-			int isMuted = muteContainer.isMuted(sender.getName());
+		if(player != null){
+			int isMuted = muteContainer.isMuted(racPlayer);
 			if(isMuted != -1){
-				String time = getTimeString(isMuted);				
+				String time = getTimeString(isMuted);		
 				sender.sendMessage(ChatColor.RED + "You are muted in this channel for: " + ChatColor.LIGHT_PURPLE + time);
 				return;
 			}
 		}
 		
 		if(channelName.equalsIgnoreCase("Tutorial") && sender instanceof Player){
-			this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 5));
+			this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.channels, 5));
 			this.setChanged();
 		}
 		
-		String modifiedMessage = "";
-		if(sender == null)
-			modifiedMessage = modifyMessageToPlayer("CONSOLE", message, forceFormat);
-		else
-			modifiedMessage = modifyMessageToPlayer(sender.getName(), message, forceFormat);
-		
-		for(String playerName : participants){
-			Player player = Bukkit.getPlayer(playerName);
-			if(player != null){
-				player.sendMessage(modifiedMessage);
+		Set<Player> players = new HashSet<Player>();
+		for(RaCPlayer member : participants){
+			if(member != null && member.isOnline()){
+				players.add(member.getPlayer());
 			}
+		}
+		
+		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(!Bukkit.isPrimaryThread(), player, message, players);
+		event.setFormat(forceFormat);
+		Bukkit.getPluginManager().callEvent(event);
+		
+		if(event.isCancelled()) return;
+		
+		String modifiedMessage = "";
+		if(sender == null){
+			modifiedMessage = modifyMessageToPlayer(null, event.getMessage(), event.getFormat());
+		}else{
+			modifiedMessage = modifyMessageToPlayer(racPlayer, event.getMessage(), event.getFormat());
+		}
+		
+		for(Player recipient : event.getRecipients()){
+			recipient.sendMessage(modifiedMessage);
 		}
 	}
 	
@@ -371,14 +404,18 @@ public class ChannelContainer extends Observable{
 					return;
 				
 				participants.clear();
-				for(Player player : Bukkit.getOnlinePlayers())
-					participants.add(player.getName());
+				for(Player player : PlayerUtils.getOnlinePlayers()){
+					RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+					participants.add(racPlayer);
+				}
 				break;
 				
 			case WorldChannel:
 				participants.clear();
-				for(Player player : Bukkit.getWorld(channelName).getPlayers())
-					participants.add(player.getName());
+				for(Player player : Bukkit.getWorld(channelName).getPlayers()){
+					RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+					participants.add(racPlayer);
+				}
 				break;
 				
 			case RaceChannel:
@@ -389,11 +426,9 @@ public class ChannelContainer extends Observable{
 					break;
 				}
 				
-				List<String> allPlayersOfRace = plugin.getRaceManager().getAllPlayersOfHolder(container);
-				for(String playerName : allPlayersOfRace) {
-					Player player = Bukkit.getPlayer(playerName);
-					if(player != null)
-						participants.add(playerName);
+				List<RaCPlayer> allPlayersOfRace = plugin.getRaceManager().getAllPlayersOfHolder(container);
+				for(RaCPlayer player : allPlayersOfRace) {
+					participants.add(player);
 				}
 				break;
 				
@@ -402,17 +437,21 @@ public class ChannelContainer extends Observable{
 				if(localPlayer == null) return;
 				int distance = plugin.getConfigManager().getChannelConfig().getConfig_localchat_range();
 				Location loc = localPlayer.getLocation();
-				for(Player tempPlayer : loc.getWorld().getPlayers())
-					if(loc.distance(tempPlayer.getLocation()) < distance)
-						participants.add(tempPlayer.getName());
+				for(Player tempPlayer : loc.getWorld().getPlayers()){
+					if(loc.distance(tempPlayer.getLocation()) < distance){
+						RaCPlayer player = RaCPlayerManager.get().getPlayer(tempPlayer);
+						participants.add(player);
+					}
+				}
+				
 				break;
 				
 			default: return;
 		}
 	}
 	
-	private String modifyMessageToPlayer(String playerName, String message, String forceFormat){		
-		return channelFormat.format(playerName, message, forceFormat, true);
+	private String modifyMessageToPlayer(RaCPlayer player, String message, String forceFormat){		
+		return channelFormat.format(player, message, forceFormat, true);
 	}
 	
 	private String getTimeString(int timeInSec){
@@ -437,39 +476,34 @@ public class ChannelContainer extends Observable{
 		return time;
 	}
 	
-	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
-	}
-	
-	private String encodeColor(String message){
-		return message.replaceAll("(§([a-f0-9]))", "&$2");
-	}
-	
 	public String getChannelName(){
 		return channelName;
 	}
 
 	public void postInfo(CommandSender sender) {
+		Player player = (sender instanceof Player) ? (Player) sender : null;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
 		sender.sendMessage(ChatColor.YELLOW + "ChannelName: " + ChatColor.AQUA + channelName);
 		sender.sendMessage(ChatColor.YELLOW + "ChannelLevel: " + ChatColor.AQUA + channelLevel.name());
-		sender.sendMessage(ChatColor.YELLOW + "ChannelColor: " + decodeColor(channelFormat.getColor()) + "COLOR");
-		sender.sendMessage(ChatColor.YELLOW + "ChannelFormat: " + ChatColor.RESET + encodeColor(channelFormat.getFormat()));
+		sender.sendMessage(ChatColor.YELLOW + "ChannelColor: " + ChatColor.translateAlternateColorCodes('&', channelFormat.getColor()) + "COLOR");
+		sender.sendMessage(ChatColor.YELLOW + "ChannelFormat: " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&',channelFormat.getFormat()));
 		
-		if(sender.getName().equalsIgnoreCase(channelAdmin)){
+		if(player != null && player.getUniqueId().equals(channelAdmin)){
 			sender.sendMessage(ChatColor.YELLOW + "ChannelPassword: " + ChatColor.AQUA + channelPassword);
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "Has Password: " + ChatColor.AQUA + !channelPassword.equalsIgnoreCase(""));
 		}
 			
-		if(!channelAdmin.equals("")){
+		if(channelAdmin != null){
 			sender.sendMessage(ChatColor.YELLOW + "ChannelAdmin: " + ChatColor.AQUA + channelAdmin);
 		}
 		
-		int isMuted = muteContainer.isMuted(sender.getName());
+		int isMuted = player == null ? 0 : muteContainer.isMuted(racPlayer);
 		if(isMuted != -1)
 			sender.sendMessage(ChatColor.YELLOW + "Muted for: " + ChatColor.AQUA + getTimeString(isMuted));
 		
-		int isBanned = banContainer.isBanned(sender.getName());
+		int isBanned = player == null ? 0 : banContainer.isBanned(racPlayer);
 		if(isBanned != -1)
 			sender.sendMessage(ChatColor.YELLOW + "Banned for: " + ChatColor.AQUA + getTimeString(isBanned));
 		
@@ -479,12 +513,12 @@ public class ChannelContainer extends Observable{
 			rescanPartitions((Player) sender);
 		}	
 		
-		for(String member : participants){
-			Player playerMember = Bukkit.getPlayer(member);
+		for(RaCPlayer member : participants){
+			RaCPlayer playerMember = RaCPlayerManager.get().getPlayer(player);
 			if(playerMember == null || !playerMember.isOnline()){
-				memberString += ChatColor.RED + member + " (offline), ";
+				memberString += ChatColor.RED + "" + member + " (offline), ";
 			}else{
-				memberString += ChatColor.GREEN + member + ", ";
+				memberString += ChatColor.GREEN + "" + member + ", ";
 			}
 		}
 		if(memberString.length() > 0){
@@ -493,7 +527,7 @@ public class ChannelContainer extends Observable{
 			sender.sendMessage(ChatColor.RED + "This channel has currently no Members.");
 		}
 		
-		this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 3));
+		if(player != null) this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.channels, 3));
 		this.setChanged();
 	}
 
@@ -501,8 +535,8 @@ public class ChannelContainer extends Observable{
 		return channelLevel;
 	}
 
-	public boolean isMember(String playerName) {
-		return participants.contains(playerName);
+	public boolean isMember(RaCPlayer player) {
+		return participants.contains(player);
 	}
 
 	public void tick() {
@@ -515,7 +549,7 @@ public class ChannelContainer extends Observable{
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalMutePower);
 		}
 		
-		return admin.getName().equalsIgnoreCase(this.channelAdmin);
+		return admin.getUniqueId().equals(this.channelAdmin);
 	}
 	
 	public boolean checkPermissionUnmute(Player admin) {
@@ -523,7 +557,7 @@ public class ChannelContainer extends Observable{
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalUnmutePower);
 		}
 		
-		return admin.getName().equalsIgnoreCase(this.channelAdmin);
+		return admin.getUniqueId().equals(this.channelAdmin);
 	}
 	
 	public boolean checkPermissionBann(Player admin) {
@@ -531,7 +565,7 @@ public class ChannelContainer extends Observable{
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalBanPower);
 		}
 		
-		return admin.getName().equalsIgnoreCase(this.channelAdmin);
+		return admin.getUniqueId().equals(this.channelAdmin);
 	}
 	
 	public boolean checkPermissionUnban(Player admin) {
@@ -539,28 +573,27 @@ public class ChannelContainer extends Observable{
 			return plugin.getPermissionManager().checkPermissionsSilent(admin, PermissionNode.channelGlobalUnbanPower);
 		}
 		
-		return admin.getName().equalsIgnoreCase(this.channelAdmin);
+		return admin.getUniqueId().equals(this.channelAdmin);
 	}
 	
-	public boolean isMuted(String playerName){
-		return muteContainer.isMuted(playerName) != -1;
+	public boolean isMuted(RaCPlayer player){
+		return muteContainer.isMuted(player) != -1;
 	}
 	
-	public boolean isBanned(String playerName){
-		return banContainer.isBanned(playerName) != -1;
+	public boolean isBanned(RaCPlayer player){
+		return banContainer.isBanned(player) != -1;
 	}
 
 	/**
 	 * Edits a property of the channel.
 	 * 
-	 * @param player
+	 * @param playerUUID2
 	 * @param property
 	 * @param newValue
 	 */
-	public void editChannel(Player player, String property, String newValue) {
-		String playerName = player.getName();
+	public void editChannel(RaCPlayer player, String property, String newValue) {
 		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel || channelLevel == ChannelLevel.LocalChannel){
-			if(!playerName.equalsIgnoreCase(channelAdmin)){
+			if(!player.equals(channelAdmin)){
 				player.sendMessage(ChatColor.RED + "You must be the channel-admin to edit the channel");
 				return;
 			}
@@ -608,23 +641,25 @@ public class ChannelContainer extends Observable{
 	 * @param newAdmin, that is the new Admin
 	 * @return
 	 */
-	private boolean changeAdmin(Player oldAdmin, String newAdmin){
+	private boolean changeAdmin(RaCPlayer playerUUID, String newAdmin){
 		if(channelLevel == ChannelLevel.PasswordChannel || 
 			channelLevel == ChannelLevel.PrivateChannel || 
 			channelLevel == ChannelLevel.PublicChannel)
 			return false;
 		
+		RaCPlayer newAdminRaCPlayer = null;
 		boolean isFoundInList = false;
-		for(String member : participants){
-			if(member.equalsIgnoreCase(newAdmin)){
+		for(RaCPlayer member : participants){
+			if(member.getName().equals(newAdmin)){
 				isFoundInList = true;
-				newAdmin = member;
+				newAdminRaCPlayer = member;
+				break;
 			}
 		}
 		
 		if(isFoundInList){
 			this.sendMessageInChannel(null, "New Admin of this channel is: " + ChatColor.LIGHT_PURPLE + newAdmin, "");
-			channelAdmin = newAdmin;
+			channelAdmin = newAdminRaCPlayer;
 			return true;
 		}
 		
@@ -641,9 +676,8 @@ public class ChannelContainer extends Observable{
 		rescanPartitions(event.getPlayer());
 		
 		
-		for(String member : participants){
-			Player memberPlayer = Bukkit.getPlayer(member);
-			if(memberPlayer != null && memberPlayer.isOnline()) members.add(memberPlayer);
+		for(RaCPlayer member : participants){
+			if(member != null && member.isOnline()) members.add(member.getPlayer());
 		}
 		
 		//setting receipients
@@ -652,8 +686,21 @@ public class ChannelContainer extends Observable{
 		
 		//setting format.
 		String format = channelFormat.getFormat();
-		format = channelFormat.format(event.getPlayer().getName(), event.getMessage(), "", false);
+		
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		format = channelFormat.format(racPlayer, event.getMessage(), "", false);
 		event.setFormat(format);
+	}
+
+	/**
+	 * Sends an completely unformatted message.
+	 * 
+	 * @param message to send
+	 */
+	public void sendUnformatedMessage(String message) {
+		for(RaCPlayer player : participants){
+			player.sendMessage(message);
+		}
 	}
 
 }

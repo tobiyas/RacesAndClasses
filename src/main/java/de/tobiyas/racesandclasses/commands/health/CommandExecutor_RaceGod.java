@@ -23,31 +23,33 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_comman
 
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_RaceGod implements CommandExecutor {
+public class CommandExecutor_RaceGod extends AbstractCommand {
 	
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RaceGod(){
+		super("racegod", new String[]{"rgod"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racegod";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racegod";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
@@ -57,7 +59,8 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 		
 		Player target = null;
 		if(args.length == 1){
-			target = Bukkit.getPlayer(args[0]);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(args[0]);
+			target = racPlayer == null ? null : racPlayer.getPlayer();
 		}
 		
 		if(args.length == 0){
@@ -81,7 +84,8 @@ public class CommandExecutor_RaceGod implements CommandExecutor {
 			return true;
 		}
 		
-		if(plugin.getPlayerManager().switchGod(target.getName())){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(target);
+		if(plugin.getPlayerManager().switchGod(racPlayer)){
 			LanguageAPI.sendTranslatedMessage(sender, success);
 		}else{
 			LanguageAPI.sendTranslatedMessage(sender, failed);

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.racbuilder.gui.holders;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.inventorymenu.elements.ScrollableItems;
 import de.tobiyas.util.inventorymenu.stats.StatType;
@@ -41,12 +41,12 @@ import de.tobiyas.util.inventorymenu.stats.StatType;
 public class HolderBuildInterface extends BasicSelectionInterface {
 
 	/**
-	 * The Traits the holder already has.
+	 * The Traits the holders already has.
 	 */
 	protected ScrollableItems holderTraits;
 	
 	/**
-	 * The Traits the holder can still use.
+	 * The Traits the holders can still use.
 	 */
 	protected ScrollableItems possibleTraits;
 	
@@ -107,7 +107,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 				ItemMetaUtils.addStringToLore(traitItem, line);
 			}
 			
-			ItemMetaUtils.addStringToLore(traitItem, "Config:");
+			ItemMetaUtils.addStringToLore(traitItem, "ConfigTotal:");
 			ItemMetaUtils.addStringToLore(traitItem, trait.getPrettyConfiguration());
 			itemsToAdd.add(traitItem);
 		}
@@ -250,7 +250,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 	protected void notifyReopened() {
 		super.notifyReopened();
 		
-		Map<String, Object> configMap = new HashMap<String, Object>();
+		TraitConfiguration configMap = new TraitConfiguration();
 		for(TraitConfigOptionContainer container : currentTraitEditingList){
 			if(!container.isValueSet()){
 				return;

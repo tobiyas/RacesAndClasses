@@ -17,13 +17,14 @@ package de.tobiyas.racesandclasses.tutorial.steps;
 
 import org.bukkit.ChatColor;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.tutorial.TutorialPath;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
 public class StartState extends AbstractStep {
 	
-	public StartState(String playerName, TutorialPath writeBack){
-		this.playerName = playerName;
+	public StartState(RaCPlayer player, TutorialPath writeBack){
+		this.player = player;
 		this.writeBack = writeBack;
 		this.currentState = TutorialState.start;
 		

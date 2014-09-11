@@ -31,7 +31,7 @@ public class CooldownList extends LinkedList<CooldownContainer>{
 	 * 
 	 * Returns true if present
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @param cooldownName to check
 	 * @return true if present, false otherwise
 	 */
@@ -45,7 +45,7 @@ public class CooldownList extends LinkedList<CooldownContainer>{
 	 * 
 	 * Returns null if not found.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @param cooldownName
 	 * @return
 	 */
@@ -65,7 +65,7 @@ public class CooldownList extends LinkedList<CooldownContainer>{
 	/**
 	 * Removes a container from the cooldown list
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @param cooldownName
 	 * @return
 	 */
@@ -82,7 +82,7 @@ public class CooldownList extends LinkedList<CooldownContainer>{
 	/**
 	 * adds a container to the cooldown list
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @param cooldownName
 	 */
 	public void add(String playerName, String cooldownName, int cooldownTime){

@@ -32,7 +32,7 @@ public class CooldownApi {
 	 * 
 	 * Returns true if the player has cooldown, returns false if not.
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @param cooldownName to check
 	 */
 	public static boolean hasCooldown(String playerName, String cooldownName){
@@ -45,7 +45,7 @@ public class CooldownApi {
 	 * Returns the cooldown time in seconds the player still has.
 	 * Returns -1 (or value < 0) if none.
 	 * 
-	 * @param playerName to check 
+	 * @param player to check 
 	 * @param cooldownName to check
 	 * 
 	 * @return the time in seconds
@@ -59,7 +59,7 @@ public class CooldownApi {
 	 * Sets a cooldown to a player with the given arguments.
 	 * The player then has a cooldown oriented on the time passed.
 	 * 
-	 * @param playerName to set the cooldown on
+	 * @param player to set the cooldown on
 	 * @param cooldownName to set the cooldown on
 	 * @param timeInSeconds to be set
 	 */
@@ -71,7 +71,7 @@ public class CooldownApi {
 	/**
 	 * Removes the cooldown of a player
 	 * 
-	 * @param playerName to remove
+	 * @param player to remove
 	 * @param cooldownName to remove
 	 */
 	public static void removeCooldown(String playerName, String cooldownName){
@@ -83,7 +83,7 @@ public class CooldownApi {
 	 * Returns a list of all cooldowns a player has.
 	 * 
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @return
 	 */
 	public static List<String> getAllCooldownsOfPlayer(String playerName){

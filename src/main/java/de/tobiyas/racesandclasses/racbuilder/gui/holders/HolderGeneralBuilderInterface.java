@@ -83,7 +83,7 @@ public class HolderGeneralBuilderInterface extends BasicSelectionInterface {
 	protected String currentModifiedValue = null;
 	
 	/**
-	 * The Builder to build this holder
+	 * The Builder to build this holders
 	 */
 	protected final AbstractHolderBuilder builder;
 	

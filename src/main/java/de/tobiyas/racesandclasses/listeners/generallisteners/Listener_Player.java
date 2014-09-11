@@ -25,9 +25,10 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.login_no_race_selected;
 
+import java.util.Date;
+
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -39,9 +40,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 
 public class Listener_Player implements Listener {
@@ -55,60 +60,82 @@ public class Listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerLeave(PlayerQuitEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
-			Player player = event.getPlayer();
-			plugin.getChannelManager().playerQuit(player);
+			plugin.getChannelManager().playerQuit(RaCPlayerManager.get().getPlayer(event.getPlayer()));
 		}
 	}
 	 
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event){
-		final Player player = event.getPlayer();
+		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
-		RaceContainer container = (RaceContainer) plugin.getRaceManager().getHolderOfPlayer(player.getName());
+		plugin.getPlayerManager().checkPlayer(player);
+		RaceContainer container = player.getRace();
 		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
 				&& racesActive){
 			LanguageAPI.sendTranslatedMessage(player, login_no_race_selected);
 			if(container == null){
-				plugin.getRaceManager().addPlayerToHolder(player.getName(), Consts.defaultRace, true);
+				plugin.getRaceManager().addPlayerToHolder(player, Consts.defaultRace, true);
 			}
 		}
 		
-		plugin.getPlayerManager().checkPlayer(player.getName());
-		plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		//just to load them.
+		player.getConfig();
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLogin(player);
 		}
 		
 		if(racesActive){
-			container.editTABListEntry(player.getName());
+			container.editTABListEntry(player);
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
-		boolean playerHasNoRace = plugin.getRaceManager().getHolderOfPlayer(player.getName()) == plugin.getRaceManager().getDefaultHolder();
+		boolean playerHasNoRace = player.getRace() == plugin.getRaceManager().getDefaultHolder();
 		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
 		
 		if(playerHasNoRace && forceSelectOfRace && racesActive){
-			final HolderInventory raceInv = new HolderInventory(player, plugin.getRaceManager());
+			final HolderInventory raceInv = new HolderInventory(player.getPlayer(), plugin.getRaceManager());
 			if(raceInv.getNumberOfHolder() > 0){
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 					
 					@Override
 					public void run() {
-						player.openInventory(raceInv);
+						player.getPlayer().openInventory(raceInv);
 					}
 				}, scheduledTimeToOpen * 20);
 			}
 		}
 	}
 	
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerJoinCheck(PlayerJoinEvent event){
+		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		if(!config.contains("uuid")){
+			YAMLPersistenceProvider.getLoadedPlayerFile(player).set("uuid", event.getPlayer().getUniqueId().toString());			
+		}
+
+		
+		String newName = player.getName();
+		String oldName = config.getString("lastKnownName", "");
+		if(!newName.equals(oldName)){
+			//Name has changed
+			RacesAndClasses.getPlugin().log(oldName + " has changed his name to: " + newName);
+			YAMLPersistenceProvider.getLoadedPlayerFile(player).set("lastKnownName", newName);
+		}
+		
+		//set the last online time.
+		YAMLPersistenceProvider.getLoadedPlayerFile(player).set("lastOnline", new Date().getTime());
+	}
+	
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			World oldWorld = event.getFrom();
-			Player player = event.getPlayer();
-			plugin.getChannelManager().playerChangedWorld(oldWorld, player);
+			plugin.getChannelManager().playerChangedWorld(oldWorld, RaCPlayerManager.get().getPlayer(event.getPlayer()));
 		}
 	}
 	
@@ -116,16 +143,17 @@ public class Listener_Player implements Listener {
 	public void onPlayerChatEarly(AsyncPlayerChatEvent event){
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()) return;
 		String orgMsg = event.getMessage();
-		Player player = event.getPlayer();
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		
-		if(orgMsg.charAt(0) == '/') return;
+		//check if we have a fake command.
+		if(orgMsg != null && orgMsg.length() > 0 && orgMsg.charAt(0) == '/') return;
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = player.getConfig();
 		String channel = "Global";
 		
 		if(config != null){
 			channel = config.getCurrentChannel();
-			if(!plugin.getChannelManager().isMember(player.getName(), channel)){
+			if(!plugin.getChannelManager().isMember(player, channel)){
 				player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
 									ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
 				
@@ -141,10 +169,12 @@ public class Listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerChatLate(AsyncPlayerChatEvent event){
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()) return;
-		if(event.getMessage().charAt(0) == '/') return;
+		
+		String message = event.getMessage();
+		if(message != null && message.length() > 0 && message.charAt(0) == '/') return;
 		
 		String format = event.getFormat();
-		format = format.replace("{msg}", event.getMessage());
+		format = format.replace("{msg}", "%2$s");
 		
 		event.setFormat(format);
 	}

@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.tutorial;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.tutorial.steps.ChannelsState;
 import de.tobiyas.racesandclasses.tutorial.steps.EndState;
 import de.tobiyas.racesandclasses.tutorial.steps.InfoClassState;
@@ -29,30 +30,30 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class TutorialPath {
 
-	private String playerName;
+	private RaCPlayer player;
 	private StepInterface currentState;
 	private boolean activationSequence;
 	
 	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	
-	public TutorialPath(String playerName){
-		this.playerName = playerName;
+	public TutorialPath(RaCPlayer player){
+		this.player = player;
 		this.activationSequence = false;
-		currentState = new StartState(playerName, this);
+		currentState = new StartState(player, this);
 	}
 	
-	public TutorialPath(String playerName, boolean activationSequence){
-		this.playerName = playerName;
+	public TutorialPath(RaCPlayer player, boolean activationSequence){
+		this.player = player;
 		this.activationSequence = activationSequence;
-		currentState = new StartState(playerName, this);
+		currentState = new StartState(player, this);
 	}
 	
 	public void save(YAMLConfigExtended config){
 		config.load();
-		config.createSection("states." + playerName);
-		config.set("states." + playerName + ".stateName", currentState.getState().name());
-		config.set("states." + playerName + ".stateValue", currentState.getStateValue());
+		config.createSection("states." + player);
+		config.set("states." + player + ".stateName", currentState.getState().name());
+		config.set("states." + player + ".stateValue", currentState.getStateValue());
 		config.save();
 	}
 	
@@ -62,18 +63,18 @@ public class TutorialPath {
 		currentState = constructNewStep(currentState.getState().getNextStep());
 		
 		if(currentState == null){
-			plugin.getTutorialManager().unregister(playerName);
+			plugin.getTutorialManager().unregister(player);
 		}
 		return true;
 	}
 	
 	public boolean reset(){
-		currentState = new StartState(playerName, this);
+		currentState = new StartState(player, this);
 		return true;
 	}
 	
 	public boolean stop(){
-		plugin.getTutorialManager().unregister(playerName);
+		plugin.getTutorialManager().unregister(player);
 		return true;
 	}
 	
@@ -86,7 +87,7 @@ public class TutorialPath {
 	}
 	
 	public TutorialStepContainer getCurrentState(){
-		TutorialStepContainer container = new TutorialStepContainer(playerName, currentState.getState(), currentState.getStateValue());
+		TutorialStepContainer container = new TutorialStepContainer(player, currentState.getState(), currentState.getStateValue());
 		return container;
 	}
 	
@@ -97,17 +98,17 @@ public class TutorialPath {
 	
 	private StepInterface constructNewStep(TutorialState state){
 		switch(state){
-			case start : return new StartState(playerName, this);
+			case start : return new StartState(player, this);
 			
-			case infoRace : return new InfoRaceState(playerName, this);
-			case selectRace : return new SelectRaceState(playerName, this);
+			case infoRace : return new InfoRaceState(player, this);
+			case selectRace : return new SelectRaceState(player, this);
 			
-			case infoClass : return new InfoClassState(playerName, this);
-			case selectClass : return new SelectClassState(playerName, this);
+			case infoClass : return new InfoClassState(player, this);
+			case selectClass : return new SelectClassState(player, this);
 			
-			case channels : return new ChannelsState(playerName, this);
+			case channels : return new ChannelsState(player, this);
 			
-			case end : return new EndState(playerName, this);
+			case end : return new EndState(player, this);
 			
 			default : return null;
 		}

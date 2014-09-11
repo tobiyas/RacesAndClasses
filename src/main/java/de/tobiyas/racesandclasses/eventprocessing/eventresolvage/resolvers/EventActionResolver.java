@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -28,7 +29,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
@@ -43,17 +45,19 @@ public class EventActionResolver {
 	 * @return the resolved Action
 	 */
 	public static PlayerAction resolveAction(Event event, Player player){
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		if(event instanceof PlayerInteractEntityEvent){
 			return PlayerAction.INTERACT_ENTITY;
 		}
 		
+		
+		
 		if(event instanceof PlayerInteractEvent){
 			//check player change spell first
 			
 			ItemStack itemInHands = ((PlayerInteractEvent) event).getItem();
-			if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).isWandItem(itemInHands)){
+			if(racPlayer.getSpellManager().isWandItem(itemInHands)){
 				if(((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_BLOCK
 						|| ((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_AIR){
 					
@@ -64,6 +68,15 @@ public class EventActionResolver {
 						|| ((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_AIR){
 					
 					return PlayerAction.CAST_SPELL;
+				}
+			}
+			
+			//check if player changes Arrow second.
+			if(itemInHands != null && itemInHands.getType() == Material.BOW){
+				if(((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_BLOCK
+						|| ((PlayerInteractEvent) event).getAction() == Action.LEFT_CLICK_AIR){
+					
+					return PlayerAction.CHANGE_ARROW;
 				}
 			}
 			

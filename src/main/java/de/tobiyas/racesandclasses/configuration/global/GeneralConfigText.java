@@ -15,18 +15,18 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.global;
 
-import de.tobiyas.racesandclasses.util.consts.Consts;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
+import de.tobiyas.racesandclasses.util.consts.Consts;
 
 
 public class GeneralConfigText {
 
 	
 	/**
-	 * The Text of the Global Config
+	 * The Text of the Global ConfigTotal
 	 */
 	public static final String GlobalConfigText = ""
-			+ "#Config for RacesAndClasses\n"
+			+ "#ConfigTotal for RacesAndClasses\n"
 			+ "#TemplateVersion " + Consts.configVersion 
 			+ "\n\n"
 			
@@ -169,10 +169,56 @@ public class GeneralConfigText {
 			+ "# default: [] \n"
 			+ worlds_disableOn + ": []\n\n"
 			
+			+ "# All regions to disable the Traits on. \n"
+			+ "# String list: example: [region12,tobiyas_region,...]\n"
+			+ "# default: [] \n"
+			+ disabled_regions + ": []\n\n"
+			
 			+ "# Tells the Plugin to reset the HP on change to disabled world. \n"
 			+ "# boolean: true or false\n"
 			+ "# default: true \n"
 			+ keep_max_hp_on_disabled_worlds + ": true\n\n"
+			
+			//Race-Spawns
+			+ "\n"
+			+ "#############\n"
+			+ "#Race Spawns#\n"
+			+ "#############\n"
+			+ "\n"
+			
+			+ "# This tells if the Race-Spawning Feature is enabled or not.. \n"
+			+ "# If it is enabled, players can get with '/racespawn' to their Race Spawns.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: true \n"
+			+ race_spawns_enabled + ": true\n\n"
+			
+			+ "# When a player dies, he will spawn on his Race Spawn.\n"
+			+ "# If this is set to false, the player NOT spawn to his race spawn.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: false \n"
+			+ race_spawn_when_dead + ": false\n\n"
+			
+			+ "# Tells the cooldown for using /racespawn. \n"
+			+ "# The cooldown is in seconds. 300 -> 6 Minutes. \n"
+			+ "# integer: 0 - high number\n"
+			+ "# default: 300 \n"
+			+ race_spawn_cooldown + ": 300\n\n"
+			
+			
+			///FOOOOOD
+			+ "\n"
+			+ "######\n"
+			+ "#Food#\n"
+			+ "######\n"
+			+ "\n"
+			
+			+ "# This tells to enable the Food addin.\n"
+			+ "# If it is enabled, players can eat food that has the correct lores on them.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: true \n"
+			+ food_enabled + ": true\n\n"
+			
+
 			
 			
 			//GENERAL
@@ -188,11 +234,11 @@ public class GeneralConfigText {
 			+ "# default: true \n"
 			+ general_copyDefaultTraitsOnStartup + ": true\n\n"
 
-			+ "# This tells the Plugin to use the Build in DB service to save data. \n"
-			+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
-			+ "# boolean: true or false\n"
-			+ "# default: true \n"
-			+ general_saving_savePlayerDataToDB + ": true\n\n"
+			//+ "# This tells the Plugin to use the Build in DB service to save data. \n"
+			//+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
+			//+ "# boolean: true or false\n"
+			//+ "# default: true \n"
+			//+ general_saving_savePlayerDataToDB + ": false\n\n"
 			
 			+ "# This tells the plugin to look at conversion at startup.. \n"
 			+ "# If turned to false, no conversion of playerdata will be done on startup!\n"
@@ -211,7 +257,37 @@ public class GeneralConfigText {
 			+ "# String list: [command1,command2,...]\n"
 			+ "# default: [] \n"
 			+ general_disable_commands + ": []\n\n"
+			
+			+ "# This tells the plugin to NOT register the following aliases. \n"
+			+ "# This is a list of aliases that are disabled for the plugin.\n"
+			+ "# String list: [alias1,alias2,...]\n"
+			+ "# default: [] \n"
+			+ general_disable_aliases + ": []\n\n"
+			
+			+ "# This is the cooldown between 2 messages when switching to the bow. \n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 10 \n"
+			+ general_cooldown_on_bow_message + ": 10\n\n"
+			
+			+ "# This is the cooldown between 2 messages when switching to the wand. \n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 10 \n"
+			+ general_cooldown_on_wand_message + ": 10\n\n"
+
+			+ "# When removing old data, the days to check. \n"
+			+ "# If a player is not online for that long, his playerfile is removed.\n"
+			+ "# The Value is in Days.\n"
+			+ "# number:  10  20   90   9001 ...."
+			+ "# default: 60 \n"
+			+ general_remove_old_data_days + ": 60\n\n"
 						
+			+ "# When removing old data, if to check if the file is empty.\n"
+			+ "# Empty means, that the player has no Race / Class entry.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: true\n"
+			+ general_remove_old_data_check_empty + ": true\n\n"
+			
+			
 			
 			//GUI
 			+ "\n"
@@ -230,10 +306,31 @@ public class GeneralConfigText {
 			+ "# default: false \n"
 			+ gui_scoreboard_disableAllOutputs + ": false\n\n"
 			
+			+ "# This is the top line on the Scoreboard.\n"
+			+ "# ColorCodes are replaced by &, eg: &e -> yellow.\n"
+			+ "# String: name (&eHallo)\n"
+			+ "# default: &eRaC \n"
+			+ gui_scoreboard_disableAllOutputs + ": '&eRaC'\n\n"
+			
 			+ "# Setting this to true will disable all Outputs of bars to the chat of the players.\n"
 			+ "# boolean: true or false\n"
 			+ "# default: false \n"
 			+ gui_disableAllChatBars + ": false\n\n"
+			
+			+ "# If this is activated, the level MC level bar is overwritten as Level Indicator.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_level_useMCLevelBar + ": false\n\n"
+			
+			+ "# If this is activated, the Mana will be displayed in the Food bar.\n"
+			+ "# boolean: true or false\n"
+			+ "# default: false \n"
+			+ gui_useFoodManaBar + ": false\n\n"
+			
+			+ "# The Mana Manager to use. This is the Mana System present and in use for this plugin.\n"
+			+ "# This can be: RaC or MagicSpells\n"
+			+ "# default: RaC \n"
+			+ gui_manaManagerType + ": 'RaC'\n\n"
 			
 			
 			//MAGIC
@@ -260,6 +357,9 @@ public class GeneralConfigText {
 			+ "# This is the Generator Polynome of the Level calculation. \n"
 			+ "# String: a string representing a polynome \n"
 			+ "# {level} will be replaced by the level of calculation.\n"
+			+ "# If mcmmo is used as Level System, the Calculation will use McMMO skills.\n"
+			+ "# The Skill name has to be written in {} eg. {mining}.\n"
+			+ "# A valid calculator would be: '{mining} + {excavation} \\ 20'\n"
 			+ "# default: '{level} * {level} * {level} * 1000' \n"
 			+ "# By default, the the next level needs (level^3) * 1000 exp.\n"
 			+ level_mapExpPerLevelCalculationString + ": '{level} * {level} * {level} * 1000'\n\n"
@@ -269,7 +369,8 @@ public class GeneralConfigText {
 			+ "# - RaC: Races and Classes leveling System (currently not usable).\n"
 			+ "# - MC: Minecraft Levels.\n"
 			+ "# - SkillAPI: Leveling System from SkillAPI.\n"
-			+ "# String: RaC or MC or SkillAPI\n"
+			+ "# - mcMMO: Leveling System from McMMO. also check for the calculation String above.\n"
+			+ "# String: RaC or MC or SkillAPI or MCMMO\n"
 			+ "# default: true \n"
 			+ level_useLevelSystem + ": RaC\n\n"
 
@@ -290,6 +391,11 @@ public class GeneralConfigText {
 			+ "# boolean: true or false \n"
 			+ "# default: true \n"
 			+ races_remindDefaultRace_enable + ": true\n\n"
+			
+			+ "# Tells the plugin to create a Permissions Group for every Race. \n"
+			+ "# boolean: true or false \n"
+			+ "# default: true \n"
+			+ races_create_group_for_race + ": true\n\n"
 			
 			+ "# This is the interval the plugin remembers the user to get a race. \n"
 			+ "# The Value is in Minutes \n"

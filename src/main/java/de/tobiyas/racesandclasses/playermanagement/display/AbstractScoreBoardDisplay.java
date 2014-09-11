@@ -23,13 +23,14 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 
 	/**
 	 * The Objective of the Scoreboard.
 	 */
-	protected final String SCOREBOARD_OBJECTIVE_NAME = "RaC";
+	protected final String SCOREBOARD_OBJECTIVE_NAME;
 	
 	/**
 	 * This is an Addition to the board name. It is concatenated to it.
@@ -37,9 +38,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	protected String boardAddition = "";
 	
 	/**
-	 * The Map of ScoreBoards to show.
+	 * The ScoreBoards to use.
 	 */
-	protected Scoreboard boardToShow;
+	protected Scoreboard boardToShow = Bukkit.getScoreboardManager().getNewScoreboard();
 	
 	/**
 	 * The old board stored while the RAC board is shown.
@@ -57,8 +58,12 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 	protected int bukkitTaskId = -1;
 	
 	
-	public AbstractScoreBoardDisplay(String playerName, DisplayInfos displayInfo) {
-		super(playerName, displayInfo);
+	public AbstractScoreBoardDisplay(RaCPlayer player, DisplayInfos displayInfo) {
+		super(player, displayInfo);
+		
+		SCOREBOARD_OBJECTIVE_NAME = ChatColor.translateAlternateColorCodes('&',
+				RacesAndClasses.getPlugin().getConfigManager()
+				.getGeneralConfig().getConfig_gui_scoreboard_name());
 
 		if(bukkitTaskId < 0 || 
 				!(Bukkit.getScheduler().isCurrentlyRunning(bukkitTaskId) 
@@ -82,19 +87,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 			return;
 		}
 		
-		Player player = Bukkit.getPlayer(playerName);
-		String objectiveName = ChatColor.YELLOW + SCOREBOARD_OBJECTIVE_NAME + boardAddition;
+		String objectiveName = SCOREBOARD_OBJECTIVE_NAME + boardAddition;
 		if(player == null || !player.isOnline()){
 			return;
-		}
-		
-		if(this.boardToShow == null){
-			Scoreboard playerbord = player.getScoreboard();
-			if(playerbord.getObjective(objectiveName) != null){
-				this.boardToShow = playerbord;
-			}else{
-				this.boardToShow = Bukkit.getScoreboardManager().getNewScoreboard();
-			}			
 		}
 		
 		Scoreboard bordOfPlayer = boardToShow;
@@ -112,8 +107,8 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 		removeOldValues(bordOfPlayer);
 		addValues(objective);
 		
-		delayFading(player, 5);
-		player.setScoreboard(bordOfPlayer);
+		delayFading(player.getPlayer(), 5);
+		player.getPlayer().setScoreboard(bordOfPlayer);
 	}
 
 	/**
@@ -151,10 +146,9 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 		fadingTime --;
 
 		if(fadingTime < 0){
-			Player player = Bukkit.getPlayer(playerName);
 			if(player != null && player.isOnline()){
 				Scoreboard oldBoard = this.oldBoardToStore;
-				Scoreboard currentBoard = player.getScoreboard();
+				Scoreboard currentBoard = player.getPlayer().getScoreboard();
 				
 				if(currentBoard != boardToShow){
 					//check again in 2 seconds.
@@ -166,7 +160,7 @@ public abstract class AbstractScoreBoardDisplay extends AbstractDisplay {
 					oldBoard = Bukkit.getScoreboardManager().getNewScoreboard();
 				}
 				
-				player.setScoreboard(oldBoard);
+				player.getPlayer().setScoreboard(oldBoard);
 			}
 		}
 	}

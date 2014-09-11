@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
 import static de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser.configureTraitFromYAML;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,12 +26,12 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.HolderPermissions;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
@@ -42,17 +41,22 @@ import de.tobiyas.util.items.MaterialParser;
 public abstract class AbstractTraitHolder {
 	
 	/**
-	 * The config of the holder to store / load stuff
+	 * The config of the holders to store / load stuff
 	 */
 	protected final YAMLConfigExtended config;
 	
 	/**
-	 * The name of the holder
+	 * The name of the holders
 	 */
-	protected final String holderName;
+	protected final String configNodeName;
 	
 	/**
-	 * The pretty tag of the holder
+	 * The Display Name to use.
+	 */
+	protected String displayName;
+	
+	/**
+	 * The pretty tag of the holders
 	 */
 	protected String holderTag;
 	
@@ -67,12 +71,12 @@ public abstract class AbstractTraitHolder {
 	protected ItemStack holderSelectionItem;
 	
 	/**
-	 * A set of Traits that the holder contains
+	 * A set of Traits that the holders contains
 	 */
 	protected Set<Trait> traits;
 	
 	/**
-	 * The permission container holding all Permissions for the holder
+	 * The permission container holding all Permissions for the holders
 	 */
 	protected final HolderPermissions holderPermissions;
 	
@@ -91,17 +95,29 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected final Set<Material> additionalWandMaterials;
 	
+	/**
+	 * The Description of the Holder.
+	 * If null, none is present.
+	 */
+	protected String holderDescription = null;
+	
+	/**
+	 * The parents of this holders.
+	 */
+	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
+	
 	
 	
 	/**
 	 * Creates an {@link AbstractTraitHolder}
 	 * 
 	 * @param config to load from
-	 * @param name of the holder
+	 * @param name of the holders
 	 */
 	protected AbstractTraitHolder(YAMLConfigExtended config, String name) {
 		this.config = config;
-		this.holderName = name;
+		this.configNodeName = name;
+		this.displayName = name;
 		this.parsingExceptionsHappened = new LinkedList<HolderTraitParseException>();
 		this.armorUsage = new boolean[]{false, false, false, false, false};
 		this.traits = new HashSet<Trait>();
@@ -109,9 +125,15 @@ public abstract class AbstractTraitHolder {
 		this.additionalWandMaterials = new HashSet<Material>();
 		this.holderSelectionItem = new ItemStack(Material.BOOK_AND_QUILL);
 		
-		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + holderName);
+		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + configNodeName);
 		this.manaBonus = 0;
+		
+		//we need to set the name to start. This is needed for inheritence.
+		try{
+			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
+		}catch(Throwable exp){}
 	}
+	
 	
 	/**
 	 * Loads the Holder from the config file passed in constructor.
@@ -127,22 +149,95 @@ public abstract class AbstractTraitHolder {
 		readPermissionSection();
 		readAdditionalWandMaterial();
 		readHolderSelectionItem();
+		readHolderDescription();
 		
 		return this;
 	}
 	
 
 	/**
+	 * Reads the parents section for the Trait.
+	 */
+	public void readParents() {
+		List<String> parentsName = config.getStringList(configNodeName + ".config.parents");
+		this.parents.clear();
+		if(parentsName.isEmpty()) return;
+		
+		for(String name : parentsName){
+			AbstractTraitHolder parent = getHolderManager().getHolderByName(name);
+			if(parent == null) continue;
+			
+			if(hasParentCyle(parent, 0, 50)){
+				RacesAndClasses.getPlugin().logError("The " + getContainerTypeAsString() + " has a cyclic Parent!"
+						+ " Please remove " + name + " in some sort from the cycle!");
+				continue;
+			}
+			
+			this.parents.add(parent);
+			addHolderToAddParents(this, parent, 0, 50);
+		}
+	}
+	
+	/**
+	 * Checks if this traitHolder has a cyclic depend.
+	 * 
+	 * @param holders to check.
+	 * @param step to do
+	 * 
+	 * @return true if it has.
+	 */
+	protected boolean hasParentCyle(AbstractTraitHolder holder, int step, int border){
+		if(step > border) return false;
+		if(holder.getParents().contains(this)) return true;
+		
+		for(AbstractTraitHolder parent : holder.getParents()) {
+			if(hasParentCyle(parent, step + 1, border)) return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Checks if this traitHolder has a cyclic depend.
+	 * 
+	 * @param holders to check.
+	 * @param step to do
+	 */
+	protected void addHolderToAddParents(AbstractTraitHolder origin, AbstractTraitHolder holder, int step, int border){
+		if(step > border) return;
+		for(Trait trait : holder.getTraits()) {
+			origin.traits.add(trait);
+			trait.addTraitHolder(origin);
+		}
+		
+		for(AbstractTraitHolder parent : holder.getParents()) {
+			parent.addHolderToAddParents(origin, parent, step + 1, border);
+		}
+	}
+	
+
+
+	/**
+	 * Reads the Description from the config.
+	 */
+	protected void readHolderDescription() {		
+		String toSet = config.getString(configNodeName + ".description", null);
+		if(toSet != null) holderDescription = toSet;
+	}
+	
+	
+
+	/**
 	 * Reads the Holder selection Item from the config.
 	 */
 	@SuppressWarnings("deprecation")
-	private void readHolderSelectionItem() {
+	protected void readHolderSelectionItem() {
 		Material mat = Material.BOOK_AND_QUILL;
 		try{
-			mat = Material.getMaterial(config.getInt(holderName + ".gui.item.id", Material.BOOK_AND_QUILL.getId()));
+			mat = Material.getMaterial(config.getInt(configNodeName + ".gui.item.id", Material.BOOK_AND_QUILL.getId()));
 		}catch(IllegalArgumentException exp){}
 		
-		short damageValue = (short) config.getInt(holderName + ".gui.item.damage", 0);
+		short damageValue = (short) config.getInt(configNodeName + ".gui.item.damage", 0);
 		
 		this.holderSelectionItem = new ItemStack(mat, 1, damageValue);
 	}
@@ -154,15 +249,15 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected void readAdditionalWandMaterial() {
 		additionalWandMaterials.clear();
-		if(!config.contains(holderName + ".config.wandMaterial")) return;
+		if(!config.contains(configNodeName + ".config.wandMaterial")) return;
 		
-		List<String> wandMatList = config.getStringList(holderName + ".config.wandMaterial");
+		List<String> wandMatList = config.getStringList(configNodeName + ".config.wandMaterial");
 		additionalWandMaterials.addAll(MaterialParser.parseToMaterial(wandMatList));
 	}
 	
 
 	/**
-	 * Reads the configuration section of the holder.
+	 * Reads the configuration section of the holders.
 	 * Expect this to be called in the load process.
 	 * 
 	 * @throws HolderConfigParseException if the parsing failed.
@@ -175,7 +270,7 @@ public abstract class AbstractTraitHolder {
 	 */
 	protected void readArmor(){
 		armorUsage = new boolean[]{false, false, false, false, false};
-		String armorString = config.getString(holderName + ".config.armor", "").toLowerCase();
+		String armorString = config.getString(configNodeName + ".config.armor", "").toLowerCase();
 		if(armorString.contains("leather"))
 			armorUsage[0] = true;
 		
@@ -211,11 +306,11 @@ public abstract class AbstractTraitHolder {
 		traits = new HashSet<Trait>();
 		addSTDTraits();
 		
-		if(!config.isConfigurationSection(holderName + ".traits")){
+		if(!config.isConfigurationSection(configNodeName + ".traits")){
 			return; //trait section is not necessary
 		}
 		
-		Set<String> traitNames = config.getConfigurationSection(holderName + ".traits").getKeys(false);
+		Set<String> traitNames = config.getConfigurationSection(configNodeName + ".traits").getKeys(false);
 		if(traitNames == null || traitNames.size() == 0) return;
 		
 		List<HolderTraitParseException> exceptionList = new LinkedList<HolderTraitParseException>();
@@ -227,14 +322,14 @@ public abstract class AbstractTraitHolder {
 				realTraitName = traitName.split("#")[0];
 			}
 			
-			if(config.isString(holderName + ".traits." + traitName + ".trait")){
-				realTraitName = config.getString(holderName + ".traits." + traitName + ".trait");
+			if(config.isString(configNodeName + ".traits." + traitName + ".trait")){
+				realTraitName = config.getString(configNodeName + ".traits." + traitName + ".trait");
 			}
 			
 			try{
 				Trait trait = TraitStore.buildTraitByName(realTraitName, this);
 				if(trait != null){
-					String configPath = holderName + ".traits." + traitName;
+					String configPath = configNodeName + ".traits." + traitName;
 					configureTraitFromYAML(config, configPath, trait);
 					trait.generalInit();
 					
@@ -242,7 +337,7 @@ public abstract class AbstractTraitHolder {
 				}
 			}catch(TraitConfigurationFailedException exp){
 				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
-				RacesAndClasses.getPlugin().log("Error on parsing: '" + getName() + "' Problem was: '" + exp.getMessage() 
+				RacesAndClasses.getPlugin().log("Error on parsing: '" + getDisplayName() + "' Problem was: '" + exp.getMessage() 
 						+ "' On Trait: '" + realTraitName + "'.");
 			}
 		}
@@ -256,32 +351,32 @@ public abstract class AbstractTraitHolder {
 	protected void readPermissionSection() {
 		holderPermissions.clear();
 		
-		if(!config.isList(holderName + ".permissions")){
+		if(!config.isList(configNodeName + ".permissions")){
 			return;
 		}
 		
-		List<String> permissionList = config.getStringList(holderName + ".permissions");
+		List<String> permissionList = config.getStringList(configNodeName + ".permissions");
 		holderPermissions.add(permissionList);
 	}
 	
 
 	/**
-	 * Adds STD Traits that every holder has to the Trait list.
+	 * Adds STD Traits that every holders has to the Trait list.
 	 */
 	protected abstract void addSTDTraits();
 	
 	
 	/**
-	 * Returns if a Player is member of this holder
+	 * Returns if a Player is member of this holders
 	 * 
-	 * @param playerName to check
+	 * @param player to check
 	 * @return true if is member, false otherwise
 	 */
-	public abstract boolean containsPlayer(String playerName);
+	public abstract boolean containsPlayer(RaCPlayer player);
 	
 	
 	/**
-	 * Returns the Permissions this holder has additional
+	 * Returns the Permissions this holders has additional
 	 * 
 	 * @return as {@link List} of {@link String}
 	 */
@@ -295,8 +390,17 @@ public abstract class AbstractTraitHolder {
 	 * 
 	 * @return
 	 */
-	public String getName(){
-		return holderName;
+	public String getDisplayName(){
+		return displayName;
+	}
+	
+	/**
+	 * The name of the Holder
+	 * 
+	 * @return
+	 */
+	public String getConfigNodeName(){
+		return configNodeName;
 	}
 	
 	
@@ -317,32 +421,11 @@ public abstract class AbstractTraitHolder {
 	 */
 	public Set<Trait> getVisibleTraits(){
 		Set<Trait> traitSet = new HashSet<Trait>();
-		for(Trait trait : traits){
-			if(isVisible(trait)){
-				traitSet.add(trait);
-			}
+		for(Trait trait : getTraits()){
+			if(trait.isVisible()) traitSet.add(trait);
 		}
 		
 		return traitSet;
-	}
-	
-	
-	/**
-	 * Checks if a Trait is visible by checking it's import Trait Annotation
-	 * 
-	 * @param trait
-	 * @return
-	 */
-	private boolean isVisible(Trait trait) {
-		try{
-			Method importMethod = trait.getClass().getMethod("importTrait");
-			TraitInfos infos = importMethod.getAnnotation(TraitInfos.class);
-			
-			boolean isVisable = infos.visible();
-			return isVisable;
-		}catch(Exception exp){}
-		
-		return false;
 	}
 
 	/**
@@ -381,7 +464,7 @@ public abstract class AbstractTraitHolder {
 	
 	@Override
 	public String toString(){
-		return holderName;
+		return displayName;
 	}
 	
 	
@@ -437,10 +520,44 @@ public abstract class AbstractTraitHolder {
 
 	
 	/**
-	 * Returns the Holder Selection item representing the holder in any GUI.
+	 * Returns the Holder Selection item representing the holders in any GUI.
 	 * 
 	 */
 	public ItemStack getHolderSelectionItem() {
 		return holderSelectionItem;
 	}
+
+	
+	/**
+	 * @return the holderDescription
+	 */
+	public String getHolderDescription() {
+		return holderDescription;
+	}
+	
+	
+	/**
+	 * @return if has a Holder Description
+	 */
+	public boolean hasHolderDescription() {
+		return holderDescription != null;
+	}
+	
+	/**
+	 * This gives the Max Health mod back.
+	 * 
+	 * @return max health mod.
+	 */
+	public abstract double getMaxHealthMod();
+	
+	
+	/**
+	 * Returns the parents of this Holder.
+	 * 
+	 * @return parents.
+	 */
+	public Set<AbstractTraitHolder> getParents(){
+		return new HashSet<AbstractTraitHolder>(parents);
+	}
+	
 }

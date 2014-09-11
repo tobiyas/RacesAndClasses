@@ -26,6 +26,7 @@ import java.util.Observable;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigList;
 import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.converter.DBConverter;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.util.chat.WordParsing;
@@ -46,7 +47,7 @@ public class MemberConfig extends Observable {
 	/**
 	 * The player this config belongs
 	 */
-	protected String player;
+	protected RaCPlayer player;
 	
 	/**
 	 * The Configuration of the player as List
@@ -72,22 +73,22 @@ public class MemberConfig extends Observable {
 	 * @param player
 	 * @param configPre
 	 */
-	protected MemberConfig(String player, String configPre){
+	protected MemberConfig(RaCPlayer player, String configPre){
 		this.configPre = configPre;
 		this.player = player;
 	}
 	
 	/**
-	 * Constructs a new Member Config for a player.
+	 * Constructs a new Member ConfigTotal for a player.
 	 * It loads from the YAML loaded, if the player is found, and creates a new one if no exists.
 	 * 
 	 * @param player to create
 	 */
-	protected MemberConfig(String player){
+	protected MemberConfig(RaCPlayer player){
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		this.player = player;
 		configList = new MemberConfigList<ConfigOption>();
-		configPre = "playerdata." + player + ".config";
+		configPre = "config";
 		
 		boolean defaultEnableHealthBar = DBConverter.getGeneralConfig().isConfig_enable_healthbar_in_chat();
 
@@ -127,20 +128,20 @@ public class MemberConfig extends Observable {
 	/**
 	 * Creates a new Member config.
 	 * 
-	 * @param player
+	 * @param player2
 	 * @return
 	 */
-	public static MemberConfig createMemberConfig(String player){
+	public static MemberConfig createMemberConfig(RaCPlayer player){
 		return new MemberConfig(player);
 	}
 	
 	
 	/**
-	 * Returns the Name of the Player of this Config.
+	 * Returns the Name of the Player of this ConfigTotal.
 	 * 
-	 * @return holder of Configuration.
+	 * @return holders of Configuration.
 	 */
-	public String getName(){
+	public RaCPlayer getPlayer(){
 		return player;
 	}
 
@@ -396,7 +397,7 @@ public class MemberConfig extends Observable {
 
 
 	/**
-	 * Checks if a Config option with the given name is present.
+	 * Checks if a ConfigTotal option with the given name is present.
 	 * Returns true if the name is found as DisplayName
 	 * 
 	 * @param identifier to check for
@@ -408,7 +409,7 @@ public class MemberConfig extends Observable {
 	
 	
 	/**
-	 * Returns all Config entries.
+	 * Returns all ConfigTotal entries.
 	 * This list is a copied list -> Changes will not affect the MemberConfig.
 	 * -> read only.
 	 * 

@@ -130,6 +130,11 @@ public class PermissionNode {
 	public static final String broadcast = prePlugin + "channel.broadcast";
 	
 	/**
+	 * The Permission to delete channels.
+	 */
+	public static final String channel_delete = prePlugin + "channel.delete";
+	
+	/**
 	 * The Permissions to use the '/racstatistics [plugin / subcommand]' command.
 	 */
 	public static final String statistics = prePlugin + "statistics";
@@ -139,6 +144,20 @@ public class PermissionNode {
 	 */
 	public static final String racEdit = prePlugin + "racedit";
 	
+	/**
+	 * The Permission to use /playerifo
+	 */
+	public static final String playerInfos = prePlugin + "playerinfos.command";
+	
+	/**
+	 * The Permission to show location on /playerinfo
+	 */
+	public static final String playerInfosLocation = prePlugin + "playerinfos.location";
+	
+	/**
+	 * The Permission to show Others on /playerinfo
+	 */
+	public static final String playerInfosOthers = prePlugin + "playerinfos.others";
 	
 	/**
 	 * The Prefix for Race permissions
@@ -149,4 +168,20 @@ public class PermissionNode {
 	 * The Prefix for Class permissions
 	 */
 	public static final String classPermPre = prePlugin + "classes.";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnCreate = prePlugin + "racespawn.create";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnUseOwn = prePlugin + "racespawn.use.own";
+	
+	/**
+	 * The Prefix for Class permissions
+	 */
+	public static final String raceSpawnUseOther = prePlugin + "racespawn.use.other";
+
 }

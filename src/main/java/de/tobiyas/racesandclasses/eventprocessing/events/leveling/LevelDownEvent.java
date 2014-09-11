@@ -17,6 +17,8 @@ package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 
 import org.bukkit.event.HandlerList;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+
 public class LevelDownEvent extends LevelEvent {
 
 	private final static HandlerList handlers = new HandlerList();
@@ -41,7 +43,7 @@ public class LevelDownEvent extends LevelEvent {
 	 * @param fromLevel the Level the Player was before
 	 * @param toLevel the Level the Player is afterwards.
 	 */
-	public LevelDownEvent(String player, int fromLevel, int toLevel) {
+	public LevelDownEvent(RaCPlayer player, int fromLevel, int toLevel) {
 		super(player);
 		
 		this.fromLevel = fromLevel;

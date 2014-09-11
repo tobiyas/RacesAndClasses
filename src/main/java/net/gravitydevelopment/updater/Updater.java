@@ -21,7 +21,13 @@
 
 package net.gravitydevelopment.updater;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -78,7 +84,7 @@ public class Updater {
 
     private static final String[] NO_UPDATE_TAG = { "-DEV", "-PRE", "-SNAPSHOT", "BETA", "ALPHA" }; // If the version number contains one of these, don't update.
     private static final int BYTE_SIZE = 1024; // Used for downloading files
-    private YamlConfiguration config; // Config file
+    private YamlConfiguration config; // ConfigTotal file
     private String updateFolder;// The folder that downloads will be placed in
     private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS; // Used for determining the outcome of the update process
 

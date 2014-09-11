@@ -21,32 +21,33 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
 import java.util.HashMap;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.racbuilder.gui.base.BaseSelectionInventory;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.util.inventorymenu.stats.StringSelectionInterface;
 
-public class CommandExecutor_Edit implements CommandExecutor {
+public class CommandExecutor_Edit extends AbstractCommand {
 	
 	private RacesAndClasses plugin;
 	
 	
 	public CommandExecutor_Edit() {
+		super("racedit", new String[]{"racedit"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racedit";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racedit";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	

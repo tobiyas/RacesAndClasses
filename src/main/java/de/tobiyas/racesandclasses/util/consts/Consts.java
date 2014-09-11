@@ -42,11 +42,20 @@ public class Consts {
 	
 	//Debugging
 	public static final int timingLength = 10;
+	public static final boolean disableBDSupport = true;
 	
 	//Version
 	public static final String currentDevStage = "B T";
-	public static final String detailedVersionString = "1.0.3 RC 2";
-	public static final String configVersion = "1.3"; //<- for 1.0.3 RC 2 Version: 1.3 (Changed FOR RC 2)
+	public static final String detailedVersionString = "1.1.1";
+	
+	/**
+	 * V1.0.3 RC 2: 1.3
+	 * V1.0.4 RC 1: 1.4
+	 * V1.1.0 : 1.5
+	 * V1.1.1 : 1.6
+	 */
+	public static final String configVersion = "1.6"; 
+	
 	
 	//Races
 	public static String defaultRace = "DefaultRace";

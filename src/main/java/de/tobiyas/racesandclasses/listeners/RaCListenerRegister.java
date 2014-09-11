@@ -16,20 +16,25 @@
 package de.tobiyas.racesandclasses.listeners;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.addins.food.FoodListener;
 import de.tobiyas.racesandclasses.listeners.classchangelistener.ClassChangeSelectionListener;
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChange;
+import de.tobiyas.racesandclasses.listeners.equipement.Listener_raceClassRestrictionOnItems;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
+import de.tobiyas.racesandclasses.listeners.externalchatlistener.TownyChatListener;
+import de.tobiyas.racesandclasses.listeners.externalchatlistener.VaultChatListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_ManaPotion;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_RaceSpawn;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_WandAndBowEquip;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.StunCancelListener;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.ClassChangeListenerGui;
 import de.tobiyas.racesandclasses.listeners.holderchangegui.RaceChangeListenerGui;
-import de.tobiyas.racesandclasses.listeners.quickslot.QuickSlotListener;
 import de.tobiyas.racesandclasses.listeners.racechangelistener.RaceChangeSelectionListener;
 import de.tobiyas.racesandclasses.listeners.traitgui.TraitGuiListener;
 
@@ -48,8 +53,6 @@ public class RaCListenerRegister {
 		new RaceChangeListenerGui();
 		
 		new TraitGuiListener();
-		
-		new QuickSlotListener();
 	}
 	
 	
@@ -72,6 +75,11 @@ public class RaCListenerRegister {
 		new StunCancelListener();
 		new Listener_WandAndBowEquip();
 		new PlayerLastDamageListener();
+		new Listener_ManaPotion();
+		new Listener_RaceSpawn();
+		new FoodListener();
+		
+		new Listener_raceClassRestrictionOnItems();
 	}
 	
 	/**
@@ -80,5 +88,7 @@ public class RaCListenerRegister {
 	public static void registerChatListeners(){
 		new HeroChatListener();
 		new DefaultChatReplacer();
+		new VaultChatListener();
+		new TownyChatListener();
 	}
 }

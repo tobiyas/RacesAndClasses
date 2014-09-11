@@ -38,4 +38,12 @@ public @interface TraitEventsUsed{
 	 * @return
 	 */
 	Class<? extends Event>[] registerdClasses() default {};
+	
+	/**
+	 * This are the registered events wanted to be used to call.
+	 * <br>These will bypass all the limitations.
+	 * {@link Trait#trigger(Event)} with.
+	 * @return
+	 */
+	Class<? extends Event>[] bypassClasses() default {};
 };

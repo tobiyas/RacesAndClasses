@@ -20,8 +20,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.ChatColor;
+
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.util.chat.ChatColorUtils;
 
 public class Translator {
 
@@ -74,14 +75,13 @@ public class Translator {
 	 * Checks and replaces Umlauts
 	 */
 	private void replaceUmlauts() {
-		modifiedText = modifiedText
-				.replaceAll("ä", "ae")
-				.replaceAll("Ä", "Ae")
-				.replaceAll("ö", "oe")
-				.replaceAll("Ö", "Oe")
-				.replaceAll("ü", "ue")
-				.replaceAll("Ü", "Ue")
-				.replaceAll("ß", "ss");
+		modifiedText = modifiedText.replace("<o>", '\u00f6' + "")
+			.replace("<O>", '\u00D6' + "")
+			.replace("<a>", '\u00e4' + "")
+			.replace("<A>", '\u00c4' + "")	
+			.replace("<u>", '\u00fc' + "")
+			.replace("<U>", '\u00dc' + "")
+			.replace("<ss>", '\u00df' + "");
 	}
 
 
@@ -160,7 +160,7 @@ public class Translator {
 	 * @return this like a builder.
 	 */
 	public Translator decodeColor(){
-		modifiedText = ChatColorUtils.decodeColors(modifiedText);
+		modifiedText = ChatColor.translateAlternateColorCodes('&', modifiedText);
 		return this;
 	}
 }

@@ -26,17 +26,22 @@ public class Keys {
 	
 	//b
 	public static final String bow_selected_message = "bow_selected_message";
+	public static final String buff_activated = "buff_activated";
+	public static final String buff_timeout = "buff_timeout";
+	public static final String buff_used = "buff_used";
 	
 	//c
 	//public static final String class = "class"; //java keyword.
 	public static final String channel_propertie = "channel_propertie";
 	public static final String change_to_same_holder = "change_to_same_holder";
-	public static final String class_changed_to = "class_not_exist";
+	public static final String class_changed_to = "class_changed_to";
 	public static final String class_changed_to_other = "class_not_exist";
 	public static final String class_not_exist = "class_not_exist";
 	public static final String cooldown_is_ready_again = "cooldown_is_ready_again";	
+	public static final String cooldown_is_ready_in = "cooldown_is_ready_in";	
 	
 	//d
+	public static final String disabled_region = "disabled_region";
 	
 	//e
 	
@@ -46,15 +51,10 @@ public class Keys {
 	//g
 	
 	//h
-	
-	//i
-	
-	//j
-	
-	//h
 	public static final String healed = "healed";
 	public static final String healed_other = "healed_other";
 	public static final String healed_by = "healed_by";
+	public static final String held_item_not_air = "held_item_not_air";
 	
 	//i
 	
@@ -114,6 +114,7 @@ public class Keys {
 	public static final String race_not_exist = "race_not_exist";
 	public static final String race_changed_to = "race_changed_to";
 	public static final String race_changed_to_other = "race_changed_to_other";
+	public static final String race_spawn_teleport_success = "race_spawn_teleport_success";
 	public static final String reload_message = "reload_message";
 	
 	//s
@@ -122,6 +123,7 @@ public class Keys {
 	public static final String stun_ended = "stun_ended";
 	public static final String stun_message = "stun_message";
 	public static final String stun_still = "stun_still";	
+	public static final String stun_success = "stun_success";	
 	public static final String success = "success";
 	
 

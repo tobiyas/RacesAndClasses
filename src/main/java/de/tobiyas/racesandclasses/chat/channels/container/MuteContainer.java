@@ -17,21 +17,29 @@ package de.tobiyas.racesandclasses.chat.channels.container;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MuteContainer {
 
-	private HashMap<String, Integer> muted = new HashMap<String, Integer>();
+	private final HashMap<RaCPlayer, Integer> muted = new HashMap<RaCPlayer, Integer>();
 	
 	public MuteContainer(){
 	}
 	
 	public MuteContainer(YAMLConfigExtended config, String channelPre){
 		Set<String> mutedPlayers = config.getChildren(channelPre + ".muted");
-		for(String playerName : mutedPlayers){
-			int time = config.getInt(channelPre + ".muted." + playerName);
-			muted.put(playerName, time);
+		for(String player : mutedPlayers){
+			try{
+				UUID id = UUID.fromString(player);
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(id);
+				
+				int time = config.getInt(channelPre + ".muted." + player);
+				muted.put(racPlayer, time);
+			}catch(IllegalArgumentException exp){ continue; }
 		}
 	}
 	
@@ -41,13 +49,13 @@ public class MuteContainer {
 	 * Returns true if the player got muted.
 	 * Returns false if the player is already muted.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @param time
 	 * @return
 	 */
-	public boolean mutePlayer(String playerName, int time){
-		if(!muted.containsKey(playerName)){
-			muted.put(playerName, time);
+	public boolean mutePlayer(RaCPlayer player, int time){
+		if(!muted.containsKey(player)){
+			muted.put(player, time);
 			return true;
 		}
 		
@@ -61,17 +69,10 @@ public class MuteContainer {
 	 * Returns false if the player was not found.
 	 * 
 	 * @return
-	 * @param playerName
+	 * @param player
 	 */
-	public boolean unmutePlayer(String playerName){
-		for(String name : muted.keySet()){
-			if(playerName.equalsIgnoreCase(name)){
-				muted.remove(name);
-				return true;
-			}
-		}
-		
-		return false;
+	public boolean unmutePlayer(RaCPlayer player){
+		return muted.remove(player) != null;
 	}
 	
 	/**
@@ -82,9 +83,9 @@ public class MuteContainer {
 	 * @param channelPre
 	 */
 	public void saveContainer(YAMLConfigExtended config, String channelPre){
-		for(String name : muted.keySet()){
+		for(RaCPlayer name : muted.keySet()){
 			int time = muted.get(name);
-			config.set(channelPre + ".muted." + name, time);
+			config.set(channelPre + ".muted." + name.getUniqueId(), time);
 		}
 		
 		if(muted.keySet().size() == 0){
@@ -98,23 +99,18 @@ public class MuteContainer {
 	 * Returns the time the player is still muted.
 	 * If -1 is returned, the player is NOT muted.
 	 * 
-	 * @param playerName
+	 * @param player
 	 * @return
 	 */
-	public int isMuted(String playerName){
-		for(String name : muted.keySet()){
-			if(playerName.equalsIgnoreCase(name))
-				return muted.get(name);
-		}
-		
-		return -1;
+	public int isMuted(RaCPlayer player){		
+		return muted.containsKey(player) ? muted.get(player) : -1;
 	}
 	
 	/**
 	 * Ticks the container to process unmuting after the time muted.
 	 */
 	public void tick(){
-		for(String name : muted.keySet()){
+		for(RaCPlayer name : muted.keySet()){
 			int duration = muted.get(name);
 			if(duration == Integer.MAX_VALUE) continue;
 			duration --;

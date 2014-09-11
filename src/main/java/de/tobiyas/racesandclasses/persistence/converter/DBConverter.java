@@ -21,6 +21,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -30,7 +31,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class DBConverter {
 
 	/**
-	 * The Plugin to call Config stuff on.
+	 * The Plugin to call ConfigTotal stuff on.
 	 */
 	private static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
@@ -51,7 +52,7 @@ public class DBConverter {
 	 * Removes all Player Entries that are empty.
 	 */
 	private static void deleteOldPlayerData(boolean broadcastSomething) {
-		Set<String> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -62,10 +63,10 @@ public class DBConverter {
 			plugin.log("Performing some cleanup...");
 		}
 			
-		for(String playerName : playerList){
-			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(playerName);
-			if(playerData.getChildren("playerdata." + playerName).size() == 0){
-				playerData.set("playerdata." + playerName, null);
+		for(RaCPlayer player : playerList){
+			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+			if(playerData.getChildren("playerdata." + player).size() == 0){
+				playerData.set("playerdata." + player, null);
 				removed ++;
 			}
 		}
@@ -80,7 +81,7 @@ public class DBConverter {
 	 * Converts the Player to classes / races Association to the DB.
 	 */
 	public static void convertHolderAssociated(){
-		Set<String> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -95,31 +96,29 @@ public class DBConverter {
 		String defaultRaceName = getGeneralConfig().getConfig_defaultRaceName();
 		String defaultClassName = null;
 		
-		for(String player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			String pre = "playerdata." + player;
+			if(!playerData.contains("race") && !playerData.contains("class")) continue;
 			
-			if(!playerData.contains(pre + ".race") && !playerData.contains(pre + ".class")) continue;
-			
-			String raceName = playerData.getString(pre + ".race", defaultRaceName);
-			String className = playerData.getString(pre + ".class", defaultClassName);
+			String raceName = playerData.getString("race", defaultRaceName);
+			String className = playerData.getString("class", defaultClassName);
 			
 			PlayerHolderAssociation container = new PlayerHolderAssociation();
 			container.setClassName(className);
 			container.setRaceName(raceName);
-			container.setPlayerName(player);
+			container.setPlayerUUID(player.getUniqueId());
 			
 			try{
 				//look if already present.
 				PlayerHolderAssociation presentHolder = plugin.getDatabase().find(PlayerHolderAssociation.class)
-						.where().ieq("playerName", player).findUnique();
+						.where().ieq("player", player.toString()).findUnique();
 				
 				if(presentHolder == null){
 					plugin.getDatabase().save(container);
 				}
 
-				playerData.set(pre + ".race", null);
-				playerData.set(pre + ".class", null);
+				playerData.set("race", null);
+				playerData.set("class", null);
 				
 				playerData.save();
 			}catch(Exception exp){
@@ -142,7 +141,7 @@ public class DBConverter {
 	 * Converts the General Data of Players.
 	 */
 	public static void convertGeneralData(){
-		Set<String> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		
 		if(playerList.size() <= 0){
 			return;
@@ -154,7 +153,7 @@ public class DBConverter {
 		
 		int fourthPercentValue = playerList.size() / 4;
 		
-		for(String player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			String pre = "playerdata." + player;
 			
@@ -173,7 +172,7 @@ public class DBConverter {
 			
 			try{
 				PlayerSavingContainer alreadyPlayerContainer = plugin.getDatabase().find(PlayerSavingContainer.class)
-						.where().ieq("playerName", player).findUnique();
+						.where().ieq("player", player.toString()).findUnique();
 				
 				if(alreadyPlayerContainer == null){
 					plugin.getDatabase().save(container);
@@ -201,7 +200,7 @@ public class DBConverter {
 	 * tries to convert the MemberConfig of the Plugin.
 	 */
 	public static void convertMemberConfig(){
-		Set<String> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
+		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
 		if(playerList.size() <= 0){
 			return;
 		}
@@ -212,7 +211,7 @@ public class DBConverter {
 		
 		int fourthPercentValue = playerList.size() / 4;
 		
-		for(String player : playerList){
+		for(RaCPlayer player : playerList){
 			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			if(playerData.getChildren("playerdata." + player + ".config").size() <= 0) continue;
 			
@@ -239,7 +238,7 @@ public class DBConverter {
 	
 	
 	/**
-	 * Returns the General Config.
+	 * Returns the General ConfigTotal.
 	 * If not load yet, it builds it temporarly.
 	 * 
 	 * @return

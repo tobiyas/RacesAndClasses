@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.traitcontainer;
 
 import java.io.File;
 import java.lang.annotation.AnnotationFormatError;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -30,6 +29,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -39,6 +39,7 @@ import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_6;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_7;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedsOtherPlugins;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -69,12 +70,12 @@ public class TraitStore {
 	
 	/**
 	 * Constructs a trait for the passed name.
-	 * It is important, that traitName and holder are NEVER null!
+	 * It is important, that traitName and holders are NEVER null!
 	 * 
 	 * If something gone Wrong while initialization, null is returned.
 	 * 
 	 * @param traitName of the trait
-	 * @param holder of Trait
+	 * @param holders of Trait
 	 * @return the constructed Trait or null
 	 */
 	public static Trait buildTraitByName(String traitName, AbstractTraitHolder holder){
@@ -105,10 +106,10 @@ public class TraitStore {
 	}
 	
 	/**
-	 * Builds a Trait and sets his holder to the one wanted.
+	 * Builds a Trait and sets his holders to the one wanted.
 	 * 
 	 * @param traitName
-	 * @param holder
+	 * @param holders
 	 * @return
 	 * @throws Exception
 	 */
@@ -123,7 +124,7 @@ public class TraitStore {
 			throw new TraitNotFoundException(traitName);
 		}
 		
-		trait.setTraitHolder(holder);
+		trait.addTraitHolder(holder);
 		
 		return trait;
 	}
@@ -152,6 +153,7 @@ public class TraitStore {
 						}
 						
 						Collections.addAll(wantedEvents, annotation.registerdClasses());
+						Collections.addAll(wantedEvents, annotation.bypassClasses());
 					}
 				}catch(Exception exp){
 					continue;
@@ -190,7 +192,7 @@ public class TraitStore {
 		for(File file : possibleTraits){
 			try{
 				loadExternalTrait(file);
-			}catch(Exception exception){
+			}catch(Throwable exception){
 				RacesAndClasses.getPlugin().log("Could not load file: " + file.toString());
 				continue;
 			}
@@ -256,6 +258,19 @@ public class TraitStore {
 	                    			}
 	                    		}
 	                    		
+	                    		if(clazz.isAnnotationPresent(NeedsOtherPlugins.class)){
+	                    			boolean doBreak = false;
+	                    			for(String pluginName : clazz.getAnnotation(NeedsOtherPlugins.class).neededPlugins()){
+	                    				if(Bukkit.getPluginManager().getPlugin(pluginName) == null) {
+	                    					doBreak = true;
+	                    					break;
+	                    				}
+	                    			}
+	                    			
+	                    			//some depends not found.
+	                    			if(doBreak) continue;
+	                    		}
+	                    		
 	                    		
 	                    		
 	                    		clazzArray.add((Class<Trait>) clazz);
@@ -274,8 +289,7 @@ public class TraitStore {
 	        for(Class<Trait> clazz : clazzArray){
 	        	try{
 					if (clazz != null) {
-						Constructor<?> constructor = clazz.getConstructor();
-						Trait trait = (Trait) constructor.newInstance();
+						Trait trait = clazz.newInstance();
 				        
 						boolean isPresent = trait.getClass().getMethod("importTrait").isAnnotationPresent(TraitInfos.class);
 				        if(isPresent){
@@ -299,18 +313,21 @@ public class TraitStore {
 	        }
 	        
 		}catch (NoClassDefFoundError e) {
-			RacesAndClasses.getPlugin().log("Unable to load " + file.getName() + ". Probably it was written for a previous Races version!");
+			String message = "Unable to load " + file.getName() + ". Probably it was written for a previous Races version!";
+			RacesAndClasses.getPlugin().log(message);
+			RacesAndClasses.getPlugin().logStackTrace(message, e);
 			return;
 		} catch (AnnotationFormatError e){
 			RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
-		} catch (Exception e) {
-			RacesAndClasses.getPlugin().log("The trait " + file.getName() + " failed to load for an unknown reason.");
-			RacesAndClasses.getPlugin().getDebugLogger().logStackTrace(e);
+		} catch (Throwable e) {
+			String message = "The trait " + file.getName() + " failed to load for an unknown reason.";
+			RacesAndClasses.getPlugin().log(message);
+			RacesAndClasses.getPlugin().logStackTrace(message, e);
 		} 
 	}
 
 	/**
-	 * Builds a static trait with NO holder.
+	 * Builds a static trait with NO holders.
 	 * 
 	 * @param string
 	 */

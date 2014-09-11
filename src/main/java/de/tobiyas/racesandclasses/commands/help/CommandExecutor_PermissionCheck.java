@@ -19,14 +19,16 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
-public class CommandExecutor_PermissionCheck implements CommandExecutor {
+public class CommandExecutor_PermissionCheck extends AbstractCommand {
 
 	/**
 	 * The plugin to call stuff on
@@ -37,16 +39,17 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 	 * Creates a CommandExecutor to call when command should be executed.
 	 */
 	public CommandExecutor_PermissionCheck() {
+		super("racpermcheck", new String[]{"rc", "racp"});
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "racpermcheck";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "racpermcheck";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 	}
 
 	@Override
@@ -89,10 +92,13 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getRaceManager().getHolderByName(holderName);
 			
-			boolean senderContained = holder.containsPlayer(sender.getName());
+			boolean senderContained = (sender instanceof Player) ? 
+					holder.containsPlayer(RaCPlayerManager.get().getPlayer(((Player) sender))) : 
+					false;
+			
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.racePermPre + holderName);
 			
-			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
+			sender.sendMessage(ChatColor.BLUE + holder.getDisplayName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Race)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
 		
@@ -114,10 +120,13 @@ public class CommandExecutor_PermissionCheck implements CommandExecutor {
 		for(String holderName : holders){
 			AbstractTraitHolder holder = plugin.getClassManager().getHolderByName(holderName);
 			
-			boolean senderContained = holder.containsPlayer(sender.getName());
+			boolean senderContained = (sender instanceof Player) ? 
+					holder.containsPlayer(RaCPlayerManager.get().getPlayer(((Player) sender))) : 
+					false;
+					
 			boolean hasPermissions = plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.classPermPre + holderName);
 			
-			sender.sendMessage(ChatColor.BLUE + holder.getName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
+			sender.sendMessage(ChatColor.BLUE + holder.getDisplayName() + ": " + (senderContained ? ChatColor.LIGHT_PURPLE + " (Your Class)" : ""
 					+ (hasPermissions? ChatColor.GREEN + " Permissions" : ChatColor.RED + " No Permissions")));
 		}
 		

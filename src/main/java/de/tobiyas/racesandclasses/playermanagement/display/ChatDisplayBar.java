@@ -15,10 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class ChatDisplayBar extends AbstractDisplay{
@@ -31,8 +29,8 @@ public class ChatDisplayBar extends AbstractDisplay{
 	 * @param player to display to
 	 * @param displayInfo the type of display to show
 	 */
-	public ChatDisplayBar(String playerName, DisplayInfos displayInfos) {
-		super(playerName, displayInfos);
+	public ChatDisplayBar(RaCPlayer player, DisplayInfos displayInfos) {
+		super(player, displayInfos);
 	}
 
 	
@@ -57,8 +55,6 @@ public class ChatDisplayBar extends AbstractDisplay{
 					pre + "." + after + colorMedium + "/" + colorHigh + maxAmount;			
 		}
 		
-		
-		Player player = Bukkit.getPlayer(playerName);
 		if(player != null && player.isOnline()){
 			player.sendMessage(displayInfo.getMidValueColor() + displayInfo.getName() + ": " + barString + healthAsNumbers);
 		}

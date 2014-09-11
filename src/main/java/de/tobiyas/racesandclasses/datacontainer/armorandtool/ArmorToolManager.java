@@ -17,13 +17,13 @@ package de.tobiyas.racesandclasses.datacontainer.armorandtool;
 
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.util.items.ItemUtils;
@@ -32,25 +32,23 @@ import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
 public class ArmorToolManager {
 
-	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
 	private HashSet<AbstractItemPermission> itemPerms;
-	private String playerName;
+	private RaCPlayer player;
 	
-	public ArmorToolManager(String playerName){
-		this.playerName = playerName;
+	public ArmorToolManager(RaCPlayer player){
+		this.player = player;
 		this.itemPerms = new HashSet<AbstractItemPermission>();
 	}
 	
 	
 	public void rescanPermission(){
 		itemPerms.clear();
-		if(WorldResolver.isOnDisabledWorld(playerName)){
+		if(player != null && !player.isOnline() && WorldResolver.isOnDisabledWorld(player)){
 			itemPerms.add(new AllItemsPermission());
 			return;
 		}
 		
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder container = player.getRace();
 		if(container != null){
 			for(ItemQuality quality : container.getArmorPerms()){
 				addPerm(quality);
@@ -59,7 +57,7 @@ public class ArmorToolManager {
 			
 		//Add ItemIDs or other here.
 		
-		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classContainer = player.getclass();
 		if(classContainer != null){
 			for(ItemQuality quality : classContainer.getArmorPerms()){
 				addPerm(quality);
@@ -125,7 +123,6 @@ public class ArmorToolManager {
 	 * @return the Damage after modification
 	 */
 	public double calcDamageToArmor(double damage, DamageCause cause){
-		Player player = Bukkit.getPlayer(playerName);
 		if(player == null){
 			return damage;
 		}
@@ -144,7 +141,7 @@ public class ArmorToolManager {
 			default: break;
 		}
 		
-		double playerArmor = getArmorLevel(player);
+		double playerArmor = getArmorLevel(player.getPlayer());
 		double playerDamageReduce = 1D - ((8D * playerArmor) / 200D);
 		return damage * playerDamageReduce;
 	}
@@ -168,55 +165,58 @@ public class ArmorToolManager {
 	 * @return true if settings is correct. False if something got thrown away.
 	 */
 	public boolean checkArmorNotValidEquiped() {
-		Player player = Bukkit.getPlayer(playerName);
 		if(player == null){
 			return true;
 		}
 		
-		ItemStack helmet = ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.HELMET);
-		ItemStack chest = ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.CHESTPLATE);
-		ItemStack legs = ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.LEGGINGS);
-		ItemStack boots = ItemUtils.getItemInArmorSlotOfPlayer(player, ArmorSlot.BOOTS);
+		boolean disableArmorCheck = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableArmorChecking();
+		if(disableArmorCheck) return true;
+		
+
+		ItemStack helmet = ItemUtils.getItemInArmorSlotOfPlayer(player.getPlayer(), ArmorSlot.HELMET);
+		ItemStack chest = ItemUtils.getItemInArmorSlotOfPlayer(player.getPlayer(), ArmorSlot.CHESTPLATE);
+		ItemStack legs = ItemUtils.getItemInArmorSlotOfPlayer(player.getPlayer(), ArmorSlot.LEGGINGS);
+		ItemStack boots = ItemUtils.getItemInArmorSlotOfPlayer(player.getPlayer(), ArmorSlot.BOOTS);
 		
 		boolean everythingOK = true;
 		
 		//check helmet
 		if(!hasPermissionForItem(helmet)){
-			if(!player.getInventory().addItem(helmet).isEmpty()){
-				player.getWorld().dropItem(player.getLocation(), helmet);
+			if(!player.getPlayer().getInventory().addItem(helmet).isEmpty()){
+				player.getPlayer().getWorld().dropItem(player.getLocation(), helmet);
 			}
 			
-			player.getInventory().setHelmet(new ItemStack(Material.AIR));
+			player.getPlayer().getInventory().setHelmet(new ItemStack(Material.AIR));
 			everythingOK = false;
 		}
 		
 		//check chest
 		if(!hasPermissionForItem(chest)){
-			if(!player.getInventory().addItem(chest).isEmpty()){
-				player.getWorld().dropItem(player.getLocation(), chest);
+			if(!player.getPlayer().getInventory().addItem(chest).isEmpty()){
+				player.getPlayer().getWorld().dropItem(player.getLocation(), chest);
 			}
 			
-			player.getInventory().setChestplate(new ItemStack(Material.AIR));
+			player.getPlayer().getInventory().setChestplate(new ItemStack(Material.AIR));
 			everythingOK = false;
 		}
 		
 		//check legs
 		if(!hasPermissionForItem(legs)){
-			if(!player.getInventory().addItem(legs).isEmpty()){
-				player.getWorld().dropItem(player.getLocation(), legs);
+			if(!player.getPlayer().getInventory().addItem(legs).isEmpty()){
+				player.getPlayer().getWorld().dropItem(player.getLocation(), legs);
 			}
 			
-			player.getInventory().setLeggings(new ItemStack(Material.AIR));
+			player.getPlayer().getInventory().setLeggings(new ItemStack(Material.AIR));
 			everythingOK = false;
 		}
 		
 		//check boots
 		if(!hasPermissionForItem(boots)){
-			if(!player.getInventory().addItem(boots).isEmpty()){
-				player.getWorld().dropItem(player.getLocation(), boots);
+			if(!player.getPlayer().getInventory().addItem(boots).isEmpty()){
+				player.getPlayer().getWorld().dropItem(player.getLocation(), boots);
 			}
 			
-			player.getInventory().setBoots(new ItemStack(Material.AIR));
+			player.getPlayer().getInventory().setBoots(new ItemStack(Material.AIR));
 			everythingOK = false;
 		}
 		

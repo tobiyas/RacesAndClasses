@@ -18,8 +18,13 @@ package de.tobiyas.racesandclasses.APIs;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -36,18 +41,48 @@ public class ClassAPI {
 	 * Returns the Class of a player.
 	 * If the player has no Class, the Default Class is returned.
 	 * 
-	 * @param playerName to search
+	 * @param player to search
+	 * 
+	 * @return the {@link RaceContainer} of the player
+	 * 
+	 * @deprecated use {@link #getClassOfPlayer(OfflinePlayer)} instead.
+	 */
+	@Deprecated
+	public static ClassContainer getClassOfPlayer(String playerName){
+		return getClassOfPlayer(Bukkit.getPlayer(playerName));
+	}
+	
+	/**
+	 * Returns the Class of a player.
+	 * If the player has no Class, the Default Class is returned.
+	 * 
+	 * @param player to search
 	 * 
 	 * @return the {@link RaceContainer} of the player
 	 */
-	public static ClassContainer getClassOfPlayer(String playerName){
+	public static ClassContainer getClassOfPlayer(Player player){
+		RaCPlayer raCPlayer = RaCPlayerManager.get().getPlayer(player);
+		
 		ClassManager classManager = plugin.getClassManager();
-		ClassContainer clazz = (ClassContainer) classManager.getHolderOfPlayer(playerName);
+		ClassContainer clazz = raCPlayer.getclass();
 		if(clazz != null){
 			return clazz;
 		}else{
 			return (ClassContainer) classManager.getDefaultHolder();
 		}
+	}
+	
+	/**
+	* Returns the Class Name of a player.
+	* If the player has no Class, the Default Class is returned.
+	* 
+	* @param player to search
+	* 
+	* @return the {@link RaceContainer} of the player
+	*/
+	public static String getClassNameOfPlayer(Player player){
+		ClassContainer container = getClassOfPlayer(player);
+		return (container == null) ? "" : container.getDisplayName();
 	}
 	
 	
@@ -80,17 +115,38 @@ public class ClassAPI {
 	 * If he already has one, the Class is changed to the new one.
 	 * 
 	 * Returns true on success, false if:
-	 *  - playerName can not be found on Bukkit.getPlayer(playerName).
+	 *  - player can not be found on Bukkit.getPlayer(player).
 	 *  - the new className is not found.
 	 *  - any internal error occurs.
 	 * 
-	 * @param playerName the player that the Class should be changed.
+	 * @param player the player that the Class should be changed.
+	 * @param className to change to
+	 * 
+	 * @return true if worked, false otherwise
+	 * 
+	 * @deprecated use {@link #addPlayerToClass(OfflinePlayer, String)} instead.
+	 */
+	@Deprecated
+	public static boolean addPlayerToClass(String playerName, String className){
+		return addPlayerToClass(Bukkit.getPlayer(playerName), className);
+	}
+	
+	/**
+	 * Gives the passed Player a Class.
+	 * If he already has one, the Class is changed to the new one.
+	 * 
+	 * Returns true on success, false if:
+	 *  - player can not be found on Bukkit.getPlayer(player).
+	 *  - the new className is not found.
+	 *  - any internal error occurs.
+	 * 
+	 * @param Offlineplayer the player that the Class should be changed.
 	 * @param className to change to
 	 * 
 	 * @return true if worked, false otherwise
 	 */
-	public static boolean addPlayerToClass(String playerName, String className){
-		if(Bukkit.getPlayer(playerName) == null) return false;
+	public static boolean addPlayerToClass(Player player, String className){
+		if(player == null) return false;
 		
 		ClassManager manager = plugin.getClassManager();
 		ClassContainer wantedClass = (ClassContainer) manager.getHolderByName(className);
@@ -98,6 +154,24 @@ public class ClassAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(playerName, className, true);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		return manager.changePlayerHolder(racPlayer, className, true);
+	}
+	
+	
+	public static String getDefaultClassName(){
+		if(!isClassSystemActive()) return null;
+		AbstractTraitHolder holder = plugin.getClassManager().getDefaultHolder();
+		if(holder == null) return null;
+		return holder.getDisplayName();
+	}
+	
+	/**
+	 * Returns if the Class system is used or if it is deactivated.
+	 * 
+	 * @return true if used.
+	 */
+	public static boolean isClassSystemActive(){
+		return plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable();
 	}
 }

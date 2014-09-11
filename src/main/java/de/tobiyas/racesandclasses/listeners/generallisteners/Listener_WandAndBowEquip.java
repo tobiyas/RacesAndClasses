@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -31,11 +30,14 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 
 public class Listener_WandAndBowEquip implements Listener {
 
 	private RacesAndClasses plugin;
+	
 
 	public Listener_WandAndBowEquip(){
 		plugin = RacesAndClasses.getPlugin();
@@ -49,25 +51,39 @@ public class Listener_WandAndBowEquip implements Listener {
 			return;
 		}
 		
-		Player player = event.getPlayer();
-		ItemStack item = player.getInventory().getItem(event.getNewSlot());
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		ItemStack item = player.getPlayer().getInventory().getItem(event.getNewSlot());
 		if(item != null){
 			Material mat = item.getType();
 			boolean newMatIsWand = isWand(player, mat);
 
 			if(newMatIsWand){
-				if(plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getSpellAmount() > 0){
-					String currentActiveSpell = plugin.getPlayerManager().getSpellManagerOfPlayer(player.getName()).getCurrentSpell().toString();
+				if(player.getSpellManager().getSpellAmount() > 0){
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.wand") > 0){
+						return;
+					}
+					
+					String currentActiveSpell = player.getSpellManager().getCurrentSpell().toString();
 					LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
 							"current_spell", currentActiveSpell);
+					
+					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_wand_message();
+					plugin.getCooldownManager().setCooldown(player.getName(), "message.wand", time);
 				}
 			}
 			
 			if(mat == Material.BOW){
-				if(plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getNumberOfArrowTypes() > 0){
-					String currentArrow = plugin.getPlayerManager().getArrowManagerOfPlayer(player.getName()).getCurrentArrow().getDisplayName();
+				if(player.getArrowManager().getNumberOfArrowTypes() > 0){
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.bow") > 0){
+						return;
+					}
+					
+					String currentArrow =player.getArrowManager().getCurrentArrow().getDisplayName();
 					LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
 							"current_arrow", currentArrow);
+					
+					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_bow_message();
+					plugin.getCooldownManager().setCooldown(player.getName(), "message.bow", time);
 				}
 			}
 			
@@ -80,18 +96,16 @@ public class Listener_WandAndBowEquip implements Listener {
 	 * @param player to check
 	 * @return true if he has, false otherwise.
 	 */
-	private boolean isWand(Player player, Material mat) {
-		String playerName = player.getName();
-		
+	private boolean isWand(RaCPlayer player, Material mat) {
 		Set<Material> wands = new HashSet<Material>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder classHolder = player.getclass();
 		if(classHolder != null){
 			wands.addAll(classHolder.getAdditionalWandMaterials());
 		}
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(playerName);
+		AbstractTraitHolder raceHolder = player.getRace();
 		if(raceHolder != null){
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}

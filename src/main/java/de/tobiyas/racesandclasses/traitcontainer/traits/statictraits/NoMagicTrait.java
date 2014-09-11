@@ -15,16 +15,15 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.statictraits;
 
-import java.util.Map;
-
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractMagicSpellTrait;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public class NoMagicTrait extends AbstractMagicSpellTrait {
@@ -47,7 +46,7 @@ public class NoMagicTrait extends AbstractMagicSpellTrait {
 	
 		
 	@Override
-	public void setConfiguration(Map<String, Object> configMap)
+	public void setConfiguration(TraitConfiguration configMap)
 			throws TraitConfigurationFailedException {
 
 		
@@ -65,7 +64,7 @@ public class NoMagicTrait extends AbstractMagicSpellTrait {
 	}
 
 	@Override
-	protected void magicSpellTriggered(Player player, TraitResults result) {
+	protected void magicSpellTriggered(RaCPlayer player, TraitResults result) {
 	}
 
 }

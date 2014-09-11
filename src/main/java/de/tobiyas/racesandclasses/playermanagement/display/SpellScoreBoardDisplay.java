@@ -16,11 +16,12 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class SpellScoreBoardDisplay extends AbstractDisplay {
 
-	public SpellScoreBoardDisplay(String playerName, DisplayInfos displayInfo) {
-		super(playerName, displayInfo);
+	public SpellScoreBoardDisplay(RaCPlayer player, DisplayInfos displayInfo) {
+		super(player, displayInfo);
 
 	
 	}

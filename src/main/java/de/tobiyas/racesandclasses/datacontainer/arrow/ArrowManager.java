@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.datacontainer.arrow;
 import java.util.ArrayList;
 import java.util.Set;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -27,11 +28,11 @@ public class ArrowManager {
 	
 	private ArrayList<AbstractArrow> arrows;
 	private int currentPointer;
-	private String player;
+	private RaCPlayer player;
 	
 	private long eventTime;
 	
-	public ArrowManager(String player){
+	public ArrowManager(RaCPlayer player){
 		this.player = player;
 		arrows = new ArrayList<AbstractArrow>();
 		currentPointer = 0;
@@ -40,6 +41,7 @@ public class ArrowManager {
 	
 	public void rescanClass(){
 		arrows.clear();
+		
 		if(WorldResolver.isOnDisabledWorld(player)){
 			return;
 		}

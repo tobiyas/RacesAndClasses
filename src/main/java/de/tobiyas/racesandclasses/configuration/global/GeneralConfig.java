@@ -23,58 +23,13 @@
  package de.tobiyas.racesandclasses.configuration.global;
 
  
- import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_channel_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_disable_channel_join_leave_messages;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_race_encryptForOthers;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_whisper_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_cancleGUIExitWhenNoClassPresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_permissions_usePermissionsForEachClasses;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_takeClassWhenNoClass;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_useRaceClassSelectionMatrix;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_errorUpload;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disable_health_modifications;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_armor_disableArmorChecking;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_convert_database_on_startup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_copyDefaultTraitsOnStartup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_commands;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_saving_savePlayerDataToDB;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_also_use_leftclick_in_guis;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_disableAllChatBars;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_disableAllOutputs;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_bar_inChat_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_defaultHealth;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useLevelSystem;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_name;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_tag;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_display_adaptListName;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_drops_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_permissions_usePermissionsForEachRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_interval;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_takeRaceWhenNoRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.tutorials_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.updater_enableAutoUpdates;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.worlds_disableOn;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -83,6 +38,8 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
+import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManagerType;
 
  
  public class GeneralConfig{
@@ -95,7 +52,6 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	
 	private boolean config_adaptListName;
 	
-	//Enables:
 	private boolean config_whisper_enable;
 	
 	private boolean config_enableDebugOutputs;
@@ -124,6 +80,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	
 	private boolean config_useRaceClassSelectionMatrix;
 	private boolean config_convertDatabaseOnStartup;
+	private boolean config_food_enabled;
 
 	//language to use
 	private String config_usedLanguage;
@@ -176,8 +133,28 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	private boolean config_disableAllChatBars;
 	private boolean config_disableChatJoinLeaveMessages;
 	
+	private boolean config_enableRaceSpawn;
+	private boolean config_enableRaceSpawnOnDeath;
+	private int config_raceSpawnCooldown;
+	
+	private int config_cooldown_on_bow_message;
+	private int config_cooldown_on_wand_message;
+
+	private List<String> config_general_disable_aliases;
+	private boolean config_gui_level_useMCLevelBar;
+
+	private int config_general_remove_old_data_days;
+	private boolean config_general_remove_old_data_check_empty;
+	private boolean config_useFoodManaBar;
+	private ManaManagerType config_manaManagerType;
+	private String config_gui_scoreboard_name;
+	private boolean config_races_create_group_for_race;
+	
+	private final Set<String> config_disabled_regions = new HashSet<String>();
+	
+	
 	/**
-	 * Inits the Config system.
+	 * Inits the ConfigTotal system.
 	 * Also loads the config directly
 	 */
 	public GeneralConfig(){
@@ -187,7 +164,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	}
 	
 	/**
-	 * Checks if the Config need Regeneration.
+	 * Checks if the ConfigTotal need Regeneration.
 	 * 
 	 * @param force if True, the config is Forced to regenerate.
 	 */
@@ -231,6 +208,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		config.addDefault(races_display_adaptListName, true);
 		
 		config.addDefault(races_drops_enable, true);
+		config.addDefault(races_create_group_for_race, true);
 		config.addDefault(races_permissions_usePermissionsForEachRace, false);
 		config.addDefault(races_change_uplinkInSeconds, 0);
 		config.addDefault(races_defaultrace_name, "DefaultRace");
@@ -250,16 +228,25 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		config.addDefault(tutorials_enable, true);
 		
 		config.addDefault(language_used, "en");
+		config.addDefault(gui_level_useMCLevelBar, false);
+		config.addDefault(gui_useFoodManaBar, false);
 		
 		config.addDefault(worlds_disableOn, Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		config.addDefault(keep_max_hp_on_disabled_worlds, true);
 		
 		config.addDefault(general_copyDefaultTraitsOnStartup, true);
-		config.addDefault(general_saving_savePlayerDataToDB, true);
+		config.addDefault(general_saving_savePlayerDataToDB, false);
 		config.addDefault(general_convert_database_on_startup, true);
 		config.addDefault(general_disable_commands, new LinkedList<String>());
+		config.addDefault(general_disable_aliases, new LinkedList<String>());
+		config.addDefault(general_cooldown_on_wand_message, 10);
+		config.addDefault(general_cooldown_on_bow_message, 10);
+		config.addDefault(general_remove_old_data_days, 60);
+		config.addDefault(general_remove_old_data_check_empty, true);
 		
+		config.addDefault(gui_manaManagerType, ManaManagerType.RaC.name());
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
+		config.addDefault(gui_scoreboard_name, "&eRaC");
 		config.addDefault(gui_disableAllChatBars, false);		
 		config.addDefault(gui_also_use_leftclick_in_guis, false);
 		
@@ -273,6 +260,13 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		config.addDefault(races_enable, true);
 		config.addDefault(general_armor_disableArmorChecking, false);
 		config.addDefault(disable_health_modifications, false);
+		
+		config.addDefault(race_spawn_when_dead, false);
+		config.addDefault(race_spawn_cooldown, 300);
+		config.addDefault(race_spawns_enabled, true);
+		
+		config.addDefault(food_enabled, true);
+
 		
 		config.options().copyDefaults(true);
 	}
@@ -335,6 +329,13 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		config_takeClassWhenNoClass = config.getString(classes_takeClassWhenNoClass, "");
 		config_takeRaceWhenNoRace = config.getString(races_takeRaceWhenNoRace, "");
 		config_enableRaces = config.getBoolean(races_enable, true);
+		config_gui_level_useMCLevelBar = config.getBoolean(gui_level_useMCLevelBar, false);
+		config_useFoodManaBar = config.getBoolean(gui_useFoodManaBar, false);
+		config_food_enabled = config.getBoolean(food_enabled, true);
+		config_races_create_group_for_race = config.getBoolean(races_create_group_for_race, true);
+		
+		List<String> list = config.getStringList(disabled_regions);
+		config_disabled_regions.clear(); config_disabled_regions.addAll(list);
 		
 		if(config.isString(magic_wandId)){
 			String itemName = config.getString(magic_wandId, "STICK");
@@ -354,7 +355,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		config_cancleGUIExitWhenNoRacePresent = config.getBoolean(races_cancleGUIExitWhenNoRacePresent_enable, true);
 		config_debugTimeAfterLoginOpening = config.getInt(races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds, 2);
 		
-		config_savePlayerDataToDB = config.getBoolean(general_saving_savePlayerDataToDB, true);
+		config_savePlayerDataToDB = config.getBoolean(general_saving_savePlayerDataToDB, false);
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config_useLevelSystem = LevelingSystem.parse(config.getString(level_useLevelSystem, "RaC"));
 		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
@@ -366,9 +367,31 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		
 		config_disableAllChatBars = config.getBoolean(gui_disableAllChatBars, false);
 		
-		if(!LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
+		config_enableRaceSpawn = config.getBoolean(race_spawns_enabled, true);
+		config_enableRaceSpawnOnDeath = config.getBoolean(race_spawn_when_dead, true);
+		config_raceSpawnCooldown = config.getInt(race_spawn_cooldown, 300);
+
+		config_general_remove_old_data_days = config.getInt(general_remove_old_data_days, 60);
+		config_general_remove_old_data_check_empty = config.getBoolean(general_remove_old_data_days, true);
+		
+		config_cooldown_on_wand_message = config.getInt(general_cooldown_on_wand_message, 10);
+		config_cooldown_on_bow_message = config.getInt(general_cooldown_on_bow_message, 10);
+		
+		config_general_disable_aliases = config.getStringList(general_disable_aliases);
+		config_manaManagerType = ManaManagerType.resolve(config.getString(gui_manaManagerType, ManaManagerType.RaC.name()));
+		
+		config_gui_scoreboard_name = config.getString(gui_scoreboard_name, "&eRaC");
+		
+		if(config_useLevelSystem == LevelingSystem.RacesAndClasses 
+				&& !LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
 			config_mapExpPerLevelCalculationString = "{level} * {level} * {level} * 1000";
+		}
+		
+		if(config_useLevelSystem == LevelingSystem.mcMMO
+				&& !McMMOLevelManager.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
+			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
+			config_mapExpPerLevelCalculationString = "{axes} + {unarmed} + {archery} / 50";
 		}
 		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds_disableOn");		
@@ -381,6 +404,12 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 		return this;
 	}
 	
+	
+
+	//single purpose is to stop it from beeing displayed in the getter frame
+	public RacesAndClasses getPlugin() {
+		return plugin;
+	}
 
 	public boolean isConfig_racechat_encrypt() {
 		return config_racechat_encrypt;
@@ -440,6 +469,10 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 
 	public boolean isConfig_usePermissionsForRaces() {
 		return config_usePermissionsForRaces;
+	}
+
+	public String getConfig_gui_scoreboard_name() {
+		return config_gui_scoreboard_name;
 	}
 
 	public boolean isConfig_usePermissionsForClasses() {
@@ -536,11 +569,14 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 	}
 
 	public boolean isConfig_savePlayerDataToDB() {
+		if(config_savePlayerDataToDB) {
+			RacesAndClasses.getPlugin().logWarning("DataBase Support is disabled and will not be enabled in long time, maybe ever.");
+			RacesAndClasses.getPlugin().logWarning("Use an older Version to Convert to YML.");
+			RacesAndClasses.getPlugin().logWarning("For more details, look at the FAQ on the Bukkit dev page.");
+			config_savePlayerDataToDB = false;
+		}
+		
 		return config_savePlayerDataToDB;
-	}
-
-	public LevelingSystem isConfig_useLevelSystem() {
-		return config_useLevelSystem;
 	}
 
 	public boolean isConfig_useAutoUpdater() {
@@ -597,6 +633,66 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 
 	public boolean isConfig_convertDatabaseOnStartup() {
 		return config_convertDatabaseOnStartup;
+	}
+
+	public LevelingSystem getConfig_useLevelSystem() {
+		return config_useLevelSystem;
+	}
+
+	public boolean isConfig_enableRaceSpawn() {
+		return config_enableRaceSpawn;
+	}
+
+	public int getConfig_raceSpawnCooldown() {
+		return config_raceSpawnCooldown;
+	}
+
+	public boolean isConfig_enableRaceSpawnOnDeath() {
+		return config_enableRaceSpawnOnDeath;
+	}
+
+	public int getConfig_cooldown_on_bow_message() {
+		return config_cooldown_on_bow_message;
+	}
+
+	public int getConfig_cooldown_on_wand_message() {
+		return config_cooldown_on_wand_message;
+	}
+
+	public List<String> getConfig_general_disable_aliases() {
+		return config_general_disable_aliases;
+	}
+
+	public boolean isConfig_gui_level_useMCLevelBar() {
+		return config_gui_level_useMCLevelBar;
+	}
+
+	public int getConfig_general_remove_old_data_days() {
+		return config_general_remove_old_data_days;
+	}
+
+	public boolean isConfig_general_remove_old_data_check_empty() {
+		return config_general_remove_old_data_check_empty;
+	}
+
+	public boolean isConfig_useFoodManaBar() {
+		return config_useFoodManaBar;
+	}
+
+	public ManaManagerType getConfig_manaManagerType() {
+		return config_manaManagerType;
+	}
+
+	public boolean isConfig_food_enabled() {
+		return config_food_enabled;
+	}
+
+	public Set<String> getConfig_disabledRegions() {
+		return config_disabled_regions;
+	}
+
+	public boolean isConfig_races_create_group_for_race() {
+		return config_races_create_group_for_race;
 	}
 	
 }

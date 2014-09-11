@@ -15,37 +15,41 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
+import java.util.List;
 import java.util.Observable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 
-public class CommandExecutor_Channel extends Observable implements CommandExecutor{
+public class CommandExecutor_Channel extends Observable implements CommandInterface {
 
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_Channel(){
 		plugin = RacesAndClasses.getPlugin();
 
-		String command = "channel";
-		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-		
-		try{
-			plugin.getCommand(command).setExecutor(this);
-		}catch(Exception e){
-			plugin.log("ERROR: Could not register command /" + command + ".");
-		}
+//		String command = "channel";
+//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
+//		
+//		try{
+//			plugin.getCommand(command).setExecutor(this);
+//		}catch(Exception e){
+//			plugin.log("ERROR: Could not register command /" + command + ".");
+//		}
 		
 		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
@@ -90,6 +94,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 	
 		Player player = (Player) sender;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		
 		if(channelCommand.equalsIgnoreCase("change") || channelCommand.equalsIgnoreCase("post") || channelCommand.equalsIgnoreCase("switch")
@@ -102,7 +107,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}
 
 			String changeTo = args[1];
-			changeChannel(player, changeTo);
+			changeChannel(racPlayer, changeTo);
 			return true;
 		}
 		
@@ -120,7 +125,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				password = args[2];
 			}
 			
-			joinChannel(player, channelName, password);
+			joinChannel(racPlayer, channelName, password);
 			return true;
 		}
 		
@@ -131,7 +136,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			String channelName = args[1];
-			leaveChannel(player, channelName);
+			leaveChannel(racPlayer, channelName);
 			return true;
 		}
 		
@@ -152,7 +157,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			if(args.length > 3)
 				channelPassword = args[3];
 			
-			createChannel(player, channelName, channelType, channelPassword);
+			createChannel(racPlayer, channelName, channelType, channelPassword);
 			return true;
 		}
 		
@@ -169,7 +174,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			plugin.getChannelManager().banPlayer(player, args[2], args[1], time);
+			Player target = Bukkit.getPlayer(args[2]);
+			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().banPlayer(racPlayer, racTarget, args[1], time);
 			return true;
 		}
 		
@@ -180,7 +192,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			plugin.getChannelManager().unbanPlayer(player, args[2], args[1]);
+			Player target = Bukkit.getPlayer(args[2]);
+			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().unbanPlayer(racPlayer, racTarget, args[1]);
 			return true;
 		}
 		
@@ -197,7 +216,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 			}catch(Exception e){
 			}
 			
-			plugin.getChannelManager().mutePlayer(player, args[2], args[1], time);
+			Player target = Bukkit.getPlayer(args[2]);
+			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().mutePlayer(racPlayer, racTarget, args[1], time);
 			return true;
 		}
 		
@@ -208,7 +234,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				return true;
 			}
 			
-			plugin.getChannelManager().unmutePlayer(player, args[2], args[1]);
+			Player target = Bukkit.getPlayer(args[2]);
+			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
+			if(target == null){
+				//TODO add some output
+				return true;
+			}
+			
+			plugin.getChannelManager().unmutePlayer(racPlayer, racTarget, args[1]);
 			return true;
 		}
 		
@@ -230,7 +263,19 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				}
 			}
 			
-			channelEdit(player, channel, property, newValue);
+			channelEdit(racPlayer, channel, property, newValue);
+			return true;
+		}
+		
+		if(channelCommand.equalsIgnoreCase("delete")){
+			if(args.length < 2){
+				LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+						"command", "/channel delete <channelname>");
+				return true;
+			}
+			
+			String channel = args[1];
+			channelDelete(racPlayer, channel);
 			return true;
 		}
 		
@@ -238,6 +283,9 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		postHelp(player);
 		return true;
 	}
+	
+
+
 	
 	private void postHelp(CommandSender sender){
 		LanguageAPI.sendTranslatedMessage(sender,"wrong_command_use",
@@ -261,8 +309,9 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	
 	
 	private void postChannelInfo(CommandSender sender, String channel){
-		if(channel == ""){
-			channel = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(sender.getName()).getCurrentChannel();
+		if(channel == "" && sender instanceof Player){
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+			channel = racPlayer.getConfig().getCurrentChannel();
 		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + " Channel Information: " + 
@@ -271,14 +320,21 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 	}
 	
 	
+	
+	private void channelDelete(RaCPlayer racPlayer, String channel) {
+		plugin.getChannelManager().deleteChannel(racPlayer, channel);
+	}
+	
 	private void listChannels(CommandSender sender){
 		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.RED + "Channel-List:" + ChatColor.YELLOW + "=====");
 		sender.sendMessage(ChatColor.YELLOW + "HINT: Format is: " + ChatColor.BLUE + "ChannelName: " + ChatColor.AQUA + "ChannelLevel");
 		for(ChannelLevel level : ChannelLevel.values())
 			for(String channel : plugin.getChannelManager().listAllPublicChannels()){
-				if(plugin.getChannelManager().getChannelLevel(channel) == level){
+				if(plugin.getChannelManager().getChannelLevel(channel) == level && sender instanceof Player){
 					String addition = "";
-					if(plugin.getChannelManager().isMember(sender.getName(), channel)){
+					RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+					
+					if(plugin.getChannelManager().isMember(racPlayer, channel)){
 						addition =  ChatColor.YELLOW + "   <-[Joined]";
 					}
 					
@@ -286,11 +342,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 				}
 			}
 		
-		this.notifyObservers(new TutorialStepContainer(sender.getName(), TutorialState.channels, 1));
+		if(sender instanceof Player) this.notifyObservers(
+				new TutorialStepContainer(RaCPlayerManager.get().getPlayer((Player) sender), TutorialState.channels, 1)
+				);
 		this.setChanged();
 	}
 	
-	private void joinChannel(Player player, String channelName, String password){
+	private void joinChannel(RaCPlayer player, String channelName, String password){
 		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channelName);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channelName);
@@ -300,7 +358,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		plugin.getChannelManager().joinChannel(player, channelName, password, true);
 	}
 	
-	private void leaveChannel(Player player, String channelName){
+	private void leaveChannel(RaCPlayer player, String channelName){
 		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channelName);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channelName);
@@ -309,14 +367,14 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		
 		plugin.getChannelManager().leaveChannel(player, channelName, true);
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = player.getConfig();
 		if(channelName.equalsIgnoreCase(config.getCurrentChannel())){
 				config.setValue(MemberConfig.chatChannel, "Global");
 		}
 			
 	}
 	
-	private void createChannel(Player player, String channelName, String channelType, String channelPassword){
+	private void createChannel(RaCPlayer player, String channelName, String channelType, String channelPassword){
 		ChannelLevel channelLevel = getChannelLevel(channelType);
 		if(channelLevel == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Channel Level could not be recognized: " + ChatColor.LIGHT_PURPLE + channelType);
@@ -330,15 +388,15 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 		
 		if(channelLevel == ChannelLevel.PasswordChannel && 
-		   !plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePassword))
+		   !plugin.getPermissionManager().checkPermissions(player.getPlayer(), PermissionNode.channelCreatePassword))
 			return;
 		
 		if(channelLevel == ChannelLevel.PublicChannel && 
-		   !plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePublic))
+		   !plugin.getPermissionManager().checkPermissions(player.getPlayer(), PermissionNode.channelCreatePublic))
 			return;
 		
 		if(channelLevel == ChannelLevel.PrivateChannel && 
-			!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelCreatePrivate))
+			!plugin.getPermissionManager().checkPermissions(player.getPlayer(), PermissionNode.channelCreatePrivate))
 			return;
 		
 		if(channelLevel != ChannelLevel.PasswordChannel && channelPassword != "")
@@ -353,7 +411,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		plugin.getChannelManager().registerChannel(channelLevel, channelName, channelPassword, player);
 	}
 	
-	private void changeChannel(Player player, String changeTo){
+	private void changeChannel(RaCPlayer player, String changeTo){
 		ChannelLevel level = plugin.getChannelManager().getChannelLevel(changeTo);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + changeTo);
@@ -361,13 +419,13 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 		
 		if(level != ChannelLevel.LocalChannel){
-			if(!plugin.getChannelManager().isMember(player.getName(), changeTo)){
+			if(!plugin.getChannelManager().isMember(player, changeTo)){
 				player.sendMessage(ChatColor.RED + "You are no member of: " + ChatColor.LIGHT_PURPLE + changeTo);
 				return;
 			}
 		}
 		
-		MemberConfig config = plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(player.getName());
+		MemberConfig config = player.getConfig();
 		if(config == null){
 			player.sendMessage(ChatColor.RED + "Something gone wrong with your config. Try relogging or ask an Admin.");
 			return;
@@ -377,7 +435,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		player.sendMessage(ChatColor.GREEN + "You now write in the channel: " + ChatColor.AQUA + changeTo);
 		
 		if(changeTo.equalsIgnoreCase("tutorial")){
-			this.notifyObservers(new TutorialStepContainer(player.getName(), TutorialState.channels, 4));
+			this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 4));
 			this.setChanged();
 		}
 	}
@@ -395,7 +453,7 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		return ChannelLevel.NONE;
 	}
 	
-	private void channelEdit(Player player, String channel, String property, String newValue){
+	private void channelEdit(RaCPlayer player, String channel, String property, String newValue){
 		ChannelLevel level = plugin.getChannelManager().getChannelLevel(channel);
 		if(level == ChannelLevel.NONE){
 			player.sendMessage(ChatColor.RED + "Could not find any channel named: " + ChatColor.LIGHT_PURPLE + channel);
@@ -403,12 +461,38 @@ public class CommandExecutor_Channel extends Observable implements CommandExecut
 		}
 		
 		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.WorldChannel || level == ChannelLevel.RaceChannel){
-			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.channelEdit)){
+			if(!plugin.getPermissionManager().checkPermissions(player.getPlayer(), PermissionNode.channelEdit)){
 				return;
 			}
 		}
 		
 		plugin.getChannelManager().editChannel(player, channel, property, newValue);
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	/**
+	 * Returns the CommandName
+	 */
+	@Override
+	public String getCommandName(){
+		return "channel";
+	}
+	
+	@Override
+	public String[] getAliases() {
+		return new String[]{};
+	}
+	
+	@Override
+	public boolean hasAliases() {
+		return false;
 	}
 	
 }

@@ -18,8 +18,12 @@ package de.tobiyas.racesandclasses.APIs;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 
@@ -35,12 +39,28 @@ public class RaceAPI {
 	 * Returns the Race of a player.
 	 * If the player has no race, the Default race is returned.
 	 * 
-	 * @param playerName to search
+	 * @param player to search
+	 * @return the {@link RaceContainer} of the player
+	 * 
+	 * @deprecated use {@link #getRaceOfPlayer(OfflinePlayer)} instead
+	 */
+	@Deprecated
+	public static RaceContainer getRaceOfPlayer(String playerName){
+		return getRaceOfPlayer(Bukkit.getPlayer(playerName));
+	}
+	
+	/**
+	 * Returns the Race of a player.
+	 * If the player has no race, the Default race is returned.
+	 * 
+	 * @param player to search
 	 * @return the {@link RaceContainer} of the player
 	 */
-	public static RaceContainer getRaceOfPlayer(String playerName){
+	public static RaceContainer getRaceOfPlayer(Player player){
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
 		RaceManager raceManager = plugin.getRaceManager();
-		RaceContainer race = (RaceContainer) raceManager.getHolderOfPlayer(playerName);
+		RaceContainer race = racPlayer.getRace();
 		if(race != null){
 			return race;
 		}else{
@@ -63,6 +83,20 @@ public class RaceAPI {
 	
 	
 	/**
+	* Returns the Race Name of a player.
+	* If the player has no Race, the Default Race is returned.
+	* 
+	* @param player to search
+	* 
+	* @return the {@link RaceContainer} of the player
+	*/
+	public static String getRaceNameOfPlayer(Player player){
+		RaceContainer container = getRaceOfPlayer(player);
+		return (container == null) ? "" : container.getDisplayName();
+	}
+	
+	
+	/**
 	 * Returns a List of all Race names available
 	 * 
 	 * @return list of Race names
@@ -78,16 +112,46 @@ public class RaceAPI {
 	 * 
 	 * Returns true on success, 
 	 * false if:
-	 *  - playerName can not be found on Bukkit.getPlayer(playerName).
+	 *  - player can not be found on Bukkit.getPlayer(player).
 	 *  - the new raceName is not found.
 	 *  - any internal error occurs.
 	 * 
-	 * @param playerName the player that the Race should be changed.
+	 * @param player the player that the Race should be changed.
+	 * @param className to change to
+	 * @return true if worked, false otherwise
+	 * 
+	 * @deprecated use {@link #addPlayerToRace(OfflinePlayer, String)} instead
+	 */
+	public static boolean addPlayerToRace(String playerName, String raceName){
+		return addPlayerToRace(Bukkit.getPlayer(playerName), raceName);
+	}
+	
+	
+	/**
+	 * Returns the Default Race name.
+	 * 
+	 * @return name of default race.
+	 */
+	public static String getDefaultRaceName(){
+		return plugin.getRaceManager().getDefaultHolder().getDisplayName();
+	}
+	
+	/**
+	 * Gives the passed Player a Race.
+	 * If he already has one, the Race is changed to the new one.
+	 * 
+	 * Returns true on success, 
+	 * false if:
+	 *  - player can not be found on Bukkit.getPlayer(player).
+	 *  - the new raceName is not found.
+	 *  - any internal error occurs.
+	 * 
+	 * @param player the player that the Race should be changed.
 	 * @param className to change to
 	 * @return true if worked, false otherwise
 	 */
-	public static boolean addPlayerToRace(String playerName, String raceName){
-		if(Bukkit.getPlayer(playerName) == null) return false;
+	public static boolean addPlayerToRace(Player player, String raceName){
+		if(player == null) return false;
 		
 		RaceManager manager = plugin.getRaceManager();
 		RaceContainer wantedRace = (RaceContainer) manager.getHolderByName(raceName);
@@ -95,6 +159,17 @@ public class RaceAPI {
 			return false;
 		}
 		
-		return manager.changePlayerHolder(playerName, raceName, true);
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		return manager.changePlayerHolder(racPlayer, raceName, true);
+	}
+	
+	
+	/**
+	 * Returns if the Race system is used or if it is deactivated.
+	 * 
+	 * @return true if used.
+	 */
+	public static boolean isRaceSystemActive(){
+		return plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 	}
 }

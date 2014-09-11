@@ -18,17 +18,18 @@ package de.tobiyas.racesandclasses.eventprocessing.eventresolvage;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class EventWrapper {
 
 	/**
 	 * the player using the event
 	 */
-	private final Player player;
+	private final RaCPlayer player;
 	
 	/**
 	 * The world this event is on
@@ -84,7 +85,7 @@ public class EventWrapper {
 	private final Event event;
 
 	
-	public EventWrapper(Player player, World world, PlayerAction playerAction,
+	public EventWrapper(RaCPlayer player, World world, PlayerAction playerAction,
 			Entity entityTarget, Block blockTarget, double damageHealValue,
 			DamageCause damageCause, boolean arrowInvolved, RegainReason regainReason, 
 			RegainResource regainResource, Event event) {
@@ -103,7 +104,7 @@ public class EventWrapper {
 		this.event = event;
 	}
 
-	public Player getPlayer() {
+	public RaCPlayer getPlayer() {
 		return player;
 	}
 

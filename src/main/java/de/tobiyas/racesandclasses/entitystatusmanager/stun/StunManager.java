@@ -28,9 +28,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.eventprocessing.events.stun.PlayerStunnedEvent;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class StunManager {
@@ -39,6 +42,11 @@ public class StunManager {
 	 * The Map containing all Stuns.
 	 */
 	private Map<Entity, StunOptions> stunTimes = new ConcurrentHashMap<Entity, StunOptions>();
+	
+	/**
+	 * The Map of StunImmun
+	 */
+	private Map<Entity, StunReduceContainer> stunReduces = new ConcurrentHashMap<Entity, StunReduceContainer>();
 	
 	/**
 	 * The Bukkit taskID for the StunDecreaser.
@@ -75,6 +83,7 @@ public class StunManager {
 						int newValue = options.timeRemaining - 1;
 						if(newValue < 0 || entity.isDead()){
 							stunIt.remove();
+							notifyStunOver(entity);
 							if(entity instanceof Player){
 								sendStunEndMessage((Player) entity);
 							}
@@ -95,6 +104,20 @@ public class StunManager {
 					}
 				}
 			}, 1, 1);
+			
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Iterator<Map.Entry<Entity, StunReduceContainer>> stunReduceIt = stunReduces.entrySet().iterator();
+					while(stunReduceIt.hasNext()){
+						Map.Entry<Entity,StunReduceContainer> entry = stunReduceIt.next();
+						if(!entry.getKey().isValid()){
+							entry.getValue().stop();
+							stunReduceIt.remove();
+						}
+					}					
+				}
+			}.runTaskTimer(RacesAndClasses.getPlugin(), 20, 20);
 		}
 	}
 	
@@ -161,20 +184,45 @@ public class StunManager {
 	 * 
 	 * @return if it worked.
 	 */
-	public boolean stunEntity(Entity entity, int time){
+	public boolean stunEntity(Entity stunner, Entity entity, int time){
 		if(entity == null || time <= 0){
 			return false;
 		}
 		
+		
+		StunReduceContainer container = stunReduces.get(entity);
+		if(container == null) {
+			container = new StunReduceContainer(entity);
+			stunReduces.put(entity, container);
+		}
+		
+		time = container.getReducedTicks(time);
 		int restTime = getRestStunTime(entity);
 		if(restTime > time){
 			return false;
 		}else{
+			
+			//Check for cancled Damage. This indicates Imun.
+			if(stunner != null){
+				if(EnemyChecker.areAllies(stunner, entity)) return false;
+			}
+			
+			if(entity instanceof Player){
+				PlayerStunnedEvent event = new PlayerStunnedEvent((Player)entity, time);
+				plugin.fireEventToBukkit(event);
+				
+				if(event.isCancelled() || event.getTimeInTicks() <= 0) return false;
+				time = event.getTimeInTicks();
+			}
+			
 			StunOptions stunOptions = new StunOptions();
 			stunOptions.stunLocation = entity.getLocation();
 			stunOptions.timeRemaining = time;
 			
 			stunTimes.put(entity, stunOptions);
+
+			//stun reduce notification.
+			container.notifyStun();
 			
 			if(entity instanceof Player){
 				int timeInSeconds = time / 20;
@@ -202,6 +250,7 @@ public class StunManager {
 		}
 		
 		stunTimes.remove(entity);
+		notifyStunOver(entity);
 		return true;
 	}
 	
@@ -215,6 +264,19 @@ public class StunManager {
 	 */
 	public boolean isStunned(Entity entity){
 		return stunTimes.containsKey(entity);
+	}
+	
+	
+	
+	private void notifyStunOver(Entity entity){
+		//stun reduce notification.
+		StunReduceContainer container = stunReduces.get(entity);
+		if(container == null) {
+			container = new StunReduceContainer(entity);
+			stunReduces.put(entity, container);
+		}
+		
+		container.notifyStunStop();
 	}
 	
 	
