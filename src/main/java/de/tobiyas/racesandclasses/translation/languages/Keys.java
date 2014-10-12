@@ -19,6 +19,7 @@ public class Keys {
 
 	//a
 	public static final String already_are = "already_are";
+	public static final String alread_full_mana = "alread_full_mana";
 	public static final String already_have_class = "already_have_class";
 	public static final String already_have_race = "already_have_race";
 	public static final String armor_not_allowed = "armor_not_allowed";
@@ -87,6 +88,7 @@ public class Keys {
 	public static final String no_class_selected_use_info = "no_class_selected_use_info";
 	public static final String no_class_selected = "no_class_selected";
 	public static final String no_class_to_select = "no_class_to_select";
+	public static final String no_find_trait = "no_find_trait";
 	public static final String no_healthcontainer_found = "no_healthcontainer_found";
 	public static final String no_message = "no_message";
 	public static final String number_not_readable = "number_not_readable";	
@@ -116,6 +118,7 @@ public class Keys {
 	public static final String race_changed_to_other = "race_changed_to_other";
 	public static final String race_spawn_teleport_success = "race_spawn_teleport_success";
 	public static final String reload_message = "reload_message";
+	public static final String restrictions_not_met = "restrictions_not_met";
 	
 	//s
 	public static final String send_empty_message = "send_empty_message";

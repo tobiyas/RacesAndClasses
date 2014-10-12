@@ -336,7 +336,7 @@ public abstract class AbstractTraitHolder {
 					traits.add(trait);
 				}
 			}catch(TraitConfigurationFailedException exp){
-				exceptionList.add(new HolderTraitParseException(exp.getMessage()));
+				exceptionList.add(new HolderTraitParseException(exp.getMessage(), this));
 				RacesAndClasses.getPlugin().log("Error on parsing: '" + getDisplayName() + "' Problem was: '" + exp.getMessage() 
 						+ "' On Trait: '" + realTraitName + "'.");
 			}

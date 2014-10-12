@@ -91,8 +91,12 @@ public class HealthManager {
 	/**
 	 * Checks if the MaxHealth is correct. If not, sets it.
 	 */
-	public void checkMaxHealth(){
+	public void checkMaxHealth(){		
+		//if the owner does not want to have a health Mod, we don't use it.
+		if(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableHealthMods()) return;
+		
 		if(!player.isOnline()) return;
+		
 		double maxHealth = BukkitPlayer.safeGetMaxHealth(player.getPlayer());
 		double realMaxHealth = getMaxHealth();
 		

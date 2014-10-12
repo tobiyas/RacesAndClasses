@@ -35,7 +35,8 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFac
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.translation.languages.Keys;
+
+import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
 
 public class CommandExecutor_BindTrait extends AbstractCommand implements Listener{
 
@@ -62,7 +63,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		
 		
 		if(args.length < 1) {
-			LanguageAPI.sendTranslatedMessage(player, Keys.wrong_command_use,
+			LanguageAPI.sendTranslatedMessage(player, wrong_command_use,
 					"command", "&c " + getCommandName() + " <skill name>  or  /" 
 					+ getCommandName() + " list  to list all available Traits.");
 			
@@ -96,7 +97,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		}
 		
 		if(selected == null){
-			sender.sendMessage(ChatColor.RED + "Could not find this Trait.");
+			LanguageAPI.sendTranslatedMessage(sender, no_find_trait);
 			return true;
 		}
 		
@@ -104,7 +105,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		ItemStack heldItem = player.getItemInHand();
 		
 		if(heldItem != null && heldItem.getType() != Material.AIR){
-			player.sendTranslatedMessage(Keys.held_item_not_air);
+			player.sendTranslatedMessage(held_item_not_air);
 			return true;
 		}
 		
@@ -148,19 +149,19 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(player);
 				if(selected instanceof TraitWithRestrictions){
 					if(! ((TraitWithRestrictions) selected).checkRestrictions(wrapper)){
-						player.sendMessage(ChatColor.RED + "Nope...");
+						LanguageAPI.sendTranslatedMessage(player, restrictions_not_met);
 						return;
 					}
 				}
 				
 				TraitResults result = selected.triggerOnBind(player);
+				event.setCancelled(true);
 				
 				if(result.isTriggered()){
-					player.sendMessage(ChatColor.GREEN + selected.getDisplayName() + " triggered.");
+					LanguageAPI.sendTranslatedMessage(player, trait_toggled, "%NAME%", selected.getDisplayName());
 				}else{
-					player.sendMessage(ChatColor.RED + selected.getDisplayName() + " failed.");				
+					LanguageAPI.sendTranslatedMessage(player, trait_failed, "%NAME%", selected.getDisplayName());
 				}
-				event.setCancelled(true);
 			}
 		}
 	}
@@ -234,7 +235,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(pl);
 			if(selected instanceof TraitWithRestrictions){
 				if(! ((TraitWithRestrictions) selected).checkRestrictions(wrapper)){
-					player.sendMessage(ChatColor.RED + "Nope...");
+					LanguageAPI.sendTranslatedMessage(player, restrictions_not_met);
 					return;
 				}
 			}
@@ -242,9 +243,9 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			TraitResults result = selected.triggerOnBind(player);
 			
 			if(result.isTriggered()){
-				player.sendMessage(ChatColor.GREEN + selected.getDisplayName() + " triggered.");
+				LanguageAPI.sendTranslatedMessage(player, trait_toggled, "%NAME%", selected.getDisplayName());
 			}else{
-				player.sendMessage(ChatColor.RED + selected.getDisplayName() + " failed.");				
+				LanguageAPI.sendTranslatedMessage(player, trait_failed, "%NAME%", selected.getDisplayName());
 			}
 			
 			event.setCancelled(true);

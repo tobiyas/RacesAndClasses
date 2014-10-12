@@ -15,12 +15,12 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class StunAPI {
 
@@ -50,7 +50,7 @@ public class StunAPI {
 		 * @return true if worked, false otherwise.
 		 */
 		public static boolean stunPlayerForTicks(String playerName, int time){
-			return stunPlayerForTicks(Bukkit.getPlayer(playerName), time);
+			return stunPlayerForTicks(PlayerUtils.getPlayer(playerName), time);
 		}
 	
 		/**
@@ -62,7 +62,7 @@ public class StunAPI {
 		 * @return true if worked, false otherwise.
 		 */
 		public static boolean stunPlayerForSeconds(String playerName, int time){
-			return stunPlayerForSeconds(Bukkit.getPlayer(playerName), time);
+			return stunPlayerForSeconds(PlayerUtils.getPlayer(playerName), time);
 		}
 	
 		/**
@@ -135,7 +135,7 @@ public class StunAPI {
 		 * @return true if worked, false otherwise
 		 */
 		public static boolean removeStun(String playerName){
-			return removeStun(Bukkit.getPlayer(playerName));
+			return removeStun(PlayerUtils.getPlayer(playerName));
 		}
 		
 		/**

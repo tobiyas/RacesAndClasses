@@ -15,11 +15,32 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions;
 
+import java.util.regex.Pattern;
+
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+
 public class HolderTraitParseException extends HolderParsingException {
 	private static final long serialVersionUID = 6315527299856915167L;
 
-	public HolderTraitParseException(String message) {
+	/**
+	 * The Holder this error was produces by.
+	 */
+	private final AbstractTraitHolder holder;
+	
+	
+	public HolderTraitParseException(String message, AbstractTraitHolder abstractTraitHolder) {
 		super(message);
+		
+		this.holder = abstractTraitHolder;
+	}
+	
+	
+	@Override
+	public String getLocalizedMessage() {
+		String message = super.getLocalizedMessage();
+		
+		message.replaceAll(Pattern.quote("%HOLDER%"), holder == null ? "UNKNOWN" : holder.getDisplayName());
+		return message;
 	}
 	
 }

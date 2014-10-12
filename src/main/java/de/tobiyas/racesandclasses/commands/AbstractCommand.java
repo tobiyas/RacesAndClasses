@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
+
 public abstract class AbstractCommand implements CommandInterface {
 
 	
@@ -18,6 +20,11 @@ public abstract class AbstractCommand implements CommandInterface {
 	 * The Aliases to use for the Command	
 	 */
 	private final String[] aliases;
+	
+	/**
+	 * THe plugin to use for post stuff.
+	 */
+	protected final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	
 	public AbstractCommand(String commandName) {

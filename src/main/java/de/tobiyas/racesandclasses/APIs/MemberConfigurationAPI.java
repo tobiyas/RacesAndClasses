@@ -17,19 +17,13 @@ package de.tobiyas.racesandclasses.APIs;
 
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class MemberConfigurationAPI {
 
-	/**
-	 * The plugin to call config stuff upon
-	 */
-	private static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
-	
 	/**
 	 * This is the setter Part of the Configuration API.
 	 * Here you can store values to a player.
@@ -368,7 +362,7 @@ public class MemberConfigurationAPI {
 		 * @return the searched Value or the defaultValue if not found.
 		 */
 		private static Object getObjectFromPlayer(String playerName, String identifier, Object defaultValue){
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(playerName);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(PlayerUtils.getPlayer(playerName));
 			MemberConfig config = racPlayer.getConfig();
 			if(config == null || !config.containsValue(identifier)){
 				return defaultValue;

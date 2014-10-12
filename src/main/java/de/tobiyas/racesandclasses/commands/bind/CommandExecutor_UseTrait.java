@@ -30,10 +30,7 @@ public class CommandExecutor_UseTrait extends AbstractCommand implements Listene
 		
 		if(!(sender instanceof Player)) return false;
 		RaCPlayer player = RaCPlayerManager.get().getPlayer((Player)sender);
-		if(!player.hasPermission("RaC.bind")){
-			sender.sendMessage(ChatColor.RED + "You do not have Permission for this command.");
-			return true;
-		}
+		if(!plugin.getPermissionManager().checkPermissions(player.getPlayer(), "RaC.bind")) return true;
 		
 		
 		if(args.length < 1) {

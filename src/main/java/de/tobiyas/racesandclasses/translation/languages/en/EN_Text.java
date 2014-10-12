@@ -23,6 +23,7 @@ public class EN_Text {
 	public static final String en_language = ""
 			//a
 			+ already_are + ": '&cYou already are a &d%HOLDER%&c.'\r\n"
+			+ alread_full_mana + ": '&cYou already have full mana.'\r\n"
 			+ already_have_class + ": '&cYou already have a class: &d%CLASS%&c. Use &c/class change&c to change your class.'\r\n"
 			+ already_have_race + ": '&cYou already have a race: &d%RACE%&c. Use &c/race change&c to change your race.'\r\n"
 			+ armor_not_allowed + ": '&cYou are not allowed to use &c%MATERIAL%&a.'\r\n"
@@ -96,6 +97,7 @@ public class EN_Text {
 			+ no_class_selected_use_info + ": '&cYou have no class selected. Use &d/class info <class name> &cto inspect a class.'\r\n"			
 			+ no_class_selected + ": '&cYou have no class selected.'\r\n"			
 			+ no_class_to_select + ": '&c You do not have any Classes to select.'\r\n"
+			+ no_find_trait + ": '&c Could not find this trait.'\r\n"
 			+ no_healthcontainer_found + ": '&cSomething gone Wrong. No healthcontainer found for you.'\r\n"
 			+ no_message + ": '&cNo message given.'\r\n"
 			+ number_not_readable + ": '&cNumber could not be read.'\r\n"
@@ -125,6 +127,7 @@ public class EN_Text {
 			+ race_changed_to_other + ": '&aRace of &d%PLAYER%&a changed to: &d%RACE%&d.'\r\n"
 			+ race_spawn_teleport_success + ": '&aWelcome to the Race Spawn of &d%RACE%&a.'\r\n"
 			+ reload_message + ": '&aReload of &dRaces &adone successfully. Time taken: &d %TIME% &ams'\r\n"
+			+ restrictions_not_met + ": '&aThe Trait still has cooldown or may not be used here..'\r\n"
 			
 			//s
 			+ send_empty_message + ": '&cYou tried to send an empty Message.'\r\n"
