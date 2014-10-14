@@ -30,6 +30,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -54,7 +56,7 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
 import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 
 public abstract class AbstractBasicTrait implements Trait,
-		TraitWithRestrictions {
+		TraitWithRestrictions, Listener {
 
 	
 	
@@ -584,7 +586,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	@Override
 	public void deInit(){
-		//Meant to be overwritten!!
+		HandlerList.unregisterAll(this);
 	}
 	
 	/**
@@ -955,4 +957,5 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected TraitResults bindCastIntern(RaCPlayer player){
 		return TraitResults.False();
 	}
+	
 }

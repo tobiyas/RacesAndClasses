@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -27,6 +28,7 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -98,6 +100,11 @@ public class EventPlayerResolver {
 			}
 		}
 		
+		if(event instanceof EntityTameEvent){
+			EntityTameEvent tameEvent = (EntityTameEvent) event;
+			AnimalTamer owner = tameEvent.getOwner();
+			if(owner instanceof Player) return (Player) owner;
+		}
 		
 		if(event instanceof EntityEvent){			
 			EntityEvent entityEvent = (EntityEvent) event;

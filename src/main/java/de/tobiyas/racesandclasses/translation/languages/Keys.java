@@ -158,6 +158,9 @@ public class Keys {
 	public static final String trait_poison_imun = "trait_poison_imun";
 	public static final String trait_poison_notify_other = "trait_poison_notify_other";
 	public static final String trait_pushaway_success = "trait_pushaway_success";
+	public static final String trait_horse_no_tame = "trait_horse_no_tame";	
+	public static final String trait_horse_no_leash = "trait_horse_no_leash";	
+	public static final String trait_horse_no_jump = "trait_horse_no_jump";	
 	public static final String trait_stun_arrow_success = "trait_stun_arrow_success";
 	public static final String trait_taunt_success = "trait_taunt_success";
 	public static final String trait_taunt_fade = "trait_taunt_fade";
