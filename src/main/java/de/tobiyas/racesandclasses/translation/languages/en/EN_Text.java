@@ -42,7 +42,7 @@ public class EN_Text {
 			+ class_not_exist + ": '&cThe class &d%CLASS% &cdoes not exist.'\r\n"
 			+ class_changed_to + ": '&cYour Class has been changed to: &d%CLASS%&c.'\r\n"
 			+ class_changed_to_other + ": '&aClass of &d%PLAYER%&a changed to: &d%CLASS%&d.'\r\n"
-			+ cooldown_is_ready_again + ": '&d%TRAIT_NAME% + &ais ready again.'\r\n"
+			+ cooldown_is_ready_again + ": '&d%TRAIT_NAME% &ais ready again.'\r\n"
 			+ cooldown_is_ready_in + ": '&cYou still have Cooldown. Ready in &d%TIME%&c.'\r\n"
 			
 			//d

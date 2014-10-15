@@ -110,7 +110,7 @@ public class CommandExecutor_RaceHeal extends AbstractCommand {
 	 */
 	private void healOther(CommandSender sender, String otherName){
 		if(plugin.getPermissionManager().checkPermissions(sender, PermissionNode.healOther)){
-			RaCPlayer otherRaCPlayer = RaCPlayerManager.get().getPlayer(otherName);
+			RaCPlayer otherRaCPlayer = RaCPlayerManager.get().getPlayerByName(otherName);
 			if(otherRaCPlayer != null && otherRaCPlayer.isOnline()){
 				Player player = (Player) sender;
 				double maxHealth = CompatibilityModifier.BukkitPlayer.safeGetMaxHealth(otherRaCPlayer.getPlayer());

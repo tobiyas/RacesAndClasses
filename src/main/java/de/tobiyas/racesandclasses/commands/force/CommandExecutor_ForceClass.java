@@ -15,11 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.force;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.class_changed_to;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.class_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -75,7 +73,7 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 		String playerToChange = args[0];
 		String newClass = args[1];
 		
-		RaCPlayer toChange = RaCPlayerManager.get().getPlayer(playerToChange);
+		RaCPlayer toChange = RaCPlayerManager.get().getPlayerByName(playerToChange);
 		if(toChange == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", playerToChange);
@@ -89,10 +87,16 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 			return true;
 		}
 		
+		boolean worked = false;
 		if(classManager.getHolderOfPlayer(toChange) == classManager.getDefaultHolder()){
-			classManager.addPlayerToHolder(toChange, newClass, true);
+			 worked = classManager.addPlayerToHolder(toChange, newClass, true);
 		}else{
-			classManager.changePlayerHolder(toChange, newClass, true);
+			worked = classManager.changePlayerHolder(toChange, newClass, true);
+		}
+		
+		if(!worked){
+			sender.sendMessage(ChatColor.RED + "This did not work. :(");
+			return true;
 		}
 		
 		if(toChange.isOnline()){
@@ -100,7 +104,7 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 					"class", newClass);
 		}
 		
-		LanguageAPI.sendTranslatedMessage(sender, "class_changed_to_other",
+		LanguageAPI.sendTranslatedMessage(sender, class_changed_to_other,
 				"player", toChange.getName(), "class", newClass);
 		
 		return true;

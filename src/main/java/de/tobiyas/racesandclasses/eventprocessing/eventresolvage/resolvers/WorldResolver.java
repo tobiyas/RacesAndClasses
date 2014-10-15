@@ -118,7 +118,7 @@ public class WorldResolver {
 	 * @param player to check.
 	 */
 	public static boolean isOnDisabledWorld(String playerName){
-		RaCPlayer player = RaCPlayerManager.get().getPlayer(playerName);
+		RaCPlayer player = RaCPlayerManager.get().getPlayerByName(playerName);
 		return isOnDisabledWorld(player);
 	}
 }

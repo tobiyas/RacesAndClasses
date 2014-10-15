@@ -207,6 +207,9 @@ public class McMMOLevelManager implements PlayerLevelManager {
 		    for(SkillType type : SkillType.values()){
 		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(42));
 		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(42));
+
+		    	generatorString = generatorString.replace(type.name().toLowerCase(), String.valueOf(42));
+		    	generatorString = generatorString.replace(type.getName().toLowerCase(), String.valueOf(42));
 		    }
 		
 	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	
@@ -246,6 +249,9 @@ public class McMMOLevelManager implements PlayerLevelManager {
 		    	
 		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(skillLevel));
 		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(skillLevel));
+
+		    	generatorString = generatorString.replace(type.getName().toLowerCase(), String.valueOf(skillLevel));
+		    	generatorString = generatorString.replace(type.name().toLowerCase(), String.valueOf(skillLevel));
 		    }
 		
 	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	

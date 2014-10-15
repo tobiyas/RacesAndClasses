@@ -136,7 +136,7 @@ public class MemberConfigurationAPI {
 		 */
 		@Deprecated
 		private static boolean setValueToPlayer(String playerName, String identifier, Object value, boolean visibleForPlayer){
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(playerName);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayerByName(playerName);
 			MemberConfig config = racPlayer.getConfig();
 			if(config == null){
 				return false;

@@ -1,5 +1,8 @@
 package de.tobiyas.racesandclasses.commands.bind;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_failed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_toggled;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +17,7 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 
@@ -30,7 +34,7 @@ public class CommandExecutor_UseTrait extends AbstractCommand implements Listene
 		
 		if(!(sender instanceof Player)) return false;
 		RaCPlayer player = RaCPlayerManager.get().getPlayer((Player)sender);
-		if(!plugin.getPermissionManager().checkPermissions(player.getPlayer(), "RaC.bind")) return true;
+		if(!plugin.getPermissionManager().checkPermissions(player.getPlayer(), "RaC.use")) return true;
 		
 		
 		if(args.length < 1) {
@@ -73,8 +77,13 @@ public class CommandExecutor_UseTrait extends AbstractCommand implements Listene
 		}
 		
 		//trigger the Trait
-		selected.triggerOnBind(player);
-		player.sendMessage(ChatColor.GREEN + "Triggered.");
+		TraitResults result = selected.triggerOnBind(player);
+		if(result.isTriggered()){
+			LanguageAPI.sendTranslatedMessage(player, trait_toggled, "name", selected.getDisplayName());
+		}else{
+			LanguageAPI.sendTranslatedMessage(player, trait_failed, "name", selected.getDisplayName());
+		}
+		
 		return true;
 	}
 	

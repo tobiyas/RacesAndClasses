@@ -65,7 +65,7 @@ private RacesAndClasses plugin;
 			}
 				
 		}else{
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(args[0]);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayerByName(args[0]);
 			player = racPlayer == null ? null : racPlayer.getPlayer();
 		}
 			

@@ -21,6 +21,8 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 
 public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
@@ -54,7 +56,11 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		String barString = "";
 		
 		if(oldName != null){
-			objective.getScoreboard().resetScores(Bukkit.getOfflinePlayer(oldName));
+			if(CertainVersionChecker.isAbove1_7()){
+				objective.getScoreboard().resetScores(oldName);
+			}else{
+				objective.getScoreboard().resetScores(Bukkit.getOfflinePlayer(oldName));
+			}
 		}
 		
 		if(displayInfo.useName()){
@@ -68,7 +74,7 @@ public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{
 		}
 		
 		//This deprecation is needed to show a false name in Scoreboard.
-		Score score = objective.getScore(Bukkit.getOfflinePlayer(barString));
+		Score score = CertainVersionChecker.isAbove1_7() ? objective.getScore(barString) : objective.getScore(Bukkit.getOfflinePlayer(barString));
 		score.setScore((int) Math.ceil(currentHealth));
 		
 		oldName = barString;

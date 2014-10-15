@@ -156,7 +156,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holders", "Class");
+						"holder", "Class");
 				return true;
 			}
 			
@@ -206,7 +206,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holders", "Class");
+						"holder", "Class");
 				return true;
 			}
 			
@@ -372,7 +372,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		if(oldClassContainer != null){
 			if(potentialClass.equalsIgnoreCase(oldClassContainer.getDisplayName())){
 				LanguageAPI.sendTranslatedMessage(player, "change_to_same_holder",
-						"holders", oldClassContainer.getDisplayName());
+						"holder", oldClassContainer.getDisplayName());
 				return;
 			}
 			

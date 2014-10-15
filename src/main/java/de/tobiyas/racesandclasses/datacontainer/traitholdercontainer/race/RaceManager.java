@@ -127,6 +127,7 @@ public class RaceManager extends AbstractHolderManager {
 		return addPlayerToHolder(player, newHolderName, callEvent);
 	}
 	
+	
 	@Override
 	public boolean addPlayerToHolder(RaCPlayer player, String newHolderName, boolean callEvent){		
 		boolean worked = super.addPlayerToHolder(player, newHolderName, callEvent);

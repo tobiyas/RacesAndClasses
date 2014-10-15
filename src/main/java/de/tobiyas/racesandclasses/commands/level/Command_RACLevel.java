@@ -76,7 +76,7 @@ public class Command_RACLevel extends AbstractCommand {
 		}
 		
 		String subCommand = args[1];
-		RaCPlayer player = RaCPlayerManager.get().getPlayer(args[0]);
+		RaCPlayer player = RaCPlayerManager.get().getPlayerByName(args[0]);
 		int value = 0;
 		
 		try{

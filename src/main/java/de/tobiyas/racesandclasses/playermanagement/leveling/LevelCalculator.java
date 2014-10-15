@@ -22,6 +22,11 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class LevelCalculator {
 	
+	/**
+	 * The Cache Script Engine.
+	 */
+	protected static ScriptEngine scriptEngine;
+	
 	
 	/**
 	 * Returns the LevelPackage for the passed Level.
@@ -49,14 +54,17 @@ public class LevelCalculator {
 	 */
 	protected static int calcMaxExpForLevel(int level){
 		try{
-			ScriptEngineManager mgr = new ScriptEngineManager();
-		    ScriptEngine engine = mgr.getEngineByName("JavaScript");
+			if(scriptEngine == null){
+				ScriptEngineManager mgr = new ScriptEngineManager();
+				scriptEngine = mgr.getEngineByName("JavaScript");
+			}
+			
 		    String maxExpGeneratorString = RacesAndClasses.getPlugin()
 		    		.getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
 		    
 		    maxExpGeneratorString = maxExpGeneratorString.replace("{level}", String.valueOf(level));
 		
-	    	String parsedValue = (String) engine.eval(maxExpGeneratorString).toString();	
+	    	String parsedValue = (String) scriptEngine.eval(maxExpGeneratorString).toString();	
 	    	double doubleValue = Double.parseDouble(parsedValue);
 	    	int intValue = (int) doubleValue;
 	    	
@@ -95,12 +103,14 @@ public class LevelCalculator {
 	 */
 	public static boolean verifyGeneratorStringWorks(String generatorString){
 		try{
-			ScriptEngineManager mgr = new ScriptEngineManager();
-		    ScriptEngine engine = mgr.getEngineByName("JavaScript");
-		    
+			if(scriptEngine == null){
+				ScriptEngineManager mgr = new ScriptEngineManager();
+				scriptEngine = mgr.getEngineByName("JavaScript");
+			}
+			
 		    generatorString = generatorString.replace("{level}", String.valueOf(42));
 		
-	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	
+	    	String parsedValue = (String) scriptEngine.eval(generatorString).toString();	    	
 	    	double doubleValue = Double.parseDouble(parsedValue);
 	    	Integer intValue = (int) doubleValue;
 	    	

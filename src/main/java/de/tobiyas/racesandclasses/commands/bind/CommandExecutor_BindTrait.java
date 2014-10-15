@@ -158,9 +158,9 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				event.setCancelled(true);
 				
 				if(result.isTriggered()){
-					LanguageAPI.sendTranslatedMessage(player, trait_toggled, "%NAME%", selected.getDisplayName());
+					LanguageAPI.sendTranslatedMessage(player, trait_toggled, "name", selected.getDisplayName());
 				}else{
-					LanguageAPI.sendTranslatedMessage(player, trait_failed, "%NAME%", selected.getDisplayName());
+					LanguageAPI.sendTranslatedMessage(player, trait_failed, "name", selected.getDisplayName());
 				}
 			}
 		}
@@ -241,11 +241,10 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			}
 			
 			TraitResults result = selected.triggerOnBind(player);
-			
 			if(result.isTriggered()){
-				LanguageAPI.sendTranslatedMessage(player, trait_toggled, "%NAME%", selected.getDisplayName());
+				LanguageAPI.sendTranslatedMessage(player, trait_toggled, "name", selected.getDisplayName());
 			}else{
-				LanguageAPI.sendTranslatedMessage(player, trait_failed, "%NAME%", selected.getDisplayName());
+				LanguageAPI.sendTranslatedMessage(player, trait_failed, "name", selected.getDisplayName());
 			}
 			
 			event.setCancelled(true);

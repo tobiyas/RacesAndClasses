@@ -89,10 +89,8 @@ public class RaCPlayerManager {
 	 * @param player to get
 	 * 
 	 * @return the player.
-	 * 
-	 * @deprecated please use {@link #getPlayer(Player)} instead!
 	 */
-	public RaCPlayer getPlayer(String playerName){
+	public RaCPlayer getPlayerByName(String playerName){
 		if(playerName == null) return null;
 		
 		for(RaCPlayer racPlayer : playerSet){

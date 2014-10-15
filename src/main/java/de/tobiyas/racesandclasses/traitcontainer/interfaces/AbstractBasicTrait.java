@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,7 +91,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The Set of biomes restricted.
 	 */
-	protected final Set<Biome> biomes = new HashSet<Biome>(Arrays.asList(Biome.values()));
+	protected final Set<Biome> biomes = new HashSet<Biome>();
 	
 	/**
 	 * The set of Items NEEDED to be weared.s
@@ -345,17 +344,15 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Reads the biomes for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.BIOME_PATH)){
 			try{
-				@SuppressWarnings("unchecked")
-				List<String> stringBiomes = (List<String>) configMap.get(TraitWithRestrictions.BIOME_PATH);
+				List<String> stringBiomes = configMap.getAsStringList(TraitWithRestrictions.BIOME_PATH);
 				this.biomes.clear();
 				
 				for(String biome : stringBiomes){
 					biome = biome.toUpperCase();
-					Biome biom = Biome.valueOf(biome);
-					
-					if(biom != null){
-						biomes.add(biom);
-					}
+					try{
+						Biome biom = Biome.valueOf(biome);
+						if(biome != null) biomes.add(biom);
+					}catch(Throwable exp){}
 				}
 			}catch(Exception exp){}
 		}
@@ -650,7 +647,7 @@ public abstract class AbstractBasicTrait implements Trait,
 
 		//check for allowed Biomes
 		Biome currentBiome = locBlock.getBiome();
-		if(!biomes.contains(currentBiome)) return false;
+		if(!biomes.isEmpty() && !biomes.contains(currentBiome)) return false;
 		
 		//Check if player is in water
 		if(onlyInWater){

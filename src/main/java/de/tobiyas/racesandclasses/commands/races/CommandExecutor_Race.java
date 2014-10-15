@@ -129,8 +129,8 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 				}
 				
 				player.openInventory(holderInventory);
-				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
-						"holders", "Race");
+				LanguageAPI.sendTranslatedMessage(sender, open_holder,
+						"holder", "Race");
 				return true;
 			}
 			
@@ -177,7 +177,7 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 				
 				player.openInventory(holderInventory);
 				LanguageAPI.sendTranslatedMessage(sender, open_holder,
-						"holders", "Race");
+						"holder", "Race");
 				return true;
 			}
 			

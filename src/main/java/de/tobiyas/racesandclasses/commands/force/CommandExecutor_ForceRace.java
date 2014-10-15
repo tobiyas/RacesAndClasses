@@ -22,6 +22,7 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exi
 import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -77,7 +78,7 @@ public class CommandExecutor_ForceRace extends AbstractCommand {
 		String playerToChange = args[0];
 		String newRace = args[1];
 		
-		RaCPlayer toChange = RaCPlayerManager.get().getPlayer(playerToChange);
+		RaCPlayer toChange = RaCPlayerManager.get().getPlayerByName(playerToChange);
 		if(toChange == null){
 			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 					"player", playerToChange);
@@ -91,10 +92,16 @@ public class CommandExecutor_ForceRace extends AbstractCommand {
 			return true;
 		}
 		
+		boolean worked = false;
 		if(raceManager.getHolderOfPlayer(toChange) == raceManager.getDefaultHolder()){
-			raceManager.addPlayerToHolder(toChange, newRace, true);
+			worked = raceManager.addPlayerToHolder(toChange, newRace, true);
 		}else{
-			raceManager.changePlayerHolder(toChange, newRace, true);
+			worked = raceManager.changePlayerHolder(toChange, newRace, true);
+		}
+		
+		if(!worked){
+			sender.sendMessage(ChatColor.RED + "This did not work. :(");
+			return true;
 		}
 		
 		if(toChange.isOnline()){

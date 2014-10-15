@@ -59,7 +59,7 @@ public class CommandExecutor_RaceGod extends AbstractCommand {
 		
 		Player target = null;
 		if(args.length == 1){
-			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(args[0]);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayerByName(args[0]);
 			target = racPlayer == null ? null : racPlayer.getPlayer();
 		}
 		

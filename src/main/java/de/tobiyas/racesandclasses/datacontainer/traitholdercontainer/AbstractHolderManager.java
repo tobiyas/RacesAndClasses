@@ -418,7 +418,6 @@ public abstract class AbstractHolderManager extends Observable{
 		AbstractTraitHolder oldHolder = getHolderOfPlayer(player);
 		
 		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
-		
 		memberList.remove(player);
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
