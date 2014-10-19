@@ -60,6 +60,12 @@
 			<id>sk89q</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
+		
+		<!-- Citizens Repo -->
+		<repository>
+		    <id>Citizens</id>
+		    <url>http://repo.citizensnpcs.co</url>
+		</repository>
 	</repositories>
 
 	<!-- Depends -->
@@ -85,6 +91,14 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>${bukkit.version}</version>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- Add citizens for interactions. -->
+		<dependency>
+		    <groupId>net.citizensnpcs</groupId>
+			<artifactId>citizensapi</artifactId>
+			<version>2.0.13-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 

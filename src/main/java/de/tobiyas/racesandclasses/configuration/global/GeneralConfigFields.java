@@ -98,6 +98,13 @@ public class GeneralConfigFields {
 	public static final String level_useLevelSystem = "level_useLevelSystem";	
 	
 	
+	//NPCs
+	public static final String npc_select_race = "npc_select_race";
+	public static final String npc_change_race = "npc_change_race";
+	public static final String npc_select_class = "npc_select_class";
+	public static final String npc_change_class = "npc_change_class";
+	
+	
 	//Races
 	public static final String races_enable = "races_enable";
 	public static final String races_create_group_for_race = "races_create_group_for_race";

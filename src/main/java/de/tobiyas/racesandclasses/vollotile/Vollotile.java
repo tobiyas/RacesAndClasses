@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.vollotile;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -157,6 +158,17 @@ public class Vollotile {
 			float data, int amount) {
 		VollotileCodeManager.getVollotileCode().sendParticleEffectToAll(effect, loc, data, amount);
 	}
+	
+
+	/**
+	 * Makes an Arrow pickupable.
+	 * 
+	 * @param arrow to modify
+	 * @param mayBePickedUp the state to give.
+	 */
+	public void makeArrowPickupable(Arrow arrow, boolean mayBePickedUp) {
+		VollotileCodeManager.getVollotileCode().makeArrowPickupable(arrow, mayBePickedUp);
+	}
 
 
 	
@@ -169,7 +181,6 @@ public class Vollotile {
 	public String toString() {
 		return VollotileCodeManager.getVollotileCode().toString();
 	}
-	
 	
 	
 }

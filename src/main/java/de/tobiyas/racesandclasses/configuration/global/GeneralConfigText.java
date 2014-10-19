@@ -373,6 +373,36 @@ public class GeneralConfigText {
 			+ "# String: RaC or MC or SkillAPI or MCMMO\n"
 			+ "# default: true \n"
 			+ level_useLevelSystem + ": RaC\n\n"
+			
+			
+			//NPC integration
+			+ "# The NPCs to open the GUI for Race Selection. \n"
+			+ "# NPC names have to be the real names of the NPCs.\n"
+			+ "# The Gui will open even if the GUI is disabled in Race Secion.\n"
+			+ "# String List: a list of NPC names.\n"
+			+ "# default: [] \n"
+			+ npc_select_race + ": []\n\n"
+
+			+ "# The NPCs to open the GUI for Race Change Selection. \n"
+			+ "# NPC names have to be the real names of the NPCs.\n"
+			+ "# The Gui will open even if the GUI is disabled in Race Secion.\n"
+			+ "# String List: a list of NPC names.\n"
+			+ "# default: [] \n"
+			+ npc_change_race + ": []\n\n"
+
+			+ "# The NPCs to open the GUI for Class Selection. \n"
+			+ "# NPC names have to be the real names of the NPCs.\n"
+			+ "# The Gui will open even if the GUI is disabled in Class Secion.\n"
+			+ "# String List: a list of NPC names.\n"
+			+ "# default: [] \n"
+			+ npc_select_class + ": []\n\n"
+			
+			+ "# The NPCs to open the GUI for Class Change Selection. \n"
+			+ "# NPC names have to be the real names of the NPCs.\n"
+			+ "# The Gui will open even if the GUI is disabled in Class Secion.\n"
+			+ "# String List: a list of NPC names.\n"
+			+ "# default: [] \n"
+			+ npc_change_class + ": []\n\n"
 
 			
 			//RACES
