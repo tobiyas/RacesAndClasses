@@ -19,6 +19,7 @@ public class TraitStringUtils {
 
 	public static double getNewValue(double oldDmg, String operation, double value){
 		double newDmg = 0;
+		
 		if(operation.equals("+")){
 			newDmg = oldDmg + value;
 		}else

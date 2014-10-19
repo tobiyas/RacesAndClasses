@@ -61,8 +61,8 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
-		operation = (String) configMap.get("operation");
-		value = (Double) configMap.get("value");
+		operation = configMap.getAsString("operation");
+		value = configMap.getAsDouble("value");
 	}
 
 	@Override	
@@ -86,10 +86,10 @@ public abstract class AbstractResistance extends AbstractBasicTrait implements R
 				}
 				
 				double oldDmg = CompatibilityModifier.EntityDamage.safeGetDamage(Eevent);
-				double newDmg = TraitStringUtils.getNewValue(oldDmg, operation, modifyToPlayer(eventWrapper.getPlayer(), oldDmg));
+				double modified = modifyToPlayer(eventWrapper.getPlayer(), oldDmg);
+				double newDmg = TraitStringUtils.getNewValue(modified, operation, value);
 				
 				CompatibilityModifier.EntityDamage.safeSetDamage(newDmg, Eevent);
-				
 				return result;
 			}
 		}
