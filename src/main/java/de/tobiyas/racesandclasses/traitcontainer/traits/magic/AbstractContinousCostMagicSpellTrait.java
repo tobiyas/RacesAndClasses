@@ -221,11 +221,11 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		super.setConfiguration(configMap);
 		
 		if(configMap.containsKey("every")){
-			everyXSeconds = (Integer) configMap.get("every");
+			everyXSeconds = configMap.getAsInt("every");
 		}
 		
 		if(configMap.containsKey("duration")){
-			durationInSeconds = (Integer) configMap.get("duration");
+			durationInSeconds = configMap.getAsInt("duration");
 		}
 		
 		if(everyXSeconds <= 0 && durationInSeconds <= 0){
