@@ -108,11 +108,11 @@ private int schedulerTaskId = -1;
 		}
 
 		if(onlyOnDay && !onlyInNight){
-			reason = "in NightShine";
+			reason = "on DayLight";			
 		}
 		
 		if(onlyInNight && !onlyOnDay){
-			reason = "on DayLight";
+			reason = "in NightShine";
 		}
 		
 		return getPrettyConfigurationPre() + " every: " + seconds + " sec for " + reason;

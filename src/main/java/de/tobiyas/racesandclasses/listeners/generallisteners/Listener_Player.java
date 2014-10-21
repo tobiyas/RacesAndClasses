@@ -91,7 +91,7 @@ public class Listener_Player implements Listener {
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
-		boolean playerHasNoRace = player.getRace() == plugin.getRaceManager().getDefaultHolder();
+		boolean playerHasNoRace = player.getRace() == null || player.getRace() == plugin.getRaceManager().getDefaultHolder();
 		int scheduledTimeToOpen = plugin.getConfigManager().getGeneralConfig().getConfig_debugTimeAfterLoginOpening();
 		
 		if(playerHasNoRace && forceSelectOfRace && racesActive){

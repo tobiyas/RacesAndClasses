@@ -349,6 +349,7 @@ public abstract class AbstractBasicTrait implements Trait,
 				
 				for(String biome : stringBiomes){
 					biome = biome.toUpperCase();
+					
 					try{
 						Biome biom = Biome.valueOf(biome);
 						if(biome != null) biomes.add(biom);
