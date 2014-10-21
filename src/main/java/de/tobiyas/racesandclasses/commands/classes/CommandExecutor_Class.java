@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.classes;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -35,7 +37,6 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderI
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
@@ -91,15 +92,16 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			if(args.length < 2){
 				classHolder = isPlayer ? racPlayer.getclass() : null;
 				if(classHolder == null){
-					LanguageAPI.sendTranslatedMessage(sender,"no_class_selected_use_info");
+					LanguageAPI.sendTranslatedMessage(sender, no_class_selected_use_info);
 					return true;
 				}
 			}else{
 				String className = args[1];
 				classHolder = plugin.getClassManager().getHolderByName(className);
 				if(classHolder == null){
-					LanguageAPI.sendTranslatedMessage(sender,"class_not_exist",
+					LanguageAPI.sendTranslatedMessage(sender, class_not_exist,
 							"class", className);
+					return true;
 				}
 			}	
 			
@@ -135,7 +137,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				AbstractTraitHolder currentClass = racPlayer.getclass();
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
-					LanguageAPI.sendTranslatedMessage(sender,"already_have_class",
+					LanguageAPI.sendTranslatedMessage(sender, already_have_class,
 							"clasname", currentClass.getDisplayName());
 					return true;
 				}
@@ -150,12 +152,12 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					LanguageAPI.sendTranslatedMessage(sender, "no_class_to_select");
+					LanguageAPI.sendTranslatedMessage(sender, no_class_to_select);
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
+				LanguageAPI.sendTranslatedMessage(sender, open_holder,
 						"holder", "Class");
 				return true;
 			}
@@ -186,7 +188,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			if(useGUI){
 				AbstractTraitHolder currentClass = racPlayer.getclass();
 				if(currentClass == plugin.getClassManager().getDefaultHolder()){
-					LanguageAPI.sendTranslatedMessage(sender, "no_class_on_change");
+					LanguageAPI.sendTranslatedMessage(sender, no_class_on_change);
 					return true;
 				}
 				
@@ -200,12 +202,12 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				
 				HolderInventory holderInventory = new HolderInventory(player, plugin.getClassManager());
 				if(holderInventory.getNumberOfHolder() <= 0){
-					LanguageAPI.sendTranslatedMessage(sender,"no_class_to_select");
+					LanguageAPI.sendTranslatedMessage(sender, no_class_to_select);
 					return true;
 				}
 				
 				player.openInventory(holderInventory);
-				LanguageAPI.sendTranslatedMessage(sender, "open_holder",
+				LanguageAPI.sendTranslatedMessage(sender, open_holder,
 						"holder", "Class");
 				return true;
 			}
@@ -231,13 +233,13 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			return true;
 		}
 		
-		sender.sendMessage(LanguageAPI.translateIgnoreError("only_players").build());
+		sender.sendMessage(LanguageAPI.translateIgnoreError(only_players).build());
 		return false;
 	}
 	
 	
 	private void postHelp(CommandSender player){
-		LanguageAPI.sendTranslatedMessage(player, "wrong_command_use",
+		LanguageAPI.sendTranslatedMessage(player, wrong_command_use,
 				"command", "");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "info");
 		player.sendMessage(ChatColor.RED + "/class " + ChatColor.LIGHT_PURPLE + "list");
@@ -256,7 +258,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		player.sendMessage(ChatColor.YELLOW + "===== " + ChatColor.RED + "ClassInfo" + ChatColor.YELLOW + " =====");
 		
 		if(classContainer == null){
-			LanguageAPI.sendTranslatedMessage(player, "no_class_selected");
+			LanguageAPI.sendTranslatedMessage(player, no_class_selected);
 			return;
 		}
 
@@ -287,7 +289,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		
 		List<String> classes = plugin.getClassManager().getAllHolderNames();
 		if(classes.size() == 0){
-			player.sendMessage(LanguageAPI.translateIgnoreError("no_class_in_list")
+			player.sendMessage(LanguageAPI.translateIgnoreError(no_class_in_list)
 					.build()
 					);
 			return;
@@ -304,7 +306,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		
 		for(String classe : classes ){
 			if(classe.equalsIgnoreCase(nameOfOwnClass)){
-				String yourClass = LanguageAPI.translateIgnoreError("your_class")
+				String yourClass = LanguageAPI.translateIgnoreError(your_class)
 						.build();
 				
 				player.sendMessage(ChatColor.RED + classe + ChatColor.YELLOW + "  <-- " + yourClass);
@@ -321,7 +323,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		ClassContainer classContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		boolean classExists = classContainer != null;
 		if(!classExists){
-			LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+			LanguageAPI.sendTranslatedMessage(player, class_not_exist,
 					"class", potentialClass);
 			
 			return false;
@@ -339,14 +341,14 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		AbstractTraitHolder defaultHolder = plugin.getClassManager().getDefaultHolder();
 		if(currentHolder == defaultHolder){
 			if(plugin.getClassManager().addPlayerToHolder(racPlayer, potentialClass, true)){
-				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
+				LanguageAPI.sendTranslatedMessage(player, class_changed_to,
 						"class", classContainer.getDisplayName());
 				return true;
 			}
 			
 			return false;
 		}else{
-			LanguageAPI.sendTranslatedMessage(player, Keys.already_have_class,
+			LanguageAPI.sendTranslatedMessage(player, already_have_class,
 					"class", classContainer.getDisplayName());
 			return false;
 		}
@@ -359,19 +361,19 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		ClassContainer newClassContainer = (ClassContainer) plugin.getClassManager().getHolderByName(potentialClass);
 		
 		if(oldClassContainer == null){
-			LanguageAPI.sendTranslatedMessage(player, "no_class_on_change");
+			LanguageAPI.sendTranslatedMessage(player, no_class_on_change);
 			return;
 		}
 		
 		if(newClassContainer == null){
-			LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+			LanguageAPI.sendTranslatedMessage(player, class_not_exist,
 					"class", potentialClass);
 			return;
 		}
 		
 		if(oldClassContainer != null){
 			if(potentialClass.equalsIgnoreCase(oldClassContainer.getDisplayName())){
-				LanguageAPI.sendTranslatedMessage(player, "change_to_same_holder",
+				LanguageAPI.sendTranslatedMessage(player, change_to_same_holder,
 						"holder", oldClassContainer.getDisplayName());
 				return;
 			}
@@ -385,10 +387,10 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			}
 			
 			if(plugin.getClassManager().changePlayerHolder(racPlayer, potentialClass, true)){
-				LanguageAPI.sendTranslatedMessage(player, "class_changed_to",
+				LanguageAPI.sendTranslatedMessage(player, class_changed_to,
 						"class", potentialClass);
 			}else{
-				LanguageAPI.sendTranslatedMessage(player, "class_not_exist",
+				LanguageAPI.sendTranslatedMessage(player, class_not_exist,
 						"class", potentialClass);
 			}
 		}

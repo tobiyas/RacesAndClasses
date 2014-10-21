@@ -23,17 +23,7 @@
 package de.tobiyas.racesandclasses.commands.races;
 
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.needs_1_arg;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_to_select;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.no_traits;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
 
 import java.util.LinkedList;
 import java.util.List;
