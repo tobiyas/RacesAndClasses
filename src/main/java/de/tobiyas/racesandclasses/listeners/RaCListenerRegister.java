@@ -19,7 +19,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.addins.food.FoodListener;
 import de.tobiyas.racesandclasses.addins.manaflask.Listener_ManaPotion;
 import de.tobiyas.racesandclasses.listeners.classchangelistener.ClassChangeSelectionListener;
-import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipChange;
+import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipItem;
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_raceClassRestrictionOnItems;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatReplacer;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
@@ -63,7 +63,11 @@ public class RaCListenerRegister {
 	 */
 	public static void registerProxys(){
 		new Listener_Player();
-		new Listener_PlayerEquipChange();
+		
+		
+		//TODO check if the new listener is better!
+		new Listener_PlayerEquipItem();
+		//new Listener_PlayerEquipChange();
 	}
 	
 	
