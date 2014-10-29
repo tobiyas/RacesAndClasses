@@ -34,8 +34,8 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-
 import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
 
 public class CommandExecutor_BindTrait extends AbstractCommand implements Listener{
@@ -148,8 +148,10 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				
 				EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(player);
 				if(selected instanceof TraitWithRestrictions){
-					if(! ((TraitWithRestrictions) selected).checkRestrictions(wrapper)){
-						LanguageAPI.sendTranslatedMessage(player, restrictions_not_met);
+					
+				TraitRestriction restriction = ((TraitWithRestrictions) selected).checkRestrictions(wrapper);
+				if(restriction != TraitRestriction.None){
+						LanguageAPI.sendTranslatedMessage(player, restriction.translation());
 						return;
 					}
 				}
@@ -234,7 +236,8 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			
 			EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(pl);
 			if(selected instanceof TraitWithRestrictions){
-				if(! ((TraitWithRestrictions) selected).checkRestrictions(wrapper)){
+				TraitRestriction restriction =  ((TraitWithRestrictions) selected).checkRestrictions(wrapper);
+				if(restriction != TraitRestriction.None){
 					LanguageAPI.sendTranslatedMessage(player, restrictions_not_met);
 					return;
 				}

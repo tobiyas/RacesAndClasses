@@ -41,6 +41,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.items.CreateDropContainer;
 import de.tobiyas.racesandclasses.util.items.DropContainer;
@@ -99,8 +100,8 @@ public class DeathCheckerTrait extends AbstractBasicTrait implements StaticTrait
 	
 
 	@Override
-	public boolean checkRestrictions(EventWrapper wrapper) {
-		return true;
+	public TraitRestriction checkRestrictions(EventWrapper wrapper) {
+		return TraitRestriction.None;
 	}
 
 	

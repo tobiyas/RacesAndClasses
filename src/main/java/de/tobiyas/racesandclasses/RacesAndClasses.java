@@ -71,6 +71,7 @@ import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_PlayerInfo;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_RacesReload;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_HP;
+import de.tobiyas.racesandclasses.commands.health.CommandExecutor_Mana;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceGod;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceHeal;
 import de.tobiyas.racesandclasses.commands.health.CommandExecutor_ShowTraits;
@@ -396,6 +397,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_RaceDebug());
 		commands.add(new CommandExecutor_Class());
 		commands.add(new CommandExecutor_HP());
+		commands.add(new CommandExecutor_Mana());
 		commands.add(new CommandExecutor_Channel());
 		commands.add(new CommandExecutor_RaceGod());
 		commands.add(new CommandExecutor_BroadCast());

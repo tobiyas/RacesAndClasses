@@ -80,7 +80,7 @@ public class EN_Text {
 			//m			
 			+ magic_chaneling_failed + ": '&cChaneling of &d%TRAIT_NAME% &cfailed.'\r\n"
 			+ magic_change_spells + ": '&aChanged Spell to: &d%TRAIT_NAME% &aCost: &d%COST% %COST_TYPE%&a.'\r\n"
-			+ magic_dont_have_enough + ": '&c You do not have enough &d%COST_TYPE% %cfor &d%TRAIT_NAME% &c.'\r\n"
+			+ magic_dont_have_enough + ": '&c You do not have enough &d%COST_TYPE% &cfor &d%TRAIT_NAME% &c.'\r\n"
 			+ magic_no_spells + ": '&cYou can not cast any spells.'\r\n"
 			+ magic_spell_activated + ": '&d%TRAIT_NAME% &aactivated.'\r\n"
 			+ magic_spell_deactivated + ": '&d%TRAIT_NAME% &cdeactivated.'\r\n"
@@ -128,6 +128,33 @@ public class EN_Text {
 			+ race_spawn_teleport_success + ": '&aWelcome to the Race Spawn of &d%RACE%&a.'\r\n"
 			+ reload_message + ": '&aReload of &dRaces &adone successfully. Time taken: &d %TIME% &ams'\r\n"
 			+ restrictions_not_met + ": '&aThe Trait still has cooldown or may not be used here..'\r\n"
+			
+			//restrictions
+			+ restrictions_not_met_MinimumLevel + ": '&aYour level is too low.'\r\n"
+			+ restrictions_not_met_MaximumLevel + ": '&aYour level is too hight.'\r\n"
+			+ restrictions_not_met_Biomes + ": '&aCan not be used in this biome'\r\n"
+			+ restrictions_not_met_Wearing + ": '&aYou are not wearing the correct clothings.'\r\n"
+			+ restrictions_not_met_OnlyInWater + ": '&aCan be used only in water.'\r\n"
+			+ restrictions_not_met_OnlyOnLand + ": '&aCan be used only on land.'\r\n"
+			+ restrictions_not_met_OnlyInLava + ": '&aCan be used only in lava.'\r\n"
+			+ restrictions_not_met_OnlyOnSnow + ": '&aCan be used only on snow.'\r\n"
+			+ restrictions_not_met_OnlyInNight + ": '&aCan be used only in night.'\r\n"
+			+ restrictions_not_met_OnlyOnDay + ": '&aCan be used only on day.'\r\n"
+			+ restrictions_not_met_Cooldown + ": '&aStill has cooldonw.'\r\n"
+			+ restrictions_not_met_AboveLevitation + ": '&aYour elevation is too low.'\r\n"
+			+ restrictions_not_met_BelowLevitation + ": '&aYour elevation is too high.'\r\n"
+			+ restrictions_not_met_OnlyInRain + ": '&aCan be used only in rain.'\r\n"
+			+ restrictions_not_met_OnlyAfterDamage + ": '&aCan only be used after beeing damaged.'\r\n"
+			+ restrictions_not_met_OnlyAfterNotDamage + ": '&aCan only be used after not beeing damaged.'\r\n"
+			+ restrictions_not_met_OnlyOnBlock + ": '&aCan only be used on specific blocks.'\r\n"
+			+ restrictions_not_met_OnlyWhileSneaking + ": '&aCan only be used while sneaking.'\r\n"
+			+ restrictions_not_met_OnlyWhileNotSneaking + ": '&aCan only be used while not sneaking.'\r\n"
+			+ restrictions_not_met_NotOnBlock + ": '&aCan not be used on this block.'\r\n"
+			+ restrictions_not_met_NeededPermission + ": '&aYou do not have the Permission.'\r\n"
+			+ restrictions_not_met_Costs + ": '&aYou do not have the cost.'\r\n"
+			+ restrictions_not_met_Unknown + ": '&aIt failed to an unknown reason.'\r\n"
+			
+			
 			
 			//s
 			+ send_empty_message + ": '&cYou tried to send an empty Message.'\r\n"

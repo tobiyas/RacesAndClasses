@@ -28,6 +28,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
@@ -54,7 +55,7 @@ private int schedulerTaskId = -1;
 						if(player == null || !player.isOnline()) continue;
 						
 						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
-						if(!checkRestrictions(fakeEventWrapper) || !canBeTriggered(fakeEventWrapper)) {
+						if(checkRestrictions(fakeEventWrapper) != TraitRestriction.None || !canBeTriggered(fakeEventWrapper)) {
 							restrictionsFailed(player);
 							continue;
 						}

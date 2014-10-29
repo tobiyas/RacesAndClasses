@@ -158,9 +158,9 @@ public interface TraitWithRestrictions {
 	 * 
 	 * @param wrapper The wrapper for the Event that accumulates all Information
 	 * 
-	 * @return true if restrictions met, false otherwise
+	 * @return returns null if may be used. Returns the Reason if not useable.
 	 */
-	public boolean checkRestrictions(EventWrapper wrapper);
+	public TraitRestriction checkRestrictions(EventWrapper wrapper);
 	
 	/**
 	 * Returns the total uplink time in seconds

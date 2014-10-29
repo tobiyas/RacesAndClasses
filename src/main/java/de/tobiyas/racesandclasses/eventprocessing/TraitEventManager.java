@@ -48,6 +48,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
 import de.tobiyas.racesandclasses.util.traitutil.TraitBypassCheck;
@@ -189,7 +190,7 @@ public class TraitEventManager{
 				
 				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions && !hasBypassForEvent){
-					if(!((TraitWithRestrictions) trait).checkRestrictions(eventWrapper)) continue;
+					if(((TraitWithRestrictions) trait).checkRestrictions(eventWrapper) != TraitRestriction.None) continue;
 				}
 				
 				//Trait is not interested in the event

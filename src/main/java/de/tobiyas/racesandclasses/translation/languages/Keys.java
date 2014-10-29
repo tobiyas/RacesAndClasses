@@ -120,6 +120,33 @@ public class Keys {
 	public static final String reload_message = "reload_message";
 	public static final String restrictions_not_met = "restrictions_not_met";
 	
+	
+	//restrictions
+	public static final String restrictions_not_met_MinimumLevel = "restrictions_not_met_MinimumLevel";
+	public static final String restrictions_not_met_MaximumLevel = "restrictions_not_met_MaximumLevel";
+	public static final String restrictions_not_met_Biomes = "restrictions_not_Biomes";
+	public static final String restrictions_not_met_Wearing = "restrictions_not_met_Wearing";
+	public static final String restrictions_not_met_OnlyInWater = "restrictions_not_met_OnlyInWater";
+	public static final String restrictions_not_met_OnlyOnLand = "restrictions_not_met_OnlyOnLand";
+	public static final String restrictions_not_met_OnlyInLava = "restrictions_not_met_OnlyInLava";
+	public static final String restrictions_not_met_OnlyOnSnow = "restrictions_not_met_OnlyOnSnow";
+	public static final String restrictions_not_met_OnlyInNight = "restrictions_not_met_OnlyInNight";
+	public static final String restrictions_not_met_OnlyOnDay = "restrictions_not_met_OnlyOnDay";
+	public static final String restrictions_not_met_Cooldown = "restrictions_not_met_Cooldown";
+	public static final String restrictions_not_met_AboveLevitation = "restrictions_not_met_AboveLevitation";
+	public static final String restrictions_not_met_BelowLevitation = "restrictions_not_met_BelowLevitation";
+	public static final String restrictions_not_met_OnlyInRain = "restrictions_not_met_OnlyInRain";
+	public static final String restrictions_not_met_OnlyAfterDamage = "restrictions_not_met_OnlyAfterDamage";
+	public static final String restrictions_not_met_OnlyAfterNotDamage = "restrictions_not_met_OnlyAfterNotDamage";
+	public static final String restrictions_not_met_OnlyOnBlock = "restrictions_not_met_OnlyOnBlock";
+	public static final String restrictions_not_met_OnlyWhileSneaking = "restrictions_not_met_OnlyWhileSneaking";
+	public static final String restrictions_not_met_OnlyWhileNotSneaking = "restrictions_not_met_OnlyWhileNotSneaking";
+	public static final String restrictions_not_met_NotOnBlock = "restrictions_not_met_NotOnBlock";
+	public static final String restrictions_not_met_NeededPermission = "restrictions_not_met_NeededPermission";
+	public static final String restrictions_not_met_Costs = "restrictions_not_met_Costs";
+	public static final String restrictions_not_met_Unknown = "restrictions_not_met_Unknown";
+	
+	
 	//s
 	public static final String send_empty_message = "send_empty_message";
 	public static final String something_disabled = "something_disabled";

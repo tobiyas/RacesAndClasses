@@ -625,18 +625,19 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected abstract String getPrettyConfigIntern();
 	
 	@Override
-	public boolean checkRestrictions(EventWrapper wrapper) {
+	public TraitRestriction checkRestrictions(EventWrapper wrapper) {
 		RaCPlayer player = wrapper.getPlayer();
-		if(player == null) return true;
+		if(player == null) return TraitRestriction.Unknown;
 		
 		//players not online will most likely fail everything.
-		if(!player.isOnline()) return false;
+		if(!player.isOnline()) return TraitRestriction.Unknown;
 		
 		String playerName = player.getName();
 		
 		//check for Level-Range
 		int playerLevel = player.getLevelManager().getCurrentLevel();
-		if(playerLevel < minimumLevel || playerLevel > maximumLevel) return false;
+		if(playerLevel < minimumLevel) return TraitRestriction.MinimumLevel;
+		if(playerLevel > maximumLevel) return TraitRestriction.MaximumLevel;
 		
 		//Save some generic Block infos.
 		Location playerLocation = player.getPlayer().getLocation();
@@ -648,13 +649,13 @@ public abstract class AbstractBasicTrait implements Trait,
 
 		//check for allowed Biomes
 		Biome currentBiome = locBlock.getBiome();
-		if(!biomes.isEmpty() && !biomes.contains(currentBiome)) return false;
+		if(!biomes.isEmpty() && !biomes.contains(currentBiome)) return TraitRestriction.Biomes;
 		
 		//Check if player is in water
 		if(onlyInWater){
 			if(feetType != Material.WATER && feetType != Material.STATIONARY_WATER){
 				triggerButHasRestriction(TraitRestriction.OnlyInWater, wrapper);
-				return false;
+				return TraitRestriction.OnlyInWater;
 			}
 		}
 
@@ -662,7 +663,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(onlyWhileSneaking){
 			if(!player.getPlayer().isSneaking()) {
 				triggerButHasRestriction(TraitRestriction.OnlyWhileSneaking, wrapper);
-				return false;
+				return TraitRestriction.OnlyWhileSneaking;
 			}
 		}
 		
@@ -670,7 +671,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(onlyWhileNotSneaking){
 			if(player.getPlayer().isSneaking()) {
 				triggerButHasRestriction(TraitRestriction.OnlyWhileNotSneaking, wrapper);
-				return false;
+				return TraitRestriction.OnlyWhileNotSneaking;
 			}
 		}
 		
@@ -678,7 +679,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(onlyOnLand){
 			if(feetType == Material.WATER || feetType == Material.STATIONARY_WATER){
 				triggerButHasRestriction(TraitRestriction.OnlyOnLand, wrapper);
-				return false;
+				return TraitRestriction.OnlyOnLand;
 			}
 		}
 		
@@ -686,7 +687,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!neededPermission.isEmpty()){
 			if(!plugin.getPermissionManager().checkPermissionsSilent(wrapper.getPlayer().getPlayer(), neededPermission)){
 				triggerButHasRestriction(TraitRestriction.NeededPermission, wrapper);
-				return false;
+				return TraitRestriction.NeededPermission;
 			}
 		}
 		
@@ -694,7 +695,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(onlyInLava){
 			if(feetType != Material.LAVA && feetType != Material.STATIONARY_LAVA){
 				triggerButHasRestriction(TraitRestriction.OnlyInLava, wrapper);
-				return false;
+				return TraitRestriction.OnlyInLava;
 			}
 		}
 
@@ -703,19 +704,19 @@ public abstract class AbstractBasicTrait implements Trait,
 			if(!(feetType == Material.SNOW || feetType == Material.SNOW_BLOCK
 					|| belowFeetType == Material.SNOW || belowFeetType == Material.SNOW_BLOCK)){
 				triggerButHasRestriction(TraitRestriction.OnlyOnSnow, wrapper);
-				return false;
+				return TraitRestriction.OnlyOnSnow;
 			}
 		}
 		
 		//check if player is in Rain
 		if(onlyInRain){
-			if(!wrapper.getWorld().hasStorm()) return false;
+			if(!wrapper.getWorld().hasStorm()) return TraitRestriction.OnlyInRain;
 			int ownY = feetBlock.getY();
 			int highestY = feetBlock.getWorld().getHighestBlockYAt(feetBlock.getX(), feetBlock.getZ());
 			//This means having a roof over oneself
 			if(ownY != highestY) {
 				triggerButHasRestriction(TraitRestriction.OnlyInRain, wrapper);
-				return false;
+				return TraitRestriction.OnlyInRain;
 			}
 		}
 		
@@ -736,7 +737,7 @@ public abstract class AbstractBasicTrait implements Trait,
 				
 				if(!found) {
 					triggerButHasRestriction(TraitRestriction.Wearing, wrapper);
-					return false;
+					return TraitRestriction.Wearing;
 				}
 			}
 		}
@@ -745,7 +746,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(aboveElevation != Integer.MIN_VALUE){
 			if(feetBlock.getY() <= aboveElevation) {
 				triggerButHasRestriction(TraitRestriction.AboveLevitation, wrapper);
-				return false;
+				return TraitRestriction.AboveLevitation;
 			}
 		}
 
@@ -753,7 +754,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(belowElevation != Integer.MAX_VALUE){
 			if(feetBlock.getY() >= belowElevation) {
 				triggerButHasRestriction(TraitRestriction.BelowLevitation, wrapper);
-				return false;
+				return TraitRestriction.BelowLevitation;
 			}
 		}
 
@@ -762,7 +763,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
 			if(lastDamage > onlyAfterDamaged) {
 				triggerButHasRestriction(TraitRestriction.OnlyAfterDamage, wrapper);
-				return false;
+				return TraitRestriction.OnlyAfterDamage;
 			}
 		}
 		
@@ -771,7 +772,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			int lastDamage = PlayerLastDamageListener.getTimePassedSinceLastDamageInSeconds(playerName);
 			if(onlyAfterNotDamaged > lastDamage) {
 				triggerButHasRestriction(TraitRestriction.OnlyAfterNotDamage, wrapper);
-				return false;
+				return TraitRestriction.OnlyAfterNotDamage;
 			}
 		}
 		
@@ -779,7 +780,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!onlyOnBlocks.isEmpty()){
 			if(!onlyOnBlocks.contains(belowFeetType)) {
 				triggerButHasRestriction(TraitRestriction.OnlyOnBlock, wrapper);
-				return false;
+				return TraitRestriction.OnlyOnBlock;
 			}
 		}
 
@@ -787,7 +788,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!notOnBlocks.isEmpty()){
 			if(notOnBlocks.contains(belowFeetType)) {
 				triggerButHasRestriction(TraitRestriction.NotOnBlock, wrapper);
-				return false;
+				return TraitRestriction.NotOnBlock;
 			}
 		}
 		
@@ -802,7 +803,7 @@ public abstract class AbstractBasicTrait implements Trait,
 					triggerButHasRestriction(TraitRestriction.Cooldown, wrapper);
 					if(notifyTriggeredUplinkTime(wrapper)){
 						//if notices are disabled, we don't need to do anything here.
-						if(disableCooldownNotice) return false;
+						if(disableCooldownNotice) return TraitRestriction.Cooldown;
 						
 						//we still check to not spam players.
 						long lastNotified = uplinkNotifyList.containsKey(playerName)
@@ -820,7 +821,7 @@ public abstract class AbstractBasicTrait implements Trait,
 					}
 				}
 				
-				return false;
+				return TraitRestriction.Cooldown;
 			}
 		}
 		
@@ -834,13 +835,13 @@ public abstract class AbstractBasicTrait implements Trait,
 			//Check day
 			if(onlyOnDay && isNight && !onlyInNight){
 				triggerButHasRestriction(TraitRestriction.OnlyOnDay, wrapper);
-				return false;
+				return TraitRestriction.OnlyOnDay;
 			}
 			
 			//Check night
 			if(onlyInNight && isDay && !onlyOnDay){
 				triggerButHasRestriction(TraitRestriction.OnlyInNight, wrapper);
-				return false;
+				return TraitRestriction.OnlyOnDay;
 			}
 		}
 		
@@ -848,10 +849,10 @@ public abstract class AbstractBasicTrait implements Trait,
 		TraitRestriction furtherRestriction = checkForFurtherRestrictions(wrapper);
 		if(furtherRestriction != null){
 			triggerButHasRestriction(furtherRestriction, wrapper);
-			return true;
+			return furtherRestriction;
 		}
 		
-		return true;
+		return TraitRestriction.None;
 	}
 	
 	
@@ -939,7 +940,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!isBindable()) return TraitResults.False();
 		if(!using.isOnline()) return TraitResults.False();
 		
-		if(!this.checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(using))){
+		if(this.checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(using)) != TraitRestriction.None){
 			return TraitResults.False();
 		}
 		

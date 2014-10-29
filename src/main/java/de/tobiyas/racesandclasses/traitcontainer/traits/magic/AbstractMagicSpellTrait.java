@@ -187,14 +187,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		PlayerAction action = eventWrapper.getPlayerAction();
 		if(action != PlayerAction.NONE){
 			
-			if(action == PlayerAction.CHANGE_SPELL){
+			boolean playerHasWandInHand = checkWandInHand(eventWrapper.getPlayer());
+			if(action == PlayerAction.CHANGE_SPELL && playerHasWandInHand){
 				changeMagicSpell(eventWrapper.getPlayer());
 				
 				return true;
 			}
 			
 			if(action == PlayerAction.CAST_SPELL){
-				boolean playerHasWandInHand = checkWandInHand(eventWrapper.getPlayer());
 				return playerHasWandInHand;
 			}
 		}
@@ -218,7 +218,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 
 
 	@Override
-	public void triggerButDoesNotHaveEnoghCostType(EventWrapper wrapper){
+	public void triggerButDoesNotHaveEnoghCostType(EventWrapper wrapper){		
 		PlayerAction action = wrapper.getPlayerAction();
 		if(action == PlayerAction.CHANGE_SPELL){
 			changeMagicSpell(wrapper.getPlayer());
@@ -230,9 +230,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			costTypeString = MCPrettyName.getPrettyName(
 					getCastMaterialType(),
 					(short) 0,
-					"en_US");
+					MCPrettyName.EN);
 		}
-			
+		
 		LanguageAPI.sendTranslatedMessage(wrapper.getPlayer(), magic_dont_have_enough, 
 				"cost_type", costTypeString, 
 				"trait_name", getDisplayName());
@@ -421,13 +421,14 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	public void triggerButHasRestriction(TraitRestriction restriction,
 			EventWrapper wrapper) {
 		
-		
 		if(restriction == TraitRestriction.Costs){
+			if(!checkWandInHand(wrapper.getPlayer())) return;
+			
 			triggerButDoesNotHaveEnoghCostType(wrapper);
 		}else{
 			if(wrapper.getPlayerAction() == PlayerAction.CHANGE_SPELL){
 				changeMagicSpell(wrapper.getPlayer());
-			}			
+			}
 		}
 	}
 	
@@ -448,7 +449,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 				public void run() {
 					if(channelingMap.containsKey(player.getUniqueId())){
 						//check restrictions for the New Trigger.
-						if(!checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(player))) return;
+						if(checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(player)) != TraitRestriction.None) return;
 						
 						magicSpellTriggered(player, result);
 						if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
