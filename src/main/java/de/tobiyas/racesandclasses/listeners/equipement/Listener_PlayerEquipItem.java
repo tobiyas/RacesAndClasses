@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.CraftingInventory;
@@ -83,6 +84,7 @@ public class Listener_PlayerEquipItem implements Listener {
 		boolean isPlayerInventory = event.getInventory() instanceof CraftingInventory;
 		if(!isPlayerInventory) return;
 		
+		if(((CraftingInventory)event.getInventory()).getType() != InventoryType.CRAFTING) return;
 		
 		HumanEntity clicker = event.getWhoClicked();
 		if(!(clicker instanceof Player)) return;
@@ -129,6 +131,8 @@ public class Listener_PlayerEquipItem implements Listener {
 		
 		boolean isPlayerInventory = event.getInventory() instanceof CraftingInventory;
 		if(!isPlayerInventory) return;
+		
+		if(((CraftingInventory)event.getInventory()).getType() != InventoryType.CRAFTING) return;
 		
 		HumanEntity clicker = event.getWhoClicked();
 		if(!(clicker instanceof Player)) return;
