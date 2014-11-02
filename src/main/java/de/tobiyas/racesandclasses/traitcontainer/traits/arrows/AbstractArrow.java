@@ -57,8 +57,6 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 	protected int duration;
 	protected double totalDamage;
 	
-	protected int uplinkTime = 0;
-	
 	
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper){
@@ -203,7 +201,8 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 				}
 			}));
 			
-			return result.setTriggered(onShoot(Eevent));
+			boolean triggered = onShoot(Eevent);
+			return result.setTriggered(triggered).setSetCooldownOnPositiveTrigger(triggered).setRemoveCostsAfterTrigger(triggered);
 		}
 		
 		//Arrow Hit Location
@@ -289,11 +288,6 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		return false;
 	}
 	
-
-	@Override
-	public int getMaxUplinkTime() {
-		return uplinkTime;
-	}
 
 	@Override
 	public boolean triggerButHasUplink(EventWrapper wrapper) {

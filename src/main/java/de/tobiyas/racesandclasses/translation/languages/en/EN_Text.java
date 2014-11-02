@@ -140,7 +140,7 @@ public class EN_Text {
 			+ restrictions_not_met_OnlyOnSnow + ": '&aCan be used only on snow.'\r\n"
 			+ restrictions_not_met_OnlyInNight + ": '&aCan be used only in night.'\r\n"
 			+ restrictions_not_met_OnlyOnDay + ": '&aCan be used only on day.'\r\n"
-			+ restrictions_not_met_Cooldown + ": '&aStill has cooldonw.'\r\n"
+			+ restrictions_not_met_Cooldown + ": '&aStill has cooldown.'\r\n"
 			+ restrictions_not_met_AboveLevitation + ": '&aYour elevation is too low.'\r\n"
 			+ restrictions_not_met_BelowLevitation + ": '&aYour elevation is too high.'\r\n"
 			+ restrictions_not_met_OnlyInRain + ": '&aCan be used only in rain.'\r\n"
