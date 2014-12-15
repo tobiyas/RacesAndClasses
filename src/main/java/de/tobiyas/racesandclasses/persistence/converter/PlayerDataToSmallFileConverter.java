@@ -57,6 +57,7 @@ public class PlayerDataToSmallFileConverter {
 			String playerName = nameIt.next();
 			
 			//needed to convert
+			@SuppressWarnings("deprecation")
 			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player.getUniqueId());
 			Object subTree = bigDataYML.get("playerdata." + playerName);

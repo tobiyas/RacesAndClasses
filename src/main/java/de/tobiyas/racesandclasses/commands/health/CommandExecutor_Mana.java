@@ -32,11 +32,9 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class CommandExecutor_Mana extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_Mana(){
 		super("playermana", new String[]{"mana"});
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "playerhealth";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
@@ -69,6 +67,7 @@ public class CommandExecutor_Mana extends AbstractCommand {
 		double percent = (currentMana / maxMana) * length;
 		for( int i = 0; i < length; i++){
 			//TODO calc stuff.
+			percent = percent + 1;
 		}
 		
 		builder += "]";

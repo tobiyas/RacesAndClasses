@@ -36,11 +36,9 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
 public class CommandExecutor_RaceConfig extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_RaceConfig(){
 		super("raceconfig", new String[]{"rconfig"});
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "raceconfig";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

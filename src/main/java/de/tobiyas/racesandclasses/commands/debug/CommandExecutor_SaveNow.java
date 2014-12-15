@@ -25,12 +25,10 @@ import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 
 public class CommandExecutor_SaveNow extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_SaveNow(){
 		super("racsave");
 		
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "racsave";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

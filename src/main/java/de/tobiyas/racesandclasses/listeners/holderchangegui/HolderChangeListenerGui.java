@@ -60,6 +60,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void RemoveAnyHolderItemFromPlayer(InventoryCloseEvent invClose){
 		if(!invClose.getViewers().iterator().hasNext()) return;
@@ -140,6 +141,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	}
 	
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerSelectsHolder(InventoryClickEvent event){
 		if(!event.getViewers().iterator().hasNext()) return;

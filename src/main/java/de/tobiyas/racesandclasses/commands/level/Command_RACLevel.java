@@ -38,18 +38,12 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 public class Command_RACLevel extends AbstractCommand {
 
 	/**
-	 * The plugin called stuff upon
-	 */
-	private RacesAndClasses plugin;
-	
-	
-	/**
 	 * Registers the Command "class" to the plugin.
 	 */
 	public Command_RACLevel(){
 		super("raclevel");
 		
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "raclevel";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

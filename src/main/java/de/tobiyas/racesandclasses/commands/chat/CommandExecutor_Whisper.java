@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.chat;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +24,7 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.chat.PrivateChat;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_Whisper extends AbstractCommand {
 	
@@ -65,7 +65,7 @@ public class CommandExecutor_Whisper extends AbstractCommand {
 		}
 		
 
-		Player target = Bukkit.getPlayer(args[0]);
+		Player target = PlayerUtils.getPlayer(args[0]);
 		if(target == null){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("target_not_exist")
 					.build());

@@ -382,4 +382,45 @@ public class RaCPlayer {
 		return getPlayer().getItemInHand();
 	}
 
+
+	
+	
+	
+	//BELOW ONLY HASHCODE / EQUALS//
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((playerName == null) ? 0 : playerName.hashCode());
+		result = prime * result
+				+ ((playerUUID == null) ? 0 : playerUUID.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RaCPlayer other = (RaCPlayer) obj;
+		if (playerName == null) {
+			if (other.playerName != null)
+				return false;
+		} else if (!playerName.equals(other.playerName))
+			return false;
+		if (playerUUID == null) {
+			if (other.playerUUID != null)
+				return false;
+		} else if (!playerUUID.equals(other.playerUUID))
+			return false;
+		return true;
+	}
+
+	
 }

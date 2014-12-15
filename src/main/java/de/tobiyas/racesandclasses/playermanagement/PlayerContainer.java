@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.playermanagement;
 
 import org.bukkit.ChatColor;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
@@ -256,6 +257,8 @@ public class PlayerContainer {
 		
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
+		
+		player.getPlayer().setMetadata("LEVEL", new FixedMetadataValue(plugin, levelManager.getCurrentLevel()));
 		
 		return this;
 	}

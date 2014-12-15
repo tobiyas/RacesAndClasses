@@ -244,7 +244,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			getDebugLogger().setAlsoToPlugin(true);
 			
 			VaultHook.init(this);
-			//Bukkit.getPluginManager().registerEvents(this, this);
 			
 			description = getDescription();
 			prefix = "[" + description.getName() + "] ";
@@ -277,8 +276,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	private void checkIfCBVersionGreaterRequired() {
 		BukkitVersion version = BukkitVersionBuilder.getbukkitBuildNumber();
-		if(version.getBukkitMainVersion() < Consts.minimalBukkitMainVersion ||
-				version.getBukkitSubVersion() < Consts.minimalBukkitSubVersion ||
+		if(version.getBukkitMainVersion() < Consts.minimalBukkitMainVersion &&
+				version.getBukkitSubVersion() < Consts.minimalBukkitSubVersion &&
 				version.getBukkitSubSubVersion() < Consts.minimalBukkitRevVersion){
 			log("Bukkit Version is below 1.6. Compatibility mode is used. Double values will be rounded.");
 		}

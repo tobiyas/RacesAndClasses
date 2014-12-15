@@ -58,6 +58,7 @@ public class Keys {
 	public static final String held_item_not_air = "held_item_not_air";
 	
 	//i
+	public static final String in_restricted_area = "in_restricted_area";
 	
 	//j
 	
@@ -145,6 +146,9 @@ public class Keys {
 	public static final String restrictions_not_met_NeededPermission = "restrictions_not_met_NeededPermission";
 	public static final String restrictions_not_met_Costs = "restrictions_not_met_Costs";
 	public static final String restrictions_not_met_Unknown = "restrictions_not_met_Unknown";
+	public static final String restrictions_not_met_OutOfRange = "restrictions_not_met_OutOfRange";
+	public static final String restrictions_not_met_TargetFriendly = "restrictions_not_met_TargetFriendly";
+	public static final String restrictions_not_met_NoTarget = "restrictions_not_met_NoTarget";
 	
 	
 	//s
@@ -193,6 +197,7 @@ public class Keys {
 	public static final String trait_taunt_fade = "trait_taunt_fade";
 	public static final String trait_teleport_solidtarger = "trait_teleport_solidtarger";
 	public static final String trait_teleport_success = "trait_teleport_success";
+	public static final String trait_tool_trait_fail = "trait_tool_trait_fail";
 	public static final String trait_wall_success = "trait_wall_success";
 	public static final String trait_wall_faded = "trait_wall_faded";
 	

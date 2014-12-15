@@ -1,5 +1,11 @@
 package de.tobiyas.racesandclasses.commands.bind;
 
+import static de.tobiyas.racesandclasses.translation.languages.Keys.held_item_not_air;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_find_trait;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_failed;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_toggled;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -20,12 +27,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -36,19 +45,28 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_BindTrait extends AbstractCommand implements Listener{
 
 	
 	private static final String BIND_KEY = ChatColor.AQUA + "Trait: ";
 	
+	/**
+	 * The Material to bind.
+	 */
+	private final Material BindMat = Material.SHEARS;
+	
 	
 	public CommandExecutor_BindTrait() {
 		super("bindtrait", new String[]{"bs", "bind"});
 		
 		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+		startCooldownComplete();
 	}
+
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
@@ -109,7 +127,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			return true;
 		}
 		
-		ItemStack item = new ItemStack(Material.MELON_SEEDS);
+		ItemStack item = new ItemStack(BindMat);
 		ItemMeta itemMeta = item.getItemMeta();
 		
 		itemMeta.setDisplayName(BIND_KEY + selected.getDisplayName());
@@ -148,12 +166,17 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				
 				EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(player);
 				if(selected instanceof TraitWithRestrictions){
-					
+				
 				TraitRestriction restriction = ((TraitWithRestrictions) selected).checkRestrictions(wrapper);
 				if(restriction != TraitRestriction.None){
 						LanguageAPI.sendTranslatedMessage(player, restriction.translation());
 						return;
 					}
+				}
+				
+				if(TraitRegionChecker.isInDisabledLocation(player.getLocation())){
+					LanguageAPI.sendTranslatedMessage(player, Keys.in_restricted_area);
+					return;
 				}
 				
 				TraitResults result = selected.triggerOnBind(player);
@@ -166,6 +189,17 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				}
 			}
 		}
+	}
+	
+	
+	@EventHandler
+	public void shearEvent(PlayerShearEntityEvent event){
+		Player player = event.getPlayer();
+		ItemStack inHand = player.getItemInHand();
+		if(inHand == null) return;
+		
+		Trait trait = getBoundTrait(inHand, RaCPlayerManager.get().getPlayer(player));
+		if(trait != null) event.setCancelled(true);
 	}
 	
 
@@ -198,6 +232,16 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 				break;
 			}
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerInteract(PlayerInteractEvent event){
+		if(event.isCancelled()) return;
+		
+		ItemStack inHand = event.getPlayer().getItemInHand();
+		Trait trait = getBoundTrait(inHand, RaCPlayerManager.get().getPlayer(event.getPlayer()));
+		
+		if(trait != null) event.setCancelled(true);
 	}
 	
 	@EventHandler
@@ -238,9 +282,14 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			if(selected instanceof TraitWithRestrictions){
 				TraitRestriction restriction =  ((TraitWithRestrictions) selected).checkRestrictions(wrapper);
 				if(restriction != TraitRestriction.None){
-					LanguageAPI.sendTranslatedMessage(player, restrictions_not_met);
+					LanguageAPI.sendTranslatedMessage(player, restriction.translation());
 					return;
 				}
+			}
+			
+			if(TraitRegionChecker.isInDisabledLocation(player.getLocation())){
+				LanguageAPI.sendTranslatedMessage(player, Keys.in_restricted_area);
+				return;
 			}
 			
 			TraitResults result = selected.triggerOnBind(player);
@@ -310,5 +359,43 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		}
 		
 		return values;
+	}
+	
+	
+	/**
+	 * Starts the Cooldown Completer for Bound Traits.
+	 */
+	private void startCooldownComplete() {
+		new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				for(Player player : PlayerUtils.getOnlinePlayers()){
+					ItemStack[] items = player.getInventory().getContents();
+					for(int i = 0; i < 9; i++){
+						ItemStack item = items[i];
+						if(item == null || item.getType() == Material.AIR) continue;
+						
+						Trait trait = getBoundTrait(item, RaCPlayerManager.get().getPlayer(player));
+						if(trait instanceof TraitWithRestrictions){
+							TraitWithRestrictions twrTrait = (TraitWithRestrictions) trait;
+							
+							double maxCD = twrTrait.getMaxUplinkTime();
+							double cd = CooldownApi.getCooldownOfPlayer(player.getName(), twrTrait.getCooldownName());
+							
+							//the CD is: 0 no cooldown. 1 full CD.
+							double percent = maxCD <= 0 ? 0 : cd / maxCD;
+							percent = Math.max(0, Math.min(1, percent));
+							
+							double maxDurability = BindMat.getMaxDurability();
+							short durability = (short)(Math.min(maxDurability - 1, percent * maxDurability));
+							
+							item.setDurability(durability);
+							player.getInventory().setItem(i, item);
+						}
+					}
+				}
+			}
+		}.runTaskTimer(RacesAndClasses.getPlugin(), 10, 10);
 	}
 }

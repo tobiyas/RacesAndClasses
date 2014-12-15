@@ -795,7 +795,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		//check cooldown
 		//only check if the Trait really HAS cooldown!
 		if(cooldownTime > 0){
-			String cooldownName = "trait." + getDisplayName();
+			String cooldownName = getCooldownName();
 			int playerUplinkTime = CooldownApi.getCooldownOfPlayer(playerName, cooldownName);
 			
 			if(playerUplinkTime > 0){
@@ -929,6 +929,11 @@ public abstract class AbstractBasicTrait implements Trait,
 	@Override
 	public boolean isBindable() {
 		return false;
+	}
+	
+	@Override
+	public String getCooldownName() {
+		return "trait." + getDisplayName();
 	}
 	
 	/**

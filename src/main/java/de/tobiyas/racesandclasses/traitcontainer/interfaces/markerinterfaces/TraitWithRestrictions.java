@@ -17,7 +17,7 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 
-public interface TraitWithRestrictions {
+public interface TraitWithRestrictions extends Trait {
 
 	/**
 	 * The ConfigTotal-Path to the Min Level to use
@@ -209,5 +209,12 @@ public interface TraitWithRestrictions {
 	 * @param wrapper The event that was triggered.
 	 */
 	public void triggerButHasRestriction(TraitRestriction restriction, EventWrapper wrapper);
+	
+	/**
+	 * Returns the Cooldown name for the Trait.
+	 * 
+	 * @return cooldown name of the Trait.
+	 */
+	public String getCooldownName();
 	
 }

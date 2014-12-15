@@ -22,7 +22,6 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
 
 public class NewScoreBoardDisplayBar extends AbstractScoreBoardDisplay{

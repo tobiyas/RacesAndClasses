@@ -51,6 +51,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker.FriendDetectEvent;
 import de.tobiyas.racesandclasses.util.traitutil.TraitBypassCheck;
 
 
@@ -112,6 +113,8 @@ public class TraitEventManager{
 	 * @return if the Event was progressed by the plugin
 	 */
 	private boolean fireEventIntern(Event event){
+		if(event instanceof FriendDetectEvent) return false;
+		
 		calls ++;
 		boolean changedSomething = false;
 		if(eventIDs.containsKey(event.hashCode())){
@@ -217,17 +220,14 @@ public class TraitEventManager{
 					if(trait instanceof TraitWithRestrictions && player != null && result.isSetCooldownOnPositiveTrigger()){
 						TraitWithRestrictions restrictionTrait = (TraitWithRestrictions) trait;
 						String playerName = player.getName();
-						String cooldownName = "trait." + trait.getDisplayName();
+						String cooldownName = restrictionTrait.getCooldownName();
 						
 						int uplinkTraitTime = restrictionTrait.getMaxUplinkTime();
 						if(uplinkTraitTime > 0){
 							plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
 							
-							String cooldownDownMessage = LanguageAPI.translateIgnoreError(cooldown_is_ready_again)
-									.replace("trait_name", trait.getDisplayName())
-									.build();
-							
-							MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
+							MessageScheduleApi.scheduleTranslateMessageToPlayer(player.getName(), uplinkTraitTime, 
+									cooldown_is_ready_again, "trait_name", trait.getDisplayName());
 						}
 					}
 				}

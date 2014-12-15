@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class HelpPage {
 	
@@ -211,7 +212,7 @@ public class HelpPage {
 		returnList.add(ChatColor.GREEN + "/hp " + ChatColor.YELLOW + "displays your current HP.");
 		
 		
-		CommandSender sender = playerName.equals("console") ? Bukkit.getConsoleSender() : Bukkit.getPlayer(playerName);
+		CommandSender sender = playerName.equals("console") ? Bukkit.getConsoleSender() : PlayerUtils.getPlayer(playerName);
 		if(RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.debug)){
 			returnList.add(ChatColor.GREEN + "/racedebug scan " + ChatColor.YELLOW + "Does a system scan. (debug purpose)");
 			returnList.add(ChatColor.GREEN + "/racedebug timing " + ChatColor.YELLOW + "Does a event timing scan. (debug purpose)");

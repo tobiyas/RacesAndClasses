@@ -34,6 +34,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class TraitConfigParser {
 
+	@SuppressWarnings("deprecation")
 	public static void configureTraitFromYAML(YamlConfiguration config, String traitPath, Trait trait) throws TraitConfigurationFailedException{
 		TraitConfiguration configurationMap = new TraitConfiguration();
 		
@@ -49,7 +50,7 @@ public class TraitConfigParser {
 			}
 			
 			List<TraitConfigurationField> annotationList = getAllTraitConfigFieldsOfTrait(trait);
-			List<RemoveSuperConfigField> removedFields = getAllTraitRemoveFieldsOfTrait(trait);
+			List<RemoveSuperConfigField> removedFields = getAllTraitRemovedFieldsOfTrait(trait);
 			
 			for(TraitConfigurationField field : annotationList){
 				boolean optional = field.optional();
@@ -345,7 +346,7 @@ public class TraitConfigParser {
 	 * 
 	 * @return list of all {@link RemoveSuperConfigField}s.
 	 */
-	public static List<RemoveSuperConfigField> getAllTraitRemoveFieldsOfTrait(Trait trait){
+	public static List<RemoveSuperConfigField> getAllTraitRemovedFieldsOfTrait(Trait trait){
 		return getAllTraitRemovedFieldsOfTrait(trait.getClass());
 	}
 }

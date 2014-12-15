@@ -123,18 +123,7 @@ public class MessageScheduleApi {
 	 * @param tag to be translated
 	 */
 	public static void scheduleTranslateMessageToPlayer(final RaCPlayer racPlayer, final int timeInSeconds, final String tag){
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			
-			@Override
-			public void run() {
-				Player player = racPlayer.getPlayer();
-				if(player != null && player.isOnline()){
-					LanguageAPI.sendTranslatedMessage(player, tag);
-				}
-			}
-		}, timeInSeconds * 20);
+		scheduleTranslateMessageToPlayer(racPlayer, timeInSeconds, tag);
 	}
 	
 	/**

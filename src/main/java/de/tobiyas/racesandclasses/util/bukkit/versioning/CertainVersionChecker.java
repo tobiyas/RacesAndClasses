@@ -51,4 +51,14 @@ public class CertainVersionChecker {
 	public static boolean isAbove1_7(){
 		return bukkitVersionIsAbove(1, 7, 0, 0, 0);
 	}
+	
+	
+	/**
+	 * Checks if the Bukkit version is above Bukkit 1.8
+	 * 
+	 * @return true if Bukkit version is above 1.8
+	 */
+	public static boolean isAbove1_8(){
+		return bukkitVersionIsAbove(1, 8, 0, 0, 0);
+	}
 }

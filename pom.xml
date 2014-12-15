@@ -99,7 +99,7 @@
 		<dependency>
 		    <groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>
-			<version>2.0.13-SNAPSHOT</version>
+			<version>2.0.5</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -116,7 +116,9 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
-			<version>5.9.1-SNAPSHOT</version>
+			<version>LATEST</version>
+			<scope>compile</scope>
+			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
 
@@ -283,6 +285,15 @@
 				</configuration>
 			</plugin>
 
+			<!-- Main-class Setting -->
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-jar-plugin</artifactId>
+			    <configuration><archive><manifest>
+			    	<mainClass>de.tobiyas.racesandclasses.standalonegui.StandaloneGuiMain</mainClass>
+			    </manifest></archive></configuration>
+			</plugin>
+			
 		</plugins>
 
 		<!-- Resources to add -->
@@ -305,22 +316,5 @@
 				</includes>
 			</resource>
 		</resources>
-
-		<!-- Pushing to Maven -->
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-alpha-6</version>
-			</extension>
-		</extensions>
 	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>pi-maven</id>
-			<url>ftp://192.168.0.116/var/www/maven/</url>
-		</repository>
-	</distributionManagement>
-
 </project>

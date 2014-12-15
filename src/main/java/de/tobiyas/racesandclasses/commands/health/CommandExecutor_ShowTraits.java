@@ -19,7 +19,6 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players
 import static de.tobiyas.racesandclasses.translation.languages.Keys.open_traits;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,15 +29,13 @@ import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.traitgui.TraitInventory;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_ShowTraits extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-	
-	
 	public CommandExecutor_ShowTraits() {
 		super("showtraits", new String[]{"rst"});
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "showtraits";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
@@ -65,7 +62,7 @@ public class CommandExecutor_ShowTraits extends AbstractCommand {
 		
 		if(args.length > 0){
 			String playerName = args[0];
-			playerToSearch = Bukkit.getPlayer(playerName);
+			playerToSearch = PlayerUtils.getPlayer(playerName);
 			if(playerToSearch == null){
 				LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
 						"player", playerName);

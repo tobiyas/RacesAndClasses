@@ -18,7 +18,6 @@ package de.tobiyas.racesandclasses.commands.chat.channels;
 import java.util.List;
 import java.util.Observable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,6 +33,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_Channel extends Observable implements CommandInterface {
 
@@ -174,7 +174,7 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 			}catch(Exception e){
 			}
 			
-			Player target = Bukkit.getPlayer(args[2]);
+			Player target = PlayerUtils.getPlayer(args[2]);
 			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
 			if(target == null){
 				//TODO add some output
@@ -192,7 +192,7 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 				return true;
 			}
 			
-			Player target = Bukkit.getPlayer(args[2]);
+			Player target = PlayerUtils.getPlayer(args[2]);
 			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
 			if(target == null){
 				//TODO add some output
@@ -216,7 +216,7 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 			}catch(Exception e){
 			}
 			
-			Player target = Bukkit.getPlayer(args[2]);
+			Player target = PlayerUtils.getPlayer(args[2]);
 			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
 			if(target == null){
 				//TODO add some output
@@ -234,7 +234,7 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 				return true;
 			}
 			
-			Player target = Bukkit.getPlayer(args[2]);
+			Player target = PlayerUtils.getPlayer(args[2]);
 			RaCPlayer racTarget = RaCPlayerManager.get().getPlayer(target);
 			if(target == null){
 				//TODO add some output

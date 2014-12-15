@@ -2,7 +2,6 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.disabled_region;
-import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
@@ -87,12 +86,10 @@ public abstract class AbstractActivatableTrait extends AbstractBasicTrait {
 		int uplinkTraitTime = getMaxUplinkTime();
 		if(uplinkTraitTime > 0){
 			plugin.getCooldownManager().setCooldown(playerName, cooldownName, uplinkTraitTime);
-			
-			String cooldownDownMessage = LanguageAPI.translateIgnoreError(cooldown_is_ready_again)
-					.replace("trait_name", getDisplayName())
-					.build();
-			
-			MessageScheduleApi.scheduleMessageToPlayer(player.getName(), uplinkTraitTime, cooldownDownMessage);
+
+			MessageScheduleApi.scheduleTranslateMessageToPlayer(player.getName(), uplinkTraitTime, 
+					cooldown_is_ready_again,
+					"trait_name", getDisplayName());
 		}
 	}
 	

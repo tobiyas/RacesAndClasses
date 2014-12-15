@@ -18,6 +18,10 @@ package de.tobiyas.racesandclasses.APIs;
 import java.util.List;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 
 public class CooldownApi {
 
@@ -88,5 +92,27 @@ public class CooldownApi {
 	 */
 	public static List<String> getAllCooldownsOfPlayer(String playerName){
 		return plugin.getCooldownManager().getAllCooldownsOfPlayer(playerName);
+	}
+
+
+	/**
+	 * Returns the Max Cooldown for the player for the Trait.
+	 * 
+	 * @param cooldown to search.
+	 * @param playerName to search.
+	 * 
+	 * @return the Max cooldown
+	 */
+	public static int getMaxCooldownForTrait(String playerName, String cooldown) {
+		RaCPlayer pl = RaCPlayerManager.get().getPlayerByName(playerName);
+				
+		for(Trait trait : pl.getTraits()){
+			if(trait instanceof TraitWithRestrictions){
+				TraitWithRestrictions twrTrait = (TraitWithRestrictions) trait;
+				if(twrTrait.getCooldownName().equals(cooldown)) return twrTrait.getMaxUplinkTime();
+			}
+		}
+		
+		return -1;
 	}
 }

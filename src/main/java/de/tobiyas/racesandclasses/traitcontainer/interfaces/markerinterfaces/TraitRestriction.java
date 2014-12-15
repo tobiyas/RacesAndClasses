@@ -29,6 +29,11 @@ public enum TraitRestriction {
 	Costs(restrictions_not_met_Costs),
 	Unknown(restrictions_not_met_Unknown),
 	
+	NoTarget(restrictions_not_met_NoTarget),
+	OutOfRange(restrictions_not_met_OutOfRange),
+	TargetFriendly(restrictions_not_met_TargetFriendly),
+	
+	
 	
 	None("");
 	

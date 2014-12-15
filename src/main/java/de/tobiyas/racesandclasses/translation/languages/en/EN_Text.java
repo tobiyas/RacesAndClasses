@@ -61,6 +61,7 @@ public class EN_Text {
 			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			
 			//i
+			+ in_restricted_area + ": '&cYou may not use any Trait here.'\r\n"
 			
 			//j
 			
@@ -130,29 +131,31 @@ public class EN_Text {
 			+ restrictions_not_met + ": '&aThe Trait still has cooldown or may not be used here..'\r\n"
 			
 			//restrictions
-			+ restrictions_not_met_MinimumLevel + ": '&aYour level is too low.'\r\n"
-			+ restrictions_not_met_MaximumLevel + ": '&aYour level is too hight.'\r\n"
-			+ restrictions_not_met_Biomes + ": '&aCan not be used in this biome'\r\n"
-			+ restrictions_not_met_Wearing + ": '&aYou are not wearing the correct clothings.'\r\n"
-			+ restrictions_not_met_OnlyInWater + ": '&aCan be used only in water.'\r\n"
-			+ restrictions_not_met_OnlyOnLand + ": '&aCan be used only on land.'\r\n"
-			+ restrictions_not_met_OnlyInLava + ": '&aCan be used only in lava.'\r\n"
-			+ restrictions_not_met_OnlyOnSnow + ": '&aCan be used only on snow.'\r\n"
-			+ restrictions_not_met_OnlyInNight + ": '&aCan be used only in night.'\r\n"
-			+ restrictions_not_met_OnlyOnDay + ": '&aCan be used only on day.'\r\n"
-			+ restrictions_not_met_Cooldown + ": '&aStill has cooldown.'\r\n"
-			+ restrictions_not_met_AboveLevitation + ": '&aYour elevation is too low.'\r\n"
-			+ restrictions_not_met_BelowLevitation + ": '&aYour elevation is too high.'\r\n"
-			+ restrictions_not_met_OnlyInRain + ": '&aCan be used only in rain.'\r\n"
-			+ restrictions_not_met_OnlyAfterDamage + ": '&aCan only be used after beeing damaged.'\r\n"
-			+ restrictions_not_met_OnlyAfterNotDamage + ": '&aCan only be used after not beeing damaged.'\r\n"
-			+ restrictions_not_met_OnlyOnBlock + ": '&aCan only be used on specific blocks.'\r\n"
-			+ restrictions_not_met_OnlyWhileSneaking + ": '&aCan only be used while sneaking.'\r\n"
-			+ restrictions_not_met_OnlyWhileNotSneaking + ": '&aCan only be used while not sneaking.'\r\n"
-			+ restrictions_not_met_NotOnBlock + ": '&aCan not be used on this block.'\r\n"
-			+ restrictions_not_met_NeededPermission + ": '&aYou do not have the Permission.'\r\n"
-			+ restrictions_not_met_Costs + ": '&aYou do not have the cost.'\r\n"
-			+ restrictions_not_met_Unknown + ": '&aIt failed to an unknown reason.'\r\n"
+			+ restrictions_not_met_MinimumLevel + ": '&cYour level is too low.'\r\n"
+			+ restrictions_not_met_MaximumLevel + ": '&cYour level is too hight.'\r\n"
+			+ restrictions_not_met_Biomes + ": '&cCan not be used in this biome'\r\n"
+			+ restrictions_not_met_Wearing + ": '&cYou are not wearing the correct clothings.'\r\n"
+			+ restrictions_not_met_OnlyInWater + ": '&cCan be used only in water.'\r\n"
+			+ restrictions_not_met_OnlyOnLand + ": '&cCan be used only on land.'\r\n"
+			+ restrictions_not_met_OnlyInLava + ": '&cCan be used only in lava.'\r\n"
+			+ restrictions_not_met_OnlyOnSnow + ": '&cCan be used only on snow.'\r\n"
+			+ restrictions_not_met_OnlyInNight + ": '&cCan be used only in night.'\r\n"
+			+ restrictions_not_met_OnlyOnDay + ": '&cCan be used only on day.'\r\n"
+			+ restrictions_not_met_Cooldown + ": '&cStill has cooldown.'\r\n"
+			+ restrictions_not_met_AboveLevitation + ": '&cYour elevation is too low.'\r\n"
+			+ restrictions_not_met_BelowLevitation + ": '&cYour elevation is too high.'\r\n"
+			+ restrictions_not_met_OnlyInRain + ": '&cCan be used only in rain.'\r\n"
+			+ restrictions_not_met_OnlyAfterDamage + ": '&cCan only be used after beeing damaged.'\r\n"
+			+ restrictions_not_met_OnlyAfterNotDamage + ": '&cCan only be used after not beeing damaged.'\r\n"
+			+ restrictions_not_met_OnlyOnBlock + ": '&cCan only be used on specific blocks.'\r\n"
+			+ restrictions_not_met_OnlyWhileSneaking + ": '&cCan only be used while sneaking.'\r\n"
+			+ restrictions_not_met_OnlyWhileNotSneaking + ": '&cCan only be used while not sneaking.'\r\n"
+			+ restrictions_not_met_NotOnBlock + ": '&cCan not be used on this block.'\r\n"
+			+ restrictions_not_met_NeededPermission + ": '&cYou do not have the Permission.'\r\n"
+			+ restrictions_not_met_Costs + ": '&cYou do not have the cost.'\r\n"
+			+ restrictions_not_met_OutOfRange + ": '&cOut of range.'\r\n"
+			+ restrictions_not_met_TargetFriendly + ": '&cTarget is friendly.'\r\n"
+			+ restrictions_not_met_NoTarget + ": '&cNo target found.'\r\n"
 			
 			
 			
@@ -202,6 +205,7 @@ public class EN_Text {
 			+ trait_taunt_fade + ": '&aTaunt on &d%TARGET% &afaded.'\r\n"
 			+ trait_teleport_solidtarger + ": '&cTarget is solid. Can not teleport.'\r\n"
 			+ trait_teleport_success + ": '&aTeleported.'\r\n"
+			+ trait_tool_trait_fail + ": '&cYou may not use this Tool.'\r\n"
 			+ trait_wall_success + ": '&aWall created.'\r\n"
 			+ trait_wall_faded + ": '&aWall disapears.'\r\n"
 

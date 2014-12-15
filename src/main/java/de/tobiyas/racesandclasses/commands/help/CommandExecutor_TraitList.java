@@ -27,11 +27,9 @@ import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 
 public class CommandExecutor_TraitList extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-
 	public CommandExecutor_TraitList(){
 		super("traitlist", new String[]{"tlist"});
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "traitlist";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

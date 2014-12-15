@@ -20,6 +20,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
 
 public class CommandExecutor_UseTrait extends AbstractCommand implements Listener{
 
@@ -73,6 +74,11 @@ public class CommandExecutor_UseTrait extends AbstractCommand implements Listene
 		
 		if(selected == null){
 			sender.sendMessage(ChatColor.RED + "Could not find this Trait.");
+			return true;
+		}
+		
+		if(TraitRegionChecker.isInDisabledLocation(player.getLocation())){
+			LanguageAPI.sendTranslatedMessage(player, Keys.in_restricted_area);
 			return true;
 		}
 		

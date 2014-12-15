@@ -29,11 +29,9 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 
 public class CommandExecutor_RaceHelp extends AbstractCommand{
 	
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_RaceHelp(){
 		super("racehelp", new String[]{"rac", "rachelp", "rhelp"});
-		plugin = RacesAndClasses.getPlugin();
+		RacesAndClasses.getPlugin();
 
 //		String command = "racehelp";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

@@ -34,7 +34,14 @@ public class BukkitVersionBuilder {
 		
 		String[] minecraftVersionSplit = bukkitVersionSplit[0].split("\\.");
 		if(minecraftVersionSplit.length < 3){
-			return BukkitVersion.empty();
+			if(minecraftVersionSplit.length < 2) return BukkitVersion.empty();
+			
+			String[] newArray = new String[3];
+			newArray[0] = minecraftVersionSplit[0];
+			newArray[1] = minecraftVersionSplit[1];
+			newArray[2] = "0";
+			
+			minecraftVersionSplit = newArray;
 		}
 		
 		String[] revisionVersionSplit = bukkitVersionSplit[1].split("\\.");
