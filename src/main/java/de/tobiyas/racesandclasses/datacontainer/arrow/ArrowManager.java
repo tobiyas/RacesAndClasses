@@ -49,8 +49,9 @@ public class ArrowManager {
 		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(player);
 		
 		for(Trait arrow : traits){
-			if(arrow instanceof AbstractArrow)
+			if(arrow instanceof AbstractArrow && !arrow.isBindable()){
 				arrows.add((AbstractArrow) arrow);
+			}
 		}
 		
 		if(arrows.size() < currentPointer)

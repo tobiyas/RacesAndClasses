@@ -163,9 +163,7 @@ public class TraitStore {
 			}
 			
 			//No events wanted? So don't bother them.
-			if(wantedEvents.isEmpty()) return true;
-			
-			TraitEventManager.registerTrait(trait, wantedEvents, traitPriority);
+			if(!wantedEvents.isEmpty()) TraitEventManager.registerTrait(trait, wantedEvents, traitPriority);
 			return true;
 		}catch(AnnotationFormatError e){
 			throw e;

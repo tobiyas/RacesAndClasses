@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -98,6 +100,8 @@ public class HotKeyInventory {
 	 * Call this regularly to update playerInventory View.
 	 */
 	public void updatePlayerInventory(){
+		if(!player.isOnline()) return;
+		
 		if(!isInSkillMode) return; //nothing to update.
 		if(traitBindings.isEmpty()) return; //nothing to update.
 		
@@ -116,12 +120,16 @@ public class HotKeyInventory {
 					String cooldownName = "trait." + trait.getDisplayName();
 					int cd = CooldownApi.getCooldownOfPlayer(player.getName(), cooldownName);
 					
-					if(cd > 0){
+					if(cd >= 0){
 						float percent = (float)cd / (float)maxCD;
 						float val = maxShortcutDurability * percent;
 						if(val <= 0) val = 1; if(val >= maxShortcutDurability) val = maxShortcutDurability - 1;
 						
 						item.setDurability((short) val);
+					}
+					
+					if(cd < 0){
+						item.setDurability((short) 0);
 					}
 				}
 			}
@@ -137,18 +145,26 @@ public class HotKeyInventory {
 		Player player = this.player.getPlayer();
 		if(player == null) return;
 		
+		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		
 		//first clear the old ones.
-		for(int i = 0; i < 9; i++) player.getInventory().setItem(0, null);
+		for(int i = 0; i < 9; i++) {
+			if(!disabled.contains(i)) player.getInventory().setItem(i, null);
+		}
 		
 		//now refill with the old ones.
 		for(Entry<Integer,ItemStack> entry : oldHotkeyBar.entrySet()){
 			int slot = entry.getKey();
 			ItemStack item = entry.getValue();
 			
+			if(!disabled.contains(slot)) continue;
+			
 			player.getInventory().setItem(slot, item);
 		}
 		
 		oldHotkeyBar.clear();
+
+		isInSkillMode = false;
 	}
 	
 	/**
@@ -160,17 +176,46 @@ public class HotKeyInventory {
 		Player player = this.player.getPlayer();
 		if(player == null) return;
 		
+		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		
 		//remove in case...
 		oldHotkeyBar.clear();
 		
 		//first save the old items
 		for(int i = 0; i < 9; i++){
+			if(disabled.contains(i)) continue;
+			
 			ItemStack item = player.getInventory().getItem(i);
-			if(item != null) oldHotkeyBar.put(i, item);
+			if(item != null) oldHotkeyBar.put(i, item.clone());
 		}
 		
 		//now set the Items to the quickslot bar.
 		for(int i = 0; i < 9; i++){
+			if(disabled.contains(i)) continue;
+			
+			ItemStack item = generateItem(traitBindings.get(i));
+			player.getInventory().setItem(i, item == null ? getEmptyItem() : item);
+		}
+		
+		isInSkillMode = true;
+	}
+	
+	
+	/**
+	 * This forces reseting all Mats when in Skil mode.
+	 */
+	public void forceUpdateOfInv(){
+		if(!isInSkillMode) return;
+		
+		Player player = this.player.getPlayer();
+		if(player == null) return;
+		
+		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		
+		//now set the Items to the quickslot bar.
+		for(int i = 0; i < 9; i++){
+			if(disabled.contains(i)) continue;
+			
 			ItemStack item = generateItem(traitBindings.get(i));
 			player.getInventory().setItem(i, item == null ? getEmptyItem() : item);
 		}
@@ -223,6 +268,35 @@ public class HotKeyInventory {
 		item.setItemMeta(itemMeta);
 		
 		return item;
+	}
+	
+	
+	/**
+	 * Returns true if in Building mode.
+	 * 
+	 * @return true if in building mode.
+	 */
+	public boolean isInBuildingMode(){
+		return !isInSkillMode;
+	}
+	
+	/**
+	 * Returns true if in Skill mode.
+	 * 
+	 * @return true if in Skill mode.
+	 */
+	public boolean isInSkillMode(){
+		return isInSkillMode;
+	}
+
+
+	/**
+	 * Returns a copy of the Bindings.
+	 * 
+	 * @return bindings.
+	 */
+	public Map<Integer,Trait> getBindings() {
+		return new HashMap<Integer,Trait>(this.traitBindings);
 	}
 	
 	

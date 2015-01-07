@@ -113,6 +113,14 @@ public class PlayerContainer {
 		
 		this.spellManager = new PlayerSpellManager(player);		
 	}
+	
+	
+	/**
+	 * This ticks the Containe once per second.
+	 */
+	public void tick(){
+		levelManager.tick();
+	}
 
 	
 	

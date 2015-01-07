@@ -30,6 +30,7 @@ import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Sett
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_RaceSpawn;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_RaceTeams;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_WandAndBowEquip;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.StunCancelListener;
@@ -83,6 +84,7 @@ public class RaCListenerRegister {
 		new PlayerLastDamageListener();
 		new Listener_ManaPotion();
 		new Listener_RaceSpawn();
+		new Listener_RaceTeams();
 		new FoodListener();
 		
 		new Listener_raceClassRestrictionOnItems();

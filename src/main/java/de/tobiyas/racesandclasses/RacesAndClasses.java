@@ -94,6 +94,7 @@ import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
+import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
@@ -197,6 +198,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 * The race Spawn Manager
 	 */
 	protected RaceSpawnManager raceSpawnManager;
+	
+	/**
+	 * The Hotkey Manager
+	 */
+	protected HotkeyManager hotkeyManger;
 	
 	/**
 	 * The Hots Manger
@@ -314,6 +320,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		stunManager = new StunManager();
 		poisonManager = new PoisonManager();
 		raceSpawnManager = new RaceSpawnManager(this);
+		hotkeyManger = new HotkeyManager();
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -739,6 +746,10 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	public HotsManager getHotsManager() {
 		if(hotsManager == null) hotsManager = new HotsManager();
 		return hotsManager;
+	}
+
+	public HotkeyManager getHotkeyManager() {
+		return hotkeyManger;
 	}
 	
 	

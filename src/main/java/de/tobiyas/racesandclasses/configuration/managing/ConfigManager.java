@@ -18,17 +18,19 @@ package de.tobiyas.racesandclasses.configuration.managing;
 import de.tobiyas.racesandclasses.configuration.global.ChannelConfig;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
+import de.tobiyas.racesandclasses.configuration.raceteams.RaceTeamManager;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceToClassConfiguration;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
 
 public class ConfigManager {
 	
-	private GeneralConfig generalConfig;
-	private ChannelConfig channelConfig;
-	private RaceToClassConfiguration raceToClassConfig;
+	private final GeneralConfig generalConfig;
+	private final ChannelConfig channelConfig;
+	private final RaceToClassConfiguration raceToClassConfig;
 	
-	private MemberConfigManager memberConfigManager;
-	private TraitConfigManager traitConfigManager;
+	private final MemberConfigManager memberConfigManager;
+	private final TraitConfigManager traitConfigManager;
+	private final RaceTeamManager raceTeamManager;
 	
 	
 	/**
@@ -40,6 +42,7 @@ public class ConfigManager {
 		raceToClassConfig = new RaceToClassConfiguration();
 		memberConfigManager = new MemberConfigManager();
 		traitConfigManager = new TraitConfigManager();
+		raceTeamManager = new RaceTeamManager();
 	}
 	
 	/**
@@ -51,6 +54,7 @@ public class ConfigManager {
 		raceToClassConfig.reload();
 		memberConfigManager.reload();
 		traitConfigManager.reload();
+		raceTeamManager.reaload();
 	}
 	
 	
@@ -98,6 +102,15 @@ public class ConfigManager {
 		return traitConfigManager;
 	}
 	
+	
+	/**
+	 * Returns the Race-Team Manager.
+	 * 
+	 * @return RaceTeamManager.
+	 */
+	public RaceTeamManager getRaceTeamManager() {
+		return raceTeamManager;
+	}
 
 
 }

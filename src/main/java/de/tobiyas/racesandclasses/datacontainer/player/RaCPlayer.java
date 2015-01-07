@@ -21,6 +21,7 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.hotkeys.HotKeyInventory;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
@@ -309,6 +310,17 @@ public class RaCPlayer {
 	}
 	
 	
+	/**
+	 * Returns the Hotkey Inventory associated to this player.
+	 * 
+	 * @return the associated HotKey Inv.
+	 */
+	public HotKeyInventory getHotkeyInventroy() {
+		if(!isOnline()) return null;
+		return plugin.getHotkeyManager().getInv(this);
+	}
+	
+	
 	
 	////////////////////
 	//Player proxys/////
@@ -381,8 +393,6 @@ public class RaCPlayer {
 		if(!isOnline()) return null;
 		return getPlayer().getItemInHand();
 	}
-
-
 	
 	
 	

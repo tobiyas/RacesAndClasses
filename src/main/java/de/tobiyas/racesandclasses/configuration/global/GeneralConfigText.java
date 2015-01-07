@@ -179,6 +179,29 @@ public class GeneralConfigText {
 			+ "# default: true \n"
 			+ keep_max_hp_on_disabled_worlds + ": true\n\n"
 			
+			//Hotkeys
+			+ "\n"
+			+ "#########\n"
+			+ "#HOTKEYS#\n"
+			+ "#########\n"
+			+ "\n"
+			
+			+ "# If hotkeys are enabled. \n"
+			+ "# If true, /bindtrait will change your inventory to a Skill inventory.\n"
+			+ "# default: true \n"
+			+ hotkeys_enabled + ": true\n\n"
+						
+			+ "# If the new Hotkey System should be used. \n"
+			+ "# This system has 2 different Hot-Bars. One for build, one for Fight.\n"
+			+ "# default: true \n"
+			+ use_new_traitbind_system + ": true\n\n"
+			
+			+ "# The slots that are not bindable and are persistent throughout the Skill Bar (in the new Hotbar System). \n"
+			+ "# The Slots may not be bound (0-8).\n"
+			+ "# Example: [0,3,8].\n"
+			+ "# default: [] \n"
+			+ disabled_hotkey_slots + ": []\n\n"
+			
 			//Race-Spawns
 			+ "\n"
 			+ "#############\n"
@@ -416,6 +439,13 @@ public class GeneralConfigText {
 			+ "# boolean: true or false \n"
 			+ "# default: true \n"
 			+ races_enable + ": true\n\n"
+			
+			+ "# If the Race-Teams should be enabled. \n"
+			+ "# RacesTeams are defined in the raceTeams.yml \n"
+			+ "# Races in the same team can not deal damage to each other.\n"
+			+ "# boolean: true or false \n"
+			+ "# default: false \n"
+			+ race_teams_enable + ": false\n\n"
 			
 			+ "# Tells the plugin to remember everyone not having a Race to get one. \n"
 			+ "# boolean: true or false \n"

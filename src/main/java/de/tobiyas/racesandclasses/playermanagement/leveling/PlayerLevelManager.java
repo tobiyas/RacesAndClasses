@@ -54,6 +54,13 @@ public interface PlayerLevelManager {
 	
 	
 	/**
+	 * The Global tick to do something.
+	 * <br>This is called once per second.
+	 */
+	public void tick();
+	
+	
+	/**
 	 * Adds EXP for a Player. 
 	 * If the maxExp is reached, the player will currentLevel up.
 	 * 

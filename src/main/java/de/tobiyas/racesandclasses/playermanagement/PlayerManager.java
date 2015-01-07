@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
@@ -50,6 +51,15 @@ public class PlayerManager{
 	public PlayerManager(){
 		playerData = new HashMap<RaCPlayer, PlayerContainer>();
 		plugin = RacesAndClasses.getPlugin();
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for(PlayerContainer container : playerData.values()){
+					container.tick();
+				}
+			}
+		}.runTaskTimer(plugin, 20, 20);
 	}
 	
 	/**

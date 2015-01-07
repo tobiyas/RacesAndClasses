@@ -71,6 +71,12 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	public RaCPlayer getPlayer() {
 		return player;
 	}
+	
+
+	@Override
+	public void tick() {
+		//not needed
+	}
 
 	@Override
 	public void setCurrentLevel(int level) {

@@ -58,6 +58,12 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	public RaCPlayer getPlayer() {
 		return player;
 	}
+	
+
+	@Override
+	public void tick() {
+		//not needed
+	}
 
 	@Override
 	public void setCurrentLevel(int level) {
@@ -111,7 +117,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player.getPlayer());
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		if(!config.getValidLoad()){
 			return;
 		}

@@ -53,6 +53,11 @@ public class HeroesLevelManager implements PlayerLevelManager {
 		
 		//Heroes seems to not support this.
 	}
+	
+	@Override
+	public void tick() {
+		//not needed
+	}
 
 	@Override
 	public boolean addExp(int exp) {

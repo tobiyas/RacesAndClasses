@@ -59,6 +59,11 @@ public class GeneralConfigFields {
 	public static final String keep_max_hp_on_disabled_worlds = "keep_max_hp_on_disabled_worlds";
 	public static final String disabled_regions = "disabled_regions";
 	
+	//HotKeys
+	public static final String hotkeys_enabled = "hotkeys_enabled";
+	public static final String use_new_traitbind_system = "use_new_traitbind_system";
+	public static final String disabled_hotkey_slots = "disabled_hotkey_slots";
+	
 	//Race-Spawns
 	public static final String race_spawns_enabled = "race_spawns_enabled";
 	public static final String race_spawn_cooldown = "race_spawn_cooldown";
@@ -121,6 +126,7 @@ public class GeneralConfigFields {
 	public static final String races_cancleGUIExitWhenNoRacePresent_enable = "races_cancleGUIExitWhenNoRacePresent_enable";
 	public static final String races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds = "races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds";
 	public static final String races_gui_enable = "races_gui_enable";
+	public static final String race_teams_enable = "race_teams_enable";
 	
 	
 	//Classes

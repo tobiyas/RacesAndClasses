@@ -27,7 +27,7 @@
 		<powermock.version>1.4.12</powermock.version>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>RaC</utilsAddition>
-		<bukkit.version>1.7.10-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.8-R0.1-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->

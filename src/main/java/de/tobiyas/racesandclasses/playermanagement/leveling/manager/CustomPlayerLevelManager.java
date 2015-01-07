@@ -269,6 +269,13 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		redrawMCLevelBar();
 		return true;
 	}
+	
+
+	@Override
+	public void tick() {
+		redrawMCLevelBar();
+	}
+	
 
 
 	@Override

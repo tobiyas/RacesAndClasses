@@ -84,6 +84,12 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	public RaCPlayer getPlayer() {
 		return player;
 	}
+	
+
+	@Override
+	public void tick() {
+		//not needed
+	}
 
 	@Override
 	public void setCurrentLevel(int level) {

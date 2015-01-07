@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -25,6 +26,16 @@ public class HotkeyManager implements Listener {
 	
 	public HotkeyManager() {
 		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+		new Listener_HotKey();
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for(HotKeyInventory inv : inventories.values()){
+					inv.updatePlayerInventory();
+				}
+			}
+		}.runTaskTimer(RacesAndClasses.getPlugin(), 20, 20);
 	}
 	
 	

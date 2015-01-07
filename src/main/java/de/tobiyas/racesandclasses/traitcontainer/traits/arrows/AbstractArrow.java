@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -31,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.LazyMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -42,20 +44,45 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.pattern.AbstractActivatableTrait;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 
-public abstract class AbstractArrow extends AbstractBasicTrait {
+public abstract class AbstractArrow extends AbstractActivatableTrait {
+	
+	protected static final String BOUND_TO_BOW_PATH = "boundToBow";
+	
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	protected int duration;
 	protected double totalDamage;
+	
+	protected boolean boundToBow = true;
+	
+	
+	
+	@TraitConfigurationNeeded(fields = {
+			@TraitConfigurationField(fieldName = BOUND_TO_BOW_PATH, classToExpect = Boolean.class, optional = true)
+	})
+	@Override
+	public void setConfiguration(TraitConfiguration configMap)
+			throws TraitConfigurationFailedException {
+		
+		super.setConfiguration(configMap);
+		
+		if(configMap.containsKey(BOUND_TO_BOW_PATH)){
+			boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH);
+		}
+	}
 	
 	
 	@Override
@@ -288,6 +315,25 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		return false;
 	}
 	
+	
+	@Override
+	public TraitResults trigger(RaCPlayer player) {
+		Player realPlayer = player.getPlayer();
+		if(realPlayer == null || !realPlayer.isOnline()) return TraitResults.False();
+		
+		Arrow arrow = realPlayer.launchProjectile(Arrow.class);
+		if(arrow != null){
+			ItemStack item = new ItemStack(Material.BOW);
+			item.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+			
+			onShoot(new EntityShootBowEvent(realPlayer, item, arrow, 1f));
+			return TraitResults.True();
+		}
+		
+		return TraitResults.False();
+	}
+	
+	
 
 	@Override
 	public boolean triggerButHasUplink(EventWrapper wrapper) {
@@ -329,6 +375,11 @@ public abstract class AbstractArrow extends AbstractBasicTrait {
 		if(wrapper.getPlayer().getArrowManager().getCurrentArrow() != this) return false;
 		
 		return super.notifyTriggeredUplinkTime(wrapper);
+	}
+	
+	@Override
+	public boolean isBindable() {
+		return !boundToBow;
 	}
 	
 	

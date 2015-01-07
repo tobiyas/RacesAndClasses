@@ -101,6 +101,8 @@ public class LanguageAPI {
 	 * @param replacements to replace
 	 */
 	public static void sendTranslatedMessage(CommandSender sender, String tag, Map<String, String> replacements){
+		if(sender == null) return;
+		
 		Translator translator = translateIgnoreError(tag);
 		translator.replace(replacements);
 		String message = translator.build();
@@ -144,6 +146,7 @@ public class LanguageAPI {
 	 * @param replacements to replace
 	 */
 	public static void sendTranslatedMessage(RaCPlayer player, String tag, Map<String, String> replacements){
+		if(player == null) return;
 		sendTranslatedMessage(player.getPlayer(), tag, replacements);
 	}
 	
@@ -155,6 +158,8 @@ public class LanguageAPI {
 	 * @param arg The Map to replace: {arg1, replacement1, arg2, replacement2, ....}
 	 */
 	public static void sendTranslatedMessage(RaCPlayer player, String tag, String... arg){
+		if(player == null) return;
+		
 		Map<String, String> replacements = HashMapUtils.generateStringStringMap(arg);
 		sendTranslatedMessage(player, tag, replacements);
 	}
@@ -167,6 +172,8 @@ public class LanguageAPI {
 	 * @param tag to translate
 	 */
 	public static void sendTranslatedMessage(RaCPlayer player, String tag){
+		if(player == null) return;
+		
 		sendTranslatedMessage(player, tag, new HashMap<String, String>());
 	}
 }

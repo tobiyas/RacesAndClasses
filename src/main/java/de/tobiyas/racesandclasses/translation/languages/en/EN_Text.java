@@ -170,6 +170,7 @@ public class EN_Text {
 			
 
 			//t
+			+ same_race_team + ": '&c%PLAYER% is in your Race Team.'\r\n"
 			+ target_not_exist + ": '&cTarget does not exist or is offline'\r\n"
 			+ time_in_seconds + ": 'time in seconds'\r\n"
 			+ too_far_away + ": '&cTarget too far away.'\r\n"

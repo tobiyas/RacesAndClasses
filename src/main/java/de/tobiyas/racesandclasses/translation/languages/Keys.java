@@ -152,6 +152,7 @@ public class Keys {
 	
 	
 	//s
+	public static final String same_race_team = "same_race_team";
 	public static final String send_empty_message = "send_empty_message";
 	public static final String something_disabled = "something_disabled";
 	public static final String stun_ended = "stun_ended";

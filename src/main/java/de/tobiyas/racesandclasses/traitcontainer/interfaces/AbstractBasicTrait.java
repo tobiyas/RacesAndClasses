@@ -847,7 +847,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		//check for further restrictions.
 		TraitRestriction furtherRestriction = checkForFurtherRestrictions(wrapper);
-		if(furtherRestriction != null){
+		if(furtherRestriction != null && furtherRestriction != TraitRestriction.None){
 			triggerButHasRestriction(furtherRestriction, wrapper);
 			return furtherRestriction;
 		}
