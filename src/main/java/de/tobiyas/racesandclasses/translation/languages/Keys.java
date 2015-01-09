@@ -22,6 +22,7 @@ public class Keys {
 	public static final String alread_full_mana = "alread_full_mana";
 	public static final String already_have_class = "already_have_class";
 	public static final String already_have_race = "already_have_race";
+	public static final String armor = "armor";
 	public static final String armor_not_allowed = "armor_not_allowed";
 	public static final String arrow_change = "arrow_change";
 	
@@ -55,7 +56,9 @@ public class Keys {
 	public static final String healed = "healed";
 	public static final String healed_other = "healed_other";
 	public static final String healed_by = "healed_by";
+	public static final String health = "health";
 	public static final String held_item_not_air = "held_item_not_air";
+	public static final String holder_selectiongui_header = "holder_selectiongui_header";
 	
 	//i
 	public static final String in_restricted_area = "in_restricted_area";
@@ -165,6 +168,7 @@ public class Keys {
 	//t
 	public static final String target_not_exist = "target_not_exist";
 	public static final String time_in_seconds = "time_in_seconds";
+	public static final String traits = "traits";
 	public static final String too_far_away = "too_far_away";
 	public static final String tutorial_error = "tutorial_error";
 	public static final String tutorial_already_running = "tutorial_already_running";

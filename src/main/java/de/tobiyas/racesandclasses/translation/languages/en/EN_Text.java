@@ -26,6 +26,7 @@ public class EN_Text {
 			+ alread_full_mana + ": '&cYou already have full mana.'\r\n"
 			+ already_have_class + ": '&cYou already have a class: &d%CLASS%&c. Use &c/class change&c to change your class.'\r\n"
 			+ already_have_race + ": '&cYou already have a race: &d%RACE%&c. Use &c/race change&c to change your race.'\r\n"
+			+ armor + ": 'Armor'\r\n"
 			+ armor_not_allowed + ": '&cYou are not allowed to use &c%MATERIAL%&a.'\r\n"
 			+ arrow_change + ": '&aSwitched arrows to: &d%TRAIT_NAME%&a.'\r\n"
 			
@@ -58,18 +59,15 @@ public class EN_Text {
 			//h
 			+ healed + ": '&aYou have been healed.'\r\n"
 			+ healed_other + ": '&aYou have healed: &d%PLAYER%&a.'\r\n"
+			+ health + ": 'Health'\r\n"
 			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
+			+ holder_selectiongui_header + ": '&aSelect your &d%HOLDER%&a, %PLAYER%'\r\n"
 			
 			//i
 			+ in_restricted_area + ": '&cYou may not use any Trait here.'\r\n"
 			
 			//j
 			
-			//h
-			
-			//i
-			
-			//j
 			
 			//k
 			
@@ -174,6 +172,7 @@ public class EN_Text {
 			+ target_not_exist + ": '&cTarget does not exist or is offline'\r\n"
 			+ time_in_seconds + ": 'time in seconds'\r\n"
 			+ too_far_away + ": '&cTarget too far away.'\r\n"
+			+ traits + ": 'traits'\r\n"
 			+ tutorial_already_running + ": '&cYou already have a Tutorial Running.'\r\n"
 			+ tutorial_error + ": '&cCould not execute this command at your current Step.'\r\n"
 			+ tutorial_no_set_at_this_state + ": '&cCan not set state at this moment.'\r\n"

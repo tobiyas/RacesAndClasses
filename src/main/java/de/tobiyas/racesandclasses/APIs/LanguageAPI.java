@@ -76,6 +76,43 @@ public class LanguageAPI {
 			return new Translator(tag);
 		}
 	}
+	
+	
+	/**
+	 * Translates the tag without throwing an {@link TranslationNotFoundException}.
+	 * <br>This indicates that the tag is just returned if the tag was not found.
+	 * <br>Also the current language + the STD language (mostly English) is searched.
+	 * 
+	 * @param tag to search for
+	 * @param arg the args that are present in the Translation.
+	 * @return the translation or the tag itself if not found.
+	 */
+	public static String translate(String tag, String... arg){
+		Map<String, String> replacements = HashMapUtils.generateStringStringMap(arg);
+		return translate(tag, replacements);
+	}
+	
+	
+	/**
+	 * Translates the tag without throwing an {@link TranslationNotFoundException}.
+	 * <br>This indicates that the tag is just returned if the tag was not found.
+	 * <br>Also the current language + the STD language (mostly English) is searched.
+	 * 
+	 * @param tag to search for
+	 * @param arg the args that are present in the Translation.
+	 * @return the translation or the tag itself if not found.
+	 */
+	public static String translate(String tag, Map<String,String> replacements){
+		try{
+			Translator translator =  translateIgnoreError(tag);
+			if(translator == null) return tag;
+			
+			translator.replace(replacements);
+			return translator.build();
+		}catch(Throwable exp){
+			return new Translator(tag).build();
+		}
+	}
 
 	/**
 	 * Checks if the Translation is contained currently.

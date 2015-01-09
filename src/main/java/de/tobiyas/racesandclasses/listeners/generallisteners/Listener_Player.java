@@ -26,9 +26,16 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.login_no_race_selected;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,6 +43,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -44,7 +52,9 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
+import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -178,4 +188,61 @@ public class Listener_Player implements Listener {
 		
 		event.setFormat(format);
 	}
+	
+	
+	@EventHandler
+	public void playerLevelUpEvent(LevelUpEvent event){
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_use_fireworks_on_level_up()) return;
+		//fireworks only exist since MC 1.7
+		if(!CertainVersionChecker.isAbove1_7()) return;
+		
+		Player player = event.getPlayer();
+		//just to be sure.
+		if(player == null || !player.isOnline()) return;
+		
+        //Spawn the Fireworks.
+		for(int i = 0; i < 4; i++){
+			Firework fw = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
+			fw.setFireworkMeta(randomizeFireworkMeta(fw.getFireworkMeta()));
+		}
+	}
+	
+	/**
+	 * The Random Generator to use.
+	 */
+	private final Random random = new Random();
+	
+	
+	/**
+	 * Randomizes the Firework Meta.
+	 * 
+	 * @param meta to randomize.
+	 */
+	private FireworkMeta randomizeFireworkMeta(FireworkMeta meta){
+		int rt = random.nextInt(5) ;
+        
+        Type type = Type.BALL;      
+        if (rt == 0) type = Type.BALL;
+        if (rt == 1) type = Type.BALL_LARGE;
+        if (rt == 2) type = Type.BURST;
+        if (rt == 3) type = Type.CREEPER;
+        if (rt == 4) type = Type.STAR;
+       
+        //Get our random colours 
+        Color color1 = Color.fromBGR(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        Color color2 = Color.fromBGR(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+       
+        //Create our effect with this
+        FireworkEffect effect = FireworkEffect.builder().flicker(random.nextBoolean()).withColor(color1).withFade(color2).with(type).trail(random.nextBoolean()).build();
+       
+        //Then apply the effect to the meta
+        meta.addEffect(effect);
+       
+        //Generate some random power and set it
+        int rp = random.nextInt(2) + 1;
+        meta.setPower(rp);
+        
+        return meta;
+	}
+
 }

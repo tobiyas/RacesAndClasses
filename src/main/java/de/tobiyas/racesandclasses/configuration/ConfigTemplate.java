@@ -113,7 +113,7 @@ public class ConfigTemplate {
 			e.printStackTrace();
 		}
 		
-		String content = GeneralConfigText.GlobalConfigText;
+		String content = GeneralConfigText.GlobalConfigText();
 		String[] lines = content.split("\n");
 		
 		content = "";

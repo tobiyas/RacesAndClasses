@@ -30,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -38,6 +39,8 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSe
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.util.formating.StringFormatUtils;
 
 public class HolderInventory extends InventoryView{
 
@@ -80,9 +83,13 @@ public class HolderInventory extends InventoryView{
 			inventorySize = 36;
 		}
 		
-		String inventoryName = "Select your " + holderManager.getContainerTypeAsString() + ", " + player.getName();
-		if(inventoryName.length() > 32) inventoryName = inventoryName.substring(0, 32);
-		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, inventoryName);
+		String name = LanguageAPI.translate(Keys.holder_selectiongui_header,
+				"holder", StringFormatUtils.firstCapitalRestLow(holderManager.getContainerTypeAsString()),
+				"player", player.getName());
+		
+		
+		if(name.length() > 32) name = name.substring(0, 32);
+		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, name);
 		
 		fillWithHolders(holderManager);
 	}
@@ -127,19 +134,19 @@ public class HolderInventory extends InventoryView{
 
 			String healthString = getHealthString(holder);
 			if(healthString != null){
-				lore.add(ChatColor.AQUA + "Health: ");
+				lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.health) + ": ");
 				lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
 			}
 			
 			//add armor as lore
-			lore.add(ChatColor.AQUA + "armor:");
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.armor) + ":");
 			if(holder.getArmorPerms().size() > 0){
 				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
 			}else{
 				lore.add(ChatColor.LIGHT_PURPLE + "NONE");
 			}
 			
-			lore.add(ChatColor.AQUA + "traits:");
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.traits) + ":");
 			
 			//add trait text as lore
 			for(Trait trait: holder.getVisibleTraits()){

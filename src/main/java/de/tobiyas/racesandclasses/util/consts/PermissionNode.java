@@ -183,5 +183,11 @@ public class PermissionNode {
 	 * The Prefix for Class permissions
 	 */
 	public static final String raceSpawnUseOther = prePlugin + "racespawn.use.other";
+	
+
+	/**
+	 * The Permission to edit your level.
+	 */
+	public static final String levelEdit = prePlugin + "level.edit";
 
 }

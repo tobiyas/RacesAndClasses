@@ -31,9 +31,9 @@ public abstract class AbstractCommand implements CommandInterface {
 		this.commandName = commandName;
 		this.aliases = new String[0];
 	}
-
 	
-	public AbstractCommand(String commandName, String[] aliases) {
+	
+	public AbstractCommand(String commandName, String... aliases) {
 		this.commandName = commandName;
 		this.aliases = aliases;
 	}

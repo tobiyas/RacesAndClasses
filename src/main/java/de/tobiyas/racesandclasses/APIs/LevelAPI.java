@@ -101,6 +101,17 @@ public class LevelAPI {
 	
 	
 	/**
+	 * Adds exp to an player
+	 * 
+	 * @param player to add to
+	 * @param amount to 
+	 */
+	public static void addExp(RaCPlayer racPlayer, int amount){
+		racPlayer.getLevelManager().addExp(amount);
+	}
+	
+	
+	/**
 	 * Removes the EXP passed from the Player
 	 * 
 	 * @param player to remove from
@@ -121,6 +132,17 @@ public class LevelAPI {
 	 */
 	public static void removeExp(Player player, double amount){
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		racPlayer.getLevelManager().removeExp((int)amount);
+	}
+	
+	
+	/**
+	 * Removes the EXP passed from the Player
+	 * 
+	 * @param player to remove from
+	 * @param amount to remove
+	 */
+	public static void removeExp(RaCPlayer racPlayer, double amount){
 		racPlayer.getLevelManager().removeExp((int)amount);
 	}
 	
@@ -152,6 +174,17 @@ public class LevelAPI {
 	
 	
 	/**
+	 * Returns the current level of the Player 
+	 * 
+	 * @param player to get
+	 * @return the level of the player
+	 */
+	public static int getCurrentLevel(RaCPlayer racPlayer){
+		return racPlayer.getLevelManager().getCurrentLevel();
+	}
+	
+	
+	/**
 	 * sets the current level of the Player 
 	 * 
 	 * @param player to get
@@ -163,6 +196,7 @@ public class LevelAPI {
 	public static void setCurrentLevel(String playerName, int level){
 		setCurrentLevel(Bukkit.getPlayer(playerName), level);
 	}
+
 	
 	
 	/**
@@ -173,6 +207,16 @@ public class LevelAPI {
 	 */
 	public static void setCurrentLevel(Player player, int level){
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		setCurrentLevel(racPlayer, level);
+	}
+	
+	/**
+	 * sets the current level of the Player 
+	 * 
+	 * @param player to get
+	 * @param level the level to set
+	 */
+	public static void setCurrentLevel(RaCPlayer racPlayer, int level){
 		racPlayer.getLevelManager().setCurrentLevel(level);
 	}
 	

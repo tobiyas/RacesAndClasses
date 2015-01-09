@@ -34,6 +34,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class Command_RACLevel extends AbstractCommand {
 
@@ -41,25 +42,17 @@ public class Command_RACLevel extends AbstractCommand {
 	 * Registers the Command "class" to the plugin.
 	 */
 	public Command_RACLevel(){
-		super("raclevel");
-		
-		RacesAndClasses.getPlugin();
-
-//		String command = "raclevel";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
+		super("raclevel", "lvl");
 	}	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
-		if(args.length == 0 && (sender instanceof Player)){
+		if((sender instanceof Player) && 
+				(!RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(sender, PermissionNode.levelEdit) 
+				|| args.length == 0 )){
+			
 			postLevel((Player)sender);
 			return true;
 		}
@@ -71,8 +64,12 @@ public class Command_RACLevel extends AbstractCommand {
 		
 		String subCommand = args[1];
 		RaCPlayer player = RaCPlayerManager.get().getPlayerByName(args[0]);
-		int value = 0;
+		if(player == null){
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist, "PLAYER", args[0]);
+			return true;
+		}
 		
+		int value = 0;
 		try{
 			value = Integer.valueOf(args[2]);
 		}catch(NumberFormatException exp){

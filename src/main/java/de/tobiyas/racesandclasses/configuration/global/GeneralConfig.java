@@ -26,13 +26,17 @@ package de.tobiyas.racesandclasses.configuration.global;
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.ConfigTemplate;
@@ -153,12 +157,14 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 	private String config_gui_scoreboard_name;
 	private boolean config_races_create_group_for_race;
 	private boolean config_hotkeysEnabled;
+	private boolean config_use_fireworks_on_level_up;
 	
 	private final Set<String> config_disabled_regions = new HashSet<String>();
 	private final Set<String> config_npc_select_race = new HashSet<String>();
 	private final Set<String> config_npc_change_race = new HashSet<String>();
 	private final Set<String> config_npc_select_class = new HashSet<String>();
 	private final Set<String> config_npc_change_class = new HashSet<String>();
+	private final Map<EntityType,Integer> config_custom_level_exp_gain = new HashMap<EntityType, Integer>();
 	
 	private final Set<Integer> config_disabledHotkeySlots = new HashSet<Integer>();
 	
@@ -270,6 +276,9 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config.addDefault(level_useLevelSystem, "RaC");
+		config.addDefault(custom_level_exp_gain, "[ZOMBIE=0,SKELETON=0,CREEPER=0]");
+		config.addDefault(use_fireworks_on_level_up, true);
+		
 		config.addDefault(races_enable, true);
 		config.addDefault(general_armor_disableArmorChecking, false);
 		config.addDefault(disable_health_modifications, false);
@@ -401,6 +410,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 		config_manaManagerType = ManaManagerType.resolve(config.getString(gui_manaManagerType, ManaManagerType.RaC.name()));
 		
 		config_gui_scoreboard_name = config.getString(gui_scoreboard_name, "&eRaC");
+		config_use_fireworks_on_level_up = config.getBoolean(use_fireworks_on_level_up, true);
 		
 		config_npc_select_race.clear();
 		config_npc_change_race.clear();
@@ -429,6 +439,23 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 		config_worldsDisabled = new LinkedList<String>();
 		for(String tempName : temp_config_worldsDisabled){
 			config_worldsDisabled.add(tempName.toLowerCase());
+		}
+		
+		
+		config_custom_level_exp_gain.clear();
+		List<String> temp_config_custom_level_exp = config.getStringList(custom_level_exp_gain);
+		for(String temp : temp_config_custom_level_exp){
+			if(!temp.contains("=")) continue;
+			
+			String[] split = temp.split(Pattern.quote("="));
+			if(split.length != 2) continue;
+			
+			try{
+				EntityType type = EntityType.valueOf(split[0].toUpperCase());
+				int amount = Integer.parseInt(split[1]);
+				
+				config_custom_level_exp_gain.put(type, amount);
+			}catch(Throwable exp){}
 		}
 		
 		return this;
@@ -755,6 +782,14 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 
 	public boolean getConfig_useNewTraitBindSystem() {
 		return config_useNewTraitBindSystem;
+	}
+
+	public Map<EntityType, Integer> getConfig_custom_level_exp_gain() {
+		return config_custom_level_exp_gain;
+	}
+
+	public boolean isConfig_use_fireworks_on_level_up() {
+		return config_use_fireworks_on_level_up;
 	}
 	
 }
