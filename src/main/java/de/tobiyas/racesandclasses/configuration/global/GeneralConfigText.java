@@ -460,6 +460,11 @@ public class GeneralConfigText {
 				+ "# default: true \n"
 				+ use_fireworks_on_level_up + ": true\n\n"
 				
+				+ "# A level Up message is sent when the level is increased. \n"
+				+ "# Boolean: true or false\n"
+				+ "# default: true \n"
+				+ use_levelup_message + ": true\n\n"
+				
 				+ "# This tells the Plugin which level system to use. \n"
 				+ "# It can use one of the following:.\n"
 				+ "# - RaC: Races and Classes leveling System (currently not usable).\n"

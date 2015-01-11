@@ -586,6 +586,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		stunManager.deinit();
 		poisonManager.deinit();
+		hotkeyManger.shutdown();
 		
 
 		if(!Consts.disableBDSupport) {

@@ -70,6 +70,8 @@ public class Keys {
 	//l
 	public static final String login_no_race_selected = "login_no_race_selected";
 	public static final String launched_something = "launched_something";
+	public static final String level_up_message = "level_up_message";
+	public static final String level_up_new_skill_message = "level_up_new_skill_message";
 	
 	
 	//m

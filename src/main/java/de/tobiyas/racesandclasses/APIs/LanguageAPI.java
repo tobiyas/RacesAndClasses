@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
 import de.tobiyas.racesandclasses.translation.Translator;
 import de.tobiyas.racesandclasses.translation.exception.TranslationNotFoundException;
@@ -87,9 +89,9 @@ public class LanguageAPI {
 	 * @param arg the args that are present in the Translation.
 	 * @return the translation or the tag itself if not found.
 	 */
-	public static String translate(String tag, String... arg){
+	public static String translate(RaCPlayer toTranslateTo, String tag, String... arg){
 		Map<String, String> replacements = HashMapUtils.generateStringStringMap(arg);
-		return translate(tag, replacements);
+		return translate(toTranslateTo, tag, replacements);
 	}
 	
 	
@@ -102,11 +104,12 @@ public class LanguageAPI {
 	 * @param arg the args that are present in the Translation.
 	 * @return the translation or the tag itself if not found.
 	 */
-	public static String translate(String tag, Map<String,String> replacements){
+	public static String translate(RaCPlayer toTranslateTo, String tag, Map<String,String> replacements){
 		try{
 			Translator translator =  translateIgnoreError(tag);
 			if(translator == null) return tag;
 			
+			translator.setReplacePlayer(toTranslateTo);
 			translator.replace(replacements);
 			return translator.build();
 		}catch(Throwable exp){
@@ -142,6 +145,8 @@ public class LanguageAPI {
 		
 		Translator translator = translateIgnoreError(tag);
 		translator.replace(replacements);
+		if(sender instanceof Player) translator.setReplacePlayer(RaCPlayerManager.get().getPlayer((Player) sender));
+		
 		String message = translator.build();
 		if("".equals(message)) return; //no message wanted.
 		

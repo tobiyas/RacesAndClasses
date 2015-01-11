@@ -103,6 +103,7 @@ public class GeneralConfigFields {
 	public static final String level_useLevelSystem = "level_useLevelSystem";
 	public static final String custom_level_exp_gain = "custom_level_exp_gain";
 	public static final String use_fireworks_on_level_up = "use_fireworks_on_level_up";
+	public static final String use_levelup_message = "use_levelup_message";
 	
 	
 	//NPCs

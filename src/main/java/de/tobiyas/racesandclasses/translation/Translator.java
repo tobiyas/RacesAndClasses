@@ -21,8 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class Translator {
 
@@ -35,6 +37,11 @@ public class Translator {
 	 * The modified Text.
 	 */
 	private String modifiedText;
+	
+	/**
+	 * Replaces to a player.
+	 */
+	private RaCPlayer playerReplace;
 	
 	/**
 	 * The translator for the Original Text.
@@ -96,6 +103,16 @@ public class Translator {
 	
 	
 	/**
+	 * Sets the Player to replace stuff
+	 * 
+	 * @param player to set
+	 */
+	public void setReplacePlayer(RaCPlayer player){
+		this.playerReplace = player;
+	}
+	
+	
+	/**
 	 * Replaces the passed Strings with the passed replacements.
 	 * 
 	 * @param replaceMap to replace.
@@ -110,9 +127,34 @@ public class Translator {
 			modifiedText = modifiedText.replaceAll(toReplace, replaceWith);
 		}
 		
+		replaceToPlayer();
+		
 		return decodeColor();
 	}
 	
+	
+	/**
+	 * Replaces some player stuff.
+	 */
+	private void replaceToPlayer() {
+		if(playerReplace == null) return;
+		
+		modifiedText = modifiedText.replace("%PLAYER%", playerReplace.getDisplayName());
+		modifiedText = modifiedText.replace("%PLAYERNAME%", playerReplace.getDisplayName());
+		
+		if(playerReplace.getRace() != null) modifiedText = modifiedText.replace("%RACE%", playerReplace.getRace().getDisplayName());
+		if(playerReplace.getclass() != null) modifiedText = modifiedText.replace("%CLASS%", playerReplace.getclass().getDisplayName());
+		
+		modifiedText = modifiedText.replace("%LEVEL%", String.valueOf(playerReplace.getLevelManager().getCurrentLevel()));
+		modifiedText = modifiedText.replace("%EXP%", String.valueOf(playerReplace.getLevelManager().getCurrentExpOfLevel()));
+
+		if(playerReplace.isOnline()){
+			Player player = playerReplace.getPlayer();
+			modifiedText = modifiedText.replace("%WORLD%", player.getWorld().getName());
+		}
+	}
+
+
 	/**
 	 * Replaces all occuraces of that word with the passed String.
 	 * 

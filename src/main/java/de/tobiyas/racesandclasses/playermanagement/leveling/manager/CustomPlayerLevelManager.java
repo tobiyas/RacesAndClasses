@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
@@ -340,7 +341,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		int oldLevel = currentLevel;
 		currentLevel += value;
 		
-		LevelUpEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
+		LevelEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 	}
 
@@ -352,7 +353,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		currentLevel -= value;
 		if(currentLevel < 1) currentLevel = 1;
 		
-		LevelUpEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
+		LevelEvent event = new LevelDownEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 	}
 }

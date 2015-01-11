@@ -74,6 +74,8 @@ public class EN_Text {
 			//l
 			+ login_no_race_selected + ": '&cYou have not selected a Race. Please select a race using /race select <racename>'\r\n"
 			+ launched_something + ": '&a%NAME% launched.'\r\n"
+			+ level_up_message + ": '&aCongratulations, &d%PLAYER%&a. You leveled up to Level &d%LEVEL%&a.'\r\n"
+			+ level_up_new_skill_message + ": '&aYou have learned a new Skill: &d%TRAITNAME%&a.'\r\n"
 			
 			
 			//m			

@@ -158,6 +158,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 	private boolean config_races_create_group_for_race;
 	private boolean config_hotkeysEnabled;
 	private boolean config_use_fireworks_on_level_up;
+	private boolean config_use_levelup_message;
 	
 	private final Set<String> config_disabled_regions = new HashSet<String>();
 	private final Set<String> config_npc_select_race = new HashSet<String>();
@@ -278,6 +279,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 		config.addDefault(level_useLevelSystem, "RaC");
 		config.addDefault(custom_level_exp_gain, "[ZOMBIE=0,SKELETON=0,CREEPER=0]");
 		config.addDefault(use_fireworks_on_level_up, true);
+		config.addDefault(use_levelup_message, true);
 		
 		config.addDefault(races_enable, true);
 		config.addDefault(general_armor_disableArmorChecking, false);
@@ -411,6 +413,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 		
 		config_gui_scoreboard_name = config.getString(gui_scoreboard_name, "&eRaC");
 		config_use_fireworks_on_level_up = config.getBoolean(use_fireworks_on_level_up, true);
+		config_use_levelup_message = config.getBoolean(use_levelup_message, true);
 		
 		config_npc_select_race.clear();
 		config_npc_change_race.clear();
@@ -790,6 +793,10 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 
 	public boolean isConfig_use_fireworks_on_level_up() {
 		return config_use_fireworks_on_level_up;
+	}
+
+	public boolean isConfig_use_levelup_message() {
+		return config_use_levelup_message;
 	}
 	
 }

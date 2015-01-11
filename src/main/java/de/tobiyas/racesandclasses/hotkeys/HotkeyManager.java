@@ -81,6 +81,16 @@ public class HotkeyManager implements Listener {
 	}
 	
 	
+	/**
+	 * This will Reset ALL players to have Build invs.
+	 */
+	public void shutdown(){
+		for(RaCPlayer player : inventories.keySet()){
+			HotKeyInventory inv = inventories.get(player);
+			if(inv.isInSkillMode()) inv.changeToBuildInv();
+		}
+	}
+	
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerLogout(PlayerQuitEvent event){
@@ -90,5 +100,7 @@ public class HotkeyManager implements Listener {
 		//notify inv that the player has quit.
 		inv.changeToBuildInv();
 	}
+	
+	
 	
 }

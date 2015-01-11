@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,11 +17,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class HotKeyInventory {
 
+	private static final String CONFIG_SEPERATOR = String.valueOf('|');
+	private static final String CONFIG_BINDINGS_PATH = "bindings";
+	
 	/**
 	 * The Material to use for shortcut Items.
 	 */
@@ -62,6 +68,55 @@ public class HotKeyInventory {
 	
 	public HotKeyInventory(RaCPlayer player) {
 		this.player = player;
+		
+		loadFromFile();
+	}
+	
+	/**
+	 * Loads the HotKeyInventory Bindings from the File.
+	 */
+	public void loadFromFile(){
+		traitBindings.clear();
+		
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		List<String> bindings = config.getStringList(CONFIG_BINDINGS_PATH);
+		
+		if(!bindings.isEmpty()){
+			for(String binding : bindings){
+				String[] split = binding.split(Pattern.quote(CONFIG_SEPERATOR));
+				if(split.length != 2) continue;
+				
+				try{
+					int key = Integer.parseInt(split[0]);
+					String displayname = split[1];
+					
+					for(Trait trait : player.getTraits()){
+						if(trait.getDisplayName().equals(displayname)){
+							this.traitBindings.put(key, trait);
+						}
+					}
+				}catch(Throwable exp){}
+			}
+		}
+	}
+	
+	/**
+	 * Saves the Bindings.
+	 */
+	public void save(){
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		
+		List<String> bindings = new LinkedList<String>();
+		for(Entry<Integer,Trait> entry : traitBindings.entrySet()){
+			String toSave = entry.getKey() + CONFIG_SEPERATOR + entry.getValue().getDisplayName();
+			bindings.add(toSave);
+		}
+		
+		if(!bindings.isEmpty()){
+			config.set(CONFIG_BINDINGS_PATH, bindings);
+		}
+		
+		
 	}
 	
 	
@@ -76,6 +131,7 @@ public class HotKeyInventory {
 		if(trait == null || !trait.isBindable()) return;
 		
 		traitBindings.put(slot, trait);
+		save();
 	}
 	
 	/**
@@ -84,7 +140,10 @@ public class HotKeyInventory {
 	 * @param slot to clear
 	 */
 	public void clearSlot(int slot){
+		if(!traitBindings.containsKey(slot)) return;
+		
 		traitBindings.remove(slot);
+		save();
 	}
 	
 	
@@ -93,6 +152,7 @@ public class HotKeyInventory {
 	 */
 	public void clearAllSlots(){
 		traitBindings.clear();
+		save();
 	}
 	
 	
@@ -144,6 +204,7 @@ public class HotKeyInventory {
 		
 		Player player = this.player.getPlayer();
 		if(player == null) return;
+		if(!player.isOnline()) return; //can't set offline players items!
 		
 		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
 		

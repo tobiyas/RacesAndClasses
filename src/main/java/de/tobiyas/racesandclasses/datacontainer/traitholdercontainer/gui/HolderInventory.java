@@ -31,6 +31,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -83,7 +84,7 @@ public class HolderInventory extends InventoryView{
 			inventorySize = 36;
 		}
 		
-		String name = LanguageAPI.translate(Keys.holder_selectiongui_header,
+		String name = LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.holder_selectiongui_header,
 				"holder", StringFormatUtils.firstCapitalRestLow(holderManager.getContainerTypeAsString()),
 				"player", player.getName());
 		
@@ -134,19 +135,19 @@ public class HolderInventory extends InventoryView{
 
 			String healthString = getHealthString(holder);
 			if(healthString != null){
-				lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.health) + ": ");
+				lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.health) + ": ");
 				lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
 			}
 			
 			//add armor as lore
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.armor) + ":");
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
 			if(holder.getArmorPerms().size() > 0){
 				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
 			}else{
 				lore.add(ChatColor.LIGHT_PURPLE + "NONE");
 			}
 			
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(Keys.traits) + ":");
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
 			
 			//add trait text as lore
 			for(Trait trait: holder.getVisibleTraits()){

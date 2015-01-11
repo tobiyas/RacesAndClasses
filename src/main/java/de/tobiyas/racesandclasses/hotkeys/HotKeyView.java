@@ -129,6 +129,8 @@ public class HotKeyView extends BasicSelectionInterface {
 			
 			getBottomInventory().setItem(slot, CommandExecutor_BindTrait.generate(bound));
 		}
+		
+		this.setCursor(selectedTrait == null ? null : CommandExecutor_BindTrait.generate(selectedTrait));
 	}
 	
 
@@ -149,6 +151,8 @@ public class HotKeyView extends BasicSelectionInterface {
 			setCursor(item.clone());
 			selectedTrait = trait;
 		}
+		
+		redraw();
 	}
 
 	@Override

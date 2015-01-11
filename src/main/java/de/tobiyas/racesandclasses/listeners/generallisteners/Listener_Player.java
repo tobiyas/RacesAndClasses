@@ -54,6 +54,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderI
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
@@ -192,13 +195,38 @@ public class Listener_Player implements Listener {
 	
 	@EventHandler
 	public void playerLevelUpEvent(LevelUpEvent event){
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_use_fireworks_on_level_up()) return;
-		//fireworks only exist since MC 1.7
-		if(!CertainVersionChecker.isAbove1_7()) return;
+		int oldLevel = event.getFromLevel();
+		int newLevel = event.getToLevel();
+		
+		if(newLevel < oldLevel) return;
 		
 		Player player = event.getPlayer();
 		//just to be sure.
 		if(player == null || !player.isOnline()) return;
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_use_levelup_message()){
+			LanguageAPI.sendTranslatedMessage(racPlayer, Keys.level_up_message, 
+					"player", player.getDisplayName(), 
+					"level", String.valueOf(newLevel));
+			
+			//check for new Skills and tell.
+			for(Trait trait : racPlayer.getTraits()){
+				if(trait instanceof TraitWithRestrictions){
+					TraitWithRestrictions twrTrait = (TraitWithRestrictions) trait;
+					if(!twrTrait.isInLevelRange(oldLevel) && twrTrait.isInLevelRange(newLevel)){
+						LanguageAPI.sendTranslatedMessage(racPlayer, Keys.level_up_new_skill_message, 
+								"player", player.getDisplayName(),
+								"level", String.valueOf(newLevel),
+								"traitname", trait.getDisplayName());
+					}
+				}
+			}
+		}
+		
+		if(!plugin.getConfigManager().getGeneralConfig().isConfig_use_fireworks_on_level_up()) return;
+		//fireworks only exist since MC 1.7
+		if(!CertainVersionChecker.isAbove1_7()) return;
 		
         //Spawn the Fireworks.
 		for(int i = 0; i < 4; i++){
@@ -239,8 +267,7 @@ public class Listener_Player implements Listener {
         meta.addEffect(effect);
        
         //Generate some random power and set it
-        int rp = random.nextInt(2) + 1;
-        meta.setPower(rp);
+        meta.setPower(0);
         
         return meta;
 	}
