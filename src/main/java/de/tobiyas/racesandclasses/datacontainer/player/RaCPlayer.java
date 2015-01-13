@@ -317,8 +317,7 @@ public class RaCPlayer {
 	 * 
 	 * @return the associated HotKey Inv.
 	 */
-	public HotKeyInventory getHotkeyInventroy() {
-		if(!isOnline()) return null;
+	public HotKeyInventory getHotkeyInventory() {
 		return plugin.getHotkeyManager().getInv(this);
 	}
 	

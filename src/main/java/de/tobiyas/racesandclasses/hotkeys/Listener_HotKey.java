@@ -101,45 +101,68 @@ public class Listener_HotKey implements Listener {
 	}
 	
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerDead(PlayerDeathEvent event){
 		RaCPlayer pl = RaCPlayerManager.get().getPlayer(event.getEntity());
-		if(pl.getHotkeyInventroy().isInBuildingMode()) return;
+		if(pl.getHotkeyInventory().isInBuildingMode()) return;
 		
+		pl.getHotkeyInventory().changeToBuildInv();
+		ItemStack empty = HotKeyInventory.getEmptyItem();
 		Iterator<ItemStack> it = event.getDrops().iterator();
+		
 		while(it.hasNext()){
-			if(getBoundTrait(it.next(), pl) != null) it.remove();
+			ItemStack item = it.next();
+			if(item == null || item.getType() == Material.AIR) continue;
+			
+			if(getBoundTrait(item, pl) != null || item.isSimilar(empty)) it.remove();
 		}
 	}
 	
 	
 	@EventHandler
 	public void playerRespawn(PlayerRespawnEvent event){
+		if(event.getPlayer() == null) return;
 		RaCPlayer pl = RaCPlayerManager.get().getPlayer(event.getPlayer());
+		if(pl == null) return;
 		
-		if(pl.getHotkeyInventroy().isInSkillMode()) return;
-		pl.getHotkeyInventroy().forceUpdateOfInv();
+		final HotKeyInventory inv = pl.getHotkeyInventory();
+		//should not happen... But when players are dead they are online.. wtf...
+		if(inv == null) return; 
+		
+		if(inv.isInSkillMode()) return;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				inv.forceUpdateOfInv();
+			}
+		}.runTaskLater(RacesAndClasses.getPlugin(), 1);
 	}
 	
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void inventoryMove(InventoryClickEvent event){
 		if(event.isCancelled()) return;
+		if(event.getView() instanceof HotKeyView) return;
 		if(!(event.getWhoClicked() instanceof Player)) return;
 		
 		Player player = (Player) event.getWhoClicked();
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
-		if(racPlayer.getHotkeyInventroy().isInBuildingMode()) return;
+		if(racPlayer.getHotkeyInventory().isInBuildingMode()) return;
 		
 		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
 		if(disabled.contains(event.getSlot())) return;
 		
-		if(event.getClick() == ClickType.NUMBER_KEY || event.getSlot() < 9){
+		final InventoryView view = event.getView();
+		if(event.getRawSlot() <= 9) return;
+		
+		int slot = event.getSlot();
+		if(!racPlayer.getHotkeyInventory().getBindings().containsKey(slot)) return;
+		
+		if(event.getClick() == ClickType.NUMBER_KEY || slot < 9){
 			event.setCancelled(true);
 			
 			final ItemStack toSet = event.getCursor();
-			final InventoryView view = event.getView();
 
 			if(toSet == null || toSet.getType() == Material.AIR) return;
 			

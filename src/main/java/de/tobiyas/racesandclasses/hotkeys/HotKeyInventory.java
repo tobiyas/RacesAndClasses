@@ -210,7 +210,7 @@ public class HotKeyInventory {
 		
 		//first clear the old ones.
 		for(int i = 0; i < 9; i++) {
-			if(!disabled.contains(i)) player.getInventory().setItem(i, null);
+			if(!disabled.contains(i) && traitBindings.containsKey(i)) player.getInventory().setItem(i, null);
 		}
 		
 		//now refill with the old ones.
@@ -218,7 +218,7 @@ public class HotKeyInventory {
 			int slot = entry.getKey();
 			ItemStack item = entry.getValue();
 			
-			if(!disabled.contains(slot)) continue;
+			if(disabled.contains(slot)) continue;
 			
 			player.getInventory().setItem(slot, item);
 		}
@@ -242,20 +242,37 @@ public class HotKeyInventory {
 		//remove in case...
 		oldHotkeyBar.clear();
 		
+		//try to move the stuff away that is in the way!
+		for(int i = 0; i < 9; i++){
+			if(disabled.contains(i)) continue;
+			if(!traitBindings.containsKey(i)) continue;
+			
+			ItemStack toMove = player.getInventory().getItem(i);
+			if(toMove == null || toMove.getType() == Material.AIR) continue;
+			
+			//now we have to move the Item to a better slot!
+			for(int slot = 9; slot < player.getInventory().getSize(); slot++){
+				ItemStack toMoveTo = player.getInventory().getItem(slot);
+				if(toMoveTo == null || toMoveTo.getType() == Material.AIR){
+					
+					//we found a good slot!
+					player.getInventory().setItem(slot, toMove.clone());
+					player.getInventory().setItem(i, null);
+					break;
+				}
+			}
+		}
+		
 		//first save the old items
 		for(int i = 0; i < 9; i++){
 			if(disabled.contains(i)) continue;
+			if(!traitBindings.containsKey(i)) continue;
 			
 			ItemStack item = player.getInventory().getItem(i);
-			if(item != null) oldHotkeyBar.put(i, item.clone());
-		}
-		
-		//now set the Items to the quickslot bar.
-		for(int i = 0; i < 9; i++){
-			if(disabled.contains(i)) continue;
-			
-			ItemStack item = generateItem(traitBindings.get(i));
-			player.getInventory().setItem(i, item == null ? getEmptyItem() : item);
+			if(item != null && item.getType() != Material.AIR) oldHotkeyBar.put(i, item.clone());
+
+			ItemStack newItem = generateItem(traitBindings.get(i));
+			player.getInventory().setItem(i, newItem == null ? getEmptyItem() : newItem);
 		}
 		
 		isInSkillMode = true;
@@ -276,6 +293,7 @@ public class HotKeyInventory {
 		//now set the Items to the quickslot bar.
 		for(int i = 0; i < 9; i++){
 			if(disabled.contains(i)) continue;
+			if(!traitBindings.containsKey(i)) continue;
 			
 			ItemStack item = generateItem(traitBindings.get(i));
 			player.getInventory().setItem(i, item == null ? getEmptyItem() : item);

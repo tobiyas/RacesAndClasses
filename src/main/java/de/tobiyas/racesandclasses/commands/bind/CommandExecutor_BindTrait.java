@@ -53,7 +53,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		if(args.length == 1 && sender.isOp() && args[0].equals("reset")){
 			for(Player player : PlayerUtils.getOnlinePlayers()){
 				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
-				racPlayer.getHotkeyInventroy().changeToBuildInv();
+				racPlayer.getHotkeyInventory().changeToBuildInv();
 			}
 			
 			return true;
@@ -81,7 +81,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		
 		
 		if(useNewBindSystem){
-			boolean isBindingMode = player.getHotkeyInventroy().isInSkillMode();
+			boolean isBindingMode = player.getHotkeyInventory().isInSkillMode();
 			boolean openView = args.length == 1 && args[0].equalsIgnoreCase("open");
 			
 			if(openView){
@@ -91,10 +91,10 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 			}
 			
 			if(isBindingMode){
-				player.getHotkeyInventroy().changeToBuildInv();
+				player.getHotkeyInventory().changeToBuildInv();
 				player.sendMessage("Change to Build Mode.");
 			}else{
-				player.getHotkeyInventroy().changeToSkillInv();
+				player.getHotkeyInventory().changeToSkillInv();
 				player.sendMessage("Change to Battle Skill.");
 			}
 			return true;

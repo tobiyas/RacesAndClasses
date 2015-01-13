@@ -12,7 +12,9 @@ import java.util.Map.Entry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -40,6 +42,11 @@ public class HotKeyView extends BasicSelectionInterface {
 	 */
 	private Trait selectedTrait = null;
 	
+	/**
+	 * If the player was in Skillmode before opening.
+	 */
+	private final boolean skillModeBefore;
+	
 	
 	public HotKeyView(Player player) {
 		this(RaCPlayerManager.get().getPlayer(player));
@@ -47,6 +54,9 @@ public class HotKeyView extends BasicSelectionInterface {
 	
 	public HotKeyView(RaCPlayer player) {
 		super(player.getPlayer(), null, "Your skills", "All Skills", RacesAndClasses.getPlugin());
+
+		this.skillModeBefore = player.getHotkeyInventory().isInSkillMode();
+		player.getHotkeyInventory().changeToBuildInv();
 		
 		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
 		for(int i = 0; i < 9; i ++){
@@ -63,6 +73,7 @@ public class HotKeyView extends BasicSelectionInterface {
 		
 		this.racPlayer = player;
 		redraw();
+		
 	}
 	
 	
@@ -122,7 +133,7 @@ public class HotKeyView extends BasicSelectionInterface {
 		}
 		
 		//post current Traits.
-		for(Entry<Integer, Trait> entry : racPlayer.getHotkeyInventroy().getBindings().entrySet()){
+		for(Entry<Integer, Trait> entry : racPlayer.getHotkeyInventory().getBindings().entrySet()){
 			int slot = entry.getKey();
 			if(disabled.contains(slot)) continue;
 			
@@ -156,6 +167,7 @@ public class HotKeyView extends BasicSelectionInterface {
 		redraw();
 	}
 
+	@EventHandler
 	@Override
 	public void onInterfaceInteract(InventoryClickEvent event) {
 		if(event.getView() != this) return;
@@ -171,6 +183,20 @@ public class HotKeyView extends BasicSelectionInterface {
 		super.onInterfaceInteract(event);
 	}
 	
+	
+	@EventHandler
+	@Override
+	public void onInventoryClose(InventoryCloseEvent event) {
+		this.setCursor(null);
+		super.onInventoryClose(event);
+		
+		if(skillModeBefore){
+			HotKeyInventory inv = racPlayer.getHotkeyInventory();
+			inv.changeToSkillInv();
+		}
+	}
+	
+	
 	@Override
 	protected void onControlItemPressed(ItemStack item) {
 		int index = -1;
@@ -183,13 +209,10 @@ public class HotKeyView extends BasicSelectionInterface {
 			}
 		}
 		
-		
 		//We can have index 0-8.
 		if( index >= 0 ){
-			
-			
-			racPlayer.getHotkeyInventroy().clearSlot(index);
-			if(selectedTrait != null) racPlayer.getHotkeyInventroy().bindTrait(index, selectedTrait);
+			racPlayer.getHotkeyInventory().clearSlot(index);
+			if(selectedTrait != null) racPlayer.getHotkeyInventory().bindTrait(index, selectedTrait);
 			
 			selectedTrait = null;
 			setCursor(null);
@@ -203,7 +226,7 @@ public class HotKeyView extends BasicSelectionInterface {
 	@Override
 	protected void scheduleOpeningOfParent() {
 		this.setCursor(null);
-		racPlayer.getHotkeyInventroy().forceUpdateOfInv();
+		racPlayer.getHotkeyInventory().forceUpdateOfInv();
 		
 		super.scheduleOpeningOfParent();
 	}
