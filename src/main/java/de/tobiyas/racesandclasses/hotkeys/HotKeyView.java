@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -156,6 +157,21 @@ public class HotKeyView extends BasicSelectionInterface {
 	}
 
 	@Override
+	public void onInterfaceInteract(InventoryClickEvent event) {
+		if(event.getView() != this) return;
+		
+		//block all SHIFT clicks. Just to be sure...
+		if(event.isShiftClick()){
+			event.setCancelled(true);
+			
+			redraw();
+			return;
+		}
+		
+		super.onInterfaceInteract(event);
+	}
+	
+	@Override
 	protected void onControlItemPressed(ItemStack item) {
 		int index = -1;
 		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
@@ -186,6 +202,7 @@ public class HotKeyView extends BasicSelectionInterface {
 	
 	@Override
 	protected void scheduleOpeningOfParent() {
+		this.setCursor(null);
 		racPlayer.getHotkeyInventroy().forceUpdateOfInv();
 		
 		super.scheduleOpeningOfParent();

@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 
 public class TraitRegionChecker {
 
@@ -22,6 +23,9 @@ public class TraitRegionChecker {
 	 * @return true if it is.
 	 */
 	public static boolean isInDisabledLocation(Location location){
+		if(location == null) return false;
+		if(WorldResolver.isDisabledWorld(location.getWorld())) return true;
+		
 		Set<String> disabledRegions = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledRegions();
 		if(disabledRegions.isEmpty()) return false;
 		
@@ -37,4 +41,5 @@ public class TraitRegionChecker {
 		
 		return false;
 	}
+
 }

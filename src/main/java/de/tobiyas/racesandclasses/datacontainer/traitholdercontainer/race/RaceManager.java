@@ -39,12 +39,11 @@ public class RaceManager extends AbstractHolderManager {
 
 	public RaceManager() {
 		super(Consts.racesYML, "races");
-
-		DefaultContainer.createSTDRaces();
 	}
 
 	@Override
 	public void init() {
+		DefaultContainer.createSTDRaces();
 		super.init();
 
 		checkForPossiblyWrongInitialized();

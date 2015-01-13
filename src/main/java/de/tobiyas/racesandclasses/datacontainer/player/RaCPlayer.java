@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.InFightAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
@@ -29,6 +30,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
 import de.tobiyas.util.player.PlayerUtils;
 
 public class RaCPlayer {
@@ -318,6 +320,26 @@ public class RaCPlayer {
 	public HotKeyInventory getHotkeyInventroy() {
 		if(!isOnline()) return null;
 		return plugin.getHotkeyManager().getInv(this);
+	}
+	
+	
+	/**
+	 * If the Player is in Fight.
+	 * 
+	 * @return true if in fight.
+	 */
+	public boolean isInFight(){
+		return InFightAPI.isInFight(this);
+	}
+	
+
+	/**
+	 * heals the Player by the Value passed.
+	 * 
+	 * @param healValue to heal.
+	 */
+	public void heal(double healValue) {
+		BukkitPlayer.safeHeal(healValue, getPlayer());
 	}
 	
 	

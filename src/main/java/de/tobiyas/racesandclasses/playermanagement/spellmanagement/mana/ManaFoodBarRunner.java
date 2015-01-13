@@ -13,6 +13,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
 
 public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 
@@ -65,7 +66,7 @@ public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 	public void foodLevelChange(FoodLevelChangeEvent event){
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()) return;
 		
-		event.setCancelled(true);
+		if(!TraitRegionChecker.isInDisabledLocation(event.getEntity().getLocation())) event.setCancelled(true);
 	}
 	
 	
@@ -74,7 +75,7 @@ public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()) return;
 		if(event.getCause() != DamageCause.STARVATION) return;
 		
-		event.setCancelled(true);
+		if(!TraitRegionChecker.isInDisabledLocation(event.getEntity().getLocation())) event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -82,7 +83,7 @@ public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_useFoodManaBar()) return;
 		if(event.getRegainReason() != RegainReason.SATIATED) return;
 		
-		event.setCancelled(true);
+		if(!TraitRegionChecker.isInDisabledLocation(event.getEntity().getLocation())) event.setCancelled(true);
 	}
 
 	

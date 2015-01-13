@@ -31,10 +31,14 @@ public class ClassManager extends AbstractHolderManager{
 	
 	public ClassManager(){
 		super(Consts.classesYML, "classes");
-		
-		DefaultContainer.createSTDClasses();
 	}
 	
+	
+	@Override
+	public void init() {
+		DefaultContainer.createSTDClasses();
+		super.init();
+	}
 
 	@Override
 	protected AbstractTraitHolder generateTraitHolder(

@@ -21,8 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfigText;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
@@ -31,7 +35,10 @@ public class ConfigTemplate {
 	private RacesAndClasses plugin;
 	private File configFile;
 	
+	private Map<String,String> replacements = new HashMap<String, String>();
+	
 	public ConfigTemplate(){
+		fillReplacements();
 		plugin = RacesAndClasses.getPlugin();
 		
 		File pluginFolder = new File(plugin.getDataFolder().toString());
@@ -40,7 +47,8 @@ public class ConfigTemplate {
 		
 		configFile = new File(plugin.getDataFolder() + File.separator + "config.yml");
 	}
-	
+
+
 	public boolean isOldConfigVersion(){
 		if(!configFile.exists())
 			return true;
@@ -82,11 +90,25 @@ public class ConfigTemplate {
 		if(!line.contains(":"))
 			return line;
 		
-		String[] nodes = line.split(":");		
+		String[] nodes = line.split(":");
 		String node = nodes[0];
 		
-		Object obj = plugin.getConfig().contains(node.replace("_", ".")) ? plugin.getConfig().get(node.replace("_", ".")) 
-				: plugin.getConfig().get(node);
+		String nodeToCheck = node;
+		
+		//check replacements
+		//only if no new Object is present.
+		for(Entry<String,String> entry : replacements.entrySet()){
+			String key = entry.getKey();
+			String replacement = entry.getValue();
+			
+			if(nodeToCheck.equals(replacement) && plugin.getConfig().contains(nodeToCheck)){
+				nodeToCheck = key;
+			}
+		}
+		
+		Object obj = plugin.getConfig().contains(nodeToCheck.replace("_", ".")) ? plugin.getConfig().get(nodeToCheck.replace("_", ".")) 
+				: plugin.getConfig().get(nodeToCheck);
+		
 		
 		//write default Value
 		if(obj == null){
@@ -102,7 +124,6 @@ public class ConfigTemplate {
 	}
 	
 	public void writeTemplate(){
-		
 		if(configFile.exists())
 			configFile.delete();
 		
@@ -129,5 +150,14 @@ public class ConfigTemplate {
 			plugin.log("Error on replacing the ConfigTotal File");
 			e.printStackTrace();
 		}
+	}
+	
+	
+	/**
+	 * Fills the Replacements to use.
+	 */
+	private void fillReplacements() {
+		replacements.put("gui_useFoodManaBar", GeneralConfigFields.magic_useFoodManaBar);
+		replacements.put("gui_manaManagerType", GeneralConfigFields.magic_manaManagerType);
 	}
 }

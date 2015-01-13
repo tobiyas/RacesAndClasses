@@ -90,12 +90,13 @@ public class GeneralConfigFields {
 	public static final String gui_scoreboard_name = "gui_scoreboard_name";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
-	public static final String gui_useFoodManaBar = "gui_useFoodManaBar";
-	public static final String gui_manaManagerType = "gui_manaManagerType";
 
 	
 	//Magic
 	public static final String magic_wandId = "magic_wandId";
+	public static final String magic_manaManagerType = "magic_manaManagerType";
+	public static final String magic_useFoodManaBar = "magic_useFoodManaBar";
+	public static final String magic_outOfFightRegeneration = "magic_outOfFightRegeneration";
 	
 	
 	//Leveling

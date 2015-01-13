@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers;
 
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -92,15 +93,8 @@ public class WorldResolver {
 	 */
 	public static boolean isOnDisabledWorld(Player player) {
 		if(player == null) return false;
-		String playerWorld = player.getWorld().getName();
 		
-		for(String world : RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_worldsDisabled()){
-			if(world.equalsIgnoreCase(playerWorld)){
-				return true;
-			}
-		}
-		
-		return false;
+		return isDisabledWorld(player.getWorld());
 	}
 	
 	/**
@@ -109,7 +103,7 @@ public class WorldResolver {
 	 * @param player to check.
 	 */
 	public static boolean isOnDisabledWorld(RaCPlayer player) {
-		return isOnDisabledWorld(player.getPlayer());
+		return isDisabledWorld(player.getWorld());
 	}
 	
 	/**
@@ -120,5 +114,24 @@ public class WorldResolver {
 	public static boolean isOnDisabledWorld(String playerName){
 		RaCPlayer player = RaCPlayerManager.get().getPlayerByName(playerName);
 		return isOnDisabledWorld(player);
+	}
+
+	/**
+	 * Checks if the World is disabled.
+	 * 
+	 * @param world to check
+	 * @return true if disabled.
+	 */
+	public static boolean isDisabledWorld(World world) {
+		if(world == null) return false;
+		
+		String worldName = world.getName();
+		for(String disabled : RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_worldsDisabled()){
+			if(disabled.equalsIgnoreCase(worldName)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

@@ -95,6 +95,7 @@ import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
+import de.tobiyas.racesandclasses.infight.InFightManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
 import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
@@ -210,6 +211,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	protected HotsManager hotsManager;
 	
 	/**
+	 * The InFight Manager to use.
+	 */
+	protected InFightManager inFightManager;
+	
+	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
@@ -274,8 +280,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			
 			errored = true;
 			registerAllCommandsAsError();
-			
-			//e.printStackTrace();
 		}
 	}
 	
@@ -307,20 +311,21 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		TraitCopy.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
-		//Create all Managers
+		//Create all Managers //TODO check if needs reinit.
 		TraitEventManager traitEventManager = new TraitEventManager();
 		
-		tutorialManager = new TutorialManager();
-		raceManager = new RaceManager();
-		classManager = new ClassManager();
-		playerManager = new PlayerManager();
-		channelManager = new ChannelManager();
+		if(tutorialManager == null) tutorialManager = new TutorialManager();
+		if(raceManager == null) raceManager = new RaceManager();
+		if(classManager == null) classManager = new ClassManager();
+		if(playerManager == null) playerManager = new PlayerManager();
+		if(channelManager == null) channelManager = new ChannelManager();
 		
-		cooldownManager = new CooldownManager();
-		stunManager = new StunManager();
-		poisonManager = new PoisonManager();
-		raceSpawnManager = new RaceSpawnManager(this);
-		hotkeyManger = new HotkeyManager();
+		if(cooldownManager == null) cooldownManager = new CooldownManager();
+		if(stunManager == null) stunManager = new StunManager();
+		if(poisonManager == null) poisonManager = new PoisonManager();
+		if(raceSpawnManager == null) raceSpawnManager = new RaceSpawnManager(this);
+		if(hotkeyManger == null) hotkeyManger = new HotkeyManager();
+		if(inFightManager == null) inFightManager = new InFightManager();
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -385,6 +390,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//race Spawn Manager
 		raceSpawnManager.load();
+		
+		//infight Manager.
+		inFightManager.reload();
 	}
 	
 
@@ -753,5 +761,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		return hotkeyManger;
 	}
 	
+	public InFightManager getInFightManager(){
+		return inFightManager;
+	}
 	
 }

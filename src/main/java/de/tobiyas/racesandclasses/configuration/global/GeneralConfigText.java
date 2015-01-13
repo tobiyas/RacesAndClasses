@@ -404,16 +404,6 @@ public class GeneralConfigText {
 				+ "# boolean: true or false\n"
 				+ "# default: false \n"
 				+ gui_level_useMCLevelBar + ": false\n\n"
-				
-				+ "# If this is activated, the Mana will be displayed in the Food bar.\n"
-				+ "# boolean: true or false\n"
-				+ "# default: false \n"
-				+ gui_useFoodManaBar + ": false\n\n"
-				
-				+ "# The Mana Manager to use. This is the Mana System present and in use for this plugin.\n"
-				+ "# This can be: RaC or MagicSpells\n"
-				+ "# default: RaC \n"
-				+ gui_manaManagerType + ": 'RaC'\n\n"
 				;
 	}
 	
@@ -422,9 +412,9 @@ public class GeneralConfigText {
 		return ""
 				//MAGIC
 				+ "\n"
-				+ "#######\n"
-				+ "#MAGIC#\n"
-				+ "#######\n"
+				+ "############\n"
+				+ "#MAGIC/MANA#\n"
+				+ "############\n"
 				+ "\n"
 				
 				+ "# Tells the plugin which Item to use as wand (magic spell cast item). \n"
@@ -432,6 +422,24 @@ public class GeneralConfigText {
 				+ "# String: The canonical Name of the Item. See: 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' \n"
 				+ "# default: STICK \n"
 				+ magic_wandId + ": STICK\n\n"
+				
+				+ "# If this is activated, the Mana will be displayed in the Food bar.\n"
+				+ "# boolean: true or false\n"
+				+ "# default: false \n"
+				+ magic_useFoodManaBar + ": false\n\n"
+								
+				+ "# This is ment to be used with the 'use_foodManaBar'.\n"
+				+ "# It will regenerate the player X Health every Y seconds.\n"
+				+ "# Example: 2#30  will heal 2 health every 30 seconds out of fight.\n"
+				+ "# To turn it off, just put 0 as X (value to heal).\n"
+				+ "# String: X#Y\n"
+				+ "# default: 0#100 \n"
+				+ magic_outOfFightRegeneration + ": 0#100\n\n"
+				
+				+ "# The Mana Manager to use. This is the Mana System present and in use for this plugin.\n"
+				+ "# This can be: RaC or MagicSpells\n"
+				+ "# default: RaC \n"
+				+ magic_manaManagerType + ": 'RaC'\n\n"
 				;
 	}
 	
