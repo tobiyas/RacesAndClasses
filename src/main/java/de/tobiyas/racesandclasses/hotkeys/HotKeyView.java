@@ -187,7 +187,9 @@ public class HotKeyView extends BasicSelectionInterface {
 	@EventHandler
 	@Override
 	public void onInventoryClose(InventoryCloseEvent event) {
+		if(event.getView() != this) return;
 		this.setCursor(null);
+		
 		super.onInventoryClose(event);
 		
 		if(skillModeBefore){
@@ -225,7 +227,6 @@ public class HotKeyView extends BasicSelectionInterface {
 	
 	@Override
 	protected void scheduleOpeningOfParent() {
-		this.setCursor(null);
 		racPlayer.getHotkeyInventory().forceUpdateOfInv();
 		
 		super.scheduleOpeningOfParent();

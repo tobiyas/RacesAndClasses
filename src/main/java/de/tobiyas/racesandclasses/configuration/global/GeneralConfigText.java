@@ -393,7 +393,7 @@ public class GeneralConfigText {
 				+ "# ColorCodes are replaced by &, eg: &e -> yellow.\n"
 				+ "# String: name (&eHallo)\n"
 				+ "# default: &eRaC \n"
-				+ gui_scoreboard_disableAllOutputs + ": '&eRaC'\n\n"
+				+ gui_scoreboard_name + ": '&eRaC'\n\n"
 				
 				+ "# Setting this to true will disable all Outputs of bars to the chat of the players.\n"
 				+ "# boolean: true or false\n"

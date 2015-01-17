@@ -38,6 +38,9 @@ public class TraitConfigParser {
 	public static void configureTraitFromYAML(YamlConfiguration config, String traitPath, Trait trait) throws TraitConfigurationFailedException{
 		TraitConfiguration configurationMap = new TraitConfiguration();
 		
+		String traitHolderName = "UNKNOWN";
+		if(!trait.getTraitHolders().isEmpty()) traitHolderName = trait.getTraitHolders().iterator().next().getDisplayName();
+		
 		try{
 			ConfigurationSection traitConfig = config.getConfigurationSection(traitPath);
 			for(String pathEntry : traitConfig.getKeys(true)){
@@ -75,15 +78,16 @@ public class TraitConfigParser {
 
 				if(!optional && !isPresent){
 					throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-							"' not found in ConfigTotal for Trait: " + trait.getName());
+							"' not found in Config for Trait: " + trait.getName());
 				}
 				
 				Class<?> classToExpect = field.classToExpect();
 
 				Object toCheck = configurationMap.get(field.fieldName());
 				if(toCheck == null){
+					
 					throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-							"' not found in Config for Trait: " + trait.getName() + " in Holder: %HOLDER%" +
+							"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 							". Wanted a " + classToExpect.getCanonicalName() + " But found NOTHING.");
 				}
 				
@@ -98,7 +102,7 @@ public class TraitConfigParser {
 						continue;
 					}catch(NumberFormatException exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in ConfigTotal for Trait: " + trait.getName() + 
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -110,7 +114,7 @@ public class TraitConfigParser {
 						continue;
 					}catch(Exception exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in ConfigTotal for Trait: " + trait.getName() + 
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -137,7 +141,7 @@ public class TraitConfigParser {
 						continue;
 					}catch(NumberFormatException exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in ConfigTotal for Trait: " + trait.getName() + 
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -153,7 +157,7 @@ public class TraitConfigParser {
 						continue;
 					}catch(NumberFormatException exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in ConfigTotal for Trait: " + trait.getName() + 
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -170,7 +174,7 @@ public class TraitConfigParser {
 						continue;
 					}catch(NumberFormatException exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in ConfigTotal for Trait: " + trait.getName() + 
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -210,7 +214,7 @@ public class TraitConfigParser {
 						
 					}catch(NumberFormatException exp){
 						throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-								"' not found in Config for Trait: " + trait.getName() + " for Holder: %HOLDER%" +
+								"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 								". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 					}
 				}
@@ -222,7 +226,7 @@ public class TraitConfigParser {
 				}
 
 				throw new TraitConfigurationFailedException("Field: '" + traitPath + "." + field.fieldName() + 
-						"' not found in Config for Trait: " + trait.getName() + " for Holder: %HOLDER%" +
+						"' not found in Config for Trait: " + trait.getName() + " in Holder: " + traitHolderName +
 						". Found a " + toCheck.getClass().getCanonicalName() + " but wanted a " + classToExpect.getCanonicalName());
 				
 			}
@@ -238,7 +242,7 @@ public class TraitConfigParser {
 				}
 				
 				throw new TraitConfigurationFailedException("Configuration of: " + trait.getDisplayName() 
-						+ " of: %HOLDER% Failed. Check your ConfigTotal! There seems to be a wrong / unset value! Check the Documentation for Value references.");
+						+ " of: " + traitHolderName + " Failed. Check your Config! There seems to be a wrong / unset value! Check the Documentation for Value references.");
 			}
 		}catch(TraitConfigurationFailedException exp){
 			throw exp;

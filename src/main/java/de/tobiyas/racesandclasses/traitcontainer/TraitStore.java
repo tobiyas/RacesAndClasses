@@ -283,7 +283,7 @@ public class TraitStore {
 	            }
 	        }
 
-	        boolean hasClass = false;
+	        boolean hasImportInfos = false;
 	        for(Class<Trait> clazz : clazzArray){
 	        	try{
 					if (clazz != null) {
@@ -294,7 +294,7 @@ public class TraitStore {
 				        	TraitInfos annotation = trait.getClass().getMethod("importTrait").getAnnotation(TraitInfos.class);
 				        	TraitsList.addTraitToList(annotation.traitName(), clazz, annotation.category(), annotation.visible());
 				        	trait.importTrait();
-				        	hasClass = true;
+				        	hasImportInfos = true;
 				        }else{
 				        	throw new AnnotationFormatError("Annotation: Import could not be found for class: " + clazz);
 				        }
@@ -306,7 +306,7 @@ public class TraitStore {
 	        
 	        jarFile.close();
 	        
-	        if(!hasClass){
+	        if(!hasImportInfos){
 	        	throw new AnnotationFormatError("Annotation: Import could not be found for file: " + file.getName());
 	        }
 	        
@@ -316,7 +316,8 @@ public class TraitStore {
 			RacesAndClasses.getPlugin().logStackTrace(message, e);
 			return;
 		} catch (AnnotationFormatError e){
-			RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
+			//Not interesting since the Plugin needed is not loaded!
+			//RacesAndClasses.getPlugin().log(e.getLocalizedMessage());
 		} catch (Throwable e) {
 			String message = "The trait " + file.getName() + " failed to load for an unknown reason.";
 			RacesAndClasses.getPlugin().log(message);
