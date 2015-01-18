@@ -442,6 +442,11 @@ public abstract class AbstractBasicTrait implements Trait,
 			this.onlyInWater = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_WATER_PATH);
 		}
 		
+		//Only in lava
+		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_LAVA_PATH)){
+			this.onlyInLava = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_LAVA_PATH);
+		}
+		
 		//Only in Rain
 		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_RAIN_PATH)){
 			this.onlyInRain = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_RAIN_PATH);
@@ -694,7 +699,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		//check if player is in lava
 		if(onlyInLava){
-			if(feetType != Material.LAVA && feetType != Material.STATIONARY_LAVA){
+			if(!(feetType == Material.LAVA || feetType == Material.STATIONARY_LAVA)){
 				triggerButHasRestriction(TraitRestriction.OnlyInLava, wrapper);
 				return TraitRestriction.OnlyInLava;
 			}
