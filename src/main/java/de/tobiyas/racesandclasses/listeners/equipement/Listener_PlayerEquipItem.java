@@ -116,9 +116,17 @@ public class Listener_PlayerEquipItem implements Listener {
 			return;
 		}
 		
-		if(!isEmptyCrosshair && isArmorSlot && cursorArmorSlot != ArmorSlot.NONE){
-			//we have a simple drag and drop.
+		if(!isEmptyCrosshair && isArmorSlot && cursorArmorSlot != ArmorSlot.NONE && isEmptyClickedSlot){
+			//we have a simple drop.
 			evaluate(event, cursorArmorSlot, player, event.getCursor());
+			return;
+		}
+		
+		if(!isEmptyCrosshair && isArmorSlot && cursorArmorSlot != ArmorSlot.NONE 
+				&& clickedItemArmorSlot != ArmorSlot.NONE && !isEmptyClickedSlot){
+			
+			//we have a simple change.
+			evaluate(event, player, event.getCursor());
 			return;
 		}
 	}
@@ -175,6 +183,26 @@ public class Listener_PlayerEquipItem implements Listener {
 				cancellable.setCancelled(true);
 				InventoryResync.resync(player);
 			}
+		}
+	}
+	
+	/**
+	 * Evaluates the passed values.
+	 * 
+	 * @param cancellable the event to set
+	 * @param slot the slot to eval
+	 * @param player the player to eval
+	 * @param item the item to eval
+	 */
+	protected void evaluate(Cancellable cancellable, Player player, ItemStack item){
+		if(item == null || item.getType() == Material.AIR) return;
+		
+		PlayerEquipsArmorEvent newEvent = new PlayerEquipsArmorEvent(player, item);
+		Bukkit.getPluginManager().callEvent(newEvent);
+			
+		if(newEvent.isCancelled()){
+			cancellable.setCancelled(true);
+			InventoryResync.resync(player);
 		}
 	}
 	
