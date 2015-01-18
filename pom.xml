@@ -33,7 +33,7 @@
 	<repositories>
 	    <!-- Spigot repo -->
 		<repository>
-			<id>org.bukkit</id>
+			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 
