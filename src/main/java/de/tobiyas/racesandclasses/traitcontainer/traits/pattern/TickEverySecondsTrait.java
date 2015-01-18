@@ -89,6 +89,7 @@ private int schedulerTaskId = -1;
 	
 	@Override
 	public void deInit(){
+		super.deInit();
 		Bukkit.getScheduler().cancelTask(schedulerTaskId);
 	}
 

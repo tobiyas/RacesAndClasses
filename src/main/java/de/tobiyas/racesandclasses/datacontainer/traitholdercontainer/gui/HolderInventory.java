@@ -61,9 +61,16 @@ public class HolderInventory extends InventoryView{
 	private final Inventory holderInventory;
 	
 	/**
+	 * The holdermanager to use.
+	 */
+	private final AbstractHolderManager holderManager;
+	
+	
+	/**
 	 * Plugin to call stuff on like config
 	 */
 	private static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
+	
 	
 	
 	/**
@@ -76,6 +83,7 @@ public class HolderInventory extends InventoryView{
 		super();
 		
 		this.player = player;
+		this.holderManager = holderManager;
 		
 		this.numberOfHolder = 0;
 		
@@ -92,7 +100,7 @@ public class HolderInventory extends InventoryView{
 		if(name.length() > 32) name = name.substring(0, 32);
 		this.holderInventory = Bukkit.getServer().createInventory(player, inventorySize, name);
 		
-		fillWithHolders(holderManager);
+		fillWithHolders();
 	}
 	
 	
@@ -101,16 +109,16 @@ public class HolderInventory extends InventoryView{
 	 * 
 	 * @param manager
 	 */
-	private void fillWithHolders(AbstractHolderManager manager){
-		for(String holderName : manager.listAllVisibleHolders()){
+	private void fillWithHolders(){
+		for(String holderName : holderManager.listAllVisibleHolders()){
 			if(plugin.testingMode){ 
 				//Testing seems to not realize Bukkit is present. Method not found on ItemStack.
 				this.numberOfHolder++;
 				continue;
 			}
 			
-			AbstractTraitHolder holder = manager.getHolderByName(holderName);
-			if(!hasPermission(holder, manager)) continue;
+			AbstractTraitHolder holder = holderManager.getHolderByName(holderName);
+			if(!hasPermission(holder, holderManager)) continue;
 			
 			
 			ItemStack item = holder.getHolderSelectionItem() != null 
@@ -232,7 +240,7 @@ public class HolderInventory extends InventoryView{
 
 	@Override
 	public Inventory getBottomInventory() {
-		return Bukkit.createInventory(player, 36);
+		return player.getInventory();
 	}
 
 	@Override
@@ -253,4 +261,9 @@ public class HolderInventory extends InventoryView{
 		return numberOfHolder;
 	}
 
+	public AbstractHolderManager getHolderManager() {
+		return holderManager;
+	}
+
+	
 }

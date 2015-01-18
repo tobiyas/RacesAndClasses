@@ -141,6 +141,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	
 	@Override
 	public void deInit(){
+		super.deInit();
+		
 		if(bukkitSchedulerID > 0){
 			Bukkit.getScheduler().cancelTask(bukkitSchedulerID);
 			bukkitSchedulerID = -1;

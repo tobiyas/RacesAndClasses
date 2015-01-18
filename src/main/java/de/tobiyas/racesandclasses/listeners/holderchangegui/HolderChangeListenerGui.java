@@ -147,9 +147,9 @@ public abstract class HolderChangeListenerGui implements Listener {
 		if(!event.getViewers().iterator().hasNext()) return;
 		
 		if(! (event.getView() instanceof HolderInventory)) return;
-		String prefix = manager.getContainerTypeAsString();
-		if(! (event.getView().getTopInventory().getName()
-				.contains(prefix))) return;
+		HolderInventory holderInv = (HolderInventory) event.getView();
+		if(holderInv.getHolderManager() != manager) return;
+		
 		//now we are sure to be in an HolderGUI.
 		
 		Player player = (Player) event.getView().getPlayer();
