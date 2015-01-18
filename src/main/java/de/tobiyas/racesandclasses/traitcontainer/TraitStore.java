@@ -39,6 +39,7 @@ import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.exceptions.TraitNotFoundException;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_6;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_7;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_8;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedsOtherPlugins;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
@@ -245,14 +246,21 @@ public class TraitStore {
 	                    		if(clazz.isAnnotationPresent(NeedMC1_6.class)){
 	                    			if(!CertainVersionChecker.isAbove1_6()){
 	                    				//We need MC > 1.6 But do not have it.
-	                    				continue;	                    				
+	                    				continue;
 	                    			}
 	                    		}
 	                    		
 	                    		if(clazz.isAnnotationPresent(NeedMC1_7.class)){
 	                    			if(!CertainVersionChecker.isAbove1_7()){
 	                    				//We need MC > 1.7 But do not have it.
-	                    				continue;	                    				
+	                    				continue;
+	                    			}
+	                    		}
+	                    		
+	                    		if(clazz.isAnnotationPresent(NeedMC1_8.class)){
+	                    			if(!CertainVersionChecker.isAbove1_8()){
+	                    				//We need MC > 1.8 But do not have it.
+	                    				continue;
 	                    			}
 	                    		}
 	                    		

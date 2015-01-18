@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -615,7 +616,7 @@ public abstract class AbstractBasicTrait implements Trait,
 			return getPrettyConfigIntern();
 		}
 		
-		return traitDiscription;
+		return ChatColor.translateAlternateColorCodes('&', traitDiscription);
 	}
 	
 	/**
@@ -902,7 +903,7 @@ public abstract class AbstractBasicTrait implements Trait,
 
 	@Override
 	public String getDisplayName() {
-		return displayName == null ? getName() : displayName;
+		return ChatColor.translateAlternateColorCodes('&', displayName == null ? getName() : displayName);
 	}
 
 	@Override

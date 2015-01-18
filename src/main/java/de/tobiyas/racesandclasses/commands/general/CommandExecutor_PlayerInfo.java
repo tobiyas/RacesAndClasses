@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.general;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -28,6 +31,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
 public class CommandExecutor_PlayerInfo extends AbstractCommand {
 
@@ -98,6 +102,22 @@ private RacesAndClasses plugin;
 		sender.sendMessage(ChatColor.YELLOW + "Race: " + ChatColor.RED + raceName);
 		sender.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.RED + className);
 		
+		if(args.length == 0){
+			Set<ItemQuality> armorPerms = new HashSet<ItemQuality>();
+			if(racPlayer.getRace() != null) armorPerms.addAll(racPlayer.getRace().getArmorPerms());
+			if(racPlayer.getclass() != null) armorPerms.addAll(racPlayer.getclass().getArmorPerms());
+			
+			String allowed = "";
+			for(ItemQuality quality : armorPerms){
+				allowed += ", " + quality.name();
+			}
+			
+			if(!allowed.isEmpty()) allowed = allowed.substring(2);
+			if(allowed.isEmpty()) allowed = "None";
+			
+			sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.RED + allowed);
+		}
+		
 		if(hasPermForLocation){
 			sender.sendMessage(ChatColor.YELLOW + "---L--O--C--A--T--I--O--N---");
 			sender.sendMessage(ChatColor.YELLOW + "World: " + ChatColor.AQUA + player.getWorld().getName());
@@ -111,6 +131,8 @@ private RacesAndClasses plugin;
 			sender.sendMessage(ChatColor.YELLOW + "---O--T--H--E--R---");
 			sender.sendMessage(ChatColor.YELLOW + "Item in Hand: " + ChatColor.AQUA + player.getItemInHand().getType().toString());
 		}
+		
+
 		
 		return true;
 	}
