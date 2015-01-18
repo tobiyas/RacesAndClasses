@@ -27,14 +27,14 @@
 		<powermock.version>1.4.12</powermock.version>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>RaC</utilsAddition>
-		<bukkit.version>1.8-R0.1-SNAPSHOT</bukkit.version>
 	</properties>
 
 	<!-- Repos -->
 	<repositories>
+	    <!-- Spigot repo -->
 		<repository>
 			<id>org.bukkit</id>
-			<url>http://repo.bukkit.org/content/groups/public</url>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 
 		<!-- Heroes repo -->
@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>${bukkit.version}</version>
+			<version>1.8-R0.1-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 		
