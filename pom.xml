@@ -50,12 +50,12 @@
 		</repository>
 
 		<!-- Own repo -->
+		<!--
 		<repository>
 			<id>tobiyas-repo</id>
-			<!-- <url>http://repository-tobiyas.forge.cloudbees.com/snapshot/</url>-->
 			<url>http://mc.minerim.de:4242/plugin/repository/everything/</url>
 		</repository>
-
+		-->
 		<!-- SK Repo -->
 		<repository>
 			<id>sk89q</id>
