@@ -50,12 +50,11 @@
 		</repository>
 
 		<!-- Own repo -->
-		<!--
 		<repository>
-			<id>tobiyas-repo</id>
-			<url>http://mc.minerim.de:4242/plugin/repository/everything/</url>
+			<id>tobiyas-own-repo</id>
+			<url>http://tobiyas.dlinkddns.com/maven/</url>
 		</repository>
-		-->
+		
 		<!-- SK Repo -->
 		<repository>
 			<id>sk89q</id>

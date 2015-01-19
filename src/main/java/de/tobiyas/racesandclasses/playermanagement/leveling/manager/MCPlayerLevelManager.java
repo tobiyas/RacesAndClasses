@@ -117,6 +117,9 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void save() {
+		//we can't save offline players.
+		if(!player.isOnline() || getRealPlayer() == null) return;
+		
 		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 		if(!config.getValidLoad()){
 			return;
@@ -129,6 +132,9 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 
 	@Override
 	public void saveTo(PlayerSavingContainer container) {
+		//we can't save offline players.
+		if(!player.isOnline()) return;
+		
 		Player player = getRealPlayer();
 		
 		container.setPlayerLevel(player.getLevel());
