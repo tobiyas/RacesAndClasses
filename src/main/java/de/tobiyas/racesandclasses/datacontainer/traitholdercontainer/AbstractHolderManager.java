@@ -386,7 +386,9 @@ public abstract class AbstractHolderManager extends Observable{
 		if(holderName == null) return getDefaultHolder();
 		
 		for(AbstractTraitHolder holder : traitHolderList){
-			if(holder.getDisplayName().equalsIgnoreCase(holderName)){
+			if(holder.getDisplayName().equalsIgnoreCase(holderName)
+					|| holder.getConfigNodeName().equals(holderName)){
+				
 				return holder;
 			}
 		}

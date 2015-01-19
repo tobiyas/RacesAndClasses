@@ -52,7 +52,7 @@
 		<!-- Own repo -->
 		<repository>
 			<id>tobiyas-own-repo</id>
-			<url>http://tobiyas.dlinkddns.com/maven/</url>
+			<url>http://tobiyas.dlinkddns.com/maven</url>
 		</repository>
 		
 		<!-- SK Repo -->
