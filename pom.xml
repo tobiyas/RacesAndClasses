@@ -54,6 +54,12 @@
 			<id>tobiyas-own-repo</id>
 			<url>http://tobiyas.dlinkddns.com/maven</url>
 		</repository>
+
+		<!-- temp repo. Not always online. -->
+		<repository>
+			<id>tobiyas-own-repo2</id>
+			<url>http://tobiyas.dlinkddns.com:13337/plugin/repository/everything</url>
+		</repository>
 		
 		<!-- SK Repo -->
 		<repository>
