@@ -39,6 +39,7 @@ public class RaceManager extends AbstractHolderManager {
 
 	public RaceManager() {
 		super(Consts.racesYML, "races");
+		new RaceReminder();
 	}
 
 	@Override
@@ -47,16 +48,11 @@ public class RaceManager extends AbstractHolderManager {
 		super.init();
 
 		checkForPossiblyWrongInitialized();
-		new RaceReminder();
 
 		plugin.getTutorialManager().registerObserver(this);
 		this.setChanged();
 	}
 
-	@Override
-	protected void readMemberList() {
-		super.readMemberList();
-	}
 
 	/**
 	 * This is needed to check if players are online on reloads or inits.

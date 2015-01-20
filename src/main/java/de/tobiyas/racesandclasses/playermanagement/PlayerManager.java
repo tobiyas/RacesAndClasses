@@ -66,6 +66,7 @@ public class PlayerManager{
 	 * Loads the health manager from the playerdata.yml
 	 */
 	public void init(){
+		playerData.clear();
 		loadPlayerContainer();
 	}
 	

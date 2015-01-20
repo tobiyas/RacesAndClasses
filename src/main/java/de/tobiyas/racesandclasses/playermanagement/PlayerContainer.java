@@ -160,8 +160,6 @@ public class PlayerContainer {
 			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			config.set("hasGod", hasGod);
 			levelManager.save();
-			
-			levelManager.save();
 			return true;			
 		}
 		

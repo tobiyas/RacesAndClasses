@@ -177,7 +177,7 @@ public class HotKeyInventory {
 				
 				int maxCD = res.getMaxUplinkTime();
 				if(maxCD > 0){
-					String cooldownName = "trait." + trait.getDisplayName();
+					String cooldownName = ((TraitWithRestrictions) trait).getCooldownName();
 					int cd = CooldownApi.getCooldownOfPlayer(player.getName(), cooldownName);
 					
 					if(cd >= 0){

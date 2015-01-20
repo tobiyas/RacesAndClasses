@@ -50,10 +50,7 @@ public class CommandExecutor_RacesReload extends AbstractCommand {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.reload)) return true;
 		
 		long timeTaken = 0;
-		if(args.length == 1){
-			timeTaken = plugin.fullReload(true, args[0].contains("gc"));
-		}else
-			timeTaken = plugin.fullReload(true, false);
+		timeTaken = plugin.fullReload(true, args.length >= 1 && args[0].contains("gc"));
 		
 		plugin.getDebugLogger().log("[RaC] Reload called by: " + sender.getName() + " took: " + timeTaken + " ms.");
 		
