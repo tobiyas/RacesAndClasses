@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui;
 
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -152,7 +153,7 @@ public class HolderInventory extends InventoryView{
 			if(holder.getArmorPerms().size() > 0){
 				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
 			}else{
-				lore.add(ChatColor.LIGHT_PURPLE + "NONE");
+				lore.add(ChatColor.LIGHT_PURPLE + "ANY");
 			}
 			
 			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
@@ -187,6 +188,11 @@ public class HolderInventory extends InventoryView{
 		}
 	}
 
+	/**
+	 * The Decimal formatter to use.
+	 */
+	private final DecimalFormat format = new DecimalFormat("0.0");
+	
 	
 	/**
 	 * Returns a health String depending on the ContainerType
@@ -197,7 +203,7 @@ public class HolderInventory extends InventoryView{
 	private String getHealthString(AbstractTraitHolder holder) {
 		if(holder instanceof ClassContainer){
 			ClassContainer container = (ClassContainer) holder;
-			return container.getClassHealthModify();
+			return container.getClassHealthModify() + format.format(container.getClassHealthModValue());
 		}
 		
 		if(holder instanceof RaceContainer){
@@ -205,7 +211,7 @@ public class HolderInventory extends InventoryView{
 			return String.valueOf(container.getRaceMaxHealth());
 		}
 		
-		return null;
+		return "";
 	}
 
 

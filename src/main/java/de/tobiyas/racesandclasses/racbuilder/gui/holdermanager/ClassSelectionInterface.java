@@ -22,7 +22,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHol
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.racbuilder.ClassBuilder;
+import de.tobiyas.racesandclasses.racbuilder.ClassHolderBuilder;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 
 public class ClassSelectionInterface extends HolderSelectionInterface {
@@ -36,13 +36,13 @@ public class ClassSelectionInterface extends HolderSelectionInterface {
 
 	@Override
 	protected AbstractHolderBuilder generateNewHolderBuilder(String name) {
-		return new ClassBuilder(name);
+		return new ClassHolderBuilder(name);
 	}
 
 	@Override
 	protected AbstractHolderBuilder generateHolderBuilderFor(
 			AbstractTraitHolder holder) {
-		return new ClassBuilder((ClassContainer) holder);
+		return new ClassHolderBuilder((ClassContainer) holder);
 	}
 
 }

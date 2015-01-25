@@ -17,8 +17,6 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 
 import java.util.HashSet;
 
-import org.bukkit.ChatColor;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
@@ -59,15 +57,12 @@ public class RaceContainer extends AbstractTraitHolder{
 	
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
+		super.readConfigSection();
+		
 		try{
-			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
-			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
-			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.racetag", "[" + configNodeName + "]"));
 			this.raceMaxHealth = config.getDouble(configNodeName + ".config.raceMaxHealth", RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_defaultHealth());
 			this.raceChatColor = config.getString(configNodeName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
 			this.raceChatFormat = config.getString(configNodeName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
-			
-			readArmor();
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}

@@ -40,13 +40,30 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public abstract class AbstractHolderManager extends Observable{
 
+	/**
+	 * The Map of Members Member -> Container.
+	 */
 	protected Map<RaCPlayer, AbstractTraitHolder> memberList;
+	
+	/**
+	 * The Set of all Known Trait Holders.
+	 */
 	protected Set<AbstractTraitHolder> traitHolderList;
 	
+	/**
+	 * The old file to convert from.
+	 */
 	protected final File oldFile;
+	
+	/**
+	 * The Folder for the Holder (lol it ryms :D)
+	 */
 	protected final File folder;
 	
-	protected RacesAndClasses plugin;
+	/**
+	 * The plugin to use.
+	 */
+	protected final RacesAndClasses plugin;
 	
 	
 	/**
@@ -203,7 +220,7 @@ public abstract class AbstractHolderManager extends Observable{
 				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
 				memberList.put(player, getHolderByName(holderName));
 			}
-		}			
+		}
 	}
 	
 	/**

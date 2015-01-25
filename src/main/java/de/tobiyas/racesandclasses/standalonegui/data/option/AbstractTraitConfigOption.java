@@ -1,8 +1,13 @@
 package de.tobiyas.racesandclasses.standalonegui.data.option;
 
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 public abstract class AbstractTraitConfigOption implements TraitConfigOption {
@@ -28,6 +33,11 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 	 */
 	protected final boolean optional;
 	
+	/**
+	 * If the Value is created.
+	 */
+	protected boolean created = false;
+	
 	
 	public AbstractTraitConfigOption(OptionType type, String name, boolean optional) {
 		this.optionType = type;
@@ -40,6 +50,18 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 	public boolean isOptional() {
 		return optional;
 	}
+	
+	
+	@Override
+	public boolean isCreated(){
+		return created;
+	}
+	
+	@Override
+	public void setCreated(boolean created){
+		this.created = created;
+	}
+	
 	
 	
 	@Override
@@ -75,7 +97,7 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 		
 		return this;
 	}
-
+	
 	
 	@Override
 	public boolean isAcceptable(String value) {
@@ -86,5 +108,56 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 		return false;
 	}
 	
+	
+	/**
+	 * Adds idividual Panels to the Panel.
+	 * 
+	 * @param panel to add to 
+	 */
+	public abstract void addWithConfigOption(JPanel panel);
 
+	
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+	
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof AbstractTraitConfigOption)) return false;
+		
+		return name.equals(((AbstractTraitConfigOption)other).name);
+	}
+	
+	
+	/**
+	 * Generates an empty pane with only the Header.
+	 * @return
+	 */
+	protected JPanel generateEmptyRightPanel(){
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new GridLayout(10,1));
+		
+		JLabel header = new JLabel("Option: " + name);
+		header.setHorizontalAlignment(JLabel.CENTER);
+		header.setFont(new Font(header.getFont().getFontName(), Font.BOLD, header.getFont().getSize()));
+		
+		mainPanel.add(header);
+		return mainPanel;
+	}
+	
+	
+	@Override
+	public void reset() {
+		this.created = false;
+	}
+
+	
+	@Override
+	public int compareTo(TraitConfigOption other) {
+		return name.compareTo(other.getName());
+	}
+	
 }

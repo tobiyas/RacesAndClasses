@@ -2,7 +2,7 @@ package de.tobiyas.racesandclasses.standalonegui.data.option;
 
 import java.util.Set;
 
-public interface TraitConfigOption {
+public interface TraitConfigOption extends Comparable<TraitConfigOption> {
 	
 	
 	/**
@@ -82,6 +82,27 @@ public interface TraitConfigOption {
 	 * @return the current Selection.
 	 */
 	public String getCurrentSelection();
+
+
+	/**
+	 * If the Value is created or not.
+	 * 
+	 * @return true if created
+	 */
+	public boolean isCreated();
+
+
+	/**
+	 * Sets the value to created.
+	 * 
+	 * @param created if it is created.
+	 */
+	public void setCreated(boolean created);
+	
+	/**
+	 * Notifies that the value should be resettet.
+	 */
+	public void reset();
 
 	
 }

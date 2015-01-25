@@ -4,8 +4,15 @@ package de.tobiyas.racesandclasses.standalonegui.data.option;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigBiomeOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigBooleanOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigDoubleOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigIntOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigMaterialOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigOperatorOption;
+import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigStringOption;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
-import de.tobiyas.racesandclasses.standalonegui.data.option.specific.*;
+import de.tobiyas.racesandclasses.traitcontainer.traits.passive.Operator;
 
 
 public class ConfigOptionFactory {
@@ -31,7 +38,9 @@ public class ConfigOptionFactory {
 		if(clazz == Boolean.class) return new TraitConfigBooleanOption(name, optional);
 		if(clazz == Biome.class) return new TraitConfigBiomeOption(name, optional);
 		if(clazz == Material.class) return new TraitConfigMaterialOption(name, optional);
-
+		if(clazz == Operator.class) return new TraitConfigOperatorOption(name, optional);
+		
+		System.out.println("Could not serialize class: " + clazz.getCanonicalName());
 		return null;
 	}
 	

@@ -29,17 +29,30 @@ public class Kit {
 		this.kitName = kitName;
 	}
 
-
+	/**
+	 * All items in the Kit.
+	 * 
+	 * @return All items in the kit. NO COPY.
+	 */
 	public Set<ItemStack> getItems() {
 		return items;
 	}
 
 
+	/**
+	 * The Cooldown of the Kit.
+	 * 
+	 * @return The Cooldown of the Kit.
+	 */
 	public int getCooldown() {
 		return cooldown;
 	}
 
-
+	/**
+	 * The Name of the Kit.
+	 * 
+	 * @return Kit name.
+	 */
 	public String getKitName() {
 		return kitName;
 	}

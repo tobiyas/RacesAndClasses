@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -102,6 +103,12 @@ public abstract class AbstractTraitHolder {
 	protected String holderDescription = null;
 	
 	/**
+	 * The Pre holder needed.
+	 * <br>If null no preHolder needed.
+	 */
+	protected String needsPreHolder = null;
+	
+	/**
 	 * The parents of this holders.
 	 */
 	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
@@ -145,6 +152,7 @@ public abstract class AbstractTraitHolder {
 	 */
 	public AbstractTraitHolder load() throws HolderParsingException{
 		readConfigSection();
+		readArmor();
 		readTraitSection();
 		readPermissionSection();
 		readAdditionalWandMaterial();
@@ -262,7 +270,15 @@ public abstract class AbstractTraitHolder {
 	 * 
 	 * @throws HolderConfigParseException if the parsing failed.
 	 */
-	protected abstract void readConfigSection() throws HolderConfigParseException;
+	protected void readConfigSection() throws HolderConfigParseException{
+		try{
+			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
+			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
+			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.tag", "[" + configNodeName + "]"));
+		}catch(Exception exp){
+			throw new HolderConfigParseException();
+		}
+	}
 	
 	
 	/**

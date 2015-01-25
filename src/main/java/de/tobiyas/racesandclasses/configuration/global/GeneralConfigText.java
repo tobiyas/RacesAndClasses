@@ -562,7 +562,7 @@ public class GeneralConfigText {
 				+ "# The Value is in Minutes \n"
 				+ "# integer: value without comma \n"
 				+ "# default: 10 \n"
-				+ races_remindDefaultRace_interval + ": true\n\n"
+				+ races_remindDefaultRace_interval + ": 10\n\n"
 				
 				+ "# Tells the plugin to replace the Name of the Player with a prefix of the race in the 'TAB' player list. \n"
 				+ "# boolean: true or false \n"

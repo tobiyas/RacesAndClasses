@@ -4,8 +4,7 @@ import java.awt.GraphicsEnvironment;
 
 import javax.swing.JOptionPane;
 
-import de.tobiyas.racesandclasses.standalonegui.gui.MainGui;
-import de.tobiyas.racesandclasses.standalonegui.gui.TreeView;
+import de.tobiyas.racesandclasses.standalonegui.gui.MainFrame;
 
 public class StandaloneGuiMain {
 
@@ -16,11 +15,7 @@ public class StandaloneGuiMain {
 		
 		JOptionPane.showMessageDialog(null, "There will be a GUI here soon...");
 		
-		MainGui main = new MainGui();
-		new TreeView(main.getFrame());
-		TreeView.redraw();
-		
-		main.repack();
+		new MainFrame();
 	}
 
 }

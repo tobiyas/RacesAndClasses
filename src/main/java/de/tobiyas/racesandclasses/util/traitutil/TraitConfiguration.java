@@ -154,9 +154,20 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 					|| stringParticle == null){
 				return null;
 			}else{
-				ParticleEffects realParticle = ParticleEffects.FIREWORKS_SPARK;
-				try{ realParticle = ParticleEffects.valueOf(stringParticle.toUpperCase()); }catch(Throwable exp){}
+				ParticleEffects realParticle = null;
+				try{
+					for(ParticleEffects effect : ParticleEffects.values()){
+						if(effect.asMirror() != null 
+								&& effect.asMirror().getPacketArg().equals(stringParticle)) {
+							
+							realParticle = effect;
+						}
+					}
+					
+					if(realParticle == null) realParticle = ParticleEffects.valueOf(stringParticle.toUpperCase()); 
+				}catch(Throwable exp){}
 				
+				if(realParticle == null) realParticle = ParticleEffects.FIREWORKS_SPARK;
 				return realParticle;
 			}
 		}

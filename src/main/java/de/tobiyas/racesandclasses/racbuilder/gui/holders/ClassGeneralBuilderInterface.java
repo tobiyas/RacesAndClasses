@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.racbuilder.AbstractHolderBuilder;
-import de.tobiyas.racesandclasses.racbuilder.ClassBuilder;
+import de.tobiyas.racesandclasses.racbuilder.ClassHolderBuilder;
 import de.tobiyas.racesandclasses.util.items.ItemMetaUtils;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.inventorymenu.stats.OperatorSelectionInterface;
@@ -52,7 +52,7 @@ public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface 
 	protected void rebuildFromBuilder() {
 		super.rebuildFromBuilder();
 		
-		ClassBuilder classBuilder = (ClassBuilder) builder;
+		ClassHolderBuilder classBuilder = (ClassHolderBuilder) builder;
 		String operation = classBuilder.getHealthOperation();
 		ItemMetaUtils.replaceLoreWith(healthOperationSelector, "Value: " + operation);
 	}
@@ -81,7 +81,7 @@ public class ClassGeneralBuilderInterface extends HolderGeneralBuilderInterface 
 	private void editHealthOperation(){
 		this.currentModifiedValue = HEALTH_OPERATOR_PATH;
 		
-		ClassBuilder classBuilder = (ClassBuilder) builder;
+		ClassHolderBuilder classBuilder = (ClassHolderBuilder) builder;
 		this.callbackMap.put(currentModifiedValue, classBuilder.getHealthOperation());
 		
 		openNewView(new OperatorSelectionInterface(player, this, callbackMap, currentModifiedValue, plugin));

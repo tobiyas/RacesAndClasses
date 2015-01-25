@@ -9,74 +9,51 @@ import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import org.bukkit.Material;
-
 import de.tobiyas.racesandclasses.standalonegui.data.option.AbstractTraitConfigOption;
 import de.tobiyas.racesandclasses.standalonegui.data.option.OptionType;
 import de.tobiyas.racesandclasses.standalonegui.gui.MainFrame;
 
-public class TraitConfigMaterialOption extends AbstractTraitConfigOption {
+public class TraitConfigOperatorOption extends AbstractTraitConfigOption {
 
 	/**
 	 * The Value to set.
 	 */
-	private Material mat = Material.AIR;
+	private String value = "*";
 	
 	
-	public TraitConfigMaterialOption(String name, boolean optional) {
-		super(OptionType.Material, name, optional);
+	
+	public TraitConfigOperatorOption(String name, boolean optoinal) {
+		super(OptionType.Operator, name, optoinal);
 		
-		this.options.clear();
-		for(Material mat : Material.values()){
-			this.options.add(mat.name());
-		}
-	}
-
-	
-	public TraitConfigMaterialOption(String name, boolean optional, Material value) {
-		this(name, optional);
-		
-		this.mat = value;
+		this.setOptions(new String[]{"+", "-", "*", "/"});
 	}
 	
-
 	
 	@Override
 	public void valueSelected(String value) {
-		try{
-			this.mat = Material.matchMaterial(value.toUpperCase());
-		}catch(Throwable exp){}
+		if(isAcceptable(value)) this.value = value;
 	}
 
 	@Override
 	public String getCurrentSelection() {
-		return mat.name();
+		return value;
 	}
 
-
-	@Override
-	public String toString() {
-		return name + ": " + mat.name();
-	}
-	
-	@Override
-	public void reset() {
-		super.reset();
-		this.mat = null;
-	}
-	
 	@Override
 	public void addWithConfigOption(JPanel panel) {
 		JPanel mainPanel = generateEmptyRightPanel();
 		
         
-		Vector<String> mats = new Vector<String>();
-		for(Material mat : Material.values()) mats.add(mat.name());
+		Vector<String> selections = new Vector<String>();
+		selections.add("+");
+		selections.add("-");
+		selections.add("*");
+		selections.add("/");
 		
-		Collections.sort(mats);
-		JComboBox<String> combo = new JComboBox<String>(mats);
+		Collections.sort(selections);
+		JComboBox<String> combo = new JComboBox<String>(selections);
 		combo.setAlignmentX(0.5f);
-		if(mat != null) combo.setSelectedItem(mat.name());
+		if(value != null) combo.setSelectedItem(value);
 		
 		combo.addItemListener(new ItemListener() {
 			
@@ -86,8 +63,7 @@ public class TraitConfigMaterialOption extends AbstractTraitConfigOption {
 				if(e.getItem() == null) return;
 				
 				String item = e.getItem().toString();
-				Material mat = Material.valueOf(item);
-				TraitConfigMaterialOption.this.mat = mat;
+				valueSelected(item);
 				MainFrame.treeUpdated();
 			}
 		});
@@ -95,5 +71,5 @@ public class TraitConfigMaterialOption extends AbstractTraitConfigOption {
 		mainPanel.add(combo);
 		panel.add(mainPanel, BorderLayout.CENTER);
 	}
-	
+
 }

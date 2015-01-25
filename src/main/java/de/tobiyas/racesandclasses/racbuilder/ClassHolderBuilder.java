@@ -20,12 +20,12 @@ import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.racbuilder.container.BuildedClassContainer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class ClassBuilder extends AbstractHolderBuilder {
+public class ClassHolderBuilder extends AbstractHolderBuilder {
 
 	/**
 	 * The Operator for Class Health modification
 	 */
-	protected String healthOperation;
+	//protected String healthOperation;
 	
 	/**
 	 * Generates the Class Builder with the passed Name.
@@ -33,10 +33,10 @@ public class ClassBuilder extends AbstractHolderBuilder {
 	 * 
 	 * @param name to build with
 	 */
-	public ClassBuilder(String name) {
+	public ClassHolderBuilder(String name) {
 		super(name);
 		
-		this.healthOperation = "+";
+		//this.healthOperation = "+";
 		this.health = 0;
 	}
 
@@ -46,10 +46,10 @@ public class ClassBuilder extends AbstractHolderBuilder {
 	 * 
 	 * @param classContainer
 	 */
-	public ClassBuilder(ClassContainer classContainer) {
+	public ClassHolderBuilder(ClassContainer classContainer) {
 		super(classContainer);
 		
-		this.healthOperation = classContainer.getClassHealthModify();
+		//this.healthOperation = classContainer.getClassHealthModify();
 		this.health = classContainer.getClassHealthModValue();
 	}
 
@@ -66,7 +66,7 @@ public class ClassBuilder extends AbstractHolderBuilder {
 			return false;
 		}
 		
-		if(healthOperation.equalsIgnoreCase("*")){
+		/*if(healthOperation.equalsIgnoreCase("*")){
 			this.healthOperation = healthOperation;
 			return true;
 		}
@@ -79,7 +79,7 @@ public class ClassBuilder extends AbstractHolderBuilder {
 		if(healthOperation.equalsIgnoreCase("+")){
 			this.healthOperation = healthOperation;
 			return true;
-		}
+		}*/
 		
 		return false;
 	}
@@ -92,7 +92,7 @@ public class ClassBuilder extends AbstractHolderBuilder {
 	 * @return the build container
 	 */
 	public ClassContainer build(){
-		return new BuildedClassContainer(this.name, this.holderTag, this.armorPermission, this.traitSet, this.permissionList, this.healthOperation, this.health);
+		return new BuildedClassContainer(this.name, this.holderTag, this.armorPermission, this.traitSet, this.permissionList, /*this.healthOperation*/"+", this.health);
 	}
 
 
@@ -105,12 +105,13 @@ public class ClassBuilder extends AbstractHolderBuilder {
 	@Override
 	protected void saveFurtherToFile(YAMLConfigExtended config) {
 		config.set(name + ".config.classtag", holderTag);
-		config.set(name + ".config.health", healthOperation + health);
+		//config.set(name + ".config.health", healthOperation + health);
 	}
 
 
 	public String getHealthOperation() {
-		return healthOperation;
+		return "+";
+		//return healthOperation;
 	}
 	
 }

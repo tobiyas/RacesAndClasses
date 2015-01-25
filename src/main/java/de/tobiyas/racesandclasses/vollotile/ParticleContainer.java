@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.vollotile;
 
 import org.bukkit.util.Vector;
 
+
 public class ParticleContainer {
 
 	private final ParticleEffects effect;
@@ -58,7 +59,17 @@ public class ParticleContainer {
 	public static ParticleContainer generate(String toParse){
 		String[] split = toParse.split("#");
 		try{
-			ParticleEffects effect = ParticleEffects.valueOf(split[0]);
+			String particleEffectName = split[0];
+			
+			for(de.tobiyas.util.vollotile.ParticleEffects effect2 : de.tobiyas.util.vollotile.ParticleEffects.values()){
+				if(effect2.getPacketArg().equalsIgnoreCase(particleEffectName)){
+					particleEffectName = effect2.name();
+					break;
+				}
+			}
+			
+			de.tobiyas.racesandclasses.vollotile.ParticleEffects effect = de.tobiyas.racesandclasses.vollotile.ParticleEffects.FIREWORKS_SPARK;
+			if(effect == null) ParticleEffects.valueOf(split[0]);
 			int amount = effect.asBukkit() != null ? 1 : 30;
 			try{ amount = Integer.parseInt(split[1]); }catch(Throwable exp){}
 

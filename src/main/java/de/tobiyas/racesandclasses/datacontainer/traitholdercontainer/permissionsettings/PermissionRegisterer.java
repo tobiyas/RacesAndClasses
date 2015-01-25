@@ -163,6 +163,7 @@ public class PermissionRegisterer implements Runnable{
 	/**
 	 * Adds the people to the corresponding groups
 	 */
+	@SuppressWarnings("deprecation")
 	private void giveMembersAccessToGroups() {
 		if(memberList == null || memberList.isEmpty()) return;
 		

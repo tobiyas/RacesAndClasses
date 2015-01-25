@@ -1,7 +1,15 @@
 package de.tobiyas.racesandclasses.standalonegui.data.option.specific;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import de.tobiyas.racesandclasses.standalonegui.data.option.AbstractTraitConfigOption;
 import de.tobiyas.racesandclasses.standalonegui.data.option.OptionType;
+import de.tobiyas.racesandclasses.standalonegui.gui.MainFrame;
 
 public class TraitConfigBooleanOption extends AbstractTraitConfigOption {
 
@@ -49,6 +57,33 @@ public class TraitConfigBooleanOption extends AbstractTraitConfigOption {
 	@Override
 	public String toString() {
 		return name + ": " + value;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		this.value = false;
+	}
+
+	@Override
+	public void addWithConfigOption(JPanel panel) {
+		JPanel mainPanel = generateEmptyRightPanel();
+		
+		JCheckBox check = new JCheckBox(name);
+		check.setSelected(value);
+		check.setHorizontalAlignment(JCheckBox.CENTER);
+		check.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JCheckBox checkBox = (JCheckBox) e.getSource();
+				value = checkBox.isSelected();
+				MainFrame.treeUpdated();
+			}
+		});
+		
+		mainPanel.add(check);
+		panel.add(mainPanel, BorderLayout.CENTER);
 	}
 	
 

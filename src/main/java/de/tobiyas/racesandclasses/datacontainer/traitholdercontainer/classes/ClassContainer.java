@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes;
 
-import org.bukkit.ChatColor;
-
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
@@ -57,13 +55,10 @@ public class ClassContainer extends AbstractTraitHolder{
 	
 	@Override
 	protected void readConfigSection() throws HolderConfigParseException{
+		super.readConfigSection();
+		
 		try{
-			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
-			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
-			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.classtag", "[" + configNodeName + "]"));
 			this.classHealthModValue = evaluateValue(config.getString(configNodeName + ".config.health", "+0"));
-			
-			readArmor();
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}

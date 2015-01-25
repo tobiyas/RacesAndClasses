@@ -19,27 +19,46 @@ import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.bukkit.Bukkit;
-
 import de.tobiyas.racesandclasses.standalonegui.data.option.TraitConfigOption;
 import de.tobiyas.racesandclasses.standalonegui.data.option.TraitGuiConfigParser;
-import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_6;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedMC1_7;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.NeedsOtherPlugins;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.util.collections.CaseInsenesitveMap;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.file.FileUtils;
 
 public class GuiLoader {
 
+	//TODO remove this later.
+	//It's just to not load it all the time!
+	static{
+		File ownMCRoot = new File("D:\\Dropbox\\MinecraftLIGHT");
+		File ownBukkit = new File(ownMCRoot, "spigot.jar");
+		File ownRaC = new File(new File(ownMCRoot, "plugins"), "RacesAndClasses");
+		
+		if(ownBukkit.exists()) lastSelectedBukkitFile = ownBukkit;
+		if(ownRaC.exists()) lastSelectedBaseFile = ownRaC;
+ 	}
+	
 	/**
 	 * The Base file to use.
 	 */
 	private static File baseFile;
+	
+	/**
+	 * The Base file to use.
+	 */
+	private static File lastSelectedBaseFile;
+	
+	/**
+	 * The Bukkit file to reopen.
+	 */
+	private static File lastSelectedBukkitFile;
+	
+	/**
+	 * The Path to CB / bukkit / Spigot.
+	 */
+	private static ClassLoader bukkitLoader;
 	
 	
 	/**
@@ -82,12 +101,94 @@ public class GuiLoader {
 	}
 	
 	
+	public static void removeRace(GuiRace race){
+		races.remove(race);
+	}
+	
+
+	public static void addRace(GuiRace race){
+		races.add(race);
+	}
+	
+
+	public static void removeClass(GuiClass clazz){
+		classes.remove(clazz);
+	}
+	
+	public static void addClass(GuiClass clazz){
+		classes.add(clazz);
+	}
+	
+	
 	
 	/**
 	 * Opens an Dir-Selection.
 	 */
 	public static void openBaseFileSelection(){
+		//select Bukkit / CB / Spigot file.
+		if(bukkitLoader == null){
+			JOptionPane.showMessageDialog(null, "Select a CraftBukkit / Spigot distribution.");
+			
+			JFileChooser fileChooser = new JFileChooser();
+			if(lastSelectedBukkitFile != null) fileChooser.setSelectedFile(lastSelectedBukkitFile);
+			//only allow .jar files.
+			fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+				
+				@Override
+				public String getDescription() {
+					return "jar";
+				}
+				
+				@Override
+				public boolean accept(File f) {
+					if(f.isDirectory()) return true;
+					
+					return f.getName().endsWith(".jar");
+				}
+			});
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileChooser.setDialogTitle("Select a CraftBukkit / Spigot distribution");
+			
+			int result = fileChooser.showOpenDialog(null);
+			
+			//check if abort or exit.
+			if(result == JFileChooser.CANCEL_OPTION) return;
+			if(result == JFileChooser.ERROR_OPTION) return;
+
+			if(result == JFileChooser.APPROVE_OPTION) {
+				File selected = fileChooser.getSelectedFile();
+				lastSelectedBukkitFile = selected;
+				if(selected == null || !selected.getName().endsWith(".jar")){
+					JOptionPane.showMessageDialog(null, "You need to select a CraftBukkit / Spigot distribution.");
+					return;
+				}
+				
+				try{
+					ClassLoader loader = URLClassLoader.newInstance(
+					    new URL[] { selected.toURI().toURL() },
+					    GuiLoader.class.getClassLoader()
+					);
+					Class<?> clazz = Class.forName("org.bukkit.Bukkit", true, loader);
+					if(clazz == null) {
+						JOptionPane.showMessageDialog(null, "Could not load the File you selected.");
+						return;
+					}
+					
+					bukkitLoader = loader;
+				}catch(Throwable exp){
+					exp.printStackTrace();
+					JOptionPane.showMessageDialog(null, "You need to select a CraftBukkit / Spigot distribution.");
+					return;
+				}
+			}
+		}
+		
+		
+		//select RaC Folder.
+		JOptionPane.showMessageDialog(null, "Select your RacesAndClasses folder.");
 		JFileChooser fileChooser = new JFileChooser();
+		if(lastSelectedBaseFile != null) fileChooser.setSelectedFile(lastSelectedBaseFile);
+		fileChooser.setDialogTitle("Select your RacesAndClasses Folder");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		int result = fileChooser.showOpenDialog(null);
@@ -96,13 +197,15 @@ public class GuiLoader {
 		if(result == JFileChooser.CANCEL_OPTION) return;
 		if(result == JFileChooser.ERROR_OPTION) return;
 
-		if(result == JFileChooser.APPROVE_OPTION) {			
-			if(!baseFile.getName().equalsIgnoreCase("RacesAndClasses")){
+		if(result == JFileChooser.APPROVE_OPTION) {
+			File selected = fileChooser.getSelectedFile();
+			lastSelectedBaseFile = selected;
+			if(selected == null || !selected.getName().equalsIgnoreCase("RacesAndClasses")){
 				JOptionPane.showMessageDialog(null, "The folder has to be 'RacesAndClasses' base directory.");
 				return;
 			}
 			
-			baseFile = fileChooser.getSelectedFile();
+			baseFile = selected;
 			reloadEverything();
 		};
 		
@@ -126,20 +229,26 @@ public class GuiLoader {
 		Set<YAMLConfigExtended> racesConfigs = new HashSet<YAMLConfigExtended>();
 		for(File raceFile : racesDir.listFiles()){
 			if(!raceFile.getName().endsWith(".yml")) continue;
-			racesConfigs.add(new YAMLConfigExtended(raceFile));
+			racesConfigs.add(new YAMLConfigExtended(raceFile).load());
 		}
 		
 		Set<YAMLConfigExtended> classesConfigs = new HashSet<YAMLConfigExtended>();
 		for(File classFile : classesDir.listFiles()){
 			if(!classFile.getName().endsWith(".yml")) continue;
-			classesConfigs.add(new YAMLConfigExtended(classFile));
+			classesConfigs.add(new YAMLConfigExtended(classFile).load());
 		}
 		
 		//do the configs.
 		for(YAMLConfigExtended raceConfig : racesConfigs){
 			for(String root : raceConfig.getRootChildren()){
+				//read ALL the Race.
+				String displayName = raceConfig.getString(root + ".config.name", root);
+				String manaBonus = raceConfig.getString(root + ".config.manabonus", "+0");
+				String tag = raceConfig.getString(root + ".config.tag", "");
+				String armor = raceConfig.getString(root + ".config.armor", "");
+				
 				Set<GuiTrait> loadTraits = loadTraits(raceConfig, root);
-				GuiRace race = new GuiRace(root, loadTraits);
+				GuiRace race = new GuiRace(displayName, root, tag, manaBonus, armor, loadTraits);
 				
 				races.add(race);
 			}
@@ -147,8 +256,13 @@ public class GuiLoader {
 
 		for(YAMLConfigExtended classConfig : classesConfigs){
 			for(String root : classConfig.getRootChildren()){
+				String displayName = classConfig.getString(root + ".config.name", root);
+				String manaBonus = classConfig.getString(root + ".config.manabonus", "+0");
+				String tag = classConfig.getString(root + ".config.tag", "");
+				String armor = classConfig.getString(root + ".config.armor", "");
+				
 				Set<GuiTrait> loadTraits = loadTraits(classConfig, root);
-				GuiClass clazz = new GuiClass(root, loadTraits);
+				GuiClass clazz = new GuiClass(displayName, root, tag, manaBonus, armor, loadTraits);
 				
 				classes.add(clazz);
 			}
@@ -169,7 +283,7 @@ public class GuiLoader {
 		Set<GuiTrait> traits = new HashSet<GuiTrait>();
 		
 		for(String traitName : names){
-			GuiTrait trait = loadTrait(config, name + ".trait", traitName);
+			GuiTrait trait = loadTrait(config, name + ".traits", traitName);
 			if(trait != null) traits.add(trait);
 		}
 		
@@ -199,9 +313,10 @@ public class GuiLoader {
 		if(traitClass == null) return null;
 		
 		GuiTrait trait = TraitGuiConfigParser.generateEmptyConfig(traitClass);
-		for(TraitConfigOption option : trait.getTraitConfiguration()){
+		for(TraitConfigOption option : trait.getTraitConfigurationNeeded()){
 			if(config.contains(path + "." + traitPath + "." + option.getName())){
 				String value = config.get(path + "." + traitPath + "." + option.getName()).toString();
+				option.setCreated(true);
 				option.valueSelected(value);
 			}
 		}
@@ -236,7 +351,7 @@ public class GuiLoader {
 	private static void loadExternalTrait(File file){
 		try{	
 			//old but working: //TODO replace by new Classloader with no leaking of memory
-			URLClassLoader clazzLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, null);
+			URLClassLoader clazzLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, bukkitLoader);
 			
 	        JarFile jarFile = new JarFile(file);
 	        Enumeration<JarEntry> entries = jarFile.entries();
@@ -250,36 +365,6 @@ public class GuiLoader {
 	                	java.lang.Class<?> clazz = clazzLoader.loadClass(element.getName().replaceAll(".class", "").replaceAll("/", "."));
 	                    if(clazz != null){
 	                    	if(Trait.class.isAssignableFrom(clazz)){
-	                    		
-	                    		if(clazz.isAnnotationPresent(NeedMC1_6.class)){
-	                    			if(!CertainVersionChecker.isAbove1_6()){
-	                    				//We need MC > 1.6 But do not have it.
-	                    				continue;	                    				
-	                    			}
-	                    		}
-	                    		
-	                    		if(clazz.isAnnotationPresent(NeedMC1_7.class)){
-	                    			if(!CertainVersionChecker.isAbove1_7()){
-	                    				//We need MC > 1.7 But do not have it.
-	                    				continue;	                    				
-	                    			}
-	                    		}
-	                    		
-	                    		if(clazz.isAnnotationPresent(NeedsOtherPlugins.class)){
-	                    			boolean doBreak = false;
-	                    			for(String pluginName : clazz.getAnnotation(NeedsOtherPlugins.class).neededPlugins()){
-	                    				if(Bukkit.getPluginManager().getPlugin(pluginName) == null) {
-	                    					doBreak = true;
-	                    					break;
-	                    				}
-	                    			}
-	                    			
-	                    			//some depends not found.
-	                    			if(doBreak) continue;
-	                    		}
-	                    		
-	                    		
-	                    		
 	                    		clazzArray.add((java.lang.Class<Trait>) clazz);
 	                    	}
 	                    }
@@ -296,17 +381,13 @@ public class GuiLoader {
 	        for(java.lang.Class<? extends Trait> clazz : clazzArray){
 	        	try{
 					if (clazz != null) {
-						Trait trait = clazz.newInstance();
-				        
-						boolean isPresent = trait.getClass().getMethod("importTrait").isAnnotationPresent(TraitInfos.class);
+						boolean isPresent = clazz.getMethod("importTrait").isAnnotationPresent(TraitInfos.class);
 				        if(isPresent){
-				        	TraitInfos annotation = trait.getClass().getMethod("importTrait").getAnnotation(TraitInfos.class);
-				        	TraitsList.addTraitToList(annotation.traitName(), clazz, annotation.category(), annotation.visible());
-				        	trait.importTrait();
+				        	TraitInfos annotation = clazz.getMethod("importTrait").getAnnotation(TraitInfos.class);
 				        	hasClass = true;
 				        	
 				        	String name = annotation.traitName();
-				        	traitMap.put(name, trait.getClass());
+				        	traitMap.put(name, clazz);
 				        }else{
 				        	throw new AnnotationFormatError("Annotation: Import could not be found for class: " + clazz);
 				        }
@@ -331,6 +412,7 @@ public class GuiLoader {
 		} catch (Throwable e) {
 			String message = "The trait " + file.getName() + " failed to load for an unknown reason.";
 			System.out.println(message);
+			e.printStackTrace();
 		} 
 	}
 	

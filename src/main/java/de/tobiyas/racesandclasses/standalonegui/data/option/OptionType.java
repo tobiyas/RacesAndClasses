@@ -8,6 +8,7 @@ public enum OptionType {
 	Boolean,
 	List,
 	Material,
-	Biome
+	Biome, 
+	Operator
 	
 }

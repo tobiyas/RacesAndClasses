@@ -1,11 +1,12 @@
 package de.tobiyas.racesandclasses.standalonegui.data.option;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.tobiyas.racesandclasses.standalonegui.data.GuiTrait;
-import de.tobiyas.racesandclasses.standalonegui.data.option.ConfigOptionFactory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.RemoveSuperConfigField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
@@ -23,13 +24,14 @@ public class TraitGuiConfigParser {
 	 * @return the parsed Trait.
 	 */
 	public static GuiTrait generateEmptyConfig(Class<? extends de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait> clazz){
-		
 		//first read the needed fields and generate own data.
 		List<TraitConfigurationField> annotationList = TraitConfigParser.getAllTraitConfigFieldsOfTrait(clazz);
 		List<RemoveSuperConfigField> removedFields = TraitConfigParser.getAllTraitRemovedFieldsOfTrait(clazz);
 		Iterator<TraitConfigurationField> it = annotationList.iterator();
 		
-		List<TraitConfigOption> options = new LinkedList<TraitConfigOption>();
+		List<TraitConfigOption> neededOptions = new LinkedList<TraitConfigOption>();
+		List<TraitConfigOption> optionalOptions = new LinkedList<TraitConfigOption>();
+		Set<String> seen = new HashSet<String>();
 		
 		while(it.hasNext()){
 			TraitConfigurationField field = it.next();
@@ -42,7 +44,12 @@ public class TraitGuiConfigParser {
 				}
 			}
 			
-			options.add(ConfigOptionFactory.generateOverride(field, optional));
+			TraitConfigOption option = ConfigOptionFactory.generateOverride(field, optional);
+			if(option == null) continue;
+			if(seen.contains(name)) continue;
+			
+			seen.add(name);
+			if(optional) optionalOptions.add(option); else neededOptions.add(option);
 		}
 		
 		
@@ -63,7 +70,7 @@ public class TraitGuiConfigParser {
 		//now we have the name and the config.
 		//let's build it.
 		
-		GuiTrait trait = new GuiTrait(traitName, options);
+		GuiTrait trait = new GuiTrait(traitName, neededOptions, optionalOptions);
 		return trait;
 	}
 	
