@@ -157,4 +157,12 @@ public interface PlayerLevelManager {
 	 */
 	public void removeLevel(int value);
 
+
+	/**
+	 * Return the max EXP needed for the next Level.
+	 * 
+	 * @return max EXP needed for the next level.
+	 */
+	public int getMaxEXPToNextLevel();
+
 }

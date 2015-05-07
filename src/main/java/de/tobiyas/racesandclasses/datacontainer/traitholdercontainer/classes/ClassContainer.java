@@ -62,6 +62,9 @@ public class ClassContainer extends AbstractTraitHolder{
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}
+		
+		//Backwards compability.
+		this.holderTag = config.getString(configNodeName + ".config.classtag", holderTag);
 	}
 	
 	protected double evaluateValue(String val){

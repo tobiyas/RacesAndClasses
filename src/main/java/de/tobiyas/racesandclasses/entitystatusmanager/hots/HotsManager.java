@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -18,7 +19,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 
 public class HotsManager implements Listener{
 
-	private final Map<LivingEntity,HotContainer> hotContainers = new HashMap<LivingEntity, HotContainer>();
+	private final Map<UUID,HotContainer> hotContainers = new HashMap<UUID, HotContainer>();
 	private final RacesAndClasses plugin;
 	
 	public HotsManager() {
@@ -29,9 +30,9 @@ public class HotsManager implements Listener{
 		Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
 			@Override
 			public void run() {
-				Iterator<Entry<LivingEntity,HotContainer>> it = hotContainers.entrySet().iterator();
+				Iterator<Entry<UUID,HotContainer>> it = hotContainers.entrySet().iterator();
 				while(it.hasNext()){
-					Entry<LivingEntity,HotContainer> entry = it.next();
+					Entry<UUID,HotContainer> entry = it.next();
 					HotContainer container = entry.getValue();
 					if(!container.stillValid()) {
 						it.remove();
@@ -52,8 +53,8 @@ public class HotsManager implements Listener{
 	 * @return
 	 */
 	public HotContainer get(LivingEntity entity){
-		if(!hotContainers.containsKey(entity)) hotContainers.put(entity, new HotContainer(entity));
-		return hotContainers.get(entity);
+		if(!hotContainers.containsKey(entity.getUniqueId())) hotContainers.put(entity.getUniqueId(), new HotContainer(entity));
+		return hotContainers.get(entity.getUniqueId());
 	}
 	
 	
@@ -80,7 +81,7 @@ public class HotsManager implements Listener{
 	
 	@EventHandler
 	public void playerQuit(PlayerQuitEvent event){
-		hotContainers.remove(event.getPlayer());
+		hotContainers.remove(event.getPlayer().getUniqueId());
 	}
 	
 	
@@ -88,6 +89,8 @@ public class HotsManager implements Listener{
 	public void playerDies(PlayerDeathEvent event){
 		HotContainer container = get(event.getEntity());
 		container.reset();
+		
+		hotContainers.remove(event.getEntity().getUniqueId());
 	}
 	
 	

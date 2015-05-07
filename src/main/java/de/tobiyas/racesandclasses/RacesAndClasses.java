@@ -92,6 +92,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerro
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.buffs.BuffManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.debuff.DebuffManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
@@ -194,6 +196,16 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 * The poisonManager of the Plugin
 	 */
 	protected PoisonManager poisonManager;
+	
+	/**
+	 * The Buffmanager to use.
+	 */
+	protected BuffManager buffManager;
+	
+	/**
+	 * The Debuffmanager to use.
+	 */
+	protected DebuffManager debuffManager;
 	
 	/**
 	 * The race Spawn Manager
@@ -322,10 +334,12 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		if(cooldownManager == null) cooldownManager = new CooldownManager();
 		if(stunManager == null) stunManager = new StunManager();
+		if(buffManager == null) buffManager = new BuffManager();
 		if(poisonManager == null) poisonManager = new PoisonManager();
 		if(raceSpawnManager == null) raceSpawnManager = new RaceSpawnManager(this);
 		if(hotkeyManger == null) hotkeyManger = new HotkeyManager();
 		if(inFightManager == null) inFightManager = new InFightManager();
+		if(debuffManager == null) debuffManager = new DebuffManager();
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -387,6 +401,12 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//Poison manager
 		poisonManager.init();
+		
+		//Buff-Manager
+		buffManager.init();
+		
+		//Debuff-Manager
+		debuffManager.init();
 		
 		//race Spawn Manager
 		raceSpawnManager.load();
@@ -595,6 +615,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		stunManager.deinit();
 		poisonManager.deinit();
 		hotkeyManger.shutdown();
+		debuffManager.shutdown();
 		
 
 		if(!Consts.disableBDSupport) {
@@ -763,6 +784,14 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	public InFightManager getInFightManager(){
 		return inFightManager;
+	}
+
+	public BuffManager getBuffManager() {
+		return buffManager;
+	}
+
+	public DebuffManager getDebuffManager() {
+		return debuffManager;
 	}
 	
 }

@@ -62,6 +62,7 @@ public class GeneralConfigFields {
 	//HotKeys
 	public static final String hotkeys_enabled = "hotkeys_enabled";
 	public static final String use_new_traitbind_system = "use_new_traitbind_system";
+	public static final String hotkeys_material = "hotkeys_material";
 	public static final String disabled_hotkey_slots = "disabled_hotkey_slots";
 	
 	//Race-Spawns
@@ -92,11 +93,14 @@ public class GeneralConfigFields {
 	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
 
 	
-	//Magic
+	//Magic/Mana
 	public static final String magic_wandId = "magic_wandId";
 	public static final String magic_manaManagerType = "magic_manaManagerType";
 	public static final String magic_useFoodManaBar = "magic_useFoodManaBar";
 	public static final String magic_outOfFightRegeneration = "magic_outOfFightRegeneration";
+	public static final String magic_sprintingManaCost = "magic_sprintingManaCost";
+	public static final String magic_sprintingManaDrainInterval = "magic_sprintingManaDrainInterval";
+	public static final String magic_manaRefillWhileSprinting = "magic_manaRefillWhileSprinting";
 	
 	
 	//Leveling
@@ -105,6 +109,7 @@ public class GeneralConfigFields {
 	public static final String custom_level_exp_gain = "custom_level_exp_gain";
 	public static final String use_fireworks_on_level_up = "use_fireworks_on_level_up";
 	public static final String use_levelup_message = "use_levelup_message";
+	public static final String level_max_level = "level_max_level";
 	
 	
 	//NPCs

@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 import org.bukkit.Bukkit;
 
 import com.sucy.skill.SkillAPI;
+import com.sucy.skill.api.PlayerSkills;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -190,5 +191,12 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public void removeLevel(int value) {
 		//TODO don't know how... :(
+		getSkillAPI().getPlayer(player.getPlayer()).levelUp(-1);
+	}
+	
+	@Override
+	public int getMaxEXPToNextLevel() {
+		PlayerSkills skills = getSkillAPI().getPlayer(player.getPlayer());
+		return skills.getExp() + skills.getExpToNextLevel();
 	}
 }

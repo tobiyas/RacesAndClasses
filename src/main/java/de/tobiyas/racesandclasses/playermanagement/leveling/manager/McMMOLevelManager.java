@@ -279,4 +279,10 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	@Override
 	public void removeLevel(int value) {
 	}
+
+
+	@Override
+	public int getMaxEXPToNextLevel() {
+		return 1;
+	}
 }

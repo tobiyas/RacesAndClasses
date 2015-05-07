@@ -138,4 +138,10 @@ public class HeroesLevelManager implements PlayerLevelManager {
 	public void removeLevel(int value) {
 	}
 
+
+	@Override
+	public int getMaxEXPToNextLevel() {
+		return 1;
+	}
+
 }

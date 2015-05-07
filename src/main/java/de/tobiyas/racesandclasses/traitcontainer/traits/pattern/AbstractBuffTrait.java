@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.BuffAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
@@ -85,6 +86,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 		
 		player.sendTranslatedMessage(Keys.buff_activated, "buff", this.getDisplayName());
 		buffActivated(player);
+		
 		BukkitTask task = new BukkitRunnable() {
 			int i = 1;
 			@Override
@@ -99,6 +101,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 					if(stillActive) {
 						taskMap.remove(player);						
 						buffTimeouted(player);
+						BuffAPI.removeBuff(player.getUniqueId(), getDisplayName());
 						
 						player.sendTranslatedMessage(Keys.buff_timeout, "buff", AbstractBuffTrait.this.getDisplayName());
 					}
@@ -109,6 +112,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 		}.runTaskTimer(RacesAndClasses.getPlugin(), 1, 20);
 		
 		taskMap.put(player, task);
+		BuffAPI.addBuff(player.getUniqueId(), getDisplayName(), System.currentTimeMillis() + (timeActive * 1000));
 		result.copyFrom(TraitResults.True());
 	}
 	
@@ -148,6 +152,8 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 		player.sendTranslatedMessage(Keys.buff_used, "buff", this.getDisplayName());
 		BukkitTask task = taskMap.remove(player);
 		if(task != null) task.cancel();
+		
+		BuffAPI.removeBuff(player.getUniqueId(), getDisplayName());
 	}
 	
 	

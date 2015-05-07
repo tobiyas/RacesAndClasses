@@ -471,8 +471,13 @@ public abstract class AbstractHolderManager extends Observable{
 		
 		AbstractTraitHolder holder = memberList.get(player);
 		if(holder == null){
-			holder = getStartingHolder();
-			memberList.put(player, holder);
+			loadIfNotExists(player);
+			holder = memberList.get(player);
+			
+			if(holder == null){
+				holder = getStartingHolder();
+				memberList.put(player, holder);
+			}
 		}
 		
 		return holder;
@@ -574,4 +579,5 @@ public abstract class AbstractHolderManager extends Observable{
 	 * This is mostly the word: 'race' or 'class'.
 	 */
 	public abstract String getContainerTypeAsString();
+
 }

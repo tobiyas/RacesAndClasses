@@ -23,82 +23,9 @@
 package de.tobiyas.racesandclasses.configuration.global;
 
 
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_channel_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_disable_channel_join_leave_messages;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_race_encryptForOthers;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.chat_whisper_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_cancleGUIExitWhenNoClassPresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_permissions_usePermissionsForEachClasses;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_takeClassWhenNoClass;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.classes_useRaceClassSelectionMatrix;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.custom_level_exp_gain;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.debug_outputs_errorUpload;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disable_health_modifications;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disabled_hotkey_slots;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.disabled_regions;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.food_enabled;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_armor_disableArmorChecking;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_convert_database_on_startup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_cooldown_on_bow_message;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_cooldown_on_wand_message;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_copyDefaultTraitsOnStartup;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_aliases;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_disable_commands;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_remove_old_data_check_empty;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_remove_old_data_days;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.general_saving_savePlayerDataToDB;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_also_use_leftclick_in_guis;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_disableAllChatBars;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_level_useMCLevelBar;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_disableAllOutputs;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.gui_scoreboard_name;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_bar_inChat_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.health_defaultHealth;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.hotkeys_enabled;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.keep_max_hp_on_disabled_worlds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.language_used;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_mapExpPerLevelCalculationString;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.level_useLevelSystem;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_manaManagerType;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_outOfFightRegeneration;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_useFoodManaBar;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.magic_wandId;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.metrics_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.npc_change_class;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.npc_change_race;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.npc_select_class;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.npc_select_race;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.race_spawn_cooldown;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.race_spawn_when_dead;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.race_spawns_enabled;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.race_teams_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_cancleGUIExitWhenNoRacePresent_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_change_uplinkInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_create_group_for_race;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_name;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_defaultrace_tag;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_display_adaptListName;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_drops_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_gui_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_permissions_usePermissionsForEachRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_remindDefaultRace_interval;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.races_takeRaceWhenNoRace;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.tutorials_enable;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.updater_enableAutoUpdates;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.use_fireworks_on_level_up;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.use_levelup_message;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.use_new_traitbind_system;
-import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.worlds_disableOn;
+import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,6 +45,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManagerType;
+import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.formating.Pair;
 
  
@@ -195,6 +123,10 @@ import de.tobiyas.util.formating.Pair;
 	private String config_defaultRaceName;
 	private String config_defaultRaceTag;
 	
+	private double config_magic_sprintingManaCost;
+	private int config_magic_sprintingManaDrainInterval;
+	private boolean config_magic_manaRefillWhileSprinting;
+	
 	private Material config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
@@ -221,9 +153,12 @@ import de.tobiyas.util.formating.Pair;
 	
 	private int config_cooldown_on_bow_message;
 	private int config_cooldown_on_wand_message;
+	private int config_max_level;
 
 	private List<String> config_general_disable_aliases;
 	private boolean config_gui_level_useMCLevelBar;
+	
+	private Material config_hotkeys_material;
 
 	private int config_general_remove_old_data_days;
 	private boolean config_general_remove_old_data_check_empty;
@@ -297,6 +232,7 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(updater_enableAutoUpdates, false);
 		
 		config.addDefault(hotkeys_enabled, true);
+		config.addDefault(hotkeys_material, Material.SHEARS.name());
 		config.addDefault(use_new_traitbind_system, true);
 		
 		config.addDefault(races_remindDefaultRace_enable, true);
@@ -351,9 +287,13 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(magic_wandId, Material.STICK.name());
 		config.addDefault(magic_manaManagerType, ManaManagerType.RaC.name());
 		config.addDefault(magic_outOfFightRegeneration, "0#100");
+		config.addDefault(magic_sprintingManaDrainInterval, 3);
+		config.addDefault(magic_sprintingManaCost, 2);
+		config.addDefault(magic_manaRefillWhileSprinting, true);
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config.addDefault(level_useLevelSystem, "RaC");
+		config.addDefault(level_max_level, -1);
 		config.addDefault(custom_level_exp_gain, "[ZOMBIE=0,SKELETON=0,CREEPER=0]");
 		config.addDefault(use_fireworks_on_level_up, true);
 		config.addDefault(use_levelup_message, true);
@@ -379,7 +319,9 @@ import de.tobiyas.util.formating.Pair;
 	@SuppressWarnings("deprecation")
 	public GeneralConfig reload(){
 		plugin.reloadConfig();
-		FileConfiguration config = plugin.getConfig();
+		//TODO test if this works
+		//plugin.getConfig();
+		YAMLConfigExtended config = new YAMLConfigExtended(new File(plugin.getDataFolder(), "config.yml")).load();
 
 		config_channels_enable = config.getBoolean(chat_channel_enable, true);
 		config_racechat_encrypt = config.getBoolean(chat_race_encryptForOthers, false);		
@@ -440,6 +382,11 @@ import de.tobiyas.util.formating.Pair;
 		config_disabledHotkeySlots.addAll(config.getIntegerList(disabled_hotkey_slots));
 		config_hotkeysEnabled = config.getBoolean(hotkeys_enabled);
 		config_useNewTraitBindSystem = config.getBoolean(use_new_traitbind_system, true);
+		
+		config_magic_manaRefillWhileSprinting = config.getBoolean(magic_manaRefillWhileSprinting, false);
+		config_magic_sprintingManaCost = config.getDouble(magic_sprintingManaCost, 1.5d);
+		config_magic_sprintingManaDrainInterval = config.getInt(magic_sprintingManaDrainInterval, 3);
+		config_max_level = config.getInt(level_max_level, -1);
 		
 		
 		String config_magic_outOfFightRegeneration_tmp = config.getString(magic_outOfFightRegeneration, "0#100");
@@ -513,6 +460,8 @@ import de.tobiyas.util.formating.Pair;
 		config_npc_change_race.addAll(config.getStringList(npc_change_race));
 		config_npc_select_class.addAll(config.getStringList(npc_select_class));
 		config_npc_change_class.addAll(config.getStringList(npc_change_class));
+		
+		config_hotkeys_material = config.getMaterial(hotkeys_material, Material.SHEARS);
 		
 		if(config_useLevelSystem == LevelingSystem.RacesAndClasses 
 				&& !LevelCalculator.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
@@ -890,6 +839,26 @@ import de.tobiyas.util.formating.Pair;
 	
 	public Pair<Double,Double> getConfig_magic_outOfFightRegeneration() {
 		return config_magic_outOfFightRegeneration;
+	}
+
+	public double getConfig_magic_sprintingManaCost() {
+		return config_magic_sprintingManaCost;
+	}
+
+	public int getConfig_magic_sprintingManaDrainInterval() {
+		return config_magic_sprintingManaDrainInterval;
+	}
+
+	public boolean getConfig_magic_manaRefillWhileSprinting() {
+		return config_magic_manaRefillWhileSprinting;
+	}
+
+	public Material getConfig_hotkeys_material() {
+		return config_hotkeys_material;
+	}
+
+	public int getConfig_max_level() {
+		return config_max_level;
 	}
 	
 }

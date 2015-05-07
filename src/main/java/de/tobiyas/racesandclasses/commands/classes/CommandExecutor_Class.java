@@ -15,7 +15,19 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.classes;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_class;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.change_to_same_holder;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.class_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.class_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_in_list;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_on_change;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_selected_use_info;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_class_to_select;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.your_class;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +39,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -34,6 +47,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -305,6 +319,11 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		}
 		
 		for(String classe : classes ){
+			if(player instanceof Player){
+				Player pl = (Player) player;
+				if(!hasPermission(pl, ClassAPI.getClassByName(classe))) continue;
+			}
+			
 			if(classe.equalsIgnoreCase(nameOfOwnClass)){
 				String yourClass = LanguageAPI.translateIgnoreError(your_class)
 						.build();
@@ -314,6 +333,21 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				player.sendMessage(ChatColor.BLUE + classe);
 			}
 		}
+	}
+	
+	/**
+	 * Checks if a player has the Permission for a holders
+	 * 
+	 * @param holders to check
+	 * @param manager the manager of the holders to check
+	 * @return true if the player has access, false otherwise.
+	 */
+	private boolean hasPermission(Player player, ClassContainer holder) {		
+		HolderPreSelectEvent event = null;
+		event = new PreClassSelectEvent(player, holder, true, false);
+		
+		plugin.getServer().getPluginManager().callEvent(event);
+		return !event.isCancelled();
 	}
 	
 	private boolean select(Player player, String potentialClass){

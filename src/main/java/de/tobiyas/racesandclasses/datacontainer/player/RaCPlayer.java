@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -413,6 +414,17 @@ public class RaCPlayer {
 	public ItemStack getItemInHand(){
 		if(!isOnline()) return null;
 		return getPlayer().getItemInHand();
+	}
+	
+
+	/**
+	 * Returns the Gamemode of the Player.
+	 * 
+	 * @return
+	 */
+	public GameMode getGameMode() {
+		if(!isOnline()) return GameMode.SURVIVAL;
+		return getPlayer().getGameMode();
 	}
 	
 	

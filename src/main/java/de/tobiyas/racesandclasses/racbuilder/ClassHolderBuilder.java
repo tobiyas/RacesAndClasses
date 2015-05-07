@@ -25,7 +25,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 	/**
 	 * The Operator for Class Health modification
 	 */
-	//protected String healthOperation;
+	protected String healthOperation = "";
 	
 	/**
 	 * Generates the Class Builder with the passed Name.
@@ -36,7 +36,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 	public ClassHolderBuilder(String name) {
 		super(name);
 		
-		//this.healthOperation = "+";
+		this.healthOperation = "+";
 		this.health = 0;
 	}
 
@@ -49,7 +49,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 	public ClassHolderBuilder(ClassContainer classContainer) {
 		super(classContainer);
 		
-		//this.healthOperation = classContainer.getClassHealthModify();
+		this.healthOperation = classContainer.getClassHealthModify();
 		this.health = classContainer.getClassHealthModValue();
 	}
 
@@ -66,7 +66,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 			return false;
 		}
 		
-		/*if(healthOperation.equalsIgnoreCase("*")){
+		if(healthOperation.equalsIgnoreCase("*")){
 			this.healthOperation = healthOperation;
 			return true;
 		}
@@ -79,7 +79,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 		if(healthOperation.equalsIgnoreCase("+")){
 			this.healthOperation = healthOperation;
 			return true;
-		}*/
+		}
 		
 		return false;
 	}
@@ -105,13 +105,12 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 	@Override
 	protected void saveFurtherToFile(YAMLConfigExtended config) {
 		config.set(name + ".config.classtag", holderTag);
-		//config.set(name + ".config.health", healthOperation + health);
+		config.set(name + ".config.health", healthOperation + health);
 	}
 
 
 	public String getHealthOperation() {
-		return "+";
-		//return healthOperation;
+		return healthOperation;
 	}
 	
 }

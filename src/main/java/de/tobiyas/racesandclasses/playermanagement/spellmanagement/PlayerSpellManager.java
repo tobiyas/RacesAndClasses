@@ -280,7 +280,7 @@ public class PlayerSpellManager {
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
 		@SuppressWarnings("deprecation")
-		List<Block> blocks = player.getPlayer().getLineOfSight(null, 100);
+		List<Block> blocks = player.getPlayer().getLineOfSight((HashSet<Byte>)null, 100);
 		Block lookingAt = blocks.iterator().next();
 		ItemStack wandItem = new ItemStack(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		

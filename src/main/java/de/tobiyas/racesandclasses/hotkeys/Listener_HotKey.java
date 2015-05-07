@@ -50,13 +50,16 @@ public class Listener_HotKey implements Listener {
 	
 	
 	public Listener_HotKey() {
-		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+		RacesAndClasses.getPlugin().registerEvents(this);
+		System.out.println("Registering HotkeyManager_Listener");
 	}
 	
 	
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerInteract(PlayerInteractEvent event){
+		//we need to ignore canceled since other plugins / Stuff can also cancel.
+		
 		ItemStack item = event.getItem();
 		if(item == null) return;
 		

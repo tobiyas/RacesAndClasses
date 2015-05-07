@@ -1,5 +1,7 @@
 package de.tobiyas.racesandclasses.entitystatusmanager.hots;
 
+import java.util.Random;
+
 import org.bukkit.entity.LivingEntity;
 
 import de.tobiyas.racesandclasses.vollotile.Vollotile;
@@ -8,10 +10,15 @@ import de.tobiyas.util.vollotile.ParticleEffects;
 public class Hot {
 
 	/**
+	 * The Random generator to use.
+	 */
+	private static final Random rand = new Random();
+	
+	
+	/**
 	 * The entity to tick on.
 	 */
 	private final LivingEntity entity;
-	
 	
 	/**
 	 * The amount to heal per tick.
@@ -54,6 +61,11 @@ public class Hot {
 	 */
 	private int currentTick = 0;
 	
+	/**
+	 * The Numeric ID of the Hot.
+	 */
+	private final int numericID;
+	
 	
 	/**
 	 * Creates a Hot.
@@ -75,6 +87,7 @@ public class Hot {
 		this.tickAmounts = tickAmounts;
 		this.id = id;
 		this.canStack = canStack;
+		this.numericID = rand.nextInt(Integer.MAX_VALUE);
 	}
 
 
@@ -101,13 +114,23 @@ public class Hot {
 	public String getId() {
 		return id;
 	}
+	
+
+	public int getNumericID() {
+		return numericID;
+	}
 
 
 	public boolean canStack() {
 		return canStack;
 	}
-
 	
+	
+	public int getCurrentTicks() {
+		return currentTick;
+	}
+
+
 	/**
 	 * Ticks this hot.
 	 * <br>This includes the Heal.

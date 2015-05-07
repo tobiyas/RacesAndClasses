@@ -60,6 +60,7 @@ import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.player.PlayerUtils;
 
 
 public class Listener_Player implements Listener {
@@ -99,8 +100,13 @@ public class Listener_Player implements Listener {
 			plugin.getChannelManager().playerLogin(player);
 		}
 		
-		if(racesActive){
-			container.editTABListEntry(player);
+		if(racesActive && plugin.getConfigManager().getGeneralConfig().isConfig_adaptListName()){
+			for(Player online : PlayerUtils.getOnlinePlayers()){
+				 RaCPlayer racOnline = RaCPlayerManager.get().getPlayer(online);
+				 RaceContainer racContainer = racOnline.getRace();
+				 if(racContainer != null) racContainer.editTABListEntry(player);
+			}
+			
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();

@@ -31,16 +31,23 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class ToYMLConverter {
 
+	/**
+	 * If we should convert.
+	 */
+	private static boolean convert = false;
+	
 	
 	/**
 	 * Converts the DB stuff to YML.
 	 */
 	public static void convertDBToYML(){
-//		EBeanPersistenceStorage ebeanStorage = new EBeanPersistenceStorage();
-//		
-//		convertHolderAssociations(ebeanStorage);
-//		convertGeneralData(ebeanStorage);
-//		convertMemberConfig(ebeanStorage);
+		if(!convert) return;
+		
+		//removed because we do NOT convert.
+		PersistenceStorage ebeanStorage = null;//new EBeanPersistenceStorage();
+		convertHolderAssociations(ebeanStorage);
+		convertGeneralData(ebeanStorage);
+		convertMemberConfig(ebeanStorage);
 	}
 
 	/**

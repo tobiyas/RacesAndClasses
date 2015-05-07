@@ -27,15 +27,6 @@ public class HotKeyInventory {
 	private static final String CONFIG_SEPERATOR = String.valueOf('|');
 	private static final String CONFIG_BINDINGS_PATH = "bindings";
 	
-	/**
-	 * The Material to use for shortcut Items.
-	 */
-	private static final Material shortcutMat = Material.SHEARS;
-	
-	/**
-	 * The Max-Durability to have.
-	 */
-	private static final short maxShortcutDurability = shortcutMat.getMaxDurability();
 	
 	/**
 	 * The Key at start to identify the Item.
@@ -164,6 +155,8 @@ public class HotKeyInventory {
 		
 		if(!isInSkillMode) return; //nothing to update.
 		if(traitBindings.isEmpty()) return; //nothing to update.
+		Material shortcutMat = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_hotkeys_material();
+		short maxShortcutDurability = shortcutMat.getMaxDurability();
 		
 		for(Entry<Integer,Trait> entry : traitBindings.entrySet()){
 			int slot = entry.getKey();
@@ -310,6 +303,8 @@ public class HotKeyInventory {
 	 */
 	public static ItemStack generateItem(Trait trait){
 		if(trait == null) return null;
+		
+		Material shortcutMat = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_hotkeys_material();
 		
 		ItemStack item = new ItemStack(shortcutMat);
 		ItemMeta itemMeta = item.getItemMeta();

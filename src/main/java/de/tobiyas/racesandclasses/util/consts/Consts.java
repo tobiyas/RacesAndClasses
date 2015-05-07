@@ -46,7 +46,7 @@ public class Consts {
 	
 	//Version
 	public static final String currentDevStage = "B T";
-	public static final String detailedVersionString = "1.1.3";
+	public static final String detailedVersionString = "1.1.4";
 	
 	/**
 	 * V1.0.3 RC 2: 1.3
@@ -55,8 +55,9 @@ public class Consts {
 	 * V1.1.1 : 1.6
 	 * V1.1.2 : 1.8
 	 * V1.1.3 : 1.9
+	 * v1.1.4 : 1.10
 	 */
-	public static final String configVersion = "1.9"; 
+	public static final String configVersion = "1.10"; 
 	
 	
 	//Races

@@ -66,6 +66,9 @@ public class RaceContainer extends AbstractTraitHolder{
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}
+		
+		//Backwards compability.
+		this.holderTag = config.getString(configNodeName + ".config.racetag", holderTag);
 	}
 	
 	@Override
@@ -161,4 +164,5 @@ public class RaceContainer extends AbstractTraitHolder{
 	public double getMaxHealthMod() {
 		return raceMaxHealth - 20;
 	}
+
 }

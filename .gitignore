@@ -4,6 +4,9 @@ null/
 .settings/
 /target/
 
+#Remove Traits.
+src\main\resources\defaultTraits
+
 copyJar.bat
 testlolwtd
 

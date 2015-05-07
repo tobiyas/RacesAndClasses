@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.APIs;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 
@@ -267,4 +268,30 @@ public class LevelAPI {
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		racPlayer.getLevelManager().setCurrentExpOfLevel(exp);
 	}
+
+	/**
+	 * Returns the Max EXP to the Next level
+	 * 
+	 * @param player to get for
+	 * 
+	 * @return the max EXP needed for the next level.
+	 */
+	public static int getMaxEXPToNextLevel(Player player) {
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		return racPlayer.getLevelManager().getMaxEXPToNextLevel();
+	}
+	
+	
+	
+	/**
+	 * Returns the Maximal possible level.
+	 * <br>A value smaller to 0 means there is no level restriction.
+	 * 
+	 * @return the max. possible Level
+	 */
+	public static int getMaxLevel(){
+		if(RacesAndClasses.getPlugin() == null) return -1;
+		return RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_max_level();
+	}
+	
 }

@@ -241,6 +241,12 @@ public class GeneralConfigText {
 				+ "# default: true \n"
 				+ use_new_traitbind_system + ": true\n\n"
 				
+				+ "# The Material to use for Hotkeys. \n"
+				+ "# This is the Material to use for Hotkey Bar.\n"
+				+ "# Materials are found here: https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java.\n"
+				+ "# default: SHEARS \n"
+				+ hotkeys_material + ": SHEARS\n\n"
+				
 				+ "# The slots that are not bindable and are persistent throughout the Skill Bar (in the new Hotbar System). \n"
 				+ "# The Slots may not be bound (0-8).\n"
 				+ "# Example: [0,3,8].\n"
@@ -440,6 +446,22 @@ public class GeneralConfigText {
 				+ "# This can be: RaC or MagicSpells\n"
 				+ "# default: RaC \n"
 				+ magic_manaManagerType + ": 'RaC'\n\n"
+				
+								
+				+ "# If the Mana of a player refills while he sprints.\n"
+				+ "# default: false \n"
+				+ magic_manaRefillWhileSprinting + ": false\n\n"
+				
+				+ "# How much mana should be drained for Sprinting.\n"
+				+ "# Can be 0 to disable this feature.\n"
+				+ "# default: 1.5 \n"
+				+ magic_sprintingManaCost + ": 1.5\n\n"
+								
+				+ "# When the Mana should be drained while running.\n"
+				+ "# This is in seconds. This means every X seconds Y mana is drained."
+				+ "# X is the Time here. Y is the mana in: 'magic_sprintingManaCost'."
+				+ "# default: 3 \n"
+				+ magic_sprintingManaDrainInterval + ": 3\n\n"
 				;
 	}
 	
@@ -468,6 +490,12 @@ public class GeneralConfigText {
 				+ "# default: true \n"
 				+ use_fireworks_on_level_up + ": true\n\n"
 				
+				+ "# The max level, no one can get over.\n"
+				+ "# If set to something below 0, there will not be any restriction.\n"
+				+ "# Number: 0 to as much as you like\n"
+				+ "# default: true \n"
+				+ level_max_level + ": -1\n\n"
+				
 				+ "# A level Up message is sent when the level is increased. \n"
 				+ "# Boolean: true or false\n"
 				+ "# default: true \n"
@@ -486,7 +514,7 @@ public class GeneralConfigText {
 				+ "# This tells the Plugin how much Custom EXP to give the player on an Entity kill. \n"
 				+ "# It is a list of Strings, which means they have to be seperated by a comma or be written below each other.\n"
 				+ "# Each element in this list has two parts: EntityType=ExpAmount.\n"
-				+ "# EntityType can be found here: http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html.\n"
+				+ "# EntityType can be found here: http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html\n"
 				+ "# The amount of EXP is an Integer value (0,1,2,3,4, ...).\n"
 				+ "# List of String: [EntityType=AmountEXP,...]\n"
 				+ "# default: [ZOMBIE=0,SKELETON=0,CREEPER=0,BLAZE=0,WITCH=0] \n"

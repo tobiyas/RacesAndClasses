@@ -129,15 +129,7 @@ public class PlayerManager{
 	 * @param player to check
 	 */
 	public void checkPlayer(RaCPlayer player){
-		PlayerContainer hContainer = playerData.get(player);
-		if(hContainer == null){
-			plugin.getRaceManager().loadIfNotExists(player);
-			plugin.getClassManager().loadIfNotExists(player);
-			
-			hContainer = new PlayerContainer(player);
-			playerData.put(player, hContainer);
-		}
-		
+		PlayerContainer hContainer = getCreate(player);
 		hContainer.checkStats();
 	}
 	
@@ -223,8 +215,13 @@ public class PlayerManager{
 	private PlayerContainer getCreate(RaCPlayer player, boolean create){
 		PlayerContainer container = playerData.get(player);
 		if(container == null && create){
+			plugin.getRaceManager().loadIfNotExists(player);
+			plugin.getClassManager().loadIfNotExists(player);
+			
+			container = new PlayerContainer(player);
+			playerData.put(player, container);
+			
 			checkPlayer(player);
-			container = playerData.get(player);
 		}
 		
 		return container;

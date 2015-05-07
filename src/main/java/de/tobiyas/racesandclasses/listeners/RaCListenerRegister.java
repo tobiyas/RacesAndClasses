@@ -25,6 +25,7 @@ import de.tobiyas.racesandclasses.listeners.externalchatlistener.DefaultChatRepl
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.HeroChatListener;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.TownyChatListener;
 import de.tobiyas.racesandclasses.listeners.externalchatlistener.VaultChatListener;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Debuff;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
@@ -86,6 +87,7 @@ public class RaCListenerRegister {
 		new Listener_RaceSpawn();
 		new Listener_RaceTeams();
 		new FoodListener();
+		new Listener_Debuff();
 		
 		new Listener_raceClassRestrictionOnItems();
 	}

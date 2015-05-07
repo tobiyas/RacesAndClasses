@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
@@ -56,12 +57,10 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	 */
 	private final RaCPlayer player;
 	
-	
 	/**
 	 * The current currentLevel of a player
 	 */
 	private int currentLevel;
-	
 	
 	/**
 	 * The current EXP of the Level
@@ -143,9 +142,16 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		return player;
 	}
 	
+	@Override
+	public int getMaxEXPToNextLevel() {
+		return LevelCalculator.calculateLevelPackage(currentLevel).getMaxEXP();
+	}
 	
 	@Override
 	public void setCurrentLevel(int level) {
+		int maxLvl = LevelAPI.getMaxLevel();
+		if(maxLvl > 0) level = Math.min(maxLvl, level);
+		
 		int oldLevel = currentLevel;
 		this.currentLevel = level;
 		checkLevelChanged();
@@ -178,6 +184,9 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	
 	@Override
 	public boolean addExp(int exp){
+		int maxLvl = LevelAPI.getMaxLevel();
+		if(maxLvl > 0 && getCurrentLevel() >= maxLvl) return false;
+		
 		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
@@ -204,7 +213,13 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		currentExpOfLevel += exp;
 		
 		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
+		int maxLvl = LevelAPI.getMaxLevel();
 		while(currentExpOfLevel >= levelPack.getMaxEXP()){
+			if(maxLvl > 0 && getCurrentLevel() >= maxLvl) {
+				currentExpOfLevel = 0;
+				break;
+			}
+			
 			currentLevel++;
 			currentExpOfLevel -= levelPack.getMaxEXP();
 			
@@ -341,6 +356,9 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		int oldLevel = currentLevel;
 		currentLevel += value;
 		
+		int maxLevel = LevelAPI.getMaxLevel();
+		if(maxLevel > 0) currentLevel = Math.min(currentLevel, maxLevel);
+		
 		LevelEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 	}
@@ -356,4 +374,5 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		LevelEvent event = new LevelDownEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 	}
+
 }

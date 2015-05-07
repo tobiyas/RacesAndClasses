@@ -61,16 +61,21 @@ public class CommandExecutor_Mana extends AbstractCommand {
 		double currentMana = racPlayer.getManaManager().getCurrentMana();
 		double maxMana = racPlayer.getManaManager().getMaxMana();
 		
-		String builder = "[";
+		String builder = ChatColor.BLUE + "[";
 		int length = 20;
 		
-		double percent = (currentMana / maxMana) * length;
-		for( int i = 0; i < length; i++){
-			//TODO calc stuff.
-			percent = percent + 1;
+		double percent = (currentMana / maxMana);
+		int filled = (int) (percent * length);
+		for( int i = 0; i < filled; i++){
+			builder += "|";
 		}
 		
-		builder += "]";
+		builder += ChatColor.LIGHT_PURPLE + "";
+		for( int i = filled; i < length; i++){
+			builder += "|";
+		}
+		
+		builder += ChatColor.BLUE + "]";
 		
 		DecimalFormat f = new DecimalFormat("0.0");
 		racPlayer.sendMessage(builder + ChatColor.BLUE + "Mana: " + ChatColor.AQUA + f.format(currentMana) 

@@ -202,4 +202,10 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 		setCurrentLevel(newLevel);
 	}
 	
+	
+	@Override
+	public int getMaxEXPToNextLevel() {
+		Player pl = player.getPlayer();
+		return (int) (pl.getExpToLevel() * (1d/(1d - pl.getExp())));
+	}
 }
