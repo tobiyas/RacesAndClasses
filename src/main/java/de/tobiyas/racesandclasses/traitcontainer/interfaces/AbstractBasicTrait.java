@@ -39,6 +39,7 @@ import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
@@ -966,6 +967,18 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	protected TraitResults bindCastIntern(RaCPlayer player){
 		return TraitResults.False();
+	}
+	
+	
+	
+	/**
+	 * Returns if the Player passed is contained in this trait.
+	 * 
+	 * @param player to check
+	 * @return true if contained.
+	 */
+	public boolean hasPlayer(RaCPlayer player){
+		return TraitHolderCombinder.checkContainer(player, this);
 	}
 	
 }

@@ -18,16 +18,11 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitHolderCombinder {
-	
-	/**
-	 * The Plugin to call stuff on
-	 */
-	private static RacesAndClasses plugin = RacesAndClasses.getPlugin();
+
 	
 	
 	/**
@@ -42,12 +37,12 @@ public class TraitHolderCombinder {
 		Set<AbstractTraitHolder> holder = trait.getTraitHolders();
 		if(holder == null || holder.isEmpty()) return true;
 		
-		AbstractTraitHolder raceHolder = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceHolder = player.getRace();
 		if(holder.contains(raceHolder)){
 			return true;
 		}
 		
-		AbstractTraitHolder classHolder = plugin.getClassManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classHolder = player.getclass();
 		if(holder.contains(classHolder)){
 			return true;
 		}
