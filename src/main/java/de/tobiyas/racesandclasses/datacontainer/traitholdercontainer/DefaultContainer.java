@@ -42,6 +42,7 @@ public class DefaultContainer {
 		
 		orcConfig.set("Orc.config.racetag", "[Orc]");
 		orcConfig.set("Orc.config.raceMaxHealth", 30);
+		orcConfig.set("Orc.config.guislot", 0);
 		orcConfig.set("Orc.config.armor", "iron,diamond,chain");
 		
 		orcConfig.createSection("Orc.traits.DamageReduceTrait");
@@ -62,6 +63,7 @@ public class DefaultContainer {
 		
 		elvesConfig.set("Elv.config.racetag", "[Elv]");
 		elvesConfig.set("Elv.config.raceMaxHealth", 20);
+		elvesConfig.set("Elv.config.guislot", 2);
 		elvesConfig.set("Elv.config.armor", "leather,gold,chain");
 		
 		elvesConfig.createSection("Elv.traits.FallResistanceTrait");
@@ -101,6 +103,7 @@ public class DefaultContainer {
 		
 		warriorConfig.set("warrior.config.classtag", "[Warrior]");
 		warriorConfig.set("warrior.config.health", "+5");
+		warriorConfig.set("warrior.config.guislot", 6);
 		
 		
 		warriorConfig.createSection("warrior.traits.SwordDamageIncreaseTrait");
@@ -121,6 +124,7 @@ public class DefaultContainer {
 		
 		archerConfig.set("archer.config.classtag", "[Archer]");
 		archerConfig.set("archer.config.health", "+1");
+		archerConfig.set("archer.config.guislot", 0);
 		
 		archerConfig.createSection("archer.traits.PoisonArrowTrait");
 		archerConfig.set("archer.traits.PoisonArrowTrait.duration", 10);
@@ -145,6 +149,7 @@ public class DefaultContainer {
 		magicianConfig.set("magician.config.classtag", "[Magician]");
 		magicianConfig.set("magician.config.health", "-1");
 		magicianConfig.set("magician.config.manabonus", 20);
+		magicianConfig.set("magician.config.guislot", 2);
 		
 		magicianConfig.createSection("magician.traits.ManaRegenerationTrait");
 		magicianConfig.set("magician.traits.ManaRegenerationTrait.time", 10);
@@ -190,6 +195,7 @@ public class DefaultContainer {
 		shamanConfig.set("shaman.config.classtag", "[Shaman]");
 		shamanConfig.set("shaman.config.health", "+1");
 		shamanConfig.set("shaman.config.manabonus", 20);
+		shamanConfig.set("shaman.config.guislot", 4);
 		
 		shamanConfig.createSection("shaman.traits.HealTotemTrait");
 		shamanConfig.set("shaman.traits.HealTotemTrait.duration", 10);

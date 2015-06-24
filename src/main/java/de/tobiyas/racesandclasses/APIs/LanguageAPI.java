@@ -142,6 +142,7 @@ public class LanguageAPI {
 	 */
 	public static void sendTranslatedMessage(CommandSender sender, String tag, Map<String, String> replacements){
 		if(sender == null) return;
+		if(replacements == null) replacements = new HashMap<String,String>();
 		
 		Translator translator = translateIgnoreError(tag);
 		translator.replace(replacements);

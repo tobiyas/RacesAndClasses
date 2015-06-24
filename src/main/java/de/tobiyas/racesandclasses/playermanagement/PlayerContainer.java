@@ -25,6 +25,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.HeroesLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
@@ -78,6 +79,11 @@ public class PlayerContainer {
 	 */
 	private final PlayerLevelManager levelManager;
 	
+	/**
+	 * The Scoreboard manager for Scoreboards.
+	 */
+	private final PlayerRaCScoreboardManager playerScoreboardManager;
+	
 	
 	/**
 	 * This constructor only sets the most important stuff.
@@ -92,6 +98,7 @@ public class PlayerContainer {
 		this.armorToolManager = new ArmorToolManager(player);
 		this.arrowManager = new ArrowManager(player);
 		this.healthManager = new HealthManager(player);
+		this.playerScoreboardManager = new PlayerRaCScoreboardManager(player);
 		
 		this.hasGod = false;
 		
@@ -319,6 +326,15 @@ public class PlayerContainer {
 		return this.spellManager;
 	}
 
+	
+	/**
+	 * Returns the Score-board Manager for the Player.
+	 * 
+	 * @return score-board Manager.
+	 */
+	public PlayerRaCScoreboardManager getPlayerScoreboardManager() {
+		return playerScoreboardManager;
+	}
 
 	/**
 	 * Returns the LevelManager of the Player.

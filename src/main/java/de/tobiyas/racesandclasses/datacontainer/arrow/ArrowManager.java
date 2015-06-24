@@ -16,6 +16,8 @@
 package de.tobiyas.racesandclasses.datacontainer.arrow;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -60,18 +62,29 @@ public class ArrowManager {
 	
 	public AbstractArrow nextArrow(){
 		if(System.currentTimeMillis() - eventTime < 100) return null;
+		if(arrows.size() == 0) return null;
+		
 		currentPointer ++;
-		if(currentPointer >= arrows.size())
-			currentPointer = 0;
-		AbstractArrow arrow = null;
-		try{
-			arrow = arrows.get(currentPointer);
-			}catch(IndexOutOfBoundsException e){
-				return null;
-			}
+		if(currentPointer >= arrows.size()) currentPointer = 0;
+		
+		AbstractArrow arrow = arrows.get(currentPointer);
+
 		eventTime = System.currentTimeMillis();
 		return arrow;
 	}
+	
+	
+	
+	public AbstractArrow previousArrow() {
+		if(System.currentTimeMillis() - eventTime < 100) return null;
+		currentPointer --;
+		if(currentPointer < 0) currentPointer = arrows.size() - 1;
+		
+		AbstractArrow arrow = arrows.get(currentPointer);
+		eventTime = System.currentTimeMillis();
+		return arrow;
+	}
+	
 	
 	public AbstractArrow getCurrentArrow(){
 		AbstractArrow arrow = arrows.get(currentPointer);
@@ -87,5 +100,14 @@ public class ArrowManager {
 	 */
 	public int getNumberOfArrowTypes(){
 		return arrows.size() - 1;
+	}
+
+	/**
+	 * Returns all available Arrows.
+	 * 
+	 * @return arrows.
+	 */
+	public List<AbstractArrow> getAllArrows() {
+		return  new LinkedList<AbstractArrow>(this.arrows);
 	}
 }

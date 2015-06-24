@@ -29,14 +29,20 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wrong_command_use;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.your_class;
 
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
@@ -51,9 +57,14 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSe
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.util.chat.components.ChatMessageObject;
+import de.tobiyas.util.chat.components.TellRawChatMessage;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class CommandExecutor_Class extends Observable implements CommandInterface {
 	
@@ -189,6 +200,25 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			
 			return true;
 		}
+		
+		
+		//Generate a Book!
+		if(potentialCommand.equalsIgnoreCase("book")){
+			if(!VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
+				sender.sendMessage(ChatColor.RED + "Only in MC 1.8+.");
+				return true;
+			}
+			
+			ItemStack book = generateClassesBook();
+			if(sender instanceof Player){
+				Player pl = (Player) sender;
+				pl.getInventory().addItem(book);
+			}
+			
+			sender.sendMessage("Done");	
+			return true;
+		}
+		
 				
 		//Change class (only if has already a class)
 		if(potentialCommand.equalsIgnoreCase("change")){
@@ -224,7 +254,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 				LanguageAPI.sendTranslatedMessage(sender, open_holder,
 						"holder", "Class");
 				return true;
-			}
+			}			
 			
 			if(args.length == 1){
 				postHelp(player);
@@ -430,6 +460,123 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		}
 		
 	}
+	
+	
+	
+	/**
+	 * Generates a Book with all Races.
+	 * 
+	 * @return a book
+	 */
+	private ItemStack generateClassesBook(){
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta meta = (BookMeta) book.getItemMeta();
+		meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Classes");
+		meta.setLore(Arrays.asList( new String[]{ChatColor.AQUA + "This book contains", ChatColor.AQUA + "all Classes."} ));
+		meta.setAuthor("RaC-Plugin");
+		meta.setTitle(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Classes");
+		book.setItemMeta(meta);
+		
+		
+		List<TellRawChatMessage> pages = new LinkedList<>();
+		//Generate 1st Page
+		TellRawChatMessage firstPage = new TellRawChatMessage();
+		pages.add(firstPage);
+
+		firstPage.addSimpleText("Classes:", false, true, false, true, false, ChatColor.GRAY)
+		.addNewLine()
+		.addNewLine();
+
+		
+		
+		//Generate the Rest of the Pages:
+		int nr = 2;
+		for(String raceName : ClassAPI.getAllClassNames()){
+			if(raceName.equals(ClassAPI.getDefaultClassName())) continue;
+			
+			ClassContainer container = ClassAPI.getClassByName(raceName);
+			if(container != null) pages.add(generateBookPageForClass(container));
+			
+			//Add the Front page.
+			firstPage.addSimpleText(container.getDisplayName(), false, true, false, false, false, ChatColor.AQUA)
+			.addSimpleText("  - page " + nr, false, false, false, false, false, ChatColor.GRAY)
+			.addNewLine();
+			
+			nr++;
+		}
+		
+		VollotileCodeManager.getVollotileCode().editBookToPages(book, pages);
+		return book;
+	}
+	
+	/**
+	 * Generates a Book Info page for the Race.
+	 * 
+	 * @param clazz to generate for
+	 * @return the Tell Raw.
+	 */
+	private TellRawChatMessage generateBookPageForClass(ClassContainer clazz){
+		DecimalFormat f = new DecimalFormat("0.0");
+		TellRawChatMessage page = new TellRawChatMessage();
+		
+		/*
+		 * <Race>
+		 * 
+		 * Armor: <>
+		 * Health: <>
+		 * Mana: <>
+		 * 
+		 * Traits:
+		 * - Name : Description
+		 * ......
+		 * 
+		 */
+		
+		page.append(new ChatMessageObject("Class: " + clazz.getDisplayName()).addChatColor(ChatColor.GRAY).addBold().addUnderlined())
+		.addNewLine()
+		.addNewLine()
+		
+		.append(new ChatMessageObject("Armor").addChatColor(ChatColor.DARK_BLUE).addBold().removeUnderlined()
+				.addPopupHover( ChatColor.RED + (clazz.getArmorString() )) )
+		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
+		
+		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
+				.addPopupHover(ChatColor.RED + f.format(clazz.getClassHealthModValue())))
+		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
+		
+		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
+				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus())))
+		.addNewLine()
+		.addNewLine()
+		
+		.append(new ChatMessageObject("Traits:").addChatColor(ChatColor.GRAY).addBold().addUnderlined())
+		.addNewLine();
+		
+		List<Trait> traits = new LinkedList<>();
+		traits.addAll(clazz.getVisibleTraits());
+		
+		Collections.sort(traits);
+		for(Trait trait : clazz.getVisibleTraits()){
+			String popup = ChatColor.GRAY + "" + ChatColor.UNDERLINE + "" + ChatColor.BOLD
+					+ "Trait: " + trait.getDisplayName() + "\n" + ChatColor.RESET;
+			
+			if(trait instanceof TraitWithRestrictions){
+				TraitWithRestrictions twr = (TraitWithRestrictions) trait;
+				if(twr.getMinLevel() > 1) popup += ChatColor.GRAY + "MinLvl: " + ChatColor.RED + twr.getMinLevel() + "\n";
+				if(twr.getMaxLevel() < 100000) popup += ChatColor.GRAY + "MaxLvl: " + ChatColor.RED + twr.getMaxLevel() + "\n";
+			}
+			
+			popup += ChatColor.GRAY + "Description: " + ChatColor.RED + trait.getPrettyConfiguration();
+			
+			page.append(new ChatMessageObject("-" + trait.getDisplayName()).addChatColor(ChatColor.AQUA).removeBold().removeUnderlined()
+				.addPopupHover(popup))
+			.addNewLine();
+		}
+		
+		
+		return page;
+	}
+	
 	
 	
 	/**

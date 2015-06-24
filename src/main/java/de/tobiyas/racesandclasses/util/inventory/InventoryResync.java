@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.util.inventory;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 
@@ -24,11 +25,16 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 	 * @author Tobiyas
 	 *
 	 */
-	public class InventoryResync implements Runnable{
+	public class InventoryResync extends BukkitRunnable {
 
 		public static void resync(Player player){
 			RacesAndClasses plugin = RacesAndClasses.getPlugin();
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new InventoryResync(player), 1);
+			new InventoryResync(player).runTaskLater(plugin, 3);
+		}
+		
+		public static void closeAndResync(Player player){
+			RacesAndClasses plugin = RacesAndClasses.getPlugin();
+			new InventoryResync(player).runTaskLater(plugin, 2);
 		}
 		
 		private final Player player;
@@ -39,7 +45,9 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		
 		@SuppressWarnings("deprecation") //let's see if it still works
 		@Override
-		public void run() {
+		public void run() {			
+			player.closeInventory();
+			
 			//it's an attempt
 			if(player != null && player.isOnline()){
 				try{

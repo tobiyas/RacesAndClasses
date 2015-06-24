@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.datacontainer.player;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -155,12 +156,32 @@ public class RaCPlayerManager {
 	}
 	
 	
-	
+	/**
+	 * If the System has UUID support.
+	 * 
+	 * @return true if has UUID support.
+	 */
 	private boolean hasUUIDSupport(){
-		try{ 
+		try{
 			Bukkit.getPlayer(UUID.randomUUID());
 			return true;
 		}catch(Throwable exp) { return false; }
+	}
+	
+	
+	/**
+	 * Returns all Online Players as {@link RaCPlayer}
+	 * 
+	 * @return a Collection of RaC Players online.
+	 */
+	public Collection<RaCPlayer> getOnlinePlayers() {
+		Set<RaCPlayer> online = new HashSet<RaCPlayer>();
+		for(Player pl : PlayerUtils.getOnlinePlayers()){
+			RaCPlayer racPlayer = getPlayer(pl);
+			if(racPlayer != null) online.add(racPlayer);
+		}
+		
+		return online;
 	}
 	
 	
@@ -168,4 +189,5 @@ public class RaCPlayerManager {
 		if (instance == null) instance = new RaCPlayerManager();
 		return instance;
 	}
+
 }

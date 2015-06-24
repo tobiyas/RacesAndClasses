@@ -37,6 +37,7 @@ public class TraitConfigDoubleOption extends AbstractTraitConfigOption {
 	public void valueSelected(String value) {
 		try{
 			this.value = Double.parseDouble(value);
+			this.needsSave = true;
 		}catch(Throwable exp){}
 	}
 

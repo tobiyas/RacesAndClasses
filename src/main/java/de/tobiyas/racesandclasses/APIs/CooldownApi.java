@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.APIs;
 
 import java.util.List;
+import java.util.Map;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
@@ -92,6 +93,17 @@ public class CooldownApi {
 	 */
 	public static List<String> getAllCooldownsOfPlayer(String playerName){
 		return plugin.getCooldownManager().getAllCooldownsOfPlayer(playerName);
+	}
+	
+	/**
+	 * Returns a list of all cooldowns a player has.
+	 * 
+	 * 
+	 * @param player to get.
+	 * @return the Map of Name to time.
+	 */
+	public static Map<String,Integer> getAllCooldownsForPlayer(String playerName){
+		return plugin.getCooldownManager().getAllCooldownsForPlayer(playerName);
 	}
 
 

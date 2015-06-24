@@ -81,11 +81,34 @@ public class PlayerSpellManager {
 	 * and the Spells he can cast.
 	 */
 	public void rescan(){
+		MagicSpellTrait current = getCurrentSpell();
+		
 		spellRescan();
 		manaManager.rescanPlayer();
+		
+		if(current != null)	selectSpell(current.getDisplayName());
 	}
 	
+
 	
+	/**
+	 * Selects the Spell by name if possible.
+	 * 
+	 * @param displayName to select.
+	 */
+	private void selectSpell(String displayName) {
+		for(int i = 0; i < spellList.size(); i++){
+			MagicSpellTrait next = spellList.next();
+			if(next instanceof TraitWithRestrictions){
+				boolean canUse = ((TraitWithRestrictions) next).isInLevelRange(player.getLevelManager().getCurrentLevel());
+				if(!canUse) continue;
+				
+				if(next.getDisplayName().equalsIgnoreCase(displayName)) return;
+			}
+		}
+	}
+
+
 	/**
 	 * Rescans the Spells the player can cast
 	 */
@@ -106,6 +129,8 @@ public class PlayerSpellManager {
 		
 		this.spellList.setEntries(spellList);
 	}
+	
+	
 	
 	/**
 	 * Changes to the next Spell in the List.
@@ -154,6 +179,25 @@ public class PlayerSpellManager {
 		return null;
 	}
 	
+	
+	/**
+	 * Returns all Spells available.
+	 * 
+	 * @return all spells available.
+	 */
+	public List<MagicSpellTrait> getAllSpells(){
+		List<MagicSpellTrait> spells = this.spellList.getAllEntries();
+		java.util.Iterator<MagicSpellTrait> it = spells.iterator();
+		while(it.hasNext()){
+			if(!it.next().isInLevelRange(player.getLevelManager().getCurrentLevel())) {
+				it.remove();
+			}
+		}
+		
+		return spells;
+	}
+	
+	
 	/**
 	 * Returns the {@link OwnManaManager} to check Spell casting or
 	 * Mana Capabilities.
@@ -170,10 +214,18 @@ public class PlayerSpellManager {
 	 * 
 	 * If no spells are present, null is returned.
 	 * 
-	 * @return
+	 * @return the current spell.
 	 */
 	public MagicSpellTrait getCurrentSpell() {
-		return spellList.currentEntry();
+		MagicSpellTrait current = spellList.currentEntry();
+		if(current == null) return changeToNextSpell();
+		
+		if(current instanceof TraitWithRestrictions){
+			boolean canUse = ((TraitWithRestrictions) current).isInLevelRange(player.getLevelManager().getCurrentLevel());
+			if(!canUse) return changeToNextSpell();
+		}
+		
+		return current;
 	}
 	
 	

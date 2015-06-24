@@ -185,7 +185,7 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 	public ParticleContainer getAsParticleContainer(String key){
 		Object obj = get(key);
 		if(obj instanceof String){
-			return ParticleContainer.generate((String) obj);
+			return ParticleContainer.generate(obj.toString());
 		}
 		
 		return null;

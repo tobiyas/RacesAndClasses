@@ -12,7 +12,6 @@ import de.tobiyas.util.items.ItemUtils.ItemQuality;
 
 public class GuiRace implements Comparable<GuiRace> {
 	
-	
 	/**
 	 * THe Traits of the Race
 	 */

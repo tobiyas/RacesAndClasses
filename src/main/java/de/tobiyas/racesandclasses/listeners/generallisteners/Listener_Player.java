@@ -44,6 +44,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -53,7 +54,9 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
@@ -199,6 +202,22 @@ public class Listener_Player implements Listener {
 	}
 	
 	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void playerGotEXPEvent(PlayerReceiveEXPEvent event){
+		if(event.isCancelled() || event.getExp() <= 0) return;
+		
+		final RaCPlayer player = event.getRaCPlayer();
+		
+		//schedule to 1 tick in future.
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				player.getScoreboardManager().updateSelectAndShow(SBCategory.General, 1000 * 4);
+			}
+		}.runTaskLater(plugin, 1);
+	}
+	
+	
 	@EventHandler
 	public void playerLevelUpEvent(LevelUpEvent event){
 		int oldLevel = event.getFromLevel();
@@ -210,6 +229,11 @@ public class Listener_Player implements Listener {
 		//just to be sure.
 		if(player == null || !player.isOnline()) return;
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
+		
+		//Resync Spells
+		racPlayer.getSpellManager().rescan();
+		
 		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_use_levelup_message()){
 			LanguageAPI.sendTranslatedMessage(racPlayer, Keys.level_up_message, 

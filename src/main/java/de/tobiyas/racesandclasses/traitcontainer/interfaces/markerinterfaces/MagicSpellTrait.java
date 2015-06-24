@@ -25,7 +25,7 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
  * 
  * @author Tobiyas
  */
-public interface MagicSpellTrait {
+public interface MagicSpellTrait extends TraitWithRestrictions {
 	
 	/**
 	 * Returns the cost of the Spell.

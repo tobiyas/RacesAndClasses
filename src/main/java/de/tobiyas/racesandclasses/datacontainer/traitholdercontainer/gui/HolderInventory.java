@@ -16,8 +16,12 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -111,6 +115,8 @@ public class HolderInventory extends InventoryView{
 	 * @param manager
 	 */
 	private void fillWithHolders(){
+		Map<ItemStack, Integer> slotsToFill = new HashMap<ItemStack, Integer>();
+		
 		for(String holderName : holderManager.listAllVisibleHolders()){
 			if(plugin.testingMode){ 
 				//Testing seems to not realize Bukkit is present. Method not found on ItemStack.
@@ -183,9 +189,29 @@ public class HolderInventory extends InventoryView{
 			meta.setLore(lore);
 			item.setItemMeta(meta);
 			
-			holderInventory.addItem(item);
+			slotsToFill.put(item, holder.getGuiSlot());
 			this.numberOfHolder++;
 		}
+		
+		//Sets the Slots as wanted.
+		Set<ItemStack> toAddAfter = new HashSet<ItemStack>();
+		for(Map.Entry<ItemStack,Integer> entry : slotsToFill.entrySet()){
+			ItemStack item = entry.getKey();
+			int slot = entry.getValue();
+			
+			if(slot < 0 || slot > getTopInventory().getSize()){
+				toAddAfter.add(item);
+				continue;
+			}
+			
+			getTopInventory().setItem(slot, item);
+		}
+		
+		//Add the Rest items.
+		for(ItemStack item : toAddAfter){
+			getTopInventory().addItem(item);
+		}
+		
 	}
 
 	/**

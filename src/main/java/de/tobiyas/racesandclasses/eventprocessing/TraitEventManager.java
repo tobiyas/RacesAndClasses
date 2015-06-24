@@ -40,6 +40,7 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFac
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -181,10 +182,13 @@ public class TraitEventManager{
 						&& eventWrapper.getPlayerAction() == PlayerAction.CHANGE_ARROW
 						&& player.getArrowManager().getCurrentArrow() == trait
 						&& !hasBypassForEvent){
+					
 					//not we have a sure Arrow switch.
-					AbstractArrow newArrow = player.getArrowManager().nextArrow();
+					boolean foreward = !player.isSneaking();
+					AbstractArrow newArrow = foreward ? player.getArrowManager().nextArrow() : player.getArrowManager().previousArrow();
 					
 					if(newArrow != null && newArrow != trait){
+						player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
 						LanguageAPI.sendTranslatedMessage(player.getPlayer(), arrow_change, "trait_name", newArrow.getDisplayName());
 					}
 					continue;

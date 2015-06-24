@@ -39,6 +39,7 @@ public class TraitConfigStringOption extends AbstractTraitConfigOption {
 	@Override
 	public void valueSelected(String value) {
 		this.value = value;
+		this.needsSave = true;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -44,6 +45,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -112,7 +114,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			if(Eevent.getEntity().getType() != EntityType.PLAYER) return false;
 			if(!TraitHolderCombinder.checkContainer(player, this)) return false;			
 			if(!isThisArrow(player)) return false;
-			
+
 			return true;
 		}
 		
@@ -120,30 +122,33 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		if(event instanceof ProjectileHitEvent){
 			ProjectileHitEvent Eevent = (ProjectileHitEvent) event;
 			if(Eevent.getEntityType() != EntityType.ARROW) return false;
-			if(CompatibilityModifier.Shooter.getShooter(Eevent.getEntity()) == null) return false;
+			Projectile arrow = (Projectile) Eevent.getEntity();
+
+			if(CompatibilityModifier.Shooter.getShooter(arrow) == null) return false;
 			
-			Arrow arrow = (Arrow) Eevent.getEntity();
 			List<MetadataValue> metaValues = arrow.getMetadata(ARROW_META_KEY);
 			if(arrow.getMetadata(ARROW_META_KEY).isEmpty()) return false;
 
 			boolean found = false;
 			for(MetadataValue value : metaValues){
-				if(getName().equals(value.value())){
+				if(getDisplayName().equals(value.value())){
 					found = true;
 					break;
 				}
 			}
 			
+			
 			if(!found) return false;
-			if(CompatibilityModifier.Shooter.getShooter(arrow).getType() != EntityType.PLAYER) return false;
 			
-			RaCPlayer realPlayer = RaCPlayerManager.get().getPlayer((Player) CompatibilityModifier.Shooter.getShooter(arrow));
+			//Remove the meta to not leak them.
+			arrow.removeMetadata(ARROW_META_KEY, plugin);
+			
+			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(arrow);
+			if(shooter.getType() != EntityType.PLAYER) return false;
+			
+			RaCPlayer realPlayer = RaCPlayerManager.get().getPlayer((Player) shooter);
 			if(!TraitHolderCombinder.checkContainer(realPlayer, this)) return false;
-
-			
-			
 			if(!isThisArrow(realPlayer)) return false;
-			
 			return true;
 		}
 		
@@ -168,13 +173,16 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			
 			boolean found = false;
 			for(MetadataValue value : metaValues){
-				if(getName().equals(value.value())){
+				if(getDisplayName().equals(value.value())){
 					found = true;
 					break;
 				}
 			}
 			
 			if(!found) return false;
+			
+			//Remove the meta to not leak them.
+			realArrow.removeMetadata(ARROW_META_KEY, plugin);
 			
 			//you can not hit your allies.
 			if(EnemyChecker.areAllies(realArrow, Eevent.getEntity())) return false;
@@ -219,12 +227,11 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		if(event instanceof EntityShootBowEvent){
 			EntityShootBowEvent Eevent = (EntityShootBowEvent) event;
 			
-			
 			Arrow arrow = (Arrow) Eevent.getProjectile();
 			arrow.setMetadata(ARROW_META_KEY , new LazyMetadataValue(plugin, new Callable<Object>() {
 				@Override
 				public Object call() throws Exception {
-					return getName();
+					return getDisplayName();
 				}
 			}));
 			
@@ -258,8 +265,11 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return;
 		
-		AbstractArrow newArrow = arrowManager.nextArrow();
+		boolean forward = !player.isSneaking();
+		AbstractArrow newArrow = forward ? arrowManager.nextArrow() : arrowManager.previousArrow();
 		if(newArrow != null && newArrow != arrow){
+			player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+			
 			LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", newArrow.getDisplayName());
 		}
 		
@@ -344,6 +354,8 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		}
 		
 		if(wrapper.getEvent() instanceof ProjectileHitEvent){
+			//Bypass the Uplink.
+			if(canBeTriggered(wrapper)) trigger(wrapper);
 			return true;
 		}
 		

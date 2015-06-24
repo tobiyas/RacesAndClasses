@@ -15,8 +15,10 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.cooldown;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 
@@ -123,6 +125,28 @@ public class CooldownManager {
 		}
 		
 		return playerCooldownList;
+	}
+	
+
+	/**
+	 * Returns a Map of all cooldown names and the Times the player has at this moment.
+	 * 
+	 * @param player to check
+	 * 
+	 * @return name -> Time.
+	 */
+	public Map<String,Integer> getAllCooldownsForPlayer(String playerName) {
+		Map<String,Integer> playerCooldownMap = new HashMap<String,Integer>();
+		
+		synchronized (cooldownList) {
+			for(CooldownContainer container : cooldownList){
+				if(container.getPlayerName().equalsIgnoreCase(playerName)){
+					playerCooldownMap.put(container.getCooldownName(), container.getCooldownTime());
+				}
+			}
+		}
+		
+		return playerCooldownMap;
 	}
 	
 	

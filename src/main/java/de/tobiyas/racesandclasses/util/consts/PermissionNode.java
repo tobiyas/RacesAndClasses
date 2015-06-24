@@ -88,6 +88,11 @@ public class PermissionNode {
 	public static final String channelEdit = prePlugin + "channel.edit";
 	
 	/**
+	 * The permission to reload channels
+	 */
+	public static final String channelReload = prePlugin + "channel.reload";
+	
+	/**
 	 * The Permission to whisper someone
 	 */
 	public static final String whisper = prePlugin + "whisper";
@@ -183,7 +188,6 @@ public class PermissionNode {
 	 * The Prefix for Class permissions
 	 */
 	public static final String raceSpawnUseOther = prePlugin + "racespawn.use.other";
-	
 
 	/**
 	 * The Permission to edit your level.

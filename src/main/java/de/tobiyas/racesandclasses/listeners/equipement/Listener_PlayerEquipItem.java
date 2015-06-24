@@ -25,6 +25,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.Pla
 import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 import de.tobiyas.util.items.ItemUtils;
 import de.tobiyas.util.items.ItemUtils.ArmorSlot;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class Listener_PlayerEquipItem implements Listener {
 
@@ -36,8 +37,12 @@ public class Listener_PlayerEquipItem implements Listener {
 	
 	public Listener_PlayerEquipItem() {
 		this.plugin = RacesAndClasses.getPlugin();
+		plugin.registerEvents(this);
 		
-		Bukkit.getPluginManager().registerEvents(this, plugin);
+		//Check if we have Armorstands.
+		if(VollotileCodeManager.getVollotileCode().getVersion().hasArmorstands()){
+			plugin.registerEvents(new Greater1_8_Listener());
+		}
 	}
 	
 	
@@ -204,6 +209,30 @@ public class Listener_PlayerEquipItem implements Listener {
 			cancellable.setCancelled(true);
 			InventoryResync.resync(player);
 		}
+	}
+	
+	
+	
+	/**
+	 * Private class for 1.8+ to imply with Armorstands.
+	 * 
+	 * @author Tobiyas
+	 *
+	 */
+	private class Greater1_8_Listener implements Listener{
+		
+		//This does not seem to be an issue at the Moment.
+		/*
+		@EventHandler
+		public void playerUsesArmorStand(PlayerArmorStandManipulateEvent event){
+			ItemStack item = event.getArmorStandItem();
+			boolean fromArmorstand = item != null;
+			if(fromArmorstand){
+				Player player = event.getPlayer();
+				evaluate(event, player, item);
+			}
+			
+		}*/
 	}
 	
 }

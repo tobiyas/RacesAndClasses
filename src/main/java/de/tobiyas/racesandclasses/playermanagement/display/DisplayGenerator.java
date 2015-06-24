@@ -20,6 +20,7 @@ import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class DisplayGenerator {
 
@@ -32,12 +33,12 @@ public class DisplayGenerator {
 	 * 
 	 * @return the generated Display
 	 */
-	public static Display generateDisplay(RaCPlayer player, DisplayInfos infos){
+	public static Display generateDisplay(RaCPlayer player, DisplayInfos infos, String prefered){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
 		MemberConfig config = player.getConfig();
 		Object displayTypeAsObject = config.getValueDisplayName("displayType");
-		String displayType = "score";
+		String displayType = prefered == null || prefered.isEmpty() ? "score" : prefered;
 		
 		boolean disableScoreboard = plugin.getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
 				
@@ -53,6 +54,18 @@ public class DisplayGenerator {
 		return generateFromType(type, player, infos);
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param player
+	 * @param infos
+	 * 
+	 * @return
+	 */
+	public static Display generateDisplay(RaCPlayer player, DisplayInfos infos){
+		return generateDisplay(player, infos, "");
+	}
+	
 	
 	/**
 	 * Generates the Display finally for the passed args.
@@ -64,12 +77,22 @@ public class DisplayGenerator {
 	 * @return the generated Display
 	 */
 	private static Display generateFromType(DisplayType type, RaCPlayer player, DisplayInfos infos){
+		if(type == DisplayType.Actionbar 
+				&& !VollotileCodeManager.getVollotileCode().getVersion().hasActionBar()){
+			
+			type = DisplayType.Chat;
+		}
+		
 		switch (type) {
 		case Chat:
 			return new ChatDisplayBar(player, infos);
 		
-		case Scoreboard:
-			return new NewScoreBoardDisplayBar(player, infos);
+		//TODO maybe enable this later!
+		//case Scoreboard:
+		//	return new NewScoreBoardDisplayBar(player, infos);
+		
+		case Actionbar:
+			return new ActionBarDisplay(player, infos);
 			
 		default:
 			return new ChatDisplayBar(player, infos);

@@ -104,6 +104,7 @@ import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
 import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerScoreboardUpdater;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
@@ -259,7 +260,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 
 	@Override
-	public void onEnable(){
+	public void pluginEnable(){
 		statistics = new StatisticGatherer(System.currentTimeMillis());
 		//We seal the startup away to prevent further erroring afterwards.
 		try{
@@ -280,7 +281,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 						
 			fullReload(false, false);
 			
-			registerEvents();
 			registerCommands();
 			
 			initMetrics();
@@ -293,6 +293,15 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			errored = true;
 			registerAllCommandsAsError();
 		}
+	}
+	
+	
+	@Override
+	protected void firstTick() {
+		super.firstTick();
+		
+		//Register the Events on the First Server Tick!
+		registerEvents();
 	}
 	
 	
@@ -413,6 +422,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//infight Manager.
 		inFightManager.reload();
+		
+		//Start the Cooldown Updater.
+		PlayerScoreboardUpdater.start();
 	}
 	
 
@@ -601,6 +613,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	}
 	
 	private void shutDownSequenz(boolean useGC){
+		PlayerScoreboardUpdater.stop();
+		
 		playerManager.savePlayerContainer();
 		getDebugLogger().shutDown();
 		plugin.reloadConfig();

@@ -109,6 +109,11 @@ public abstract class AbstractTraitHolder {
 	protected String needsPreHolder = null;
 	
 	/**
+	 * The GuiSlot to use.
+	 */
+	protected int guiSlot = -1;
+	
+	/**
 	 * The parents of this holders.
 	 */
 	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
@@ -275,6 +280,7 @@ public abstract class AbstractTraitHolder {
 			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
 			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
 			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.tag", "[" + configNodeName + "]"));
+			this.guiSlot = config.getInt(configNodeName + ".config.guislot", -1);
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}
@@ -427,6 +433,15 @@ public abstract class AbstractTraitHolder {
 	
 	public Set<Trait> getTraits(){
 		return traits;
+	}
+	
+	/**
+	 * The GuiSlot to show in.
+	 * 
+	 * @return the Slot to show in.
+	 */
+	public int getGuiSlot() {
+		return guiSlot;
 	}
 	
 	

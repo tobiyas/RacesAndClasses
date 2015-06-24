@@ -51,7 +51,6 @@ public class Listener_HotKey implements Listener {
 	
 	public Listener_HotKey() {
 		RacesAndClasses.getPlugin().registerEvents(this);
-		System.out.println("Registering HotkeyManager_Listener");
 	}
 	
 	

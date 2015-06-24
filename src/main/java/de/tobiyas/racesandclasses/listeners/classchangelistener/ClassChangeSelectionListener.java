@@ -144,4 +144,14 @@ public class ClassChangeSelectionListener implements Listener {
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
 		plugin.getPlayerManager().displayHealth(player);
 	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void resetHotkeys(AfterClassSelectedEvent selectEvent){
+		if(selectEvent.getPlayer() == null) return;
+		if(selectEvent.getPlayer().getName() == null) return;
+		
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
+		player.getHotkeyInventory().changeToBuildInv();
+		player.getHotkeyInventory().clearAllSlots();
+	}
 }

@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
@@ -24,6 +25,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolder
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.hotkeys.HotKeyInventory;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
@@ -228,6 +230,15 @@ public class RaCPlayer {
 		return plugin.getPlayerManager().displayHealth(this);
 	}
 	
+	/**
+	 * Returns the Scoreboard Manager of the player.
+	 * 
+	 * @return the scoreboard Manager.
+	 */
+	public PlayerRaCScoreboardManager getScoreboardManager(){
+		return plugin.getPlayerManager().getScoreboardManager(this);
+	}
+	
 	
 	/**
 	 * Returns a list of Traits the Player has.
@@ -425,6 +436,27 @@ public class RaCPlayer {
 	public GameMode getGameMode() {
 		if(!isOnline()) return GameMode.SURVIVAL;
 		return getPlayer().getGameMode();
+	}
+	
+	
+	/**
+	 * Sets the Scoreboard of the Player.
+	 * 
+	 * @param board to set.
+	 */
+	public void setScoreboard(Scoreboard board){
+		if(!isOnline()) return;
+		getPlayer().setScoreboard(board);
+	}
+	
+	/**
+	 * Returns the Scoreboard.
+	 * 
+	 * @return scoreboard to use.
+	 */
+	public Scoreboard getScoreboard() {
+		if(!isOnline()) return Bukkit.getScoreboardManager().getMainScoreboard();
+		return getPlayer().getScoreboard();
 	}
 	
 	

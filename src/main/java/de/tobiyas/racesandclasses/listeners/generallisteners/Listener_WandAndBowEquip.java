@@ -33,6 +33,7 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 
 public class Listener_WandAndBowEquip implements Listener {
 
@@ -59,34 +60,40 @@ public class Listener_WandAndBowEquip implements Listener {
 
 			if(newMatIsWand){
 				if(player.getSpellManager().getSpellAmount() > 0){
-					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.wand") > 0){
-						return;
+					player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
+					
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.wand") <= 0){
+						String currentActiveSpell = player.getSpellManager().getCurrentSpell().toString();
+						LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
+								"current_spell", currentActiveSpell);
+						
+						int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_wand_message();
+						plugin.getCooldownManager().setCooldown(player.getName(), "message.wand", time);
 					}
 					
-					String currentActiveSpell = player.getSpellManager().getCurrentSpell().toString();
-					LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
-							"current_spell", currentActiveSpell);
-					
-					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_wand_message();
-					plugin.getCooldownManager().setCooldown(player.getName(), "message.wand", time);
+					return;
 				}
 			}
+			
 			
 			if(mat == Material.BOW){
 				if(player.getArrowManager().getNumberOfArrowTypes() > 0){
-					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.bow") > 0){
-						return;
+					player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+					
+					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.bow") <= 0){
+						String currentArrow =player.getArrowManager().getCurrentArrow().getDisplayName();
+						LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
+								"current_arrow", currentArrow);
+						
+						int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_bow_message();
+						plugin.getCooldownManager().setCooldown(player.getName(), "message.bow", time);
 					}
 					
-					String currentArrow =player.getArrowManager().getCurrentArrow().getDisplayName();
-					LanguageAPI.sendTranslatedMessage(player, bow_selected_message, 
-							"current_arrow", currentArrow);
-					
-					int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_bow_message();
-					plugin.getCooldownManager().setCooldown(player.getName(), "message.bow", time);
+					return;
 				}
 			}
 			
+			player.getScoreboardManager().updateSelectAndShow(SBCategory.Cooldown, -1);
 		}
 	}
 

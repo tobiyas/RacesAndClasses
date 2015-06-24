@@ -28,6 +28,7 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
@@ -154,6 +155,17 @@ public class PlayerManager{
 	 */
 	public ArmorToolManager getArmorToolManagerOfPlayer(RaCPlayer player){
 		return getCreate(player, true).getArmorToolManager();
+	}
+	
+	/**
+	 * Checks if the {@link PlayerRaCScoreboardManager} of a Player exists and returns it.
+	 * If the {@link PlayerRaCScoreboardManager} does not exist, it is created.
+	 * 
+	 * @param player to check
+	 * @return the {@link PlayerRaCScoreboardManager} of the Player
+	 */
+	public PlayerRaCScoreboardManager getScoreboardManager(RaCPlayer player){
+		return getCreate(player, true).getPlayerScoreboardManager();
 	}
 
 	/**

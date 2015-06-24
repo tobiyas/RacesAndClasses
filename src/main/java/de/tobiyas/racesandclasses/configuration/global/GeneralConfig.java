@@ -154,6 +154,8 @@ import de.tobiyas.util.formating.Pair;
 	private int config_cooldown_on_bow_message;
 	private int config_cooldown_on_wand_message;
 	private int config_max_level;
+	
+	private String config_magic_manaShowPlace;
 
 	private List<String> config_general_disable_aliases;
 	private boolean config_gui_level_useMCLevelBar;
@@ -279,7 +281,7 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_scoreboard_name, "&eRaC");
 		config.addDefault(gui_disableAllChatBars, false);		
-		config.addDefault(gui_also_use_leftclick_in_guis, false);
+		config.addDefault(gui_also_use_leftclick_in_guis, true);
 		
 		config.addDefault(races_gui_enable, true);
 		config.addDefault(classes_gui_enable, true);
@@ -290,6 +292,7 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(magic_sprintingManaDrainInterval, 3);
 		config.addDefault(magic_sprintingManaCost, 2);
 		config.addDefault(magic_manaRefillWhileSprinting, true);
+		config.addDefault(magic_manaShowPlace, "Chat");
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config.addDefault(level_useLevelSystem, "RaC");
@@ -333,7 +336,7 @@ import de.tobiyas.util.formating.Pair;
 		
 		config_enableDebugOutputs = config.getBoolean(debug_outputs_enable, true);
 		config_enableErrorUpload = config.getBoolean(debug_outputs_errorUpload, true);
-		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, false);
+		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, true);
 		config_disableAllScoreboardOutputs = config.getBoolean(gui_scoreboard_disableAllOutputs, false);
 		config_convertDatabaseOnStartup = config.getBoolean(general_convert_database_on_startup, true);
 		
@@ -387,6 +390,8 @@ import de.tobiyas.util.formating.Pair;
 		config_magic_sprintingManaCost = config.getDouble(magic_sprintingManaCost, 1.5d);
 		config_magic_sprintingManaDrainInterval = config.getInt(magic_sprintingManaDrainInterval, 3);
 		config_max_level = config.getInt(level_max_level, -1);
+		
+		config_magic_manaShowPlace = config.getString(magic_manaShowPlace, "Chat");
 		
 		
 		String config_magic_outOfFightRegeneration_tmp = config.getString(magic_outOfFightRegeneration, "0#100");
@@ -855,6 +860,10 @@ import de.tobiyas.util.formating.Pair;
 
 	public Material getConfig_hotkeys_material() {
 		return config_hotkeys_material;
+	}
+	
+	public String getConfig_magic_manaShowPlace() {
+		return config_magic_manaShowPlace;
 	}
 
 	public int getConfig_max_level() {

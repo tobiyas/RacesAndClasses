@@ -943,6 +943,19 @@ public abstract class AbstractBasicTrait implements Trait,
 		return "trait." + getDisplayName();
 	}
 	
+	
+	@Override
+	public int getMaxLevel() {
+		return maximumLevel;
+	}
+	
+	
+	@Override
+	public int getMinLevel() {
+		return minimumLevel;
+	}
+	
+	
 	/**
 	 * This is indicating that a player uses the bound 
 	 * @param using the player that is using this Trait.
@@ -979,6 +992,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	public boolean hasPlayer(RaCPlayer player){
 		return TraitHolderCombinder.checkContainer(player, this);
+	}
+	
+	
+	@Override
+	public int compareTo(Trait other) {
+		return getDisplayName().compareTo(other.getDisplayName());
 	}
 	
 }

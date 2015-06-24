@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.listeners.holderchangegui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -34,6 +36,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHol
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
+import de.tobiyas.racesandclasses.util.inventory.InventoryResync;
 
 public abstract class HolderChangeListenerGui implements Listener {
 	
@@ -60,7 +63,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 	}
 
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void RemoveAnyHolderItemFromPlayer(InventoryCloseEvent invClose){
 		if(!invClose.getViewers().iterator().hasNext()) return;
@@ -83,7 +85,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 			}
 		}
 		
-		player.getPlayer().updateInventory();
+		InventoryResync.resync(player.getPlayer());
 	}
 	
 	
@@ -141,7 +143,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerSelectsHolder(InventoryClickEvent event){
 		if(!event.getViewers().iterator().hasNext()) return;
@@ -206,19 +207,25 @@ public abstract class HolderChangeListenerGui implements Listener {
 		if(worked){
 			if(player != null){
 				player.sendMessage(ChatColor.GREEN + "You are now a " + ChatColor.LIGHT_PURPLE + newHolder.getDisplayName() + ChatColor.GREEN + ".");
-				player.closeInventory();
-				player.updateInventory();
+				InventoryResync.closeAndResync(player);
 			}
 		}else{
 			if(player != null){
-				player.sendMessage(ChatColor.RED + "Did not work. :( .");
-				player.closeInventory();
-				player.updateInventory();
-				
-				//InventoryResync.resync(player);
+				player.sendMessage(ChatColor.RED + "Did not work. :( .");				
+				InventoryResync.closeAndResync(player);
 			}
 		}
 	}
+	
+	
+	@EventHandler
+	public void playerDropItem(PlayerDropItemEvent event){
+		Item item = event.getItemDrop();
+		ItemStack itemStack = item.getItemStack();
+		
+		if(isHolderItem(itemStack)) item.remove();
+	}
+	
 	
 	/**
 	 * The player wants to select his holders.

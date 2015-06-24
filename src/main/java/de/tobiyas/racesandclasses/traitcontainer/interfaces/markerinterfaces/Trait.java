@@ -29,7 +29,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
-public interface Trait{
+public interface Trait extends Comparable<Trait> {
 	
 	/**
 	 * This method is called when the Trait is load the first time.

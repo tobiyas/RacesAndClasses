@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.chat.channels;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
@@ -33,6 +34,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.util.autocomplete.AutoCompleteUtils;
 import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_Channel extends Observable implements CommandInterface {
@@ -159,6 +161,14 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 			
 			createChannel(racPlayer, channelName, channelType, channelPassword);
 			return true;
+		}
+		
+		
+		if(channelCommand.equalsIgnoreCase("reload")){
+			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.channelReload)) return true;
+			
+			plugin.getChannelManager().init();
+			sender.sendMessage(ChatColor.GREEN + "Reloaded.");
 		}
 		
 		if(channelCommand.equalsIgnoreCase("ban")){
@@ -305,6 +315,21 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 		
 		sender.sendMessage(ChatColor.RED + "/channel " + ChatColor.LIGHT_PURPLE + "edit " + ChatColor.YELLOW + "<channelname> " +
 							ChatColor.AQUA + "<@channel_propertie@> <@new_value@>");
+	}
+	
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		
+		List<String> complete = new LinkedList<String>();
+		if(args.length == 0) return complete;
+		
+		if(args.length == 1){
+			return AutoCompleteUtils.getAllNamesWith(args[0], "info", "list", "change", "join", "leave", "create", "edit");
+		}
+		
+		return complete;
 	}
 	
 	
@@ -467,13 +492,6 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 		}
 		
 		plugin.getChannelManager().editChannel(player, channel, property, newValue);
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command,
-			String alias, String[] args) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	

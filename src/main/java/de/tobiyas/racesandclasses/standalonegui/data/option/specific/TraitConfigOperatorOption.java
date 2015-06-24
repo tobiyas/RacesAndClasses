@@ -31,7 +31,10 @@ public class TraitConfigOperatorOption extends AbstractTraitConfigOption {
 	
 	@Override
 	public void valueSelected(String value) {
-		if(isAcceptable(value)) this.value = value;
+		if(isAcceptable(value)) {
+			this.value = value;
+			this.needsSave = true;
+		}
 	}
 
 	@Override

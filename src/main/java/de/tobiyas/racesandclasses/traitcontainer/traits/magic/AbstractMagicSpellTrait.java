@@ -41,6 +41,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -319,6 +320,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		}
 		
 		if(nextSpell != null){
+			player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
+			
 			DecimalFormat formatter = new DecimalFormat("###.#");
 			
 			String costName = formatter.format(nextSpell.getCost());

@@ -23,19 +23,39 @@
 package de.tobiyas.racesandclasses.commands.races;
 
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.*;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_are;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.already_have_race;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.needs_1_arg;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_selected;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_race_to_select;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.no_traits;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_changed_to;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.race_not_exist;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.something_disabled;
+import static de.tobiyas.racesandclasses.translation.languages.Keys.your_race;
 
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import com.google.common.collect.Lists;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.APIs.RaceAPI;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
@@ -45,9 +65,15 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceCo
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
+import de.tobiyas.util.chat.JSONRawSender;
+import de.tobiyas.util.chat.components.ChatMessageObject;
+import de.tobiyas.util.chat.components.TellRawChatMessage;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 
 
 public class CommandExecutor_Race extends Observable implements CommandInterface {
@@ -204,6 +230,23 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoRace));
 				this.setChanged();
 			}
+			return true;
+		}
+		
+		//Generate a Book!
+		if(raceCommand.equalsIgnoreCase("book")){
+			if(!VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
+				sender.sendMessage(ChatColor.RED + "Only in MC 1.8+.");
+				return true;
+			}
+			
+			ItemStack book = generateRacesBook();
+			if(sender instanceof Player){
+				Player pl = (Player) sender;
+				pl.getInventory().addItem(book);
+			}
+			
+			sender.sendMessage("Done");	
 			return true;
 		}
 			
@@ -393,6 +436,151 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 			}
 		}
 	}
+	
+	
+	private void newRaceList(CommandSender sender){
+		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
+		
+		sender.sendMessage(ChatColor.YELLOW + "====== LIST OF RACES ======");
+		for(String race : races){
+			RaceContainer rc = RaceAPI.getRaceByName(race);
+			
+			String description = "";
+			
+			description += ChatColor.AQUA + "Race health: " + ChatColor.LIGHT_PURPLE + rc.getRaceMaxHealth() + "\n";
+			description += ChatColor.AQUA + "Race name: " + ChatColor.LIGHT_PURPLE + rc.getDisplayName() + "\n";
+			description += ChatColor.AQUA + "Race tag: " + ChatColor.LIGHT_PURPLE + rc.getTag() + "\n";
+			
+			description += ChatColor.AQUA + "Armor: " + ChatColor.YELLOW + rc.getArmorString() + "\n";
+			description += ChatColor.AQUA + "Traits:" + "\n";
+			
+			for(Trait trait : rc.getVisibleTraits()){
+				description += ChatColor.AQUA + trait.getDisplayName() + " : " 
+						+ ChatColor.YELLOW + trait.getPrettyConfiguration() + "\n";
+			}
+			
+			JSONRawSender raw = new JSONRawSender();
+			raw.appendPopup(description, race);
+		}
+	}
+	
+	
+	/**
+	 * Generates a Book with all Races.
+	 * 
+	 * @return a book
+	 */
+	private ItemStack generateRacesBook(){
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta meta = (BookMeta) book.getItemMeta();
+		meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Races");
+		meta.setLore(Arrays.asList( new String[]{ChatColor.AQUA + "This book contains", ChatColor.AQUA + "all Races."} ));
+		meta.setAuthor("RaC-Plugin");
+		meta.setTitle(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Races");
+		book.setItemMeta(meta);
+		
+		
+		List<TellRawChatMessage> pages = new LinkedList<>();
+		//Generate 1st Page
+		TellRawChatMessage firstPage = new TellRawChatMessage();
+		pages.add(firstPage);
+
+		firstPage.addSimpleText("Races:", false, true, false, true, false, ChatColor.GRAY)
+		.addNewLine()
+		.addNewLine();
+
+		
+		
+		//Generate the Rest of the Pages:
+		int nr = 2;
+		for(String raceName : RaceAPI.getAllRaceNames()){
+			if(raceName.equals(RaceAPI.getDefaultRaceName())) continue;
+			
+			RaceContainer container = RaceAPI.getRaceByName(raceName);
+			if(container != null) pages.add(generateBookPageForRace(container));
+			
+			//Add the Front page.
+			firstPage.addSimpleText(container.getDisplayName(), false, true, false, false, false, ChatColor.AQUA)
+			.addSimpleText("  - page " + nr, false, false, false, false, false, ChatColor.GRAY)
+			.addNewLine();
+			
+			nr++;
+		}
+		
+		VollotileCodeManager.getVollotileCode().editBookToPages(book, pages);
+		return book;
+	}
+	
+	
+	/**
+	 * Generates a Book Info page for the Race.
+	 * 
+	 * @param race to generate for
+	 * @return the Tell Raw.
+	 */
+	private TellRawChatMessage generateBookPageForRace(RaceContainer race){
+		DecimalFormat f = new DecimalFormat("0.0");
+		TellRawChatMessage page = new TellRawChatMessage();
+		
+		/*
+		 * <Race>
+		 * 
+		 * Armor: <>
+		 * Health: <>
+		 * Mana: <>
+		 * 
+		 * Traits:
+		 * - Name : Description
+		 * ......
+		 * 
+		 */
+		
+		page.append(new ChatMessageObject("Race: " + race.getDisplayName()).addChatColor(ChatColor.GRAY).addBold().addUnderlined())
+		.addNewLine()
+		.addNewLine()
+		
+		.append(new ChatMessageObject("Armor").addChatColor(ChatColor.DARK_BLUE).addBold().removeUnderlined()
+				.addPopupHover( ChatColor.RED + (race.getArmorString() )) )
+		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
+		
+		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
+				.addPopupHover(ChatColor.RED + f.format(race.getRaceMaxHealth())))
+		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
+		
+		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
+				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus())))
+		.addNewLine()
+		.addNewLine()
+		
+		.append(new ChatMessageObject("Traits:").addChatColor(ChatColor.GRAY).addBold().addUnderlined())
+		.addNewLine();
+		
+		List<Trait> traits = new LinkedList<>();
+		traits.addAll(race.getVisibleTraits());
+		
+		Collections.sort(traits);
+		for(Trait trait : race.getVisibleTraits()){
+			String popup = ChatColor.GRAY + "" + ChatColor.UNDERLINE + "" + ChatColor.BOLD
+					+ "Trait: " + trait.getDisplayName() + "\n" + ChatColor.RESET;
+			
+			if(trait instanceof TraitWithRestrictions){
+				TraitWithRestrictions twr = (TraitWithRestrictions) trait;
+				if(twr.getMinLevel() > 1) popup += ChatColor.GRAY + "MinLvl: " + ChatColor.RED + twr.getMinLevel() + "\n";
+				if(twr.getMaxLevel() < 100000) popup += ChatColor.GRAY + "MaxLvl: " + ChatColor.RED + twr.getMaxLevel() + "\n";
+			}
+			
+			popup += ChatColor.GRAY + "Description: " + ChatColor.RED + trait.getPrettyConfiguration();
+			
+			page.append(new ChatMessageObject("-" + trait.getDisplayName()).addChatColor(ChatColor.AQUA).removeBold().removeUnderlined()
+				.addPopupHover(popup))
+			.addNewLine();
+		}
+		
+		
+		return page;
+	}
+	
+	
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command,

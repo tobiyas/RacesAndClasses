@@ -2,7 +2,9 @@ package de.tobiyas.racesandclasses.standalonegui.data.option;
 
 import java.util.Set;
 
-public interface TraitConfigOption extends Comparable<TraitConfigOption> {
+import de.tobiyas.racesandclasses.standalonegui.data.NeedsSave;
+
+public interface TraitConfigOption extends Comparable<TraitConfigOption>, NeedsSave {
 	
 	
 	/**

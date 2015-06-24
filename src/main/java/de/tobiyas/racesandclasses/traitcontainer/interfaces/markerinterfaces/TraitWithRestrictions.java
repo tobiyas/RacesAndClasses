@@ -217,4 +217,19 @@ public interface TraitWithRestrictions extends Trait {
 	 */
 	public String getCooldownName();
 	
+	
+	/**
+	 * Returns the Min-Level
+	 * 
+	 * @return Min level.
+	 */
+	public int getMinLevel();
+	
+	/**
+	 * Returns the Max-Level
+	 * 
+	 * @return Max level.
+	 */
+	public int getMaxLevel();
+	
 }

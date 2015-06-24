@@ -447,6 +447,10 @@ public class GeneralConfigText {
 				+ "# default: RaC \n"
 				+ magic_manaManagerType + ": 'RaC'\n\n"
 				
+				+ "# Where the 'Mana-Bar' should be shown.\n"
+				+ "# This can be: Chat, ActionBar(needs MC 1.8+), Scoreboard\n"
+				+ "# default: Chat \n"
+				+ magic_manaShowPlace + ": 'Chat'\n\n"
 								
 				+ "# If the Mana of a player refills while he sprints.\n"
 				+ "# default: false \n"
@@ -545,13 +549,6 @@ public class GeneralConfigText {
 				+ "# String List: a list of NPC names.\n"
 				+ "# default: [] \n"
 				+ npc_select_class + ": []\n\n"
-				
-				+ "# The NPCs to open the GUI for Class Change Selection. \n"
-				+ "# NPC names have to be the real names of the NPCs.\n"
-				+ "# The Gui will open even if the GUI is disabled in Class Secion.\n"
-				+ "# String List: a list of NPC names.\n"
-				+ "# default: [] \n"
-				+ npc_change_class + ": []\n\n"
 				;
 	}
 	

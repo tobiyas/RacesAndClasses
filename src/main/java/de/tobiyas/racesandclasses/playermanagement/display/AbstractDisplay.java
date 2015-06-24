@@ -103,6 +103,7 @@ public abstract class AbstractDisplay implements Display{
 	 * @return
 	 */
 	protected String calcForHealth(double currentHealth, double maxHealth, int healthBarLength){
+		if(maxHealth == 0) maxHealth = 0.1;
 		double healthPresentBarLength = ((currentHealth / maxHealth) * (healthBarLength));
 		
 		if(healthPresentBarLength < 0) healthPresentBarLength = 0;

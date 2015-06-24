@@ -5,8 +5,8 @@ import java.util.List;
 
 import de.tobiyas.racesandclasses.standalonegui.data.option.TraitConfigOption;
 
-public class GuiTrait implements Comparable<GuiTrait> {
-
+public class GuiTrait implements Comparable<GuiTrait>, NeedsSave {
+	
 	
 	/**
 	 * The Type of trait.
@@ -97,5 +97,13 @@ public class GuiTrait implements Comparable<GuiTrait> {
 	}
 
 
+	@Override
+	public boolean needsSave() {
+		for(TraitConfigOption config : traitConfigurationNeeded){
+			if(config.needsSave()) return true;
+		}
+		
+		return false;
+	}
 	
 }

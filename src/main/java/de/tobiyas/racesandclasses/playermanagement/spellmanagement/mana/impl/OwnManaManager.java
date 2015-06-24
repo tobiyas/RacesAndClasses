@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.bukkit.scheduler.BukkitRunnable;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
@@ -93,13 +95,12 @@ public class OwnManaManager implements Observer, ManaManager {
 			manaDisplay.unregister();
 		}
 		
-		manaDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.MANA);
+		String prefered = plugin.getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace();
+		manaDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.MANA, prefered);
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#rescanPlayer()
-	 */
+
 	@Override
 	public void rescanPlayer(){
 		if(player == null || !player.isOnline() || WorldResolver.isOnDisabledWorld(player)){
@@ -125,24 +126,20 @@ public class OwnManaManager implements Observer, ManaManager {
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#outputManaToPlayer()
-	 */
+
 	@Override
 	public void outputManaToPlayer(){
-		if(getMaxMana() <= 0) return;
+		double maxMana = getMaxMana();
+		if(maxMana <= 0) maxMana = 0.1;
 		
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				manaDisplay.display(currentMana, getMaxMana());
 			}
-		}, 1);
+		}.runTask(plugin);
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#playerCastSpell(de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait)
-	 */
+
 	@Override
 	public boolean playerCastSpell(MagicSpellTrait spellToCast){
 		if(!hasEnoughMana(spellToCast)) return false;
@@ -154,19 +151,14 @@ public class OwnManaManager implements Observer, ManaManager {
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#hasEnoughMana(de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait)
-	 */
+
 	@Override
 	public boolean hasEnoughMana(MagicSpellTrait spell){
 		if(spell.getCostType() != CostType.MANA) return false;
 		return hasEnoughMana(spell.getCost());
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#fillMana(double)
-	 */
+
 	@Override
 	public double fillMana(double value){
 		currentMana += value;
@@ -178,10 +170,7 @@ public class OwnManaManager implements Observer, ManaManager {
 		return currentMana;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#drownMana(double)
-	 */
+
 	@Override
 	public double drownMana(double value){
 		currentMana -= value;
@@ -194,9 +183,7 @@ public class OwnManaManager implements Observer, ManaManager {
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#hasEnoughMana(double)
-	 */
+
 	@Override
 	public boolean hasEnoughMana(double manaNeeded){
 		return currentMana - manaNeeded >= 0;
@@ -204,9 +191,7 @@ public class OwnManaManager implements Observer, ManaManager {
 	
 	
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getMaxMana()
-	 */
+
 	@Override
 	public double getMaxMana() {
 		double max = 0;
@@ -218,50 +203,37 @@ public class OwnManaManager implements Observer, ManaManager {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getCurrentMana()
-	 */
+
 	@Override
 	public double getCurrentMana() {
 		return currentMana;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#addMaxManaBonus(java.lang.String, double)
-	 */
+
 	@Override
 	public void addMaxManaBonus(String key, double value){
 		maxManaBonus.put(key.toLowerCase(), value);
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#removeMaxManaBonus(java.lang.String)
-	 */
+
 	@Override
 	public void removeMaxManaBonus(String key){
 		maxManaBonus.remove(key.toLowerCase());
 	}
+
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getAllBonuses()
-	 */
 	@Override
 	public Map<String,Double> getAllBonuses(){
 		return maxManaBonus;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#getPlayer()
-	 */
+
 	@Override
 	public RaCPlayer getPlayer() {
 		return player;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager#isManaFull()
-	 */
+
 	@Override
 	public boolean isManaFull(){
 		return currentMana >= getMaxMana();

@@ -51,7 +51,12 @@ public interface Display {
 		/**
 		 * Shows the display on the right side as ScoreBoard.
 		 */
-		Scoreboard;
+		Scoreboard,
+		
+		/**
+		 * Shows the Display in the Action bar.
+		 */
+		Actionbar;
 		
 		
 		/**
@@ -68,6 +73,10 @@ public interface Display {
 			
 			if(name.contains("score") || name.contains("board")){
 				return Scoreboard;
+			}
+			
+			if(name.contains("action")){
+				return Actionbar;
 			}
 				
 				

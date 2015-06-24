@@ -16,10 +16,8 @@
 package de.tobiyas.racesandclasses.listeners.externalchatlistener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Herochat;
@@ -40,9 +38,8 @@ public class HeroChatListener implements Listener  {
 	public HeroChatListener() {
 		this.plugin = RacesAndClasses.getPlugin();
 		
-		if(isHeroChatThere()){
-			Bukkit.getPluginManager().registerEvents(this, plugin);
-		}
+		if(!isHeroChatThere()) return;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	/**
@@ -51,18 +48,12 @@ public class HeroChatListener implements Listener  {
 	 * @return true if it is present, false otherwise.
 	 */
 	public static boolean isHeroChatThere(){
-		for(Plugin plugin : Bukkit.getPluginManager().getPlugins()){
-			if(plugin.getName().equalsIgnoreCase("Herochat")){
-				return true;
-			}
-		}
-		
-		return false;
+		return Bukkit.getPluginManager().getPlugin("Herochat") != null;
 	}
 	
 	
 	@EventHandler
-	public void heroChatMessage(ChannelChatEvent event){
+	public void heroChatMessage(ChannelChatEvent event){		
 		String format = event.getFormat();
 		if (format.equals("{default}")) {
 			format = Herochat.getChannelManager().getStandardFormat();
@@ -87,14 +78,10 @@ public class HeroChatListener implements Listener  {
 		
 		
 	    if (format.contains(raceReplacement)) {
-	      String lastColor = ChatColor.getLastColors(event.getMessage().split(raceReplacement)[0]);
-	      raceTag += lastColor;
 	      format = format.replace(raceReplacement, raceTag);
 	    }
 
 	    if (format.contains(classReplacement)) {
-			String lastColor = ChatColor.getLastColors(event.getMessage().split(classReplacement)[0]);
-			classTag += lastColor;
 			format = format.replace(classReplacement, classTag);
 	    }
 	    

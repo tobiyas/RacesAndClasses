@@ -1,9 +1,11 @@
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import org.bukkit.Bukkit;
+import java.util.Map;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
@@ -26,7 +28,7 @@ public class CustomPlayerLevelManagerEXPListener implements Listener {
 	
 	public CustomPlayerLevelManagerEXPListener() {
 		this.plugin = RacesAndClasses.getPlugin();
-		Bukkit.getPluginManager().registerEvents(this, plugin);
+		plugin.registerEvents(this);
 	}
 	
 	
@@ -55,9 +57,10 @@ public class CustomPlayerLevelManagerEXPListener implements Listener {
 	 * @param killed the entity type killed.
 	 */
 	private void killedEntity(RaCPlayer racPlayer, EntityType killed) {
-		if(!plugin.getConfigManager().getGeneralConfig().getConfig_custom_level_exp_gain().containsKey(killed)) return;
+		Map<EntityType,Integer> expMap = plugin.getConfigManager().getGeneralConfig().getConfig_custom_level_exp_gain();
+		if(!expMap.containsKey(killed)) return;
 		
-		int exp = plugin.getConfigManager().getGeneralConfig().getConfig_custom_level_exp_gain().get(killed);
+		int exp = expMap.get(killed);
 		LevelAPI.addExp(racPlayer, exp);
 	}
 
@@ -67,7 +70,9 @@ public class CustomPlayerLevelManagerEXPListener implements Listener {
 	 * This will register the Listener IF needed!
 	 */
 	public static void launch(){
-		if(instance == null) instance = new CustomPlayerLevelManagerEXPListener();
+		if(instance != null) HandlerList.unregisterAll(instance);
+		
+		instance = new CustomPlayerLevelManagerEXPListener();
 	}
 	
 }

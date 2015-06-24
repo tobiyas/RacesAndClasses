@@ -12,6 +12,12 @@ import javax.swing.JPanel;
 
 public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 
+
+	/**
+	 * If the Element needs Save.
+	 */
+	protected boolean needsSave = false;
+	
 	
 	/**
 	 * The Name of the option.
@@ -158,6 +164,12 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 	@Override
 	public int compareTo(TraitConfigOption other) {
 		return name.compareTo(other.getName());
+	}
+	
+	
+	@Override
+	public boolean needsSave() {
+		return needsSave;
 	}
 	
 }

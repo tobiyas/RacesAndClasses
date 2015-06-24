@@ -123,8 +123,12 @@ public class Translator {
 		if(modifiedText == null || replaceMap == null) return this; 
 		
 		for(Entry<String, String> entry : replaceMap.entrySet()){
-			String toReplace = "%" + entry.getKey().toUpperCase() + "%";
+			String toReplace = entry.getKey();
 			String replaceWith = entry.getValue();
+			
+			//skip empty entries!
+			if(toReplace == null || toReplace.isEmpty() || replaceWith == null) continue;
+			toReplace = "%" + toReplace.toUpperCase() + "%";
 			
 			modifiedText = modifiedText.replaceAll(toReplace, replaceWith);
 		}
