@@ -87,6 +87,8 @@ public class DisplayGenerator {
 		case Chat:
 			return new ChatDisplayBar(player, infos);
 		
+		case None:
+			return new NoneDisplayBar(player, infos);
 		//TODO maybe enable this later!
 		//case Scoreboard:
 		//	return new NewScoreBoardDisplayBar(player, infos);

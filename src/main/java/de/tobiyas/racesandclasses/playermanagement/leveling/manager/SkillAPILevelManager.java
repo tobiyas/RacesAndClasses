@@ -23,9 +23,6 @@ import com.sucy.skill.api.player.PlayerData;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
-import de.tobiyas.racesandclasses.playermanagement.display.Display;
-import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 
 public class SkillAPILevelManager implements PlayerLevelManager {
@@ -37,23 +34,10 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	
 	
 	/**
-	 * The Display to show.
-	 */
-	private Display expDisplay;
-
-	/**
-	 * The Display to show.
-	 */
-	private Display levelDisplay;
-	
-	
-	/**
 	 * Sets up the Plugin.
 	 */
 	public SkillAPILevelManager(RaCPlayer player) {
 		this.player = player;
-		
-		rescanDisplay();
 	}
 	
 	
@@ -145,18 +129,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 		//levelDisplay.display(getCurrentLevel(), getCurrentLevel());
 	}
 	
-	/**
-	 * This re-registers the display.
-	 * <br>Meaning to throw the old one away and generate a new one.
-	 */
-	private void rescanDisplay(){
-		if(expDisplay != null){
-			expDisplay.unregister();
-		}
-		
-		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
-	}
 
 	@Override
 	public boolean canRemove(int toRemove) {

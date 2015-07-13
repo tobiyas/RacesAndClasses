@@ -47,7 +47,6 @@ public interface Display {
 		 */
 		Chat,
 		
-		
 		/**
 		 * Shows the display on the right side as ScoreBoard.
 		 */
@@ -56,7 +55,12 @@ public interface Display {
 		/**
 		 * Shows the Display in the Action bar.
 		 */
-		Actionbar;
+		Actionbar,
+		
+		/**
+		 * Show on non Display.
+		 */
+		None;
 		
 		
 		/**
@@ -77,6 +81,10 @@ public interface Display {
 			
 			if(name.contains("action")){
 				return Actionbar;
+			}
+			
+			if(name.contains("none")){
+				return None;
 			}
 				
 				

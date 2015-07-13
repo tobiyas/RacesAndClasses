@@ -7,13 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
@@ -36,7 +31,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
 import de.tobiyas.util.player.PlayerUtils;
 
-public class RaCPlayer {
+public class RaCPlayer extends PlayerProxy {
 
 	/**
 	 * The UUID of the player
@@ -106,15 +101,14 @@ public class RaCPlayer {
 	}
 	
 	
-	/**
-	 * Returns a player object for this player.
-	 * 
-	 * @return player or null
-	 */
-	public Player getPlayer(){
+	@Override
+	public Player getRealPlayer() {
 		if(!hasUUIDSupport()) return PlayerUtils.getPlayer(playerName);
 		return Bukkit.getPlayer(playerUUID);
 	}
+	
+	
+	
 	
 	/**
 	 * Returns a player object for this player.
@@ -132,9 +126,15 @@ public class RaCPlayer {
 	 * 
 	 * @return true if online.
 	 */
+	@Override
 	public boolean isOnline(){
 		Player player = getPlayer();
 		return player != null && player.isOnline();
+	}
+	
+	@Override
+	public Player getPlayer() {
+		return PlayerUtils.getPlayer(playerUUID);
 	}
 	
 	
@@ -354,113 +354,6 @@ public class RaCPlayer {
 	}
 	
 	
-	
-	////////////////////
-	//Player proxys/////
-	////////////////////
-	
-	/**
-	 * The Location of the Player.
-	 * 
-	 * @return location or null
-	 * @see Player#getLocation()
-	 */
-	public Location getLocation(){
-		if(!isOnline()) return null;
-		return getPlayer().getLocation();
-	}
-	
-	/**
-	 * The World the player is on.
-	 * 
-	 * @return World or null
-	 * @see Player#getWorld()
-	 */
-	public World getWorld(){
-		if(!isOnline()) return null;
-		return getPlayer().getWorld();
-	}
-	
-	
-	/**
-	 * If the player is sneaking
-	 * 
-	 * @return true if sneaking
-	 * @see Player#isSneaking()
-	 */
-	public boolean isSneaking(){
-		if(!isOnline()) return false;
-		return getPlayer().isSneaking();
-	}
-	
-	
-	/**
-	 * Should not be used, since we use translations.
-	 * <br>Try using translation module instead.
-	 * 
-	 * @param message to send.
-	 */
-	public void sendMessage(String message){
-		if(isOnline()) getPlayer().sendMessage(message);
-	}
-	
-	
-	/**
-	 * Should not be used, since we use translations.
-	 * 
-	 * @return the displayName
-	 * @see Player#getDisplayName()
-	 */
-	public String getDisplayName(){
-		if(!isOnline()) return playerName;
-		return getPlayer().getDisplayName();
-	}
-	
-	
-	/**
-	 * Returns the item in hand.
-	 * 
-	 * @return
-	 */
-	public ItemStack getItemInHand(){
-		if(!isOnline()) return null;
-		return getPlayer().getItemInHand();
-	}
-	
-
-	/**
-	 * Returns the Gamemode of the Player.
-	 * 
-	 * @return
-	 */
-	public GameMode getGameMode() {
-		if(!isOnline()) return GameMode.SURVIVAL;
-		return getPlayer().getGameMode();
-	}
-	
-	
-	/**
-	 * Sets the Scoreboard of the Player.
-	 * 
-	 * @param board to set.
-	 */
-	public void setScoreboard(Scoreboard board){
-		if(!isOnline()) return;
-		getPlayer().setScoreboard(board);
-	}
-	
-	/**
-	 * Returns the Scoreboard.
-	 * 
-	 * @return scoreboard to use.
-	 */
-	public Scoreboard getScoreboard() {
-		if(!isOnline()) return Bukkit.getScoreboardManager().getMainScoreboard();
-		return getPlayer().getScoreboard();
-	}
-	
-	
-	
 	//BELOW ONLY HASHCODE / EQUALS//
 	
 	@Override
@@ -496,6 +389,5 @@ public class RaCPlayer {
 			return false;
 		return true;
 	}
-
 	
 }
