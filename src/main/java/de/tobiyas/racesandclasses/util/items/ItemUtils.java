@@ -114,6 +114,22 @@ public class ItemUtils {
 		
 
 		/**
+		 * Resets the ItemQualities.
+		 * 
+		 * @param toSet to set.
+		 */
+		public static void set(Map<String, Set<Material>> toSet) {
+			allValues.clear();
+			for(Map.Entry<String, Set<Material>> entry : toSet.entrySet()){
+				ItemQuality quality = new ItemQuality(entry.getKey(), entry.getValue());
+				allValues.add(quality);
+			}
+			
+			allValues.add(None);
+		}
+		
+
+		/**
 		 * Parses the ItemQuality from a String.
 		 * 
 		 * @param armorString to parse.
@@ -148,6 +164,21 @@ public class ItemUtils {
 			}
 			
 			return null;
+		}
+
+		/**
+		 * Loads the Default.
+		 */
+		public static void loadDefault() {
+			allValues.clear();
+			
+			allValues.add(Chain);
+			allValues.add(Diamond);
+			allValues.add(Gold);
+			allValues.add(Iron);
+			allValues.add(Leather);
+			
+			allValues.add(None);
 		}
 		
 	}

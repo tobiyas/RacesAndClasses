@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.configuration.managing;
 
 import de.tobiyas.racesandclasses.configuration.global.ChannelConfig;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
+import de.tobiyas.racesandclasses.configuration.armory.ArmorConfig;
 import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
 import de.tobiyas.racesandclasses.configuration.raceteams.RaceTeamManager;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceToClassConfiguration;
@@ -27,6 +28,7 @@ public class ConfigManager {
 	private final GeneralConfig generalConfig;
 	private final ChannelConfig channelConfig;
 	private final RaceToClassConfiguration raceToClassConfig;
+	private final ArmorConfig armorConfig;
 	
 	private final MemberConfigManager memberConfigManager;
 	private final TraitConfigManager traitConfigManager;
@@ -40,6 +42,8 @@ public class ConfigManager {
 		generalConfig = new GeneralConfig();
 		channelConfig = new ChannelConfig();
 		raceToClassConfig = new RaceToClassConfiguration();
+		armorConfig = new ArmorConfig();
+		
 		memberConfigManager = new MemberConfigManager();
 		traitConfigManager = new TraitConfigManager();
 		raceTeamManager = new RaceTeamManager();
@@ -52,6 +56,8 @@ public class ConfigManager {
 		generalConfig.reload();
 		channelConfig.reload();
 		raceToClassConfig.reload();
+		armorConfig.reload();
+		
 		memberConfigManager.reload();
 		traitConfigManager.reload();
 		raceTeamManager.reaload();
@@ -112,5 +118,13 @@ public class ConfigManager {
 		return raceTeamManager;
 	}
 
+	/**
+	 * Returns the Armor-Config.
+	 * 
+	 * @return the Armor Config to use.
+	 */
+	public ArmorConfig getArmorConfig() {
+		return armorConfig;
+	}
 
 }
