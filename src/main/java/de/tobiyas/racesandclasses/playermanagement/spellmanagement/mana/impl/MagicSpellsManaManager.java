@@ -1,8 +1,6 @@
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.bukkit.entity.Player;
 
@@ -12,15 +10,9 @@ import com.nisovin.magicspells.mana.ManaChangeReason;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
-import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 
-public class MagicSpellsManaManager implements ManaManager {
+public class MagicSpellsManaManager extends AbstractManaManager {
 
-	/**
-	 * The player to use.
-	 */
-	private final RaCPlayer player;
 	
 	/**
 	 * The runner for the Mana food bar.
@@ -28,52 +20,36 @@ public class MagicSpellsManaManager implements ManaManager {
 	private final ManaFoodBarRunner foodBar;	
 	
 	
-	public MagicSpellsManaManager(RaCPlayer player) {
-		this.player = player;
+	public MagicSpellsManaManager(RaCPlayer racPlayer) {
+		super(racPlayer);
 		
 		foodBar = new ManaFoodBarRunner(this);
 		foodBar.start();
 	}
 
-	@Override
-	public void rescanPlayer() {
-	}
 
 	@Override
 	public void outputManaToPlayer() {
 	}
 
-	@Override
-	public boolean playerCastSpell(MagicSpellTrait spellToCast) {
-		if(!hasEnoughMana(spellToCast)) return false;
-		return MagicSpells.getManaHandler().removeMana(player.getPlayer(), (int)spellToCast.getCost(), ManaChangeReason.SPELL_COST);
-	}
 
-	@Override
-	public boolean hasEnoughMana(MagicSpellTrait spell) {
-		return hasEnoughMana(spell.getCost());
-	}
 
 	@Override
 	public double fillMana(double value) {
-		MagicSpells.getManaHandler().addMana(player.getPlayer(), (int)value, ManaChangeReason.OTHER);
+		MagicSpells.getManaHandler().addMana(racPlayer.getPlayer(), (int)value, ManaChangeReason.OTHER);
 		return getCurrentMana();
 	}
 
 	@Override
 	public double drownMana(double value) {
-		MagicSpells.getManaHandler().removeMana(player.getPlayer(), (int)value, ManaChangeReason.OTHER);
+		MagicSpells.getManaHandler().removeMana(racPlayer.getPlayer(), (int)value, ManaChangeReason.OTHER);
 		return getCurrentMana();
 	}
 
-	@Override
-	public boolean hasEnoughMana(double manaNeeded) {
-		return MagicSpells.getManaHandler().hasMana(player.getPlayer(), (int)manaNeeded);
-	}
 
 	@Override
 	public double getMaxMana() {
-		return MagicSpells.getManaHandler().getMaxMana(player.getPlayer());
+		return MagicSpells.getManaHandler().getMaxMana(racPlayer.getPlayer());
 	}
 
 	@Override
@@ -84,41 +60,21 @@ public class MagicSpellsManaManager implements ManaManager {
 		return bar.getMana();
 	}
 
-	@Override
-	public void addMaxManaBonus(String key, double value) {
-		//not supported here.
-	}
-
-	@Override
-	public void removeMaxManaBonus(String key) {
-		//not supported here.
-	}
-
-	@Override
-	public Map<String, Double> getAllBonuses() {
-		return new HashMap<String, Double>();
-	}
-
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
-
-	@Override
-	public boolean isManaFull() {
-		return getCurrentMana() >= getMaxMana();
-	}
 	
 	
 	private ManaBar getBar(){
 		try{
 			Method method = MagicSpells.getManaHandler().getClass().getDeclaredMethod("getManaBar", Player.class);
 			method.setAccessible(true);
-			return (ManaBar) method.invoke(MagicSpells.getManaHandler(), player.getPlayer());
+			return (ManaBar) method.invoke(MagicSpells.getManaHandler(), racPlayer.getPlayer());
 		}catch(Throwable exp){ 
 			exp.printStackTrace();
 			return null; 
 		}
 	}
+
+
+	@Override
+	protected void applyMaxManaBonus(double bonus) {}
 	
 }

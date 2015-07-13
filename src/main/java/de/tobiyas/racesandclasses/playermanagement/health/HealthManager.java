@@ -81,7 +81,7 @@ public class HealthManager {
 	 */
 	public void rescanPlayer(){
 		RaceContainer race = player.getRace();
-		if(race != null) addMaxHealthBonus("race", race.getMaxHealthMod());
+		if(race != null) addMaxHealthBonus("race", race.getMaxHealthMod(player.getLevelManager().getCurrentLevel()));
 
 		ClassContainer clazz = player.getclass();
 		if(clazz != null) addMaxHealthBonus("class", clazz.getMaxHealthMod());

@@ -36,6 +36,7 @@ public class ItemContainer {
 		this(itemID, damageValue, minAmount, maxAmount, probability, 0);
 	}
 	
+	@SuppressWarnings("deprecation") //Still valid function.
 	public ItemContainer(int itemID, int damageValue, int minAmount, int maxAmount, double probability, int randomEnchants){
 		this.itemMaterial = Material.getMaterial(itemID);
 		this.damageValue = damageValue;

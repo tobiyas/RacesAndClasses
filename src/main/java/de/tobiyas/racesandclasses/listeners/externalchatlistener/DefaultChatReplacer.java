@@ -60,7 +60,7 @@ public class DefaultChatReplacer implements Listener {
 		replace(event);
 	}
 	
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void asyncChatLow(AsyncPlayerChatEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			//plugin is already handling chat.
@@ -73,7 +73,7 @@ public class DefaultChatReplacer implements Listener {
 	
 	private void replace(AsyncPlayerChatEvent event){
 		String format = event.getFormat();
-		if(format == null) return;
+		if(format == null || format.isEmpty()) return;
 		
 		String raceTag = "";
 		String classTag = "";

@@ -13,6 +13,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class PlayerRaCScoreboardManager {
 
@@ -153,13 +155,31 @@ public class PlayerRaCScoreboardManager {
 				String key = entry.getKey();
 				int value = entry.getValue();
 				
-				Score score = objective.getScore(key);
+				Score score = objective.getScore(shortenKey(key));
 				score.setScore(value);
 			}
 		}
 		
 		//Now show stuff.
 		needsUpdate = false;
+	}
+	
+	
+	/**
+	 * Shortends the Key to the Best length.
+	 * 
+	 * @param key to shorten
+	 * 
+	 * @return the shortened Key.
+	 */
+	private String shortenKey(String key){
+		if(key.length() > 16 
+				&& !VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
+			
+			key = key.substring(0,16);
+		}
+		
+		return key;
 	}
 	
 	

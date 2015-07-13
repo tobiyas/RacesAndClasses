@@ -18,7 +18,8 @@ package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 import org.bukkit.Bukkit;
 
 import com.sucy.skill.SkillAPI;
-import com.sucy.skill.api.PlayerSkills;
+import com.sucy.skill.api.player.PlayerClass;
+import com.sucy.skill.api.player.PlayerData;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -59,13 +60,19 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public int getCurrentLevel() {
 		if(!isSkillAPIPresent()) return 1;
-		return getSkillAPI().getPlayer(player.getName()).getLevel();
+		PlayerData data = SkillAPI.getPlayerData(player.getPlayer());
+		int level = 0;
+		for(PlayerClass clazz : data.getClasses()) level += clazz.getLevel();
+		
+		return level;
 	}
 
 	@Override
 	public int getCurrentExpOfLevel() {
 		if(!isSkillAPIPresent()) return 1;
-		return getSkillAPI().getPlayer(player.getName()).getExp();
+		
+		return 0;
+		//return getSkillAPI().getPlayer(player.getName()).getExp();
 	}
 
 	@Override
@@ -92,15 +99,16 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	@Override
 	public boolean addExp(int exp) {
 		if(!isSkillAPIPresent()) return false;
-		getSkillAPI().getPlayer(player.getName()).giveExp(exp);
-		return true;
+		//getSkillAPI().getPlayer(player.getName()).giveExp(exp);
+		return false;
 	}
 
 	@Override
 	public boolean removeExp(int exp) {
 		if(!isSkillAPIPresent()) return false;
-		getSkillAPI().getPlayer(player.getName()).loseExp(exp);
-		return true;
+		
+		//getSkillAPI().getPlayer(player.getName()).loseExp(exp);
+		return false;
 	}
 
 	@Override
@@ -133,8 +141,8 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	public void forceDisplay() {
 		if(player == null || !player.isOnline()) return;
 		
-		expDisplay.display(getCurrentExpOfLevel(), getSkillAPI().getPlayer(player.getName()).getExpToNextLevel());
-		levelDisplay.display(getCurrentLevel(), getCurrentLevel());
+		//expDisplay.display(getCurrentExpOfLevel(), getSkillAPI().getPlayer(player.getName()).getExpToNextLevel());
+		//levelDisplay.display(getCurrentLevel(), getCurrentLevel());
 	}
 	
 	/**
@@ -184,19 +192,21 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 
 	@Override
 	public void addLevel(int value) {
-		getSkillAPI().getPlayer(player.getPlayer()).levelUp(value);
+		//getSkillAPI().getPlayer(player.getPlayer()).levelUp(value);
 	}
 
 
 	@Override
 	public void removeLevel(int value) {
 		//TODO don't know how... :(
-		getSkillAPI().getPlayer(player.getPlayer()).levelUp(-1);
+		//getSkillAPI().getPlayer(player.getPlayer()).levelUp(-1);
 	}
 	
 	@Override
 	public int getMaxEXPToNextLevel() {
-		PlayerSkills skills = getSkillAPI().getPlayer(player.getPlayer());
-		return skills.getExp() + skills.getExpToNextLevel();
+		//PlayerSkills skills = getSkillAPI().getPlayer(player.getPlayer());
+		//return skills.getExp() + skills.getExpToNextLevel();
+		
+		return 1;
 	}
 }

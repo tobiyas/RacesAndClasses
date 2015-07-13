@@ -21,6 +21,7 @@ import java.util.Set;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
 public class BuildedClassContainer extends ClassContainer {
 
@@ -29,7 +30,7 @@ public class BuildedClassContainer extends ClassContainer {
 	 * 
 	 * @param name
 	 */
-	public BuildedClassContainer(String name, String classTag, boolean[] armorPermissions, Set<Trait> traits, 
+	public BuildedClassContainer(String name, String classTag, Set<ItemQuality> armorPermissions, Set<Trait> traits, 
 			List<String> permissionList, String operation, double healthValue) {
 		
 		super(name);
@@ -37,7 +38,7 @@ public class BuildedClassContainer extends ClassContainer {
 		this.traits = traits;
 		this.holderTag = classTag;
 		this.holderPermissions.add(permissionList);
-		this.armorUsage = armorPermissions;
+		//this.armorUsage = armorPermissions; //TODO fixme
 		
 		this.classHealthModify = operation + healthValue;
 	}

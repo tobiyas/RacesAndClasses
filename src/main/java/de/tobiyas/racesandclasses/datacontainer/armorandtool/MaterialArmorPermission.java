@@ -40,6 +40,6 @@ public class MaterialArmorPermission implements AbstractItemPermission{
 	
 	@Override
 	public String toString(){
-		return quality.name();
+		return quality.getName();
 	}
 }

@@ -3,8 +3,11 @@ package de.tobiyas.racesandclasses.commands.reflect;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -49,12 +52,14 @@ public class CommandMap {
 		if(map != null){
 			List<Command> toRegister = new LinkedList<Command>();
 			for(CommandInterface command : commands){
-				PluginCommand commandWrapper = generate(command.getCommandName(), racesAndClasses);
-				if(commandWrapper == null) continue;
+				Collection<PluginCommand> commandWrapper = generate(command.getCommandNames(), racesAndClasses);
+				if(commandWrapper == null || commandWrapper.isEmpty()) continue;
 				
-				commandWrapper.setAliases(Arrays.asList(command.getAliases()));
-				commandWrapper.setExecutor(command);
-				toRegister.add(commandWrapper);
+				for(PluginCommand subCommand : commandWrapper){
+					subCommand.setAliases(Arrays.asList(command.getAliases()));
+					subCommand.setExecutor(command);
+					toRegister.add(subCommand);					
+				}
 			}
 			
 			map.registerAll(racesAndClasses.getDescription().getName(), toRegister);
@@ -64,15 +69,21 @@ public class CommandMap {
 	/**
 	 * Tries to generate a new Instance.
 	 */
-	private static PluginCommand generate(String name, Plugin plugin){
-		try{
-			Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-			constructor.setAccessible(true);
-			
-			return constructor.newInstance(name, plugin);
-		}catch(Throwable exp){
-			exp.printStackTrace();
-			return null;
+	private static Collection<PluginCommand> generate(Collection<String> names, Plugin plugin){
+		Set<PluginCommand> commands = new HashSet<PluginCommand>();
+		
+		for(String name : names){
+			try{
+				Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+				constructor.setAccessible(true);
+				
+				PluginCommand command = constructor.newInstance(name, plugin);
+				if(command != null) commands.add(command);
+			}catch(Throwable exp){
+				exp.printStackTrace();
+			}
 		}
+		
+		return commands;
 	}
 }

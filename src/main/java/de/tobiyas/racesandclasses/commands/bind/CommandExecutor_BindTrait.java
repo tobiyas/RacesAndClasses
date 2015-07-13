@@ -103,8 +103,8 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		
 		if(args.length < 1) {
 			LanguageAPI.sendTranslatedMessage(player, wrong_command_use,
-					"command", "&c " + getCommandName() + " <skill name>  or  /" 
-					+ getCommandName() + " list  to list all available Traits.");
+					"command", "&c " + getCommandNames().iterator().next() + " <skill name>  or  /" 
+					+ getCommandNames().iterator().next() + " list  to list all available Traits.");
 			
 			return true;
 		}

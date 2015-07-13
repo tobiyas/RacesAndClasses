@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.racbuilder;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -56,7 +58,7 @@ public abstract class AbstractHolderBuilder {
 	/**
 	 * The permission for Armor
 	 */
-	protected boolean[] armorPermission;
+	protected Set<ItemQuality> armorPermission;
 	
 	
 	
@@ -88,7 +90,7 @@ public abstract class AbstractHolderBuilder {
 			this.holderTag = "[" + name + "]";
 		}
 		
-		this.armorPermission = new boolean[]{false, false, false, false, false};
+		this.armorPermission = new HashSet<ItemQuality>();
 				
 		this.traitSet = new HashSet<Trait>();
 		this.permissionList = new LinkedList<String>();
@@ -103,7 +105,7 @@ public abstract class AbstractHolderBuilder {
 	public AbstractHolderBuilder(AbstractTraitHolder holder) {
 		this.name = holder.getDisplayName();
 		this.holderTag = holder.getTag();
-		this.armorPermission = holder.getArmorPermsAsBoolArray();
+		this.armorPermission = holder.getArmorPerms();
 		
 		this.traitSet = holder.getVisibleTraits();
 		this.permissionList = new LinkedList<String>();
@@ -256,37 +258,9 @@ public abstract class AbstractHolderBuilder {
 	 * @param toSet
 	 */
 	protected void setArmor(String armorString, boolean toSet){
-		if(armorString == null){
-			return;
-		}
-		
-		if(armorString.contains("leather")){
-			armorPermission[0] = toSet;
-		}
-		
-		if(armorString.contains("iron")){
-			armorPermission[1] = toSet;
-		}
-		
-		if(armorString.contains("gold")){
-			armorPermission[2] = toSet;
-		}
-		
-		if(armorString.contains("diamond")){
-			armorPermission[3] = toSet;
-		}
-		
-		if(armorString.contains("chain")){
-			armorPermission[4] = toSet;
-		}
-		
-		if(armorString.contains("all")){
-			armorPermission[0] = toSet;
-			armorPermission[1] = toSet;
-			armorPermission[2] = toSet;
-			armorPermission[3] = toSet;
-			armorPermission[4] = toSet;
-		}
+		Collection<ItemQuality> stuff = ItemQuality.parse(armorString);
+		if(toSet) armorPermission.addAll(stuff);
+		else armorPermission.removeAll(stuff);
 	}
 
 
@@ -414,34 +388,12 @@ public abstract class AbstractHolderBuilder {
 	 * @return
 	 */
 	protected String buildArmorString(){
-		boolean hasAll = true;
-		for(boolean bool : armorPermission){
-			if(!bool) hasAll = false;
-		}
-		if(hasAll)	return "all";
-
+		boolean hasAll = ItemQuality.values().size() == armorPermission.size();
 		
 		String armorString = "";
-		if(armorPermission[0]){
-			armorString += "leather";
-		}
-
-		if(armorPermission[1]){
-			armorString += "iron";
-		}
+		for(ItemQuality quality : this.armorPermission) armorString += quality + ",";
 		
-		if(armorPermission[2]){
-			armorString += "gold";
-		}
-		
-		if(armorPermission[3]){
-			armorString += "diamond";
-		}
-		
-		if(armorPermission[4]){
-			armorString += "chain";
-		}
-		
+		if(hasAll) armorString = "all";
 		return armorString;
 	}
 	

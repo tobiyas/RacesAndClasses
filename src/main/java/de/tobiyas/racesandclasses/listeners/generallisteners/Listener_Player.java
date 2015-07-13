@@ -231,6 +231,13 @@ public class Listener_Player implements Listener {
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
 		
+		//Recheck max Health / Mana:
+		racPlayer.getHealthManager().rescanPlayer();
+		racPlayer.getHealthManager().checkMaxHealth();
+		
+		//Recheck Mana
+		racPlayer.getManaManager().rescanPlayer();
+		
 		//Resync Spells
 		racPlayer.getSpellManager().rescan();
 		
@@ -253,16 +260,17 @@ public class Listener_Player implements Listener {
 				}
 			}
 		}
-		
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_use_fireworks_on_level_up()) return;
-		//fireworks only exist since MC 1.7
-		if(!CertainVersionChecker.isAbove1_7()) return;
-		
-        //Spawn the Fireworks.
-		for(int i = 0; i < 4; i++){
-			Firework fw = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
-			fw.setFireworkMeta(randomizeFireworkMeta(fw.getFireworkMeta()));
+
+		//Spawn firework if MC > 1.7 and wanted.
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_use_fireworks_on_level_up()
+				&& CertainVersionChecker.isAbove1_7()) {
+			
+			for(int i = 0; i < 4; i++){
+				Firework fw = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
+				fw.setFireworkMeta(randomizeFireworkMeta(fw.getFireworkMeta()));
+			}
 		}
+		
 	}
 	
 	/**

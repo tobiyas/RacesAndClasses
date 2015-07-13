@@ -17,44 +17,30 @@ package de.tobiyas.racesandclasses.commands.chat.channels;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.commands.CommandInterface;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
-import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.autocomplete.AutoCompleteUtils;
 import de.tobiyas.util.player.PlayerUtils;
 
-public class CommandExecutor_Channel extends Observable implements CommandInterface {
+public class CommandExecutor_Channel extends AbstractCommand {
 
-	private RacesAndClasses plugin;
 	
 	public CommandExecutor_Channel(){
-		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "channel";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
+		super("channel");
 		
-		plugin.getTutorialManager().registerObserver(this);
-		this.setChanged();
+		// TODO plugin.getTutorialManager().registerObserver(this);
+		// TODO this.setChanged();
 	}
 	
 	@Override
@@ -367,10 +353,10 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 				}
 			}
 		
-		if(sender instanceof Player) this.notifyObservers(
-				new TutorialStepContainer(RaCPlayerManager.get().getPlayer((Player) sender), TutorialState.channels, 1)
-				);
-		this.setChanged();
+		// TODO if(sender instanceof Player) this.notifyObservers(
+		// TODO		new TutorialStepContainer(RaCPlayerManager.get().getPlayer((Player) sender), TutorialState.channels, 1)
+		// TODO		);
+		// TODO this.setChanged();
 	}
 	
 	private void joinChannel(RaCPlayer player, String channelName, String password){
@@ -460,8 +446,8 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 		player.sendMessage(ChatColor.GREEN + "You now write in the channel: " + ChatColor.AQUA + changeTo);
 		
 		if(changeTo.equalsIgnoreCase("tutorial")){
-			this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 4));
-			this.setChanged();
+			// TODO this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 4));
+			// TODO this.setChanged();
 		}
 	}
 	
@@ -495,22 +481,5 @@ public class CommandExecutor_Channel extends Observable implements CommandInterf
 	}
 
 	
-	/**
-	 * Returns the CommandName
-	 */
-	@Override
-	public String getCommandName(){
-		return "channel";
-	}
-	
-	@Override
-	public String[] getAliases() {
-		return new String[]{};
-	}
-	
-	@Override
-	public boolean hasAliases() {
-		return false;
-	}
 	
 }

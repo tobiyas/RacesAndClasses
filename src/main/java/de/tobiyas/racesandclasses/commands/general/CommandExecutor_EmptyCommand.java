@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.general;
 
+import java.util.Collection;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,10 +29,10 @@ public class CommandExecutor_EmptyCommand implements CommandExecutor {
 	private RacesAndClasses plugin;
 	
 	
-	public CommandExecutor_EmptyCommand(String commandName) {
+	public CommandExecutor_EmptyCommand(Collection<String> commandNames) {
 		plugin = RacesAndClasses.getPlugin();
 		try{
-			plugin.getCommand(commandName).setExecutor(this);
+			for(String name : commandNames) plugin.getCommand(name).setExecutor(this);
 		}catch(Exception e){
 		}
 

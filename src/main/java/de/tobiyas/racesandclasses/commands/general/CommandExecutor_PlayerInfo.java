@@ -109,7 +109,7 @@ private RacesAndClasses plugin;
 			
 			String allowed = "";
 			for(ItemQuality quality : armorPerms){
-				allowed += ", " + quality.name();
+				allowed += ", " + quality.getName();
 			}
 			
 			if(!allowed.isEmpty()) allowed = allowed.substring(2);

@@ -234,7 +234,7 @@ public class HolderInventory extends InventoryView{
 		
 		if(holder instanceof RaceContainer){
 			RaceContainer container = (RaceContainer) holder;
-			return String.valueOf(container.getRaceMaxHealth());
+			return String.valueOf(container.getRaceMaxHealth(1));
 		}
 		
 		return "";

@@ -15,28 +15,139 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.util.items;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static org.bukkit.Material.*;
+
 public class ItemUtils {
 
-	public enum ItemQuality{
-		None(-1),
-		Leather(0),
-		Iron(1),
-		Gold(2),
-		Diamond(3),
-		Chain(4);
+	public static class ItemQuality{
 		
-		private int value;
+		public static final ItemQuality None = new ItemQuality("none");
+		public static final ItemQuality Leather = new ItemQuality("leather", new Material[]{ LEATHER_BOOTS, LEATHER_LEGGINGS, LEATHER_CHESTPLATE, LEATHER_HELMET });
+		public static final ItemQuality Iron = new ItemQuality("iron", new Material[]{ IRON_BOOTS, IRON_LEGGINGS, IRON_CHESTPLATE, IRON_HELMET });
+		public static final ItemQuality Gold = new ItemQuality("gold", new Material[]{ GOLD_BOOTS, GOLD_LEGGINGS, GOLD_CHESTPLATE, GOLD_HELMET });
+		public static final ItemQuality Diamond = new ItemQuality("diamond", new Material[]{ DIAMOND_BOOTS, DIAMOND_LEGGINGS, DIAMOND_CHESTPLATE, DIAMOND_HELMET });
+		public static final ItemQuality Chain = new ItemQuality("chain", new Material[]{ CHAINMAIL_BOOTS, CHAINMAIL_LEGGINGS, CHAINMAIL_CHESTPLATE, CHAINMAIL_HELMET });
 		
-		ItemQuality(int value){
-			this.value = value;
+		
+		private static final List<ItemQuality> allValues = new LinkedList<ItemQuality>();
+		
+		
+		static{
+			allValues.add(None);
+			allValues.add(Leather);
+			allValues.add(Iron);
+			allValues.add(Gold);
+			allValues.add(Diamond);
+			allValues.add(Chain);
 		}
 		
-		public int getValue(){
-			return value;
+		
+		private String name;
+		private final Collection<Material> mats;
+		
+		private ItemQuality(String name){
+			this(name, new Material[]{});
+		}
+		
+		private ItemQuality(String name, Material[] materials){
+			this(name, Arrays.asList(materials));
+		}
+		
+		private ItemQuality(String name, Collection<Material> materials){
+			this.name = name;
+			this.mats = materials;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		
+		public Collection<Material> getMats() {
+			return new HashSet<Material>(mats);
+		}
+		
+		
+		public static Collection<ItemQuality> values(){
+			return new HashSet<ItemQuality>(allValues);
+		}
+		
+		
+		/**
+		 * Reparses the ItemStuff.
+		 */
+		public static void reparse(Map<String,String> qualityMap){
+			allValues.clear();
+			
+			for(Map.Entry<String,String> entry : qualityMap.entrySet()){
+				String key = entry.getKey().toLowerCase();
+				String toParse = entry.getValue();
+				
+				String[] vals = toParse.split(Pattern.quote(","));
+				Set<Material> mats = new HashSet<Material>();
+				
+				if(vals != null && vals.length != 0){
+					for(String val : vals){
+						Material mat = Material.matchMaterial(val);
+						if(mat != null) mats.add(mat);
+					}
+				}
+				
+				if(mats.size() > 0) allValues.add(new ItemQuality(key, mats));
+			}
+			
+			allValues.add(None);
+		}
+		
+
+		/**
+		 * Parses the ItemQuality from a String.
+		 * 
+		 * @param armorString to parse.
+		 * 
+		 * @return the parsed ArmorString
+		 */
+		public static Collection<ItemQuality> parse(String armorString) {			
+			Set<ItemQuality> set = new HashSet<ItemQuality>();
+			if(armorString == null || armorString.isEmpty()) return set;
+			
+			if(armorString.equalsIgnoreCase("all")) return values();
+			
+			String[] parts = armorString.split(Pattern.quote(","));
+			if(parts != null && parts.length > 0){
+				for(String part : parts){
+					ItemQuality quality = parseSingle(part);
+					if(quality != null) set.add(quality);
+				}				
+			}
+			
+			return set;
+		}
+		
+		
+		private static ItemQuality parseSingle(String key){
+			key = key.toLowerCase();
+			
+			for(ItemQuality quality : allValues){
+				if(key.equals(quality.getName())){
+					return quality;
+				}
+			}
+			
+			return null;
 		}
 		
 	}
@@ -49,34 +160,15 @@ public class ItemUtils {
 	 * @return
 	 */
 	public static ItemQuality getItemValue(ItemStack stack){
-		switch(stack.getType()){
-			case LEATHER_HELMET :
-			case LEATHER_CHESTPLATE :
-			case LEATHER_LEGGINGS :
-			case LEATHER_BOOTS : return ItemQuality.Leather;
-			
-			case CHAINMAIL_HELMET :
-			case CHAINMAIL_CHESTPLATE :
-			case CHAINMAIL_LEGGINGS :
-			case CHAINMAIL_BOOTS : return ItemQuality.Chain;
-			
-			case IRON_HELMET :
-			case IRON_CHESTPLATE :
-			case IRON_LEGGINGS :
-			case IRON_BOOTS : return ItemQuality.Iron;
-			
-			case DIAMOND_HELMET :
-			case DIAMOND_CHESTPLATE :
-			case DIAMOND_LEGGINGS :
-			case DIAMOND_BOOTS : return ItemQuality.Diamond;
-			
-			case GOLD_HELMET :
-			case GOLD_CHESTPLATE :
-			case GOLD_LEGGINGS :
-			case GOLD_BOOTS : return ItemQuality.Gold;
+		if(stack == null) return ItemQuality.None;
 		
-			default: return ItemQuality.None;
+		Material type = stack.getType();
+		
+		for(ItemQuality quality : ItemQuality.values()){
+			if(quality.getMats().contains(type)) return quality;
 		}
+		
+		return ItemQuality.None;
 	}
 	
 	
@@ -87,7 +179,7 @@ public class ItemUtils {
 	 * @param stack to check
 	 * @return int representation of robustness
 	 */
-	public static int getArmorValueOfItem(ItemStack stack){
+	/*public static int getArmorValueOfItem(ItemStack stack){
 		if(stack == null || stack.getType() == Material.AIR) return 0;
 		
 		switch(stack.getType()){
@@ -123,7 +215,7 @@ public class ItemUtils {
 			
 			default: return 0;
 		}
-	}
+	}*/
 	
 	
 	/**
@@ -212,11 +304,10 @@ public class ItemUtils {
 				return player.getInventory().getLeggings();
 			
 			case NONE:
+			default:
 				return null;
+				
 		}
-		
-		//dead code.
-		return null;
 	}
 	
 }

@@ -15,37 +15,18 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
-import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 
-public class OwnManaManager implements Observer, ManaManager {
-
-	/**
-	 * The Plugin to call Stuff on
-	 */
-	private RacesAndClasses plugin = RacesAndClasses.getPlugin();
-	
-	/**
-	 * The Player this mana Manager belongs.
-	 */
-	private final RaCPlayer player;
+public class OwnManaManager extends AbstractManaManager implements Observer{
 	
 	/**
 	 * The current Mana the Player contains.
@@ -56,11 +37,6 @@ public class OwnManaManager implements Observer, ManaManager {
 	 * The Display displaying mana change to the Player
 	 */
 	private Display manaDisplay;
-	
-	/**
-	 * The Max manas.
-	 */
-	private final Map<String,Double> maxManaBonus = new HashMap<String, Double>();
 	
 	/**
 	 * The Food bar runnable to use.
@@ -75,7 +51,8 @@ public class OwnManaManager implements Observer, ManaManager {
 	 * @param player
 	 */
 	public OwnManaManager(RaCPlayer player) {
-		this.player = player;
+		super(player);
+		
 		this.currentMana = 0;
 		
 		rescanDisplay();
@@ -96,26 +73,14 @@ public class OwnManaManager implements Observer, ManaManager {
 		}
 		
 		String prefered = plugin.getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace();
-		manaDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.MANA, prefered);
+		manaDisplay = DisplayGenerator.generateDisplay(racPlayer, DisplayInfos.MANA, prefered);
 	}
 	
 	
 
 	@Override
 	public void rescanPlayer(){
-		if(player == null || !player.isOnline() || WorldResolver.isOnDisabledWorld(player)){
-			return;
-		}
-		
-		RaceContainer race = player.getRace();
-		if(race != null){
-			addMaxManaBonus("race", race.getManaBonus());
-		}
-		
-		ClassContainer clazz = player.getclass();
-		if(clazz != null){
-			addMaxManaBonus("class", clazz.getManaBonus());
-		}
+		super.rescanPlayer();
 		
 		double max = getMaxMana();
 		if(currentMana > max){
@@ -138,27 +103,9 @@ public class OwnManaManager implements Observer, ManaManager {
 				manaDisplay.display(currentMana, getMaxMana());
 			}
 		}.runTask(plugin);
-	}
-
-	@Override
-	public boolean playerCastSpell(MagicSpellTrait spellToCast){
-		if(!hasEnoughMana(spellToCast)) return false;
-		
-		currentMana -= spellToCast.getCost();
-		outputManaToPlayer();
-		return true;
-	}
+	}	
 	
 	
-	
-
-	@Override
-	public boolean hasEnoughMana(MagicSpellTrait spell){
-		if(spell.getCostType() != CostType.MANA) return false;
-		return hasEnoughMana(spell.getCost());
-	}
-	
-
 	@Override
 	public double fillMana(double value){
 		currentMana += value;
@@ -183,19 +130,12 @@ public class OwnManaManager implements Observer, ManaManager {
 	}
 
 	
-
-	@Override
-	public boolean hasEnoughMana(double manaNeeded){
-		return currentMana - manaNeeded >= 0;
-	}
 	
-	
-
 
 	@Override
 	public double getMaxMana() {
 		double max = 0;
-		for(Double value : maxManaBonus.values()){
+		for(Double value : maxManaBonusses.values()){
 			max += value;
 		}
 		
@@ -209,35 +149,7 @@ public class OwnManaManager implements Observer, ManaManager {
 		return currentMana;
 	}
 
-	@Override
-	public void addMaxManaBonus(String key, double value){
-		maxManaBonus.put(key.toLowerCase(), value);
-	}
-	
 
-	@Override
-	public void removeMaxManaBonus(String key){
-		maxManaBonus.remove(key.toLowerCase());
-	}
-
-	
-	@Override
-	public Map<String,Double> getAllBonuses(){
-		return maxManaBonus;
-	}
-
-
-
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
-	
-
-	@Override
-	public boolean isManaFull(){
-		return currentMana >= getMaxMana();
-	}
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -247,4 +159,8 @@ public class OwnManaManager implements Observer, ManaManager {
 			rescanDisplay();
 		}
 	}
+
+	@Override
+	protected void applyMaxManaBonus(double bonus) {}
+
 }

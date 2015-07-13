@@ -147,15 +147,22 @@ public class ArmorToolManager {
 	}
 
 	
+	/**
+	 * Returns the Toughness of the Armor.
+	 * 
+	 * @param player to get from.
+	 * @return the toughness.
+	 */
 	public int getArmorLevel(Player player) {
-		int armorLevel = 0;
+		//TODO fix me somehow!
+		/*int armorLevel = 0;
 		ItemStack inventory[] = player.getInventory().getArmorContents();
 		
 		for(ItemStack stack : inventory){
-			armorLevel += ItemUtils.getArmorValueOfItem(stack);
+			//armorLevel += ItemUtils.getArmorValueOfItem(stack);
 		}
-			
-		return armorLevel;
+		*/
+		return 0;
 	}
 
 	/**

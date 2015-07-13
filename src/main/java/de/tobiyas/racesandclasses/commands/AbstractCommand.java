@@ -1,5 +1,9 @@
 package de.tobiyas.racesandclasses.commands;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,14 +16,14 @@ public abstract class AbstractCommand implements CommandInterface {
 
 	
 	/**
-	 * The Command name to check.
+	 * The Command names to check.
 	 */
-	private final String commandName;
+	protected final Collection<String> commandNames = new HashSet<String>();
 	
 	/**
 	 * The Aliases to use for the Command	
 	 */
-	private final String[] aliases;
+	protected final Collection<String> aliases = new HashSet<String>();
 	
 	/**
 	 * THe plugin to use for post stuff.
@@ -28,29 +32,30 @@ public abstract class AbstractCommand implements CommandInterface {
 	
 	
 	public AbstractCommand(String commandName) {
-		this.commandName = commandName;
-		this.aliases = new String[0];
+		this.commandNames.add(commandName);
 	}
 	
 	
 	public AbstractCommand(String commandName, String... aliases) {
-		this.commandName = commandName;
-		this.aliases = aliases;
+		this.commandNames.add(commandName);
+		this.aliases.addAll(Arrays.asList(aliases));
 	}
 
 	
 	/**
 	 * Returns the CommandName
 	 */
-	public String getCommandName(){
-		return commandName;
+	@Override
+	public Collection<String> getCommandNames(){
+		return commandNames;
 	}
 	
 	/**
 	 * Returns the aliases
 	 */
+	@Override
 	public String[] getAliases(){
-		return aliases;
+		return aliases.toArray(new String[aliases.size()]);
 	}
 	
 	/**
@@ -58,8 +63,9 @@ public abstract class AbstractCommand implements CommandInterface {
 	 * 
 	 * @return
 	 */
+	@Override
 	public boolean hasAliases(){
-		return aliases != null && aliases.length > 0;
+		return aliases != null && aliases.size() > 0;
 	}
 
 
@@ -70,6 +76,32 @@ public abstract class AbstractCommand implements CommandInterface {
 		return new LinkedList<String>();
 	}
 	
+	
+	@Override
+	public void filterToDisabledCommands(Collection<String> disabled) {
+		for(String name : disabled){
+			//filter aliases:
+			Iterator<String> it = aliases.iterator();
+			while(it.hasNext()) {
+				if(name.equalsIgnoreCase(it.next()))  {
+					it.remove();
+				}
+			}
+			
+			//filter commands:
+			it = commandNames.iterator();
+			while(it.hasNext()){
+				if(name.equalsIgnoreCase(it.next())){
+					it.remove();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public boolean hasAnyCommand() {
+		return !commandNames.isEmpty();
+	}
 	
 	
 }

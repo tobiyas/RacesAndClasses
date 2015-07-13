@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -47,7 +46,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.commands.CommandInterface;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -58,15 +57,13 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
-import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.chat.components.ChatMessageObject;
 import de.tobiyas.util.chat.components.TellRawChatMessage;
 import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
-public class CommandExecutor_Class extends Observable implements CommandInterface {
+public class CommandExecutor_Class extends AbstractCommand {
 	
 	/**
 	 * The plugin called stuff upon
@@ -78,19 +75,10 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 	 * Registers the Command "class" to the plugin.
 	 */
 	public CommandExecutor_Class(){
-		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "class";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
+		super("class");
 		
-		plugin.getTutorialManager().registerObserver(this);
-		this.setChanged();
+		// TODO plugin.getTutorialManager().registerObserver(this);
+		// TODO this.setChanged();
 	}
 
 	@Override
@@ -140,9 +128,9 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			list(sender);
 			
 			if(sender instanceof Player){
-				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
-				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoClass));
-				this.setChanged();
+				// TODO RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
+				// TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoClass));
+				// TODO this.setChanged();
 			}
 			return true;
 		}
@@ -194,8 +182,8 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 			
 			String potentialClass = args[1];
 			if(select(player, potentialClass)){
-				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.selectClass));
-				this.setChanged();
+				// TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.selectClass));
+				// TODO this.setChanged();
 			}
 			
 			return true;
@@ -313,7 +301,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
 		
-		double mana = classContainer.getManaBonus();
+		double mana = classContainer.getManaBonus(1);
 		if(mana > 0){
 			player.sendMessage(ChatColor.YELLOW + "+ Mana: " + ChatColor.AQUA + mana);
 		}
@@ -545,7 +533,7 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus())))
+				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus(1))))
 		.addNewLine()
 		.addNewLine()
 		
@@ -576,31 +564,6 @@ public class CommandExecutor_Class extends Observable implements CommandInterfac
 		
 		return page;
 	}
-	
-	
-	
-	/**
-	 * Returns the CommandName
-	 */
-	@Override
-	public String getCommandName(){
-		return "class";
-	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command,
-			String alias, String[] args) {
-		return new LinkedList<String>();
-	}
-
-	@Override
-	public String[] getAliases() {
-		return new String[]{};
-	}
-	
-	@Override
-	public boolean hasAliases() {
-		return false;
-	}
 	
 }

@@ -163,4 +163,10 @@ public class ClassContainer extends AbstractTraitHolder{
 	public AbstractHolderManager getHolderManager() {
 		return RacesAndClasses.getPlugin().getClassManager();
 	}
+
+
+	@Override
+	public double getMaxHealthMod(int level) {
+		return getClassHealthModValue();
+	}
 }

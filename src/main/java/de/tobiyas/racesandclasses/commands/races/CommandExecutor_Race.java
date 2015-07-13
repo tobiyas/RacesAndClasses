@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,13 +48,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.collect.Lists;
-
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.RaceAPI;
+import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
@@ -66,33 +62,21 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.P
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
-import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
-import de.tobiyas.util.chat.JSONRawSender;
 import de.tobiyas.util.chat.components.ChatMessageObject;
 import de.tobiyas.util.chat.components.TellRawChatMessage;
-import de.tobiyas.util.vollotile.VollotileCodeManager;
 import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 
-public class CommandExecutor_Race extends Observable implements CommandInterface {
-	private RacesAndClasses plugin;
+public class CommandExecutor_Race extends AbstractCommand implements CommandInterface {
+	
 
 	public CommandExecutor_Race(){
-		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "race";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
+		super("race");
 		
-		plugin.getTutorialManager().registerObserver(this);
-		this.setChanged();
+		// TODO plugin.getTutorialManager().registerObserver(this);
+		// TODO this.setChanged();
 	}
 
 	@Override
@@ -226,9 +210,9 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 			raceList(sender);
 			
 			if(sender instanceof Player){
-				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
-				this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoRace));
-				this.setChanged();
+				// RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
+				//TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoRace));
+				//TODO this.setChanged();
 			}
 			return true;
 		}
@@ -394,12 +378,12 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		}
 			
 		
-		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getRaceMaxHealth());
+		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getRaceMaxHealth(1));
 		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getDisplayName());
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
 		
-		double mana = container.getManaBonus();
+		double mana = container.getManaBonus(1);
 		if(mana > 0){
 			sender.sendMessage(ChatColor.YELLOW + "+ Mana: " + ChatColor.AQUA + mana);
 		}
@@ -438,6 +422,7 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 	}
 	
 	
+	/*
 	private void newRaceList(CommandSender sender){
 		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
 		
@@ -462,7 +447,7 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 			JSONRawSender raw = new JSONRawSender();
 			raw.appendPopup(description, race);
 		}
-	}
+	} */
 	
 	
 	/**
@@ -544,11 +529,11 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getRaceMaxHealth())))
+				.addPopupHover(ChatColor.RED + f.format(race.getRaceMaxHealth(1))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus())))
+				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus(1))))
 		.addNewLine()
 		.addNewLine()
 		
@@ -581,25 +566,4 @@ public class CommandExecutor_Race extends Observable implements CommandInterface
 	}
 	
 	
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command,
-			String alias, String[] args) {
-		return new LinkedList<String>();
-	}
-
-	@Override
-	public String getCommandName() {
-		return "race";
-	}
-	
-	@Override
-	public String[] getAliases() {
-		return new String[]{};
-	}
-	
-	@Override
-	public boolean hasAliases() {
-		return false;
-	}
 }

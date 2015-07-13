@@ -45,8 +45,8 @@ public class Consts {
 	public static final boolean disableBDSupport = true;
 	
 	//Version
-	public static final String currentDevStage = "B T";
-	public static final String detailedVersionString = "1.1.5";
+	public static final String currentDevStage = "R T";
+	public static final String detailedVersionString = "1.1.7";
 	
 	/**
 	 * V1.0.3 RC 2: 1.3

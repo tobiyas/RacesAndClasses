@@ -32,6 +32,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.HolderPermissions;
+import de.tobiyas.racesandclasses.playermanagement.leveling.values.LevelValueModifyReader;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
@@ -64,7 +65,7 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * The armor permissions of the Holder
 	 */
-	protected boolean[] armorUsage;
+	protected final Set<ItemQuality> armorUsage;
 
 	/**
 	 * The Material of the Holder to select
@@ -84,7 +85,7 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * The magic bonus to the mana pool.
 	 */
-	protected double manaBonus;
+	protected LevelValueModifyReader.LevelModifier manaBonus;
 	
 	/**
 	 * Logs all parsing exceptions happening during startup.
@@ -131,14 +132,14 @@ public abstract class AbstractTraitHolder {
 		this.configNodeName = name;
 		this.displayName = name;
 		this.parsingExceptionsHappened = new LinkedList<HolderTraitParseException>();
-		this.armorUsage = new boolean[]{false, false, false, false, false};
+		this.armorUsage = new HashSet<ItemQuality>();
 		this.traits = new HashSet<Trait>();
 		this.holderTag = "[" + name + "]";
 		this.additionalWandMaterials = new HashSet<Material>();
 		this.holderSelectionItem = new ItemStack(Material.BOOK_AND_QUILL);
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + configNodeName);
-		this.manaBonus = 0;
+		this.manaBonus = LevelValueModifyReader.LevelModifier.empty();
 		
 		//we need to set the name to start. This is needed for inheritence.
 		try{
@@ -278,7 +279,7 @@ public abstract class AbstractTraitHolder {
 	protected void readConfigSection() throws HolderConfigParseException{
 		try{
 			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
-			this.manaBonus = config.getDouble(configNodeName + ".config.manabonus", 0);
+			this.manaBonus = new LevelValueModifyReader(config, configNodeName + ".config.manabonus").parse(0);
 			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.tag", "[" + configNodeName + "]"));
 			this.guiSlot = config.getInt(configNodeName + ".config.guislot", -1);
 		}catch(Exception exp){
@@ -291,30 +292,9 @@ public abstract class AbstractTraitHolder {
 	 * Reads the Armor permissions from the Holder and parses it.
 	 */
 	protected void readArmor(){
-		armorUsage = new boolean[]{false, false, false, false, false};
+		armorUsage.clear();
 		String armorString = config.getString(configNodeName + ".config.armor", "").toLowerCase();
-		if(armorString.contains("leather"))
-			armorUsage[0] = true;
-		
-		if(armorString.contains("iron"))
-			armorUsage[1] = true;
-		
-		if(armorString.contains("gold"))
-			armorUsage[2] = true;
-		
-		if(armorString.contains("diamond"))
-			armorUsage[3] = true;
-		
-		if(armorString.contains("chain"))
-			armorUsage[4] = true;
-		
-		if(armorString.contains("all")){
-			armorUsage[0] = true;
-			armorUsage[1] = true;
-			armorUsage[2] = true;
-			armorUsage[3] = true;
-			armorUsage[4] = true;
-		}
+		armorUsage.addAll(ItemQuality.parse(armorString));
 	}
 	
 	
@@ -468,7 +448,7 @@ public abstract class AbstractTraitHolder {
 		Set<ItemQuality> qualities = getArmorPerms();
 		String armorString = "";
 		for(ItemQuality quality : qualities)
-			armorString += quality.name() + " ";
+			armorString += quality.getName() + " ";
 		
 		return armorString;
 	}
@@ -478,19 +458,7 @@ public abstract class AbstractTraitHolder {
 	 * Returns a List of {@link ItemQuality} what this Holder can wear
 	 */
 	public Set<ItemQuality> getArmorPerms(){
-		HashSet<ItemQuality> perms = new HashSet<ItemQuality>();
-		if(armorUsage[0])
-			perms.add(ItemQuality.Leather);
-		if(armorUsage[1])
-			perms.add(ItemQuality.Iron);
-		if(armorUsage[2])
-			perms.add(ItemQuality.Gold);
-		if(armorUsage[3])
-			perms.add(ItemQuality.Diamond);
-		if(armorUsage[4])
-			perms.add(ItemQuality.Chain);
-		
-		return perms;
+		return new HashSet<ItemQuality>(armorUsage);
 	}
 	
 	@Override
@@ -517,17 +485,10 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * @return the manaBonus
 	 */
-	public double getManaBonus() {
-		return manaBonus;
+	public double getManaBonus(int level) {
+		return manaBonus.getForLevel(level);
 	}
 
-	/**
-	 * Returns the Armor perms as loaded naturaly
-	 * @return
-	 */
-	public boolean[] getArmorPermsAsBoolArray() {
-		return armorUsage;
-	}
 	
 	
 	/**
@@ -579,7 +540,7 @@ public abstract class AbstractTraitHolder {
 	 * 
 	 * @return max health mod.
 	 */
-	public abstract double getMaxHealthMod();
+	public abstract double getMaxHealthMod(int level);
 	
 	
 	/**
@@ -590,5 +551,6 @@ public abstract class AbstractTraitHolder {
 	public Set<AbstractTraitHolder> getParents(){
 		return new HashSet<AbstractTraitHolder>(parents);
 	}
+
 	
 }

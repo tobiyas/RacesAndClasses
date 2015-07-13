@@ -43,7 +43,7 @@ public class RaceBuilder extends AbstractHolderBuilder{
 	public RaceBuilder(RaceContainer raceContainer){
 		super(raceContainer);
 		
-		health = raceContainer.getRaceMaxHealth();
+		//health = raceContainer.getRaceMaxHealth();
 	}
 	
 	

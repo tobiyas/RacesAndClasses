@@ -475,9 +475,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		Iterator<CommandInterface> it = commands.iterator();
 		while(it.hasNext()){
 			CommandInterface command = it.next();
-			if(disabledCommands.contains(command.getCommandName().toLowerCase())){
-				it.remove();
-			}
+			command.filterToDisabledCommands(disabledCommands);
+			
+			if(!command.hasAnyCommand()) it.remove();
 		}
 		
 		CommandMap.registerCommands(commands, this);		
@@ -587,7 +587,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	private void registerAllCommandsAsError() {
 		for(CommandInterface command : this.commands){
-			new CommandExecutor_EmptyCommand(command.getCommandName());
+			new CommandExecutor_EmptyCommand(command.getCommandNames());
 		}
 	}
 

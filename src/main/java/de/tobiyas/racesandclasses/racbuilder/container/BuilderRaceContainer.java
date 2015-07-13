@@ -22,6 +22,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
 public class BuilderRaceContainer extends RaceContainer {
 
@@ -31,14 +32,14 @@ public class BuilderRaceContainer extends RaceContainer {
 	 * 
 	 * @param name the name to generate to.
 	 */
-	public BuilderRaceContainer(String name, String raceTag, boolean[] armorPermissions, Set<Trait> traits, 
+	public BuilderRaceContainer(String name, String raceTag, Set<ItemQuality> armorPermissions, Set<Trait> traits, 
 			List<String> permissionList, double raceMaxHealth) {
 		super(name);
 		
 		this.holderTag = raceTag;
-		this.armorUsage = armorPermissions;
+		//this.armorUsage = armorPermissions; //TODO fixme
 		
-		this.raceMaxHealth = raceMaxHealth;
+		//this.raceMaxHealth = raceMaxHealth;
 		this.traits = traits;
 		
 		this.raceChatColor = RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color();
