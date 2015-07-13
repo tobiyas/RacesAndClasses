@@ -28,11 +28,8 @@ import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_Whisper extends AbstractCommand {
 	
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_Whisper(){
 		super("whisper", new String[]{"w"});
-		plugin = RacesAndClasses.getPlugin();
 	
 //		String command = "whisper";
 //		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;

@@ -62,6 +62,7 @@ public class EN_Text {
 			+ health + ": 'Health'\r\n"
 			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			+ holder_selectiongui_header + ": '&aSelect your &d%HOLDER%&a, %PLAYER%'\r\n"
+			+ holder_not_present + ": '&cYou have to be a %HOLDER% for this.'"
 			
 			//i
 			+ in_restricted_area + ": '&cYou may not use any Trait here.'\r\n"
@@ -74,6 +75,7 @@ public class EN_Text {
 			//l
 			+ login_no_race_selected + ": '&cYou have not selected a Race. Please select a race using /race select <racename>'\r\n"
 			+ launched_something + ": '&a%NAME% launched.'\r\n"
+			+ level_too_low + ": '&cYour level is too low.'\r\n"
 			+ level_up_message + ": '&aCongratulations, &d%PLAYER%&a. You leveled up to Level &d%LEVEL%&a.'\r\n"
 			+ level_up_new_skill_message + ": '&aYou have learned a new Skill: &d%TRAITNAME%&a.'\r\n"
 			
@@ -114,6 +116,7 @@ public class EN_Text {
 			
 			//p
 			+ password + ": 'password'\r\n"
+			+ permission_not_present + ": '&cYou do not have the Permission to do that.'\r\n"
 			+ player_not_exist + ": '&cPlayer &d%PLAYER%&c does not exist.'\r\n"
 			+ plugin_pre + ": '&4[RaC]'\r\n"
 			

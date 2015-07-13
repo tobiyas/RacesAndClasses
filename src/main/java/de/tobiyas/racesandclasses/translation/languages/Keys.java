@@ -58,6 +58,7 @@ public class Keys {
 	public static final String healed_by = "healed_by";
 	public static final String health = "health";
 	public static final String held_item_not_air = "held_item_not_air";
+	public static final String holder_not_present = "holder_not_present";
 	public static final String holder_selectiongui_header = "holder_selectiongui_header";
 	
 	//i
@@ -70,6 +71,7 @@ public class Keys {
 	//l
 	public static final String login_no_race_selected = "login_no_race_selected";
 	public static final String launched_something = "launched_something";
+	public static final String level_too_low = "level_too_low";
 	public static final String level_up_message = "level_up_message";
 	public static final String level_up_new_skill_message = "level_up_new_skill_message";
 	
@@ -110,6 +112,7 @@ public class Keys {
 	
 	//p
 	public static final String password = "password";
+	public static final String permission_not_present = "permission_not_present";
 	public static final String player_not_exist = "player_not_exist";
 	public static final String plugin_pre = "plugin_pre";
 	

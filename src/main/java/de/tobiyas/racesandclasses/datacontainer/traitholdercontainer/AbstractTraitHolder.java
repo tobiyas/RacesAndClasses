@@ -107,7 +107,7 @@ public abstract class AbstractTraitHolder {
 	 * The Pre holder needed.
 	 * <br>If null no preHolder needed.
 	 */
-	protected String needsPreHolder = null;
+	protected HolderSelectionPreconditions preconditions = null;
 	
 	/**
 	 * The GuiSlot to use.
@@ -137,6 +137,7 @@ public abstract class AbstractTraitHolder {
 		this.holderTag = "[" + name + "]";
 		this.additionalWandMaterials = new HashSet<Material>();
 		this.holderSelectionItem = new ItemStack(Material.BOOK_AND_QUILL);
+		this.preconditions = HolderSelectionPreconditions.getEmpty(getHolderManager());
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + configNodeName);
 		this.manaBonus = LevelValueModifyReader.LevelModifier.empty();
@@ -164,6 +165,7 @@ public abstract class AbstractTraitHolder {
 		readAdditionalWandMaterial();
 		readHolderSelectionItem();
 		readHolderDescription();
+		readHolderPreconditions();
 		
 		return this;
 	}
@@ -191,6 +193,14 @@ public abstract class AbstractTraitHolder {
 			addHolderToAddParents(this, parent, 0, 50);
 		}
 	}
+	
+	/**
+	 * Reads the Preconditions for the Holder.
+	 */
+	protected void readHolderPreconditions(){
+		preconditions = HolderSelectionPreconditions.parse(config, getHolderManager());
+	}
+	
 	
 	/**
 	 * Checks if this traitHolder has a cyclic depend.
@@ -422,6 +432,25 @@ public abstract class AbstractTraitHolder {
 	 */
 	public int getGuiSlot() {
 		return guiSlot;
+	}
+	
+	/**
+	 * Returns the Holder permissions.
+	 * 
+	 * @return holder permissions.
+	 */
+	public HolderPermissions getHolderPermissions() {
+		return holderPermissions;
+	}
+	
+	
+	/**
+	 * Returns the Preconditions.
+	 * 
+	 * @return preconditions.
+	 */
+	public HolderSelectionPreconditions getPreconditions() {
+		return preconditions;
 	}
 	
 	

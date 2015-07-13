@@ -22,7 +22,7 @@ public class ArmorConfig {
 	/**
 	 * The File for the Default File.
 	 */
-	private final File defaultFile = new File(RacesAndClasses.getPlugin().getDataFolder(), "ArmorAndWeapons.yml");
+	private final File defaultFile = new File(RacesAndClasses.getPlugin().getDataFolder(), "armor.yml");
 	
 	/**
 	 * The Config to use.

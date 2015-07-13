@@ -19,27 +19,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 
 public class CommandExecutor_LocalChat extends AbstractCommand{
 
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_LocalChat(){
 		super("localchat", new String[]{"lc", "l"});
-		
-		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "localchat";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override

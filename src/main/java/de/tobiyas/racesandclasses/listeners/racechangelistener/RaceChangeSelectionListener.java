@@ -17,15 +17,18 @@ package de.tobiyas.racesandclasses.listeners.racechangelistener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.HolderSelectionPreconditions.HolderPreconditionResult;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -95,6 +98,24 @@ public class RaceChangeSelectionListener implements Listener {
 			if(!valid) event.setCancelled("Your class can not select the race: " + raceName);
 		}
 	}
+	
+	
+	@EventHandler(ignoreCancelled = true)
+	public void checkPlayerMeetsPreconditions(PreRaceSelectEvent event){
+		Player player = event.getPlayer();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
+		AbstractTraitHolder newHolder = event.getHolderToSelect();
+		if(newHolder != null){
+			HolderPreconditionResult result = newHolder.getPreconditions().checkPreconditions(racPlayer);
+			if(result != HolderPreconditionResult.RESTRICTIONS_MET){
+				//TODO implement some sort of Precondition resolution
+				String translated = LanguageAPI.translate(racPlayer, result.name().toLowerCase(), "HOLDER", "Specific Race");
+				event.setCancelled(translated);
+			}
+		}
+	}
+	
 	
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(PreRaceSelectEvent event){

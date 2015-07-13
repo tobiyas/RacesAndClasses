@@ -31,7 +31,6 @@ public abstract class HolderSelectedEvent extends Event{
 	 */
 	protected Player player;
 	
-	
 	/**
 	 * The holders the player has selected to be
 	 */

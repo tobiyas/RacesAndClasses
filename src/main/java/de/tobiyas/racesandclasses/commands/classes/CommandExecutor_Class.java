@@ -43,7 +43,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
@@ -64,11 +63,6 @@ import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class CommandExecutor_Class extends AbstractCommand {
-	
-	/**
-	 * The plugin called stuff upon
-	 */
-	private RacesAndClasses plugin;
 	
 	
 	/**
@@ -306,6 +300,11 @@ public class CommandExecutor_Class extends AbstractCommand {
 			player.sendMessage(ChatColor.YELLOW + "+ Mana: " + ChatColor.AQUA + mana);
 		}
 		
+		String armorString = classContainer.getArmorString();
+		if(!armorString.isEmpty()){
+			player.sendMessage(ChatColor.YELLOW + "Armor: " + ChatColor.AQUA + armorString);
+		}
+		
 		player.sendMessage(ChatColor.YELLOW + "==== " + ChatColor.RED + "Class Traits" + ChatColor.YELLOW +" =====");
 		for(Trait trait : classContainer.getVisibleTraits()){
 			player.sendMessage(ChatColor.BLUE + trait.getDisplayName() + " : " + trait.getPrettyConfiguration());
@@ -327,11 +326,10 @@ public class CommandExecutor_Class extends AbstractCommand {
 			return;
 		}
 		
-		RaCPlayer racPlayer = null;
 		String nameOfOwnClass = "";
 		
 		if(player instanceof Player){
-			racPlayer = RaCPlayerManager.get().getPlayer((Player) player);
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) player);
 			AbstractTraitHolder holder = racPlayer.getclass();
 			nameOfOwnClass = holder != null ? holder.getDisplayName() : "";
 		}

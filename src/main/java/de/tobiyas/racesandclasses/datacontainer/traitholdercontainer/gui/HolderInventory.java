@@ -127,68 +127,7 @@ public class HolderInventory extends InventoryView{
 			AbstractTraitHolder holder = holderManager.getHolderByName(holderName);
 			if(!hasPermission(holder, holderManager)) continue;
 			
-			
-			ItemStack item = holder.getHolderSelectionItem() != null 
-					? holder.getHolderSelectionItem().clone()
-					: new ItemStack(Material.BOOK_AND_QUILL);
-			
-			ItemMeta meta = item.getItemMeta();
-			
-			boolean isEmptyTag = holder.getTag() == null || holder.getTag().equals("");
-			meta.setDisplayName(isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag());
-			
-			List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
-			
-			if(holder.hasHolderDescription()){
-				String description = holder.getHolderDescription();
-				String[] split = description.split("#n");
-				
-				for(String desc : split){
-					lore.add(ChatColor.translateAlternateColorCodes('&', desc));					
-				}
-			}
-
-			String healthString = getHealthString(holder);
-			if(healthString != null){
-				lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.health) + ": ");
-				lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
-			}
-			
-			//add armor as lore
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
-			if(holder.getArmorPerms().size() > 0){
-				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
-			}else{
-				lore.add(ChatColor.LIGHT_PURPLE + "ANY");
-			}
-			
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
-			
-			//add trait text as lore
-			for(Trait trait: holder.getVisibleTraits()){
-				lore.add(ChatColor.DARK_AQUA + trait.getDisplayName() + ": " );
-				String traitConfig = trait.getPrettyConfiguration();
-				String[] words = traitConfig.split(" ");
-				
-				String currentLine = ChatColor.YELLOW + " -" + words[0];
-				for(int i = 1; i < words.length; i++){
-					String currentWord = words[i];
-					
-					if(currentLine.length() + words.length + 1 > 29){
-						lore.add(currentLine);
-						currentLine = ChatColor.YELLOW + "  " + currentWord;
-					}else{
-						currentLine += " " + currentWord;
-					}
-				}
-				if(currentLine.length() > 0){
-					lore.add(currentLine);
-				}
-			}
-			
-			meta.setLore(lore);
-			item.setItemMeta(meta);
-			
+			ItemStack item = generateForHolder(holder);
 			slotsToFill.put(item, holder.getGuiSlot());
 			this.numberOfHolder++;
 		}
@@ -211,8 +150,84 @@ public class HolderInventory extends InventoryView{
 		for(ItemStack item : toAddAfter){
 			getTopInventory().addItem(item);
 		}
-		
 	}
+	
+	
+	/**
+	 * Generates an ItemStack for the holder.
+	 * 
+	 * @param holder to generate for
+	 * @return the itemstack generated.
+	 */
+	private ItemStack generateForHolder(AbstractTraitHolder holder){
+		ItemStack item = holder.getHolderSelectionItem() != null 
+				? holder.getHolderSelectionItem().clone()
+				: new ItemStack(Material.BOOK_AND_QUILL);
+		
+		ItemMeta meta = item.getItemMeta();
+		
+		boolean isEmptyTag = holder.getTag() == null || holder.getTag().equals("");
+		meta.setDisplayName(isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag());
+		
+		List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
+		
+		if(holder.hasHolderDescription()){
+			String description = holder.getHolderDescription();
+			String[] split = description.split("#n");
+			
+			for(String desc : split){
+				lore.add(ChatColor.translateAlternateColorCodes('&', desc));					
+			}
+		}
+
+		String healthString = getHealthString(holder);
+		if(healthString != null){
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.health) + ": ");
+			lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
+		}
+		
+		//add armor as lore
+		lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
+		if(holder.getArmorPerms().size() > 0){
+			lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
+		}else{
+			lore.add(ChatColor.LIGHT_PURPLE + "ANY");
+		}
+		
+		//Add the Preconditions (if present).
+		lore.addAll(holder.getPreconditions().generateDescription(RaCPlayerManager.get().getPlayer(player)));
+		
+		//Trait stuff below:
+		lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
+		
+		//add trait text as lore
+		for(Trait trait: holder.getVisibleTraits()){
+			lore.add(ChatColor.DARK_AQUA + trait.getDisplayName() + ": " );
+			String traitConfig = trait.getPrettyConfiguration();
+			String[] words = traitConfig.split(" ");
+			
+			String currentLine = ChatColor.YELLOW + " -" + words[0];
+			for(int i = 1; i < words.length; i++){
+				String currentWord = words[i];
+				
+				if(currentLine.length() + words.length + 1 > 29){
+					lore.add(currentLine);
+					currentLine = ChatColor.YELLOW + "  " + currentWord;
+				}else{
+					currentLine += " " + currentWord;
+				}
+			}
+			if(currentLine.length() > 0){
+				lore.add(currentLine);
+			}
+		}
+		
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		
+		return item;
+	}
+	
 
 	/**
 	 * The Decimal formatter to use.

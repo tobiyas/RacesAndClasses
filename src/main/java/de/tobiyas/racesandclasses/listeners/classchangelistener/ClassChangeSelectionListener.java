@@ -25,11 +25,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceNotFoundException;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.HolderSelectionPreconditions.HolderPreconditionResult;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -124,6 +126,23 @@ public class ClassChangeSelectionListener implements Listener {
 			event.setCancelled(message);
 		}
 	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void checkPlayerMeetsPreconditions(PreClassSelectEvent event){
+		Player player = event.getPlayer();
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		
+		AbstractTraitHolder newHolder = event.getHolderToSelect();
+		if(newHolder != null){
+			HolderPreconditionResult result = newHolder.getPreconditions().checkPreconditions(racPlayer);
+			if(result != HolderPreconditionResult.RESTRICTIONS_MET){
+				//TODO implement some sort of Precondition resolution
+				String translated = LanguageAPI.translate(racPlayer, result.name().toLowerCase(), "HOLDER", "Specific Class");
+				event.setCancelled(translated);
+			}
+		}
+	}
+	
 	
 	@EventHandler
 	public void givePlayerUplinkAfterSelect(AfterClassSelectedEvent event){
