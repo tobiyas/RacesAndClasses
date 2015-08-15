@@ -123,7 +123,6 @@ public class YAMLPersistanceSaver {
 	
 	protected static void saveEverything(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		plugin.getConfigManager().getMemberConfigManager().saveConfigs();
 		
 		plugin.getRaceManager().saveAll();
 		plugin.getClassManager().saveAll();

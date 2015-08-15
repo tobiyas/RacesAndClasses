@@ -52,6 +52,7 @@ public class YML_OLD_to_NEW_converter {
 				if(!oldConfig.contains("playerdata")) continue;
 				
 				String playerName = file.getName().replace(".yml", "");
+				@SuppressWarnings("deprecation")
 				OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 				if(player == null || player.getUniqueId() == null) {
 					RacesAndClasses.getPlugin().logWarning("Could not find a UUID for: " + playerName + ". We will ignore him.");

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,6 +52,11 @@ public class ChannelManager {
 	 * All channels saved as Map String -> {@link ChannelContainer}
 	 */
 	private Map<String, ChannelContainer> channels;
+
+	/**
+	 * The Map of player -> Channel.
+	 */
+	private final Map<UUID,String> playerChannelMap = new HashMap<UUID,String>();
 	
 	/**
 	 * The ConfigTotal to save the channel settings in
@@ -726,6 +732,32 @@ public class ChannelManager {
 		
 		container.sendUnformatedMessage(ChatColor.YELLOW + "Channel " + container.getChannelName() + " was deleted.");
 		removeChannel(container.getChannelName());
+	}
+	
+	
+	/**
+	 * Returns the current Channel of the Player.
+	 * 
+	 * @param player to use.
+	 * 
+	 * @return the current channel.
+	 */
+	public String getCurrentChannel(RaCPlayer player){
+		if(!playerChannelMap.containsKey(player.getUniqueId())){
+			playerChannelMap.put(player.getUniqueId(), "Global");
+		}
+		
+		return playerChannelMap.get(player.getUniqueId());
+	}
+	
+	/**
+	 * Changes the current channel of the player.
+	 * 
+	 * @param player to use
+	 * @param channel to use.
+	 */
+	public void changeCurrentChannel(RaCPlayer player, String channel){
+		playerChannelMap.put(player.getUniqueId(), channel);
 	}
 	
 }

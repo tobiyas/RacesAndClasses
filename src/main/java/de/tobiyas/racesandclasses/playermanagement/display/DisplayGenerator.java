@@ -16,7 +16,6 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
@@ -36,16 +35,9 @@ public class DisplayGenerator {
 	public static Display generateDisplay(RaCPlayer player, DisplayInfos infos, String prefered){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		MemberConfig config = player.getConfig();
-		Object displayTypeAsObject = config.getValueDisplayName("displayType");
 		String displayType = prefered == null || prefered.isEmpty() ? "score" : prefered;
-		
 		boolean disableScoreboard = plugin.getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
-				
-		if(displayTypeAsObject != null && displayTypeAsObject instanceof String){
-			displayType = (String) displayTypeAsObject;
-		}
-		
+
 		DisplayType type = DisplayType.resolve(displayType);
 		if(disableScoreboard && type == DisplayType.Scoreboard){
 			type = DisplayType.Chat;

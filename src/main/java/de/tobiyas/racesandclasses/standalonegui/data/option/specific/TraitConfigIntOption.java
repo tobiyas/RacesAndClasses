@@ -53,6 +53,7 @@ public class TraitConfigIntOption extends AbstractTraitConfigOption {
 			int parsed = Integer.parseInt(value);
 			this.intOption = parsed;
 			this.needsSave = true;
+			this.setCreated(true);
 		}catch(Throwable exp){}
 	}
 

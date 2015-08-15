@@ -46,6 +46,7 @@ public class TraitConfigMaterialOption extends AbstractTraitConfigOption {
 		try{
 			this.mat = Material.matchMaterial(value.toUpperCase());
 			this.needsSave = true;
+			this.setCreated(true);
 		}catch(Throwable exp){}
 	}
 

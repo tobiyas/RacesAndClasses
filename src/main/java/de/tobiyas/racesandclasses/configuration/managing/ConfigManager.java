@@ -15,10 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.configuration.managing;
 
+import de.tobiyas.racesandclasses.configuration.armory.ArmorConfig;
 import de.tobiyas.racesandclasses.configuration.global.ChannelConfig;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
-import de.tobiyas.racesandclasses.configuration.armory.ArmorConfig;
-import de.tobiyas.racesandclasses.configuration.member.MemberConfigManager;
 import de.tobiyas.racesandclasses.configuration.raceteams.RaceTeamManager;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceToClassConfiguration;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
@@ -30,7 +29,6 @@ public class ConfigManager {
 	private final RaceToClassConfiguration raceToClassConfig;
 	private final ArmorConfig armorConfig;
 	
-	private final MemberConfigManager memberConfigManager;
 	private final TraitConfigManager traitConfigManager;
 	private final RaceTeamManager raceTeamManager;
 	
@@ -44,7 +42,6 @@ public class ConfigManager {
 		raceToClassConfig = new RaceToClassConfiguration();
 		armorConfig = new ArmorConfig();
 		
-		memberConfigManager = new MemberConfigManager();
 		traitConfigManager = new TraitConfigManager();
 		raceTeamManager = new RaceTeamManager();
 	}
@@ -58,7 +55,6 @@ public class ConfigManager {
 		raceToClassConfig.reload();
 		armorConfig.reload();
 		
-		memberConfigManager.reload();
 		traitConfigManager.reload();
 		raceTeamManager.reaload();
 	}
@@ -90,15 +86,6 @@ public class ConfigManager {
 	 */
 	public RaceToClassConfiguration getRaceToClassConfig() {
 		return raceToClassConfig;
-	}
-
-	/**
-	 * The member config manager to get configs of a member
-	 * 
-	 * @return the memberConfigManager
-	 */
-	public MemberConfigManager getMemberConfigManager() {
-		return memberConfigManager;
 	}
 
 	/**

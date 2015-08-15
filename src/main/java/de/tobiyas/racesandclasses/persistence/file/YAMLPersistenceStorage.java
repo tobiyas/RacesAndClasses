@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
-import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
@@ -103,19 +102,6 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 		return true;
 	}
 
-	@Override
-	public boolean savePlayerMemberConfigEntry(ConfigOption container, boolean forceSave) {
-		if(!container.needsSaving() && !forceSave) return false;
-		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(container.getPlayerUUID());
-		config.set(DEFAULT_FORMAT_PATH, container.getFormat().name());
-		config.set(DEFAULT_VALUE_PATH, container.getValue());
-		config.set(DEFAULT_DEFAULTVALUE_PATH, container.getDefaultValue());
-		config.set(DEFAULT_VISIBLE_PATH, container.isVisible());
-		config.set(DEFAULT_DISPLAY_NAME_PATH, container.getDisplayName());
-		
-		return true;
-	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -172,40 +158,6 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 		return container;
 	}
 
-	@Override
-	public ConfigOption getPlayerMemberConfigEntryByPath(RaCPlayer player,
-			String entryPath) {
-		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		String pre = "config";
-		
-		boolean visible = config.getBoolean(pre + "." + entryPath + "." + DEFAULT_VISIBLE_PATH, true);
-		Object defaultValue = config.get(pre + "." + entryPath + "." + DEFAULT_DEFAULTVALUE_PATH, null);
-		Object value = config.get(pre + "." + entryPath + "." + DEFAULT_VALUE_PATH, defaultValue);
-		String displayName = config.getString(pre + "." + entryPath + "." + DEFAULT_DISPLAY_NAME_PATH, entryPath);
-		
-		ConfigOption option = new ConfigOption(entryPath, player, displayName, value, defaultValue, visible);
-		return option;
-	}
-
-	@Override
-	public ConfigOption getPlayerMemberConfigEntryByName(RaCPlayer player,
-			String entryName) {
-
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		String pre = "config";
-		
-		Set<String> allOptions = config.getChildren(pre);
-		for(String option : allOptions){
-			String displayName = config.getString(pre + "." + option + "." + DEFAULT_DISPLAY_NAME_PATH, "");
-			if(entryName.equals(displayName)){
-				return getPlayerMemberConfigEntryByPath(player, option);
-			}
-		}
-		
-		return null;
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public ChannelSaveContainer getChannelSaveContainer(String channelName, String channelLevel) {
@@ -229,20 +181,6 @@ public class YAMLPersistenceStorage implements PersistenceStorage {
 		container.setMutedMap(config.getString(channelPre + ".muted", ""));
 		
 		return container;
-	}
-
-	@Override
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(RaCPlayer player) {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		Set<String> allOptions = config.getChildren("config");
-		
-		List<ConfigOption> containers = new LinkedList<ConfigOption>();
-		for(String option : allOptions){
-			ConfigOption container = getPlayerMemberConfigEntryByPath(player, option);
-			containers.add(container);
-		}
-		
-		return containers;
 	}
 
 	@Override

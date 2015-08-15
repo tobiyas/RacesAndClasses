@@ -21,26 +21,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.util.chat.components.ChatMessageObject;
+import de.tobiyas.util.chat.components.TellRawChatMessage;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class CommandExecutor_RaceHelp extends AbstractCommand{
 	
 	public CommandExecutor_RaceHelp(){
 		super("racehelp", new String[]{"rac", "rachelp", "rhelp"});
 		RacesAndClasses.getPlugin();
-
-//		String command = "racehelp";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	@Override
@@ -59,18 +54,45 @@ public class CommandExecutor_RaceHelp extends AbstractCommand{
 		}
 		
 		String commandString = args[0];
+		int page = -1;
+		try{ page = Integer.parseInt(commandString); }catch(Throwable exp){}
 		
-		if(commandString.equalsIgnoreCase("page")){
-			int page = 1;
-			if(args.length > 1)
+		if(commandString.equalsIgnoreCase("page") || page > 0){
+			if(args.length > 1 && page <= 0){
 				try{
 					page = Integer.valueOf(args[1]);
 				}catch(NumberFormatException e){
 					sender.sendMessage(ChatColor.RED + "The Page-Number must be an Integer value.");
 					return true;
 				}
+			}
+			
+			//Set to 1 if needed.
+			if(page <= 0) page = 1;
+			
 			String[] messages = HelpPage.getPageContent(senderName, page).toArray(new String[0]);
 			sender.sendMessage(messages);
+			
+			if(VollotileCodeManager.getVollotileCode().getVersion().hasTellRawSupport() 
+					&& sender instanceof Player){
+				Player player = (Player) sender;
+				
+				int pageBefore = page - 1;
+				int pageAfter = page + 1;
+				
+				boolean pageBeforeExist = page > 1;
+				boolean pageAfterExist = page < HelpPage.getLastPageIndex();
+				
+				TellRawChatMessage message = new TellRawChatMessage();
+				if(pageBeforeExist) message.append(new ChatMessageObject("page " + pageBefore).addCommandClickable("rachelp " + pageBefore).addPopupHover("Go to page " + pageBefore));
+				else message.addSimpleText("     ");
+				
+				message.addSimpleText("                             ");
+				
+				if(pageAfterExist) message.append(new ChatMessageObject("page " + pageAfter).addCommandClickable("rachelp " + pageAfter).addPopupHover("Go to page " + pageAfter));
+				
+				message.sendToPlayers(player);
+			}
 			return true;
 		}
 		

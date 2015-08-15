@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
@@ -322,7 +321,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 	private void postChannelInfo(CommandSender sender, String channel){
 		if(channel == "" && sender instanceof Player){
 			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
-			channel = racPlayer.getConfig().getCurrentChannel();
+			channel = racPlayer.getCurrentChatChannel();
 		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "=====" + ChatColor.RED + " Channel Information: " + 
@@ -378,9 +377,9 @@ public class CommandExecutor_Channel extends AbstractCommand {
 		
 		plugin.getChannelManager().leaveChannel(player, channelName, true);
 		
-		MemberConfig config = player.getConfig();
-		if(channelName.equalsIgnoreCase(config.getCurrentChannel())){
-				config.setValue(MemberConfig.chatChannel, "Global");
+		
+		if(channelName.equalsIgnoreCase(player.getCurrentChatChannel())){
+			player.setCurrentChatChannel("Global");
 		}
 			
 	}
@@ -436,13 +435,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 			}
 		}
 		
-		MemberConfig config = player.getConfig();
-		if(config == null){
-			player.sendMessage(ChatColor.RED + "Something gone wrong with your config. Try relogging or ask an Admin.");
-			return;
-		}
-		
-		config.setValue(MemberConfig.chatChannel, changeTo);
+		player.setCurrentChatChannel(changeTo);
 		player.sendMessage(ChatColor.GREEN + "You now write in the channel: " + ChatColor.AQUA + changeTo);
 		
 		if(changeTo.equalsIgnoreCase("tutorial")){

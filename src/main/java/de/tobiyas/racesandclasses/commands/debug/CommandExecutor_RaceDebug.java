@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.commands.debug;
 
 import java.util.Properties;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -36,15 +37,6 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 	public CommandExecutor_RaceDebug(){
 		super("racedebug", new String[]{"rdebug"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racedebug";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override
@@ -58,6 +50,16 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 			if(commandString.equalsIgnoreCase("scan")){
 				long timeTook = runDebugScan();
 				sender.sendMessage(ChatColor.GREEN + "Full Scan finished (" + timeTook + "ms) and logged in Debug file.");
+				return true;
+			}
+			
+			if(commandString.equals("time")){
+				//We need to add a 6 hour offset, since MC seems to be starting at 6am.
+				int hour = ((int) (Bukkit.getWorld("world").getTime() / 1000l) + 6) % 24;
+				boolean isNight = hour > 18 || hour < 6;
+				boolean isDay = hour > 6 && hour < 18;
+				
+				sender.sendMessage(ChatColor.GREEN + "It is: " + (isNight ? ChatColor.RED + "Night" : "") + "" + (isDay ? ChatColor.YELLOW +  "Day": ""));
 				return true;
 			}
 			

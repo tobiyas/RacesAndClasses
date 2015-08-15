@@ -62,7 +62,7 @@ public class EN_Text {
 			+ health + ": 'Health'\r\n"
 			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			+ holder_selectiongui_header + ": '&aSelect your &d%HOLDER%&a, %PLAYER%'\r\n"
-			+ holder_not_present + ": '&cYou have to be a %HOLDER% for this.'"
+			+ holder_not_present + ": '&cYou have to be a %HOLDER% for this.'\r\n"
 			
 			//i
 			+ in_restricted_area + ": '&cYou may not use any Trait here.'\r\n"
@@ -129,6 +129,8 @@ public class EN_Text {
 			+ race_not_exist + ": '&cThe race &d%RACE% &cdoes not exist.'\r\n"
 			+ race_changed_to + ": '&cYour Race has been changed to: &d%RACE%&c.'\r\n"
 			+ race_changed_to_other + ": '&aRace of &d%PLAYER%&a changed to: &d%RACE%&d.'\r\n"
+			+ race_spawn_created + ": '&aRace-Spawn of &d%RACE% &acreated.'\r\n"
+			+ race_spawn_no_spawnpoint + ": '&cThe race &d%RACE% &chas no spawnpoint.'\r\n"
 			+ race_spawn_teleport_success + ": '&aWelcome to the Race Spawn of &d%RACE%&a.'\r\n"
 			+ reload_message + ": '&aReload of &dRaces &adone successfully. Time taken: &d %TIME% &ams'\r\n"
 			+ restrictions_not_met + ": '&aThe Trait still has cooldown or may not be used here..'\r\n"

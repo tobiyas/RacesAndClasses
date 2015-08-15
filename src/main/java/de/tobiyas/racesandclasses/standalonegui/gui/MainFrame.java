@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -83,7 +84,8 @@ public class MainFrame extends JFrame {
 				}
 				
 				if(command.equals("SAVE")){
-					//TODO implement me
+					GuiLoader.save();
+					JOptionPane.showMessageDialog(null, "Save done!");
 					return;
 				}
 				

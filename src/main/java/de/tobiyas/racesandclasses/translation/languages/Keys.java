@@ -125,6 +125,8 @@ public class Keys {
 	public static final String race_not_exist = "race_not_exist";
 	public static final String race_changed_to = "race_changed_to";
 	public static final String race_changed_to_other = "race_changed_to_other";
+	public static final String race_spawn_created = "race_spawn_created";
+	public static final String race_spawn_no_spawnpoint = "race_spawn_no_spawnpoint";
 	public static final String race_spawn_teleport_success = "race_spawn_teleport_success";
 	public static final String reload_message = "reload_message";
 	public static final String restrictions_not_met = "restrictions_not_met";

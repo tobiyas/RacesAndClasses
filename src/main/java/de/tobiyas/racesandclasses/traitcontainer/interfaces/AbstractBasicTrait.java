@@ -835,7 +835,8 @@ public abstract class AbstractBasicTrait implements Trait,
 		//Only check if we really need. Otherwise we would use resources we don't need
 		if(onlyOnDay || onlyInNight){
 			//Daytime check
-			int hour = ((int) (wrapper.getWorld().getTime() / 1000l) + 8) % 24;
+			//We need to add a 6 hour offset, since MC seems to be starting at 6am.
+			int hour = ((int) (wrapper.getWorld().getTime() / 1000l) + 6) % 24;
 			boolean isNight = hour > 18 || hour < 6;
 			boolean isDay = hour > 6 && hour < 18;
 			

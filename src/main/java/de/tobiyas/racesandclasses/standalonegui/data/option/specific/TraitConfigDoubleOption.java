@@ -38,6 +38,7 @@ public class TraitConfigDoubleOption extends AbstractTraitConfigOption {
 		try{
 			this.value = Double.parseDouble(value);
 			this.needsSave = true;
+			this.setCreated(true);
 		}catch(Throwable exp){}
 	}
 

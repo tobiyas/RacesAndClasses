@@ -61,7 +61,6 @@ import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Channel
 import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Racechat;
 import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_ConfigRegenerate;
-import de.tobiyas.racesandclasses.commands.config.CommandExecutor_RaceConfig;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_SaveNow;
@@ -90,10 +89,10 @@ import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
-import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
-import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.buffs.BuffManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.debuff.DebuffManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
@@ -439,7 +438,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_Whisper());
 		commands.add(new CommandExecutor_TraitList());
 		commands.add(new CommandExecutor_RaceHeal());
-		commands.add(new CommandExecutor_RaceConfig());
 		commands.add(new CommandExecutor_RaceDebug());
 		commands.add(new CommandExecutor_Class());
 		commands.add(new CommandExecutor_HP());
@@ -619,7 +617,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		getDebugLogger().shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
-		getConfigManager().getMemberConfigManager().shutDown();
 		channelManager.saveChannels();
 		tutorialManager.shutDown();
 		raceSpawnManager.save(false);

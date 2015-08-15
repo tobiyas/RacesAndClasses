@@ -91,14 +91,16 @@ public class ScoreboardUpdater {
 	public void updateSpells(){
 		MagicSpellTrait currentSpell = player.getSpellManager().getCurrentSpell();
 		manager.clearCategory(SBCategory.Spells);
+		
 		if(currentSpell != null){
 			//If spell == null, we have no spells available
 			int id = player.getSpellManager().getSpellAmount();
 			for(MagicSpellTrait spell : player.getSpellManager().getAllSpells()){
-				String name = spell.getDisplayName();
 				boolean selected = spell == currentSpell;
+				ChatColor pre = (selected ? ChatColor.RED : ChatColor.YELLOW);
+				ChatColor after = (selected ? ChatColor.AQUA : ChatColor.BLUE);
 				
-				name = (selected ? ChatColor.RED : ChatColor.YELLOW) + name;
+				String name =  getFromCooldown(spell, pre, after);
 				manager.setValue(SBCategory.Spells, name, id);
 				id--;
 			}
@@ -108,6 +110,32 @@ public class ScoreboardUpdater {
 	}
 	
 	
+	/**
+	 * Generates a String for the Spell.
+	 * 
+	 * @param spell
+	 * @param pre
+	 * @param after
+	 * 
+	 * @return a colorfull name.
+	 */
+	private String getFromCooldown(MagicSpellTrait spell, ChatColor pre,
+			ChatColor after) {
+		
+		String name = spell.getDisplayName();
+		double cooldown = CooldownApi.getCooldownOfPlayer(player.getName(), spell.getCooldownName());
+		if(cooldown <= 0) return pre + name;
+
+		
+		cooldown = cooldown / spell.getMaxUplinkTime();
+		int chars = (int)(cooldown * (double)name.length());
+		String first = name.substring(0, chars);
+		String second = name.substring(chars, name.length());
+		
+		return pre + first + after + second;
+	}
+
+
 	/**
 	 * Updates the General Part.
 	 */

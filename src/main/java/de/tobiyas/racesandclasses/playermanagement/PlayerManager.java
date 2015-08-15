@@ -28,6 +28,7 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
@@ -280,6 +281,17 @@ public class PlayerManager{
 	 */
 	public String getPlayerNumber() {
 		return playerData.size() + "";
+	}
+
+	/**
+	 * Returns the PlayerPetManager.
+	 * 
+	 * @param raCPlayer to get for.
+	 * @return the Player Pet manager.
+	 */
+	public PlayerPetManager getPlayerPetManager(RaCPlayer player) {
+		PlayerContainer containerOfPlayer = getCreate(player);
+		return containerOfPlayer.getPlayerPetManager();
 	}
 
 }

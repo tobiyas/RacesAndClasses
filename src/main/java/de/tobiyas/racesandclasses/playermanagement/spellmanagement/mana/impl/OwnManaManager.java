@@ -57,8 +57,6 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 		
 		rescanDisplay();
 		
-		player.getConfig().addObserver(this);
-		
 		foodBar = new ManaFoodBarRunner(this);
 		foodBar.start();
 	}

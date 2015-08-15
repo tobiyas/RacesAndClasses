@@ -31,7 +31,7 @@ public class HelpPage {
 	/**
 	 * The total amount of pages for the help
 	 */
-	private final static int pages = 7; 
+	private final static int pages = 8; 
 	
 	
 	/**
@@ -49,7 +49,9 @@ public class HelpPage {
 			case 4: return page4();
 			case 5: return page5();
 			case 6: return page6();
-			case 7: return page7(playerName);
+			case 7: return page7();
+			case 8: return page8(playerName);
+			
 			default: return page1();
 		}
 	}
@@ -76,20 +78,24 @@ public class HelpPage {
 			return page3();
 		}
 		
-		if(category.equalsIgnoreCase("chat")){
+		if(category.equalsIgnoreCase("racespawn")){
 			return page4();
 		}
 		
-		if(category.equalsIgnoreCase("channel")){
+		if(category.equalsIgnoreCase("chat")){
 			return page5();
 		}
 		
-		if(category.equalsIgnoreCase("config")){
+		if(category.equalsIgnoreCase("channel")){
 			return page6();
 		}
 		
+		if(category.equalsIgnoreCase("config")){
+			return page7();
+		}
+		
 		if(category.equalsIgnoreCase("general")){
-			return page7(sender);
+			return page8(sender);
 		}
 		
 		return page1();
@@ -103,7 +109,7 @@ public class HelpPage {
 		List<String> returnList = new LinkedList<String>();
 		
 		returnList.add(postPageHead(1, "HELP"));
-		returnList.add(ChatColor.GREEN + "Pages are: " + ChatColor.RED + "1:help, 2:races, 3:classes, 4:chat, 5:channel, 6:config, 7:general");
+		returnList.add(ChatColor.GREEN + "Pages are: " + ChatColor.RED + "1:Help, 2:Races, 3:Classes, 4:Race-Spawns, 5:Chat, 6:Channel, 7:Config, 8:General");
 		returnList.add(ChatColor.GREEN + "/racehelp " + ChatColor.YELLOW + "displays this page.");
 		returnList.add(ChatColor.GREEN + "/racehelp page <number> " + ChatColor.YELLOW + "displays the page with the number.");
 		returnList.add(ChatColor.GREEN + "/racehelp trait <traitname> " + ChatColor.YELLOW + "displays the help to a trait.");
@@ -147,14 +153,31 @@ public class HelpPage {
 		return returnList;
 	}
 	
+	
 
 	/**
-	 * Generates the help for the Chat page
+	 * Generates the Help for Race-Spawns.
 	 */
 	private static List<String> page4(){
 		List<String> returnList = new LinkedList<String>();
 		
-		returnList.add(postPageHead(4, "CHAT"));
+		returnList.add(postPageHead(4, "RACE-SPAWNS"));
+		returnList.add(ChatColor.GREEN + "/racespawn " + ChatColor.YELLOW + "teleports you to the Spawn of your Race.");
+		returnList.add(ChatColor.GREEN + "/racespawn <otherrace> " + ChatColor.YELLOW + "teleports you to the Spawn of the <otherrace>.");
+		returnList.add(ChatColor.GREEN + "/racespawn <otherrace> " + ChatColor.YELLOW + "teleports you to the Spawn of the <otherrace>.");
+		returnList.add(ChatColor.GREEN + "/racespawn set <race> " + ChatColor.YELLOW + "sets the Race-Spawn of the <race>.");
+
+		return returnList;
+	}
+	
+
+	/**
+	 * Generates the help for the Chat page
+	 */
+	private static List<String> page5(){
+		List<String> returnList = new LinkedList<String>();
+		
+		returnList.add(postPageHead(5, "CHAT"));
 		returnList.add(ChatColor.GREEN + "/whisper <playername> <message> " + ChatColor.YELLOW + "whispers the target with a message.");
 		returnList.add(ChatColor.GREEN + "/racechat <message> " + ChatColor.YELLOW + "sends a message to your race channel");
 		
@@ -169,10 +192,10 @@ public class HelpPage {
 	/**
 	 * Generates the help for the Channel page
 	 */
-	private static List<String> page5(){
+	private static List<String> page6(){
 		List<String> returnList = new LinkedList<String>();
 		
-		returnList.add(postPageHead(5, "CHANNEL"));
+		returnList.add(postPageHead(6, "CHANNEL"));
 		returnList.add(ChatColor.GREEN + "/channel " + ChatColor.YELLOW + "breaf overview over channel commands.");
 		returnList.add(ChatColor.GREEN + "/channel info [channelname] " + ChatColor.YELLOW + "gives you infos to the given channel.");
 		returnList.add(ChatColor.GREEN + "/channel list " + ChatColor.YELLOW + "lists all public channels.");
@@ -189,10 +212,10 @@ public class HelpPage {
 	/**
 	 * Generates the help for the ConfigTotal page
 	 */
-	private static List<String> page6(){
+	private static List<String> page7(){
 		List<String> returnList = new LinkedList<String>();
 		
-		returnList.add(postPageHead(6, "CONFIG"));
+		returnList.add(postPageHead(7, "CONFIG"));
 		returnList.add(ChatColor.GREEN + "/raceconfig " + ChatColor.YELLOW + "displays your current MemberConfig.");
 		returnList.add(ChatColor.GREEN + "/raceconfig <attribute> <value> " + ChatColor.YELLOW + "Changes a config option for you.");
 
@@ -205,10 +228,10 @@ public class HelpPage {
 	 * 
 	 * @param player this is needed to check against permissions
 	 */
-	private static List<String> page7(String playerName){
+	private static List<String> page8(String playerName){
 		List<String> returnList = new LinkedList<String>();
 		
-		returnList.add(postPageHead(7, "GENERAL"));
+		returnList.add(postPageHead(8, "GENERAL"));
 		returnList.add(ChatColor.GREEN + "/hp " + ChatColor.YELLOW + "displays your current HP.");
 		
 		
@@ -231,7 +254,7 @@ public class HelpPage {
 			returnList.add(ChatColor.GREEN + "/racesreload [gc] " + ChatColor.YELLOW + "Fully reloads the plugin. (gc means with garbage collection)");
 
 		return returnList;
-	}
+	}	
 	
 	
 	/**
@@ -245,6 +268,16 @@ public class HelpPage {
 		return ChatColor.YELLOW + "========== " + ChatColor.RED + "RACES HELP: " + ChatColor.LIGHT_PURPLE  + category + ChatColor.AQUA +
 							" Page<" + ChatColor.RED + page + ChatColor.AQUA +  "/" + ChatColor.RED + pages + ChatColor.AQUA+ ">" +
 							ChatColor.YELLOW + " ==========";
+	}
+
+
+	/**
+	 * Returns the Index of the last page.
+	 * 
+	 * @return indes of last page.
+	 */
+	public static int getLastPageIndex() {
+		return pages;
 	}
 
 }

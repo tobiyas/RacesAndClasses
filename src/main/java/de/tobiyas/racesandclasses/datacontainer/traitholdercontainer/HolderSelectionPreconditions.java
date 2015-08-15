@@ -100,10 +100,11 @@ public class HolderSelectionPreconditions {
 	 */
 	public List<String> generateDescription(RaCPlayer player) {
 		List<String> list = new LinkedList<String>();
+		list.add(ChatColor.LIGHT_PURPLE + "Preconditions:");
 		
 		if(minLevel > 0) {
 			boolean hasLevel = LevelAPI.getCurrentLevel(player) >= minLevel;
-			list.add(ChatColor.LIGHT_PURPLE + "Needs " + (hasLevel ? ChatColor.GREEN : ChatColor.RED) + "level " + minLevel);
+			list.add((hasLevel ? ChatColor.GREEN : ChatColor.RED) + "- Needs level " + minLevel);
 		}
 		
 		if(preHolder != null){
@@ -111,15 +112,16 @@ public class HolderSelectionPreconditions {
 			
 			boolean hasHolder = holder != null && holder.getDisplayName().equalsIgnoreCase(preHolder);
 			list.add((hasHolder ? ChatColor.GREEN : ChatColor.RED) 
-					+ "Needs " + holder.getContainerTypeAsString() 
+					+ "- Needs " + holder.getContainerTypeAsString() 
 					+ " " + preHolder);
 		}
 		
 		if(prePerm != null) {
 			boolean hasPerm = RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player.getRealPlayer(), prePerm);
-			list.add((hasPerm ? ChatColor.GREEN : ChatColor.RED) + "Needs Permission");
+			list.add((hasPerm ? ChatColor.GREEN : ChatColor.RED) + "- Needs Permission");
 		}
 		
+		if(list.size() == 1) list.clear();
 		return list;
 	}
 	

@@ -39,7 +39,6 @@ import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
-import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -441,7 +440,6 @@ public class AlternateEbeanServerImpl {
     protected List<Class<?>> getDatabaseClasses() {
 	    List<Class<?>> list = new LinkedList<Class<?>>();
 	    
-	    list.add(DBConfigOption.class);
 	    list.add(PlayerSavingContainer.class);
 	    list.add(PlayerHolderAssociation.class);
 	    list.add(ChannelSaveContainer.class);

@@ -25,11 +25,14 @@ public class ItemRestrictionAPI {
 		RaceContainer container = RaceAPI.getRaceByName(raceName);
 		if(container == null) return; //nothing found.
 		
-		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.RACE_RESTRICTION_PRE;
+		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.RACE_RESTRICTION_PRE.get(0);
 		String value = ChatColor.AQUA + "" + container.getDisplayName();
 		
 		addStringToLore(item, pre, value);
 	}
+	
+
+	
 	
 	/**
 	 * Adds the Restriction for the Class on the item.
@@ -42,27 +45,58 @@ public class ItemRestrictionAPI {
 		ClassContainer container = ClassAPI.getClassByName(className);
 		if(container == null) return; //nothing found.
 		
-		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.CLASS_RESTRICTION_PRE;
+		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.CLASS_RESTRICTION_PRE.get(0);
 		String value = ChatColor.AQUA + "" + container.getDisplayName();
 		
 		addStringToLore(item, pre, value);
 	}
-	
+
 	/**
-	 * Adds the Restriction for the Level on the Item.
+	 * Adds the Restriction for the Level on the item.
 	 * 
 	 * @param item to add to.
-	 * @param level to add.
+	 * @param level to add
 	 */
-	public static void addClassRestriction(ItemStack item, int level){
+	public static void addLevelRestriction(ItemStack item, int level){
 		if(level <= 0) return;
 		
-		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.LEVEL_RESTRICTION_PRE;
+		String pre =  ChatColor.RED + Listener_raceClassRestrictionOnItems.LEVEL_RESTRICTION_PRE.get(0);
 		String value = ChatColor.AQUA + "" + level;
 		
 		addStringToLore(item, pre, value);
 	}
-
+	
+	
+	/**
+	 * gets the level restriction on the Item
+	 * 
+	 * @param item to get from.
+	 */
+	public static int getLevelRestiction(ItemStack item){
+		if(item == null) return 0;
+		
+		if(!item.hasItemMeta()) return 0;
+		
+		ItemMeta meta = item.getItemMeta();
+		if(!meta.hasLore()) return 0;
+		
+		for(String loreString : meta.getLore()){
+			loreString = loreString.toLowerCase();
+			loreString = ChatColor.stripColor(loreString);
+		
+		
+			for(String recog : Listener_raceClassRestrictionOnItems.LEVEL_RESTRICTION_PRE){
+				if(loreString.startsWith(recog)){
+					String needed = loreString.split(": ")[1];
+					try{
+						return Integer.parseInt(needed);
+					}catch(NumberFormatException exp){}
+				}
+			}
+		}
+		
+		return 0;
+	}
 	
 	
 	/**

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.bukkit.GameMode;
@@ -22,12 +23,17 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.eventprocessing.events.entitydamage.EntityHealEvent;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 
@@ -463,6 +469,53 @@ public class CompatibilityModifier {
 				}catch(Exception exp){}//silent fail
 			}
 		}
+		
+		
+		/**
+		 * Does damage to an entity safely to healthVersions.
+		 * 
+		 * @param entity to damage
+		 * @param value to do damage
+		 */
+		public static void safeDamageEntityByEntity(org.bukkit.entity.LivingEntity entity, 
+				org.bukkit.entity.LivingEntity damager, double value, DamageCause cause){
+			
+			if(entity == null) return;
+			if(CertainVersionChecker.isAbove1_6()){
+				//This will be auto-removed later!
+				new DamageEventChangerClass(cause);
+				entity.damage(value, damager);
+			}else{
+				int damage = Math.round((float) value);
+				
+				try{
+					Method method = org.bukkit.entity.LivingEntity.class.getMethod("damage", Integer.class, Entity.class);					
+					method.invoke(entity, damage, damager);
+				}catch(Exception exp){}//silent fail
+			}
+		}
+		
+		
+		private static class DamageEventChangerClass implements Listener{
+			private final DamageCause cause;			
+			private DamageEventChangerClass(DamageCause cause) {
+				this.cause = cause;
+				RacesAndClasses.getPlugin().registerEvents(this);
+			}
+			
+			@EventHandler(priority=EventPriority.LOWEST)
+			public void damage(EntityDamageByEntityEvent event){
+				try{
+					Field field = EntityDamageEvent.class.getDeclaredField("cause");
+					field.setAccessible(true);
+					field.set(event, cause);
+				}catch(Throwable exp){ exp.printStackTrace(); }
+				
+				HandlerList.unregisterAll(this);
+			}
+			
+		}
+		
 		
 		/**
 		 * Does damage to an entity safely to healthVersions.

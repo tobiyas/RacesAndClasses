@@ -23,9 +23,10 @@ import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.pets.PlayerPetManager;
+import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.HeroesLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
@@ -41,26 +42,30 @@ public class PlayerContainer {
 	 */
 	private static RacesAndClasses plugin = RacesAndClasses.getPlugin();
 
-	
 	/**
 	 * The ArrowManager of the Player.
 	 */
-	private ArrowManager arrowManager;
+	private final ArrowManager arrowManager;
 	
 	/**
 	 * The Armor and Tool Manager of the Player
 	 */
-	private ArmorToolManager armorToolManager;
+	private final ArmorToolManager armorToolManager;
+	
+	/**
+	 * The PetManager of the player.
+	 */
+	private final PlayerPetManager petManager;
 	
 	/**
 	 * The Name of the Player associated with this Container
 	 */
-	private RaCPlayer player;
+	private final RaCPlayer player;
 	
 	/**
 	 * The health manager to use.
 	 */
-	protected HealthManager healthManager;
+	protected final HealthManager healthManager;
 	
 	/**
 	 * Shows if the Player has God mode.
@@ -99,6 +104,7 @@ public class PlayerContainer {
 		this.arrowManager = new ArrowManager(player);
 		this.healthManager = new HealthManager(player);
 		this.playerScoreboardManager = new PlayerRaCScoreboardManager(player);
+		this.petManager = new PlayerPetManager(player);
 		
 		this.hasGod = false;
 		
@@ -127,6 +133,7 @@ public class PlayerContainer {
 	 */
 	public void tick(){
 		levelManager.tick();
+		petManager.tick();
 	}
 
 	
@@ -343,6 +350,14 @@ public class PlayerContainer {
 	 */
 	public PlayerLevelManager getPlayerLevelManager() {
 		return this.levelManager;
+	}
+
+
+	/**
+	 * Returns the PetManager of this player.
+	 */
+	public PlayerPetManager getPlayerPetManager() {
+		return this.petManager;
 	}
 	
 }

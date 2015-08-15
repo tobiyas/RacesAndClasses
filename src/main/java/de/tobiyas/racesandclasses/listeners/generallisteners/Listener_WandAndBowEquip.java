@@ -34,6 +34,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 
 public class Listener_WandAndBowEquip implements Listener {
 
@@ -60,12 +61,14 @@ public class Listener_WandAndBowEquip implements Listener {
 
 			if(newMatIsWand){
 				if(player.getSpellManager().getSpellAmount() > 0){
-					player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
+					MagicSpellTrait currentActiveSpell = player.getSpellManager().getCurrentSpell();
+					if(currentActiveSpell == null) return;
 					
+					player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
 					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.wand") <= 0){
-						String currentActiveSpell = player.getSpellManager().getCurrentSpell().toString();
+						
 						LanguageAPI.sendTranslatedMessage(player, wand_select_message, 
-								"current_spell", currentActiveSpell);
+								"current_spell", currentActiveSpell.getDisplayName());
 						
 						int time = plugin.getConfigManager().getGeneralConfig().getConfig_cooldown_on_wand_message();
 						plugin.getCooldownManager().setCooldown(player.getName(), "message.wand", time);

@@ -48,7 +48,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderInventory;
@@ -98,7 +97,6 @@ public class Listener_Player implements Listener {
 		}
 		
 		//just to load them.
-		player.getConfig();
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLogin(player);
 		}
@@ -170,18 +168,13 @@ public class Listener_Player implements Listener {
 		//check if we have a fake command.
 		if(orgMsg != null && orgMsg.length() > 0 && orgMsg.charAt(0) == '/') return;
 		
-		MemberConfig config = player.getConfig();
-		String channel = "Global";
-		
-		if(config != null){
-			channel = config.getCurrentChannel();
-			if(!plugin.getChannelManager().isMember(player, channel)){
-				player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
-									ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
-				
-				event.setCancelled(true);
-				return;
-			}
+		String channel = player.getCurrentChatChannel();
+		if(!plugin.getChannelManager().isMember(player, channel)){
+			player.sendMessage(ChatColor.RED + "You are writing in a channel, you don't have access to. Please change your channel with " + 
+								ChatColor.LIGHT_PURPLE + "/channel change" + ChatColor.YELLOW + " [channelname]");
+			
+			event.setCancelled(true);
+			return;
 		}
 		
 		plugin.getChannelManager().editToChannel(channel, event);

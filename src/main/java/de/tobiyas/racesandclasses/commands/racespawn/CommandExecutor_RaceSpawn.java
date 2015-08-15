@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.racespawn;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,12 +25,15 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.APIs.RaceAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.util.autocomplete.AutoCompleteUtils;
 
 public class CommandExecutor_RaceSpawn extends AbstractCommand {
 
@@ -38,15 +44,6 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		super("racespawn");
 		
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racespawn";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	
@@ -67,6 +64,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		//to own spawn
 		if(args.length == 0){
 			if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceSpawnUseOwn)) return true;
+			
 			if(checkCooldown(player)) return true;
 			sendPlayerToOwnSpawn(player);
 			return true;
@@ -78,8 +76,14 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 				if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.raceSpawnCreate)) return true;				
 				
 				String race = args[1];
+				RaceContainer container = RaceAPI.getRaceByName(race);
+				if(container == null){
+					LanguageAPI.sendTranslatedMessage(sender, Keys.race_not_exist, "race", race);
+					return true;
+				}
+				
 				plugin.getRaceSpawnManager().setRaceSpawn(race, player.getLocation());
-				LanguageAPI.sendTranslatedMessage(sender, Keys.success);
+				LanguageAPI.sendTranslatedMessage(sender, Keys.race_spawn_created, "race", container.getDisplayName());
 				return true;
 			}
 			
@@ -121,7 +125,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 	private boolean checkCooldown(Player player){
 		int cooldown = plugin.getCooldownManager().stillHasCooldown(player.getName(), "command.racespawn");
 		if(cooldown > 0){
-			LanguageAPI.sendTranslatedMessage(player, Keys.cooldown_is_ready_again, cooldown + " Seconds");
+			LanguageAPI.sendTranslatedMessage(player, Keys.cooldown_is_ready_in, "time", cooldown + " Seconds");
 			return true;
 		}
 		
@@ -139,7 +143,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		Location loc = plugin.getRaceSpawnManager().getSpawnForRace(spawn);
 		
 		if(loc == null){
-			LanguageAPI.sendTranslatedMessage(player, Keys.race_not_exist, "race", spawn);
+			LanguageAPI.sendTranslatedMessage(player, Keys.race_spawn_no_spawnpoint, "race", spawn);
 			return false;
 		}
 		
@@ -151,6 +155,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		LanguageAPI.sendTranslatedMessage(player, Keys.race_spawn_teleport_success, "race", spawn);
 		return false;
 	}
+	
 	
 	/**
 	 * Sends the player to the spawn passed.
@@ -165,6 +170,21 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 		if(holder == null) return false;
 		
 		return sendPlayerToSpawn(player, holder.getDisplayName());
+	}
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		
+		String raceStart = null;
+		Collection<String> raceNames = RaceAPI.getAllRaceNames();
+		if(args.length == 1) { raceStart = args[0]; raceNames.add("set"); }
+		if(args.length == 2 && args[0].equalsIgnoreCase("set")) raceStart = args[1];
+		
+		if(raceStart != null)return AutoCompleteUtils.getAllNamesWith(raceNames, raceStart);
+		
+		return super.onTabComplete(sender, command, alias, args);
 	}
 
 }

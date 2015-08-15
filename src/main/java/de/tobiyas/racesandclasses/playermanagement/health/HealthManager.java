@@ -18,11 +18,6 @@ public class HealthManager {
 	 */
 	private final RaCPlayer player;
 	
-	/**
-	 * The Display to output the HP
-	 */
-	private HealthDisplayRunner display;
-	
 	
 	/**
 	 * The Life Modification map.
@@ -33,7 +28,6 @@ public class HealthManager {
 	
 	public HealthManager(RaCPlayer player) {
 		this.player = player;
-		this.display = new HealthDisplayRunner(player);
 	}
 	
 	
@@ -117,7 +111,6 @@ public class HealthManager {
 		if(player == null || !player.isOnline()) return;
 		
 		checkMaxHealth();
-		display.forceHPOut();
 	}
 
 

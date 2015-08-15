@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.tobiyas.racesandclasses.standalonegui.data.option.TraitConfigOption;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class GuiTrait implements Comparable<GuiTrait>, NeedsSave {
 	
@@ -104,6 +105,42 @@ public class GuiTrait implements Comparable<GuiTrait>, NeedsSave {
 		}
 		
 		return false;
+	}
+
+
+
+	/**
+	 * Saves self to the Traits section of the Config.
+	 * 
+	 * @param ymlConfig to use
+	 * @param string the pre, including the traits section and a Period.
+	 */
+	public void saveTo(YAMLConfigExtended ymlConfig, String pre) {
+		pre += traitType;
+		String addon = "";
+		
+		int i = 0;
+		while(ymlConfig.contains(pre+addon)){
+			i++;
+			addon = "#"+i;
+		}
+		
+		//adapt to trait type.
+		pre += addon;
+		ymlConfig.createSection(pre);
+		pre += ".";
+		
+		for(TraitConfigOption option : traitConfigurationNeeded){
+			ymlConfig.set(pre + option.getName(), option.getCurrentSelection());
+			option.notifySaved();
+		}
+
+		for(TraitConfigOption option : traitConfigurationOptional){
+			if(!option.isCreated()) continue;
+
+			ymlConfig.set(pre + option.getName(), option.getCurrentSelection());
+			option.notifySaved();
+		}
 	}
 	
 }

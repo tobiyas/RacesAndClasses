@@ -8,8 +8,9 @@ import java.util.Set;
 
 import de.tobiyas.racesandclasses.standalonegui.data.option.TraitConfigOption;
 import de.tobiyas.racesandclasses.standalonegui.data.option.specific.TraitConfigStringOption;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class GuiClass implements Comparable<GuiClass> {
+public class GuiClass implements Comparable<GuiClass>, NeedsSave {
 
 
 	/**
@@ -31,9 +32,20 @@ public class GuiClass implements Comparable<GuiClass> {
 	 * The Config to use.
 	 */
 	private final List<TraitConfigOption> config = new LinkedList<TraitConfigOption>();
+	
+	/**
+	 * The Config to use for re-Sereializing.
+	 */
+	private final YAMLConfigExtended ymlConfig;
+	
+	/**
+	 * If we currently need save.
+	 */
+	private boolean needsSave = false;
 
 	
-	public GuiClass(String name, String nodeName, String tag, String manaBonus, String armor, Set<GuiTrait> traits) {
+	public GuiClass(YAMLConfigExtended ymlConfig, String name, String nodeName, String tag, String manaBonus, String armor, Set<GuiTrait> traits) {
+		this.ymlConfig = ymlConfig;
 		this.traits.addAll(traits);
 		this.classNodeName = nodeName;
 		this.className = name;
@@ -56,6 +68,7 @@ public class GuiClass implements Comparable<GuiClass> {
 	
 	public void setClassName(String className) {
 		this.className = className;
+		this.needsSave = true;
 	}
 	
 	public String getClassNodeName() {
@@ -64,6 +77,46 @@ public class GuiClass implements Comparable<GuiClass> {
 
 	public void setClassNodeName(String classNodeName) {
 		this.classNodeName = classNodeName;
+		this.needsSave = true;
+	}
+	
+	/**
+	 * Saves to YML file.
+	 */
+	public void save(){
+		if(!needsSave()) return;
+		
+		//First clear the config.
+		ymlConfig.clearConfig();
+		
+		//second save config!
+		for( TraitConfigOption option : config ){
+			ymlConfig.set(classNodeName + ".config." + option.getName(), option.getCurrentSelection());
+		}
+		
+		//Last save the Traits:
+		for( GuiTrait trait : traits ){
+			trait.saveTo(ymlConfig, classNodeName + ".traits.");
+		}
+		
+		ymlConfig.save();
+		this.needsSave = false;
+	}
+	
+	
+	@Override
+	public boolean needsSave() {
+		if( needsSave ) return true;
+		
+		for(GuiTrait trait : traits){
+			if(trait.needsSave()) return true;
+		}
+		
+		for( TraitConfigOption option : config ){
+			if(option.needsSave()) return true;
+		}
+		
+		return false;
 	}
 
 
@@ -75,11 +128,14 @@ public class GuiClass implements Comparable<GuiClass> {
 	public void addTrait(GuiTrait trait) {
 		trait.setBelongingClass(this);
 		traits.add(trait);
+		this.needsSave = true;
 	}
 	
 	public void removeTrait(GuiTrait trait) {
 		traits.remove(trait);
+		this.needsSave = true;
 	}
+	
 	
 	
 	

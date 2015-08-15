@@ -48,6 +48,7 @@ public class TraitConfigBiomeOption extends AbstractTraitConfigOption {
 			if(biome.name().equalsIgnoreCase(value)) {
 				this.biome = biome;
 				this.needsSave = true;
+				this.setCreated(true);
 				
 				break;
 			}

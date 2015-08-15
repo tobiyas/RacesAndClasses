@@ -106,5 +106,10 @@ public interface TraitConfigOption extends Comparable<TraitConfigOption>, NeedsS
 	 */
 	public void reset();
 
+	/**
+	 * Notifies that it has been saved.
+	 */
+	public void notifySaved();
+
 	
 }

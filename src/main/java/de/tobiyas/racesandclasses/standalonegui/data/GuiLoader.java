@@ -32,7 +32,7 @@ public class GuiLoader {
 	//TODO remove this later.
 	//It's just to not load it all the time!
 	static{
-		File ownMCRoot = new File("D:\\Dropbox\\MinecraftLIGHT");
+		File ownMCRoot = new File("D:\\Bastelecke\\1.8.7");
 		File ownBukkit = new File(ownMCRoot, "spigot.jar");
 		File ownRaC = new File(new File(ownMCRoot, "plugins"), "RacesAndClasses");
 		
@@ -248,7 +248,7 @@ public class GuiLoader {
 				String armor = raceConfig.getString(root + ".config.armor", "");
 				
 				Set<GuiTrait> loadTraits = loadTraits(raceConfig, root);
-				GuiRace race = new GuiRace(displayName, root, tag, manaBonus, armor, loadTraits);
+				GuiRace race = new GuiRace(raceConfig, displayName, root, tag, manaBonus, armor, loadTraits);
 				
 				races.add(race);
 			}
@@ -262,7 +262,7 @@ public class GuiLoader {
 				String armor = classConfig.getString(root + ".config.armor", "");
 				
 				Set<GuiTrait> loadTraits = loadTraits(classConfig, root);
-				GuiClass clazz = new GuiClass(displayName, root, tag, manaBonus, armor, loadTraits);
+				GuiClass clazz = new GuiClass(classConfig, displayName, root, tag, manaBonus, armor, loadTraits);
 				
 				classes.add(clazz);
 			}
@@ -306,7 +306,7 @@ public class GuiLoader {
 		if(!config.contains(path)) return null;
 		
 		String traitName = traitPath;
-		if(traitPath.contains(Pattern.quote("#"))) traitName = traitName.split(Pattern.quote("#"))[0];
+		if(traitPath.contains("#")) traitName = traitName.split(Pattern.quote("#"))[0];
 		traitName = config.getString(path + "." + traitPath + ".trait", traitName);
 		
 		java.lang.Class<? extends Trait> traitClass = traitMap.get(traitName);
@@ -414,6 +414,20 @@ public class GuiLoader {
 			System.out.println(message);
 			e.printStackTrace();
 		} 
+	}
+
+
+	/**
+	 * Saves everything!
+	 */
+	public static void save() {
+		for(GuiRace race : races){
+			race.save();
+		}
+
+		for(GuiClass clazz : classes){
+			clazz.save();
+		}
 	}
 	
 }

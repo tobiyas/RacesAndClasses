@@ -37,6 +37,7 @@ import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.collections.ListCreateUtils;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.items.MaterialParser;
 
@@ -120,7 +121,6 @@ public abstract class AbstractTraitHolder {
 	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
 	
 	
-	
 	/**
 	 * Creates an {@link AbstractTraitHolder}
 	 * 
@@ -175,7 +175,11 @@ public abstract class AbstractTraitHolder {
 	 * Reads the parents section for the Trait.
 	 */
 	public void readParents() {
+		//Read parents:
 		List<String> parentsName = config.getStringList(configNodeName + ".config.parents");
+		List<String> ignoreParentTraits = config.getStringList(configNodeName + ".config.ignoreParentTraits");
+		ListCreateUtils.toLowerCase(ignoreParentTraits);
+		
 		this.parents.clear();
 		if(parentsName.isEmpty()) return;
 		
@@ -190,7 +194,7 @@ public abstract class AbstractTraitHolder {
 			}
 			
 			this.parents.add(parent);
-			addHolderToAddParents(this, parent, 0, 50);
+			addHolderToAddParents(this, parent, 0, 50, ignoreParentTraits);
 		}
 	}
 	
@@ -224,18 +228,23 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * Checks if this traitHolder has a cyclic depend.
 	 * 
-	 * @param holders to check.
+	 * @param origin to add
+	 * @param holder to check.
 	 * @param step to do
+	 * @param border to abort
 	 */
-	protected void addHolderToAddParents(AbstractTraitHolder origin, AbstractTraitHolder holder, int step, int border){
+	protected void addHolderToAddParents(AbstractTraitHolder origin, AbstractTraitHolder holder, int step, int border, List<String> toIgnore){
 		if(step > border) return;
 		for(Trait trait : holder.getTraits()) {
+			//if on ignoreList -> skip.
+			if(toIgnore.contains(holder.getDisplayName().toLowerCase() + "." + trait.getDisplayName().toLowerCase())) continue;
+ 			
 			origin.traits.add(trait);
 			trait.addTraitHolder(origin);
 		}
 		
 		for(AbstractTraitHolder parent : holder.getParents()) {
-			parent.addHolderToAddParents(origin, parent, step + 1, border);
+			parent.addHolderToAddParents(origin, parent, step + 1, border, toIgnore);
 		}
 	}
 	

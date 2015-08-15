@@ -17,11 +17,7 @@ package de.tobiyas.racesandclasses.persistence;
 
 import java.util.List;
 
-import org.bukkit.configuration.ConfigurationOptions;
-
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
-import de.tobiyas.racesandclasses.configuration.member.database.DBConfigOption;
-import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
@@ -59,16 +55,6 @@ public interface PersistenceStorage {
 	public boolean savePlayerHolderAssociation(PlayerHolderAssociation container);
 
 	/**
-	 * Saves a {@link DBConfigOption} Persistent
-	 * 
-	 * @param container to save
-	 * @param forces save even if the container sais it is saved.
-	 * 
-	 * @return true if worked, false otherwise
-	 */
-	public boolean savePlayerMemberConfigEntry(ConfigOption container, boolean forceSave);
-
-	/**
 	 * Saves a {@link ChannelSaveContainer} Persistent
 	 * 
 	 * @param container to save
@@ -93,26 +79,7 @@ public interface PersistenceStorage {
 	 * @return the found {@link PlayerHolderAssociation} or NULL if not found.
 	 */
 	public PlayerHolderAssociation getPlayerHolderAssociation(RaCPlayer player);
-	
-	
-	/**
-	 * Returns the {@link ConfigOption} for the Player and the given entry Path
-	 * 
-	 * @param player to search for
-	 * @param entryPath to search for
-	 * @return the found Entry or NULL if not found.
-	 */
-	public ConfigOption getPlayerMemberConfigEntryByPath(RaCPlayer player, String entryPath);
-	
-	/**
-	 * Returns the {@link ConfigOption} for the Player and the given entry Name
-	 * 
-	 * @param player to search for
-	 * @param entryName to search for
-	 * @return the found Entry or NULL if not found.
-	 */
-	public ConfigOption getPlayerMemberConfigEntryByName(RaCPlayer player, String entryName);
-	
+
 	/**
 	 * Retrieves the ChannelSaveContainer for a Channel Name.
 	 * 
@@ -122,16 +89,6 @@ public interface PersistenceStorage {
 	 * @return the found ChannelSaveContainer or NULL if not found.
 	 */
 	public ChannelSaveContainer getChannelSaveContainer(String channelName, String channelLevel);
-	
-	
-	/**
-	 * Returns all {@link ConfigurationOptions} a Player contains.
-	 * If none where found, an empty list is returned.
-	 * 
-	 * @param player to search for
-	 * @return an List of all Entries for a Player.
-	 */
-	public List<ConfigOption> getAllConfigOptionsOfPlayer(RaCPlayer player);
 	
 	/**
 	 * Returns all PlayerHolderAssociations found for a HolderName.

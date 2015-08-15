@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.util.chat;
 
-import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption.SaveFormat;
 
 public class WordParsing {
 
@@ -148,30 +147,4 @@ public class WordParsing {
 	}
 
 
-	/**
-	 * Parses the passed Value into the wanted format.
-	 * If parsing is not possible, null is returned.
-	 * 
-	 * @param value to parse.
-	 * @param toParseInto to parse into.
-	 * 
-	 * @return the wanted converted value or null if not possible
-	 */
-	public static Object parseToSaveFormat(Object value, SaveFormat toParseInto){
-		switch (toParseInto) {
-		case BOOLEAN:
-			return isBool(value) ? convertToBool(value) : null;
-		case DOUBLE:
-			return isDouble(value) ? convertToDouble(value) : null;
-		case INT:
-			return isInt(value) ? convertToInt(value) : null;
-		case STRING:
-			return value;
-		case UNKNOWN:
-			return null;
-		}
-		
-		//should not get here
-		return null;
-	}
 }

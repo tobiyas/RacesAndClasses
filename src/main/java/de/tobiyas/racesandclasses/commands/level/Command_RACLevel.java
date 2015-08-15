@@ -23,6 +23,7 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.value_0_not_
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -31,6 +32,8 @@ import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.pets.Pet;
+import de.tobiyas.racesandclasses.pets.PetBuilder;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
@@ -56,6 +59,28 @@ public class Command_RACLevel extends AbstractCommand {
 			postLevel((Player)sender);
 			return true;
 		}
+		
+		
+		//TODO remove below:
+		if(args.length == 1 && args[0].equalsIgnoreCase("pet")){
+			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			
+			Pet pet = new PetBuilder().setPetType(EntityType.ZOMBIE).build();
+			racPlayer.getPlayerPetManager().registerNewPet(pet);
+			player.sendMessage("Done");
+			return true;
+		}
+		
+		if(args.length == 1 && args[0].equalsIgnoreCase("cleanpet")){
+			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			
+			racPlayer.getPlayerPetManager().despawnAndClear();
+			player.sendMessage("Done");
+			return true;
+		}
+		//TODO remove above
 		
 		if(args.length != 3){
 			pasteHelp(sender);

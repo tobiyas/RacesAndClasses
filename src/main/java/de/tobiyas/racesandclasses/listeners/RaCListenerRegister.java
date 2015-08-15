@@ -40,6 +40,7 @@ import de.tobiyas.racesandclasses.listeners.holderchangegui.RaceChangeListenerGu
 import de.tobiyas.racesandclasses.listeners.npc.Listener_NPCInteract;
 import de.tobiyas.racesandclasses.listeners.racechangelistener.RaceChangeSelectionListener;
 import de.tobiyas.racesandclasses.listeners.traitgui.TraitGuiListener;
+import de.tobiyas.racesandclasses.pets.PetListener;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManagerEXPListener;
 
 public class RaCListenerRegister {
@@ -59,6 +60,8 @@ public class RaCListenerRegister {
 		new TraitGuiListener();
 		new Listener_NPCInteract();
 		CustomPlayerLevelManagerEXPListener.launch();
+		
+		new PetListener(RacesAndClasses.getPlugin());
 	}
 	
 	

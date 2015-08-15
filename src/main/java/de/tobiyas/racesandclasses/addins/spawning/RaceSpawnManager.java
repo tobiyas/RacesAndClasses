@@ -99,7 +99,7 @@ public class RaceSpawnManager {
 	 * 
 	 * @param race to search for.
 	 * 
-	 * @return the location to spawn
+	 * @return the location to spawn. Null if not present
 	 */
 	public Location getSpawnForRace(String race){
 		for(RaceSpawn spawn : spawns){

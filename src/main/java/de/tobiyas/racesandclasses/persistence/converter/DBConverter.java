@@ -19,8 +19,6 @@ import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
-import de.tobiyas.racesandclasses.configuration.member.database.DBMemberConfig;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
@@ -43,7 +41,6 @@ public class DBConverter {
 		deleteOldPlayerData(false);
 		convertHolderAssociated();
 		convertGeneralData();
-		convertMemberConfig();
 		deleteOldPlayerData(true);
 	}
 	
@@ -193,47 +190,6 @@ public class DBConverter {
 		}
 		
 		plugin.log("Copying done. Have fun with the DB. :)");
-	}
-	
-	
-	/**
-	 * tries to convert the MemberConfig of the Plugin.
-	 */
-	public static void convertMemberConfig(){
-		Set<RaCPlayer> playerList = YAMLPersistenceProvider.getAllPlayersKnown();
-		if(playerList.size() <= 0){
-			return;
-		}
-		
-		plugin.log("Starting to Transfer PlayerData to DB. This may take some time. Entries: " + playerList.size());
-		int i = 0;
-		int times = 1;
-		
-		int fourthPercentValue = playerList.size() / 4;
-		
-		for(RaCPlayer player : playerList){
-			YAMLConfigExtended playerData = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			if(playerData.getChildren("playerdata." + player + ".config").size() <= 0) continue;
-			
-			MemberConfig config = MemberConfig.createMemberConfig(player);
-			
-			DBMemberConfig dbConfig = DBMemberConfig.copyFrom(config);
-			dbConfig.save();
-			
-			i++;
-			
-			if(fourthPercentValue == i){
-				plugin.log("Still copying... Done: " + (times * 25) + "% that's: " + (times * fourthPercentValue) + " / " + playerList.size());
-				times ++;
-				i = 0;
-			}
-			
-			playerData.set("playerdata." + player + ".config", null);
-		}
-		
-		
-		
-		plugin.log("Copying done. Have fun with the Database. :)");
 	}
 	
 	

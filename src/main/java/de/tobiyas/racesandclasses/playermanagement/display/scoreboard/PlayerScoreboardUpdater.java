@@ -27,6 +27,8 @@ public class PlayerScoreboardUpdater extends BukkitRunnable {
 			PlayerRaCScoreboardManager manager = racPlayer.getScoreboardManager();
 			
 			manager.getUpdater().updateCooldown();
+			manager.getUpdater().updateSpells();
+			
 			manager.tick();
 		}
 	}

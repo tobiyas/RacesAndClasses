@@ -20,11 +20,11 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.open_holder;
 
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.racbuilder.gui.base.BaseSelectionInventory;
@@ -33,21 +33,14 @@ import de.tobiyas.util.inventorymenu.stats.StringSelectionInterface;
 
 public class CommandExecutor_Edit extends AbstractCommand {
 	
-	private RacesAndClasses plugin;
+	/**
+	 * If the Command is disabled.
+	 */
+	private boolean disabled = true;
 	
 	
 	public CommandExecutor_Edit() {
 		super("racedit", new String[]{"racedit"});
-		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racedit";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	
@@ -56,6 +49,11 @@ public class CommandExecutor_Edit extends AbstractCommand {
 			String label, String[] args) {
 		if(!(sender instanceof Player)){
 			LanguageAPI.sendTranslatedMessage(sender, only_players);
+			return true;
+		}
+		
+		if(disabled){
+			sender.sendMessage(ChatColor.RED + "Feature is not ready to use.");
 			return true;
 		}
 		

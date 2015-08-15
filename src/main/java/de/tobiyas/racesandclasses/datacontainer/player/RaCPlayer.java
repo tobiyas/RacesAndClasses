@@ -13,13 +13,13 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.configuration.member.file.MemberConfig;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.hotkeys.HotKeyInventory;
+import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
@@ -132,6 +132,26 @@ public class RaCPlayer extends PlayerProxy {
 		return player != null && player.isOnline();
 	}
 	
+	
+	/**
+	 * Returns the current channel.
+	 * 
+	 * @return current channel
+	 */
+	public String getCurrentChatChannel() {
+		return plugin.getChannelManager().getCurrentChannel(this);
+	}
+	
+	/**
+	 * Sets the new Current channel.
+	 * 
+	 * @param newChannel to set.
+	 */
+	public void setCurrentChatChannel(String newChannel){
+		plugin.getChannelManager().changeCurrentChannel(this, newChannel);
+	}
+	
+	
 	@Override
 	public Player getPlayer() {
 		return PlayerUtils.getPlayer(playerUUID);
@@ -181,15 +201,6 @@ public class RaCPlayer extends PlayerProxy {
 	 */
 	public PlayerLevelManager getLevelManager(){
 		return plugin.getPlayerManager().getPlayerLevelManager(this);
-	}
-	
-	/**
-	 * Returns The config for the Player
-	 * 
-	 * @return config
-	 */
-	public MemberConfig getConfig(){
-		return plugin.getConfigManager().getMemberConfigManager().getConfigOfPlayer(this);
 	}
 	
 	/**
@@ -264,6 +275,17 @@ public class RaCPlayer extends PlayerProxy {
 		
 		return returnList;
 	}
+	
+	
+	/**
+	 * Returns the PlayerPetmanager of the Player.
+	 * 
+	 * @return the PlayerPetManager.
+	 */
+	public PlayerPetManager getPlayerPetManager(){
+		return plugin.getPlayerManager().getPlayerPetManager(this);
+	}
+	
 	
 
 	/**

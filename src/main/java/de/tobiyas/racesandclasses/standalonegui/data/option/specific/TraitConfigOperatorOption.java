@@ -34,6 +34,7 @@ public class TraitConfigOperatorOption extends AbstractTraitConfigOption {
 		if(isAcceptable(value)) {
 			this.value = value;
 			this.needsSave = true;
+			this.setCreated(true);
 		}
 	}
 

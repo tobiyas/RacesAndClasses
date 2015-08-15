@@ -38,6 +38,7 @@ public class TraitConfigBooleanOption extends AbstractTraitConfigOption {
 		try{
 			this.value = Boolean.parseBoolean(value);
 			this.needsSave = true;
+			this.setCreated(true);
 		}catch(Throwable exp){}
 	}
 

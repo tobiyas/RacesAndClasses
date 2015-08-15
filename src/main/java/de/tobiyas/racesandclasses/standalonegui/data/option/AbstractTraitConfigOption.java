@@ -172,4 +172,9 @@ public abstract class AbstractTraitConfigOption implements TraitConfigOption {
 		return needsSave;
 	}
 	
+	@Override
+	public void notifySaved() {
+		this.needsSave = false;
+	}
+	
 }

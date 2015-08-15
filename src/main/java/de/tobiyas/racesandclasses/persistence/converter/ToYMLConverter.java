@@ -20,12 +20,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import de.tobiyas.racesandclasses.configuration.member.file.ConfigOption;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceStorage;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -47,7 +44,6 @@ public class ToYMLConverter {
 		PersistenceStorage ebeanStorage = null;//new EBeanPersistenceStorage();
 		convertHolderAssociations(ebeanStorage);
 		convertGeneralData(ebeanStorage);
-		convertMemberConfig(ebeanStorage);
 	}
 
 	/**
@@ -123,27 +119,4 @@ public class ToYMLConverter {
 		}
 	}
 	
-	/**
-	 * Converty the EBean Storage to YML.
-	 * 
-	 * @param storage to convert from
-	 */
-	private static void convertMemberConfig(PersistenceStorage storage){
-		Set<ConfigOption> playerConfig = new HashSet<ConfigOption>();
-		
-		for(RaCPlayer player : YAMLPersistenceProvider.getAllPlayersKnown()){
-			List<ConfigOption> newHolders = storage.getAllConfigOptionsOfPlayer(player);
-			if(newHolders != null){
-				playerConfig.addAll(newHolders);
-			}
-		}
-		
-		if(playerConfig.isEmpty()) return; //early out if none found.
-
-		YAMLPersistenceStorage newStorage = new YAMLPersistenceStorage();
-		for(ConfigOption container : playerConfig){
-			newStorage.savePlayerMemberConfigEntry(container, true);
-		}
-	}
-
 }
