@@ -182,6 +182,7 @@ import de.tobiyas.util.formating.Pair;
 	
 	private final Set<Integer> config_disabledHotkeySlots = new HashSet<Integer>();
 	
+	private final Map<String,String> config_command_remaps = new HashMap<String,String>();
 	
 	/**
 	 * Inits the ConfigTotal system.
@@ -485,6 +486,19 @@ import de.tobiyas.util.formating.Pair;
 		config_worldsDisabled = new LinkedList<String>();
 		for(String tempName : temp_config_worldsDisabled){
 			config_worldsDisabled.add(tempName.toLowerCase());
+		}
+		
+		
+		//Handle Remaps:
+		List<String> remaps = config.getStringList(general_command_remaps);
+		config_command_remaps.clear();
+		for(String remap : remaps){
+			if(!remap.contains("->")) continue;
+			String[] split = remap.split(Pattern.quote("->"));
+			String command = split[0];
+			String replace = split[1];
+			
+			config_command_remaps.put(command, replace);
 		}
 		
 		
@@ -868,6 +882,10 @@ import de.tobiyas.util.formating.Pair;
 
 	public int getConfig_max_level() {
 		return config_max_level;
+	}
+
+	public Map<String, String> getConfig_command_remaps() {
+		return config_command_remaps;
 	}
 	
 }

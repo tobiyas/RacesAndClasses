@@ -6,18 +6,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class FoodListener implements Listener {
 
@@ -32,9 +33,9 @@ public class FoodListener implements Listener {
 		
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 		
-		new BukkitRunnable() {
+		new DebugBukkitRunnable("FoodListenerEating"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				Iterator<Entry<RaCPlayer,Food>> it = eating.entrySet().iterator();
 				while(it.hasNext()){
 					Entry<RaCPlayer,Food> entry = it.next();
@@ -47,7 +48,7 @@ public class FoodListener implements Listener {
 					Food food = entry.getValue();
 					food.tick(player);
 					if(!food.isValid()) {
-						player.sendMessage(ChatColor.GREEN + "Eating finished.");
+						LanguageAPI.sendTranslatedMessage(player, Keys.food_finished);
 						it.remove();
 					}
 				}
@@ -84,7 +85,7 @@ public class FoodListener implements Listener {
 			player.getPlayer().setItemInHand(item);
 			
 			eating.put(player, food);
-			player.sendMessage(ChatColor.GREEN + "Do not move, or your eating will be cancled.");
+			LanguageAPI.sendTranslatedMessage(player, Keys.food_eat);
 		}
 	}
 	
@@ -100,7 +101,7 @@ public class FoodListener implements Listener {
 		if(!eating.containsKey(player)) return;
 		
 		eating.remove(player);
-		player.sendMessage(ChatColor.RED + "Eating cancled.");
+		LanguageAPI.sendTranslatedMessage(player, Keys.food_cancle);
 	}
 	
 	

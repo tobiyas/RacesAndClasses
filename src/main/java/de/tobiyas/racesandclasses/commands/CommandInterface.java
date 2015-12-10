@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.commands;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
@@ -32,6 +33,15 @@ public interface CommandInterface extends CommandExecutor, TabCompleter {
 	 * @param disabled to remove.
 	 */
 	public void filterToDisabledCommands(Collection<String> disabled);
+	
+	
+	/**
+	 * Does a Remapping to the Command.
+	 * 
+	 * @param remaps to apply.
+	 */
+	public void applyRemapping(Map<String,String> remaps);
+	
 	
 	/**
 	 * if there is any command to activate.

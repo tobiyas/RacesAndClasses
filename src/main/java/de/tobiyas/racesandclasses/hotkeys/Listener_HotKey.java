@@ -6,7 +6,6 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_toggle
 import java.util.Iterator;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -28,7 +27,6 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -42,6 +40,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class Listener_HotKey implements Listener {
 
@@ -132,9 +131,9 @@ public class Listener_HotKey implements Listener {
 		if(inv == null) return; 
 		
 		if(inv.isInSkillMode()) return;
-		new BukkitRunnable() {
+		new DebugBukkitRunnable("HotKeyListenerInvUpdate") {
 			@Override
-			public void run() {
+			protected void runIntern() {
 				inv.forceUpdateOfInv();
 			}
 		}.runTaskLater(RacesAndClasses.getPlugin(), 1);
@@ -170,9 +169,9 @@ public class Listener_HotKey implements Listener {
 			
 			//try setting the slot if needed.
 			//so we schedule this to the end of this tick.
-			new BukkitRunnable() {
+			new DebugBukkitRunnable("HotKeyListener"){
 				@Override
-				public void run() {
+				protected void runIntern() {
 					view.setCursor(toSet);
 				}
 			}.runTask(RacesAndClasses.getPlugin());
@@ -189,16 +188,15 @@ public class Listener_HotKey implements Listener {
 	 * @param player to resync
 	 */
 	private void resyncInv(final Player player){
-		Bukkit.getScheduler().scheduleSyncDelayedTask(RacesAndClasses.getPlugin(), new Runnable() {
-			
+		new DebugBukkitRunnable("HotKeyInvSyncer"){
 			@SuppressWarnings("deprecation")
 			@Override
-			public void run() {
+			protected void runIntern() {
 				try{
 					player.updateInventory();
 				}catch(Throwable exp){}
 			}
-		}, 1);
+		}.runTaskLater(RacesAndClasses.getPlugin(), 1);
 	}
 
 
@@ -331,9 +329,9 @@ public class Listener_HotKey implements Listener {
 			event.setCancelled(true);
 			
 			//here we just reset the itemslot in case it failed to reset...
-			new BukkitRunnable() {
+			new DebugBukkitRunnable("ListenerHotKeyUpdateSlots"){
 				@Override
-				public void run() {
+				protected void runIntern() {
 					pl.getInventory().setHeldItemSlot(pl.getInventory().getHeldItemSlot());						
 				}
 			}.runTaskLater(RacesAndClasses.getPlugin(), 1);

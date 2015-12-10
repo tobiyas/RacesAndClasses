@@ -343,6 +343,13 @@ public class GeneralConfigText {
 				+ "# default: [] \n"
 				+ general_disable_commands + ": []\n\n"
 				
+				+ "# This tells the plugin to remap own commands. The first command is replaced by the second one. \n"
+				+ "# This is to remap often used commands as /race or /playerinfo.\n"
+				+ "# The replacesments work as following: command -> replacement. Example: racespawn->spawn.\n"
+				+ "# String list: [command1->test12, command2->test123,...]\n"
+				+ "# default: [] \n"
+				+ general_command_remaps + ": []\n\n"
+				
 				+ "# This tells the plugin to NOT register the following aliases. \n"
 				+ "# This is a list of aliases that are disabled for the plugin.\n"
 				+ "# String list: [alias1,alias2,...]\n"
@@ -448,9 +455,9 @@ public class GeneralConfigText {
 				+ magic_manaManagerType + ": 'RaC'\n\n"
 				
 				+ "# Where the 'Mana-Bar' should be shown.\n"
-				+ "# This can be: Chat, ActionBar(needs MC 1.8+), Scoreboard\n"
+				+ "# This can be: Chat, ActionBar(needs MC 1.8+), None\n"
 				+ "# default: Chat \n"
-				+ magic_manaShowPlace + ": 'Chat'\n\n"
+				+ magic_manaShowPlace + ": 'ActionBar'\n\n"
 								
 				+ "# If the Mana of a player refills while he sprints.\n"
 				+ "# default: false \n"

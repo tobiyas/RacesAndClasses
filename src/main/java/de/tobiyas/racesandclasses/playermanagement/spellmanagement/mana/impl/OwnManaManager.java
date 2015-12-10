@@ -18,13 +18,12 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class OwnManaManager extends AbstractManaManager implements Observer{
 	
@@ -95,9 +94,9 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 		double maxMana = getMaxMana();
 		if(maxMana <= 0) maxMana = 0.1;
 		
-		new BukkitRunnable() {
+		new DebugBukkitRunnable("ManaToPlayerDisplay"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				manaDisplay.display(currentMana, getMaxMana());
 			}
 		}.runTask(plugin);

@@ -67,7 +67,7 @@ public class YAMLPersistenceProvider {
 	 * 
 	 * @param player to load
 	 * 
-	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
+	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit Main thread!
 	 */
 	public static YAMLConfigExtended getLoadedPlayerFile(Player player) {
 		return getLoadedPlayerFile(player.getUniqueId());
@@ -81,7 +81,7 @@ public class YAMLPersistenceProvider {
 	 * 
 	 * @param player to load
 	 * 
-	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit thread!
+	 * @return the loaded file. NEVER!!! SAVE IT!!! This will be done Async to NOT stop the Bukkit Main thread!
 	 */
 	public static YAMLConfigExtended getLoadedPlayerFile(RaCPlayer player) {
 		return getLoadedPlayerFile(player.getUniqueId());
@@ -89,7 +89,7 @@ public class YAMLPersistenceProvider {
 
 	
 	/**
-	 * Returns the already loaded loaded Races YAML File.
+	 * Returns the already loaded Races YAML File.
 	 * This is a lazy load.
 	 * 
 	 * @return
@@ -162,11 +162,9 @@ public class YAMLPersistenceProvider {
 			}
 		};
 		
-		if(knownPlayerIDs == null){
-			knownPlayerIDs = new HashSet<RaCPlayer>();
-		}
-		
+		if(knownPlayerIDs == null)knownPlayerIDs = new HashSet<RaCPlayer>();
 		knownPlayerIDs.clear();
+		
 		String[] playerFileNames = playerFolder.list(filter);
 		if(playerFileNames == null) return;
 		
@@ -214,9 +212,7 @@ public class YAMLPersistenceProvider {
 	 * @return the loaded file.
 	 */
 	public static YAMLConfigExtended getLoadedPlayerFile(UUID playerUUID) {
-		if(knownPlayerIDs == null){
-			rescanKnownPlayers();
-		}
+		if(knownPlayerIDs == null) rescanKnownPlayers();
 		
 		if(playerYamls.containsKey(playerUUID)){
 			YAMLConfigExtended playerConfig = playerYamls.get(playerUUID);
@@ -241,7 +237,10 @@ public class YAMLPersistenceProvider {
 		YAMLConfigExtended playerConfig = new YAMLConfigExtended(new File(Consts.playerDataPath + playerUUID.toString() + ".yml")).load();
 		playerYamls.put(playerUUID, playerConfig);
 		
-		rescanKnownPlayers();
+		//Add to known players.
+		RaCPlayer player = RaCPlayerManager.get().getPlayer(playerUUID);
+		if(player != null) knownPlayerIDs.add(player);
+		
 		cacheMiss++;
 		return playerConfig;
 	}

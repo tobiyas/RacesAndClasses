@@ -17,11 +17,13 @@ package de.tobiyas.racesandclasses.persistence.file;
 
 import java.util.Set;
 
-import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class YAMLPersistanceSaver {
 
@@ -31,12 +33,10 @@ public class YAMLPersistanceSaver {
 	 * 
 	 * @param async if the Configs should be load async.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void loadAllConfigs(boolean async){
-		Runnable runnable = new Runnable() {
-			
+		BukkitRunnable runnable = new DebugBukkitRunnable("YMLPersistanceLoader"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				YAMLPersistenceProvider.rescanKnownPlayers();
 				
 				Set<RaCPlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
@@ -49,9 +49,9 @@ public class YAMLPersistanceSaver {
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		//schedule this somewhat behind to not be in Server Start.
 		if(async){
-			Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, runnable, 10);
+			runnable.runTaskAsynchronously(plugin);
 		}else{
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable, 10);
+			runnable.runTaskLater(plugin, 1);
 		}
 	}
 	
@@ -60,13 +60,13 @@ public class YAMLPersistanceSaver {
 	/**
 	 * The resave intervall of the Saving in ticks.
 	 */
-	protected static int RE_SAVE_INTERVALL = 10 * 60 * 20; // 10min -> * 60 seconds -> * 20 ticks
+	protected static int RE_SAVE_INTERVALL = 10 * 60 * 20; // 10min
 	
 	
 	/**
 	 * The TaskID of the Scheduling task.
 	 */
-	protected static int bukkitTaskId = -1;
+	protected static BukkitTask bukkitTask = null;
 	
 	/**
 	 * Flushes the Configs to the Files.
@@ -110,11 +110,8 @@ public class YAMLPersistanceSaver {
 			plugin.getStatistics().eventTime("yml_save", timeTaken);
 		}
 		
-		if(!Bukkit.getScheduler().isCurrentlyRunning(bukkitTaskId)){
-			Bukkit.getScheduler().cancelTask(bukkitTaskId);
-		}
-		
-		bukkitTaskId = -1;
+		if(bukkitTask != null) bukkitTask.cancel();
+		bukkitTask = null;
 		
 		if(reregister){
 			start(async);
@@ -138,23 +135,21 @@ public class YAMLPersistanceSaver {
 	 * 
 	 * @param async if the files should be flushed async or sync.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void start(final boolean async){
-		if(bukkitTaskId > 0) return; // already running
+		if(bukkitTask != null) return; // already running
 		
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		Runnable rescedule = new Runnable() {
-			
+		BukkitRunnable rescedule = new DebugBukkitRunnable("YMLFlushTask"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				flushNow(async, true);
 			}
 		};
 		
 		if(async){
-			bukkitTaskId = Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, rescedule, RE_SAVE_INTERVALL);
+			bukkitTask = rescedule.runTaskLater(plugin, RE_SAVE_INTERVALL);
 		}else{
-			bukkitTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, rescedule, RE_SAVE_INTERVALL);
+			bukkitTask = rescedule.runTaskLaterAsynchronously(plugin, RE_SAVE_INTERVALL);
 		}
 	}
 	
@@ -163,9 +158,9 @@ public class YAMLPersistanceSaver {
 	 * Stops the flushing of the YML files.
 	 */
 	public static void stop(){
-		if(bukkitTaskId > 0){
-			Bukkit.getScheduler().cancelTask(bukkitTaskId);
-			bukkitTaskId = -1;
+		if(bukkitTask != null){
+			bukkitTask.cancel();
+			bukkitTask = null;
 		}
 	}
 }

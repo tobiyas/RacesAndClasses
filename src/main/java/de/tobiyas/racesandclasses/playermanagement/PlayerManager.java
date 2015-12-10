@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
@@ -34,6 +33,7 @@ import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.util.player.PlayerUtils;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class PlayerManager{
 	
@@ -54,9 +54,9 @@ public class PlayerManager{
 		playerData = new HashMap<RaCPlayer, PlayerContainer>();
 		plugin = RacesAndClasses.getPlugin();
 		
-		new BukkitRunnable() {
+		new DebugBukkitRunnable("RaCPlayerDataTicker") {
 			@Override
-			public void run() {
+			protected void runIntern() {
 				for(PlayerContainer container : playerData.values()){
 					container.tick();
 				}

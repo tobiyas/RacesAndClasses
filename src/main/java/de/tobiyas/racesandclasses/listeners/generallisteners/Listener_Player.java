@@ -44,7 +44,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -63,6 +62,7 @@ import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.player.PlayerUtils;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 
 public class Listener_Player implements Listener {
@@ -202,9 +202,9 @@ public class Listener_Player implements Listener {
 		final RaCPlayer player = event.getRaCPlayer();
 		
 		//schedule to 1 tick in future.
-		new BukkitRunnable() {
+		new DebugBukkitRunnable("1TickFutureScoreboardScheduler") {
 			@Override
-			public void run() {
+			protected void runIntern() {
 				player.getScoreboardManager().updateSelectAndShow(SBCategory.General, 1000 * 4);
 			}
 		}.runTaskLater(plugin, 1);

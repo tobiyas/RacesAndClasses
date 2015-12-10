@@ -53,6 +53,9 @@ public class EN_Text {
 			
 			//f
 			+ failed + ": '&cfailed'\r\n"
+			+ food_cancle + ": '&aEating cancled.'\r\n"
+			+ food_eat + ": '&cDo not move, or your eating will be cancled.'\r\n"
+			+ food_finished + ": '&cEating finished.'\r\n"
 			
 			//g
 			

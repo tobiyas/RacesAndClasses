@@ -27,13 +27,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.eventprocessing.events.stun.PlayerStunnedEvent;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class StunManager {
@@ -72,10 +72,10 @@ public class StunManager {
 	 */
 	public void init(){
 		if(bukkitTask == null){
-			bukkitTask = new BukkitRunnable() {
+			bukkitTask = new DebugBukkitRunnable("StunManagerTick"){
 				
 				@Override
-				public void run() {
+				protected void runIntern() {
 					Iterator<Map.Entry<Entity, StunOptions>> stunIt = stunTimes.entrySet().iterator();
 					while (stunIt.hasNext()){
 						Map.Entry<Entity, StunOptions> entry = stunIt.next();
@@ -107,9 +107,9 @@ public class StunManager {
 				}
 			}.runTaskTimer(plugin, 20, TICK_TIME);
 			
-			new BukkitRunnable() {
+			new DebugBukkitRunnable("StunManagerRemoveOld"){
 				@Override
-				public void run() {
+				protected void runIntern() {
 					Iterator<Map.Entry<Entity, StunReduceContainer>> stunReduceIt = stunReduces.entrySet().iterator();
 					while(stunReduceIt.hasNext()){
 						Map.Entry<Entity,StunReduceContainer> entry = stunReduceIt.next();

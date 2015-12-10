@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -103,5 +104,30 @@ public abstract class AbstractCommand implements CommandInterface {
 		return !commandNames.isEmpty();
 	}
 	
+	
+	@Override
+	public void applyRemapping(Map<String, String> remaps) {
+		for(String key : remaps.keySet()){
+			String replacement = remaps.get(key);
+			
+			for(String command : commandNames){
+				if(command.equalsIgnoreCase(key)){
+					commandNames.remove(command);
+					commandNames.add(replacement);
+					
+					break;
+				}
+			}
+			
+			for(String alias : aliases){
+				if(alias.equalsIgnoreCase(key)){
+					aliases.remove(alias);
+					aliases.add(replacement);
+					
+					break;
+				}
+			}
+		}
+	}
 	
 }

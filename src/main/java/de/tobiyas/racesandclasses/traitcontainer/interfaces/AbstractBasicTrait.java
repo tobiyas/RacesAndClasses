@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +43,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -966,11 +968,21 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!isBindable()) return TraitResults.False();
 		if(!using.isOnline()) return TraitResults.False();
 		
-		if(this.checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(using)) != TraitRestriction.None){
+		EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(using);
+		if(this.checkRestrictions(wrapper) != TraitRestriction.None){
 			return TraitResults.False();
 		}
 		
-		return bindCastIntern(using);
+		//Finally trigger!
+		TraitResults result = bindCastIntern(using);
+		
+		//If triggered -> Fire trigger event!
+		if(result.isTriggered()){
+			TraitTriggerEvent event = new TraitTriggerEvent(wrapper, this);
+			Bukkit.getPluginManager().callEvent(event);
+		}
+		
+		return result;
 	}
 	
 	/**

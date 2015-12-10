@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class DebuffManager {
 
@@ -59,9 +59,9 @@ public class DebuffManager {
 			task = null;
 		}
 		
-		task = new BukkitRunnable() {
+		task = new DebugBukkitRunnable("DebuffTick"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				if(debuffs.isEmpty()) return;
 				
 				tick();

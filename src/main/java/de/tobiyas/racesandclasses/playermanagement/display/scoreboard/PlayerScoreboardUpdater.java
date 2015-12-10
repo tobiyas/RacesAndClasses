@@ -1,13 +1,13 @@
 package de.tobiyas.racesandclasses.playermanagement.display.scoreboard;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
-public class PlayerScoreboardUpdater extends BukkitRunnable {
+public class PlayerScoreboardUpdater extends DebugBukkitRunnable {
 
 	private static final int TICK_TIME = 10;
 	
@@ -18,11 +18,13 @@ public class PlayerScoreboardUpdater extends BukkitRunnable {
 	private static BukkitTask instance;
 	
 	
-	private PlayerScoreboardUpdater() {}
+	private PlayerScoreboardUpdater() {
+		super("RaCPlayerScoreboardUpdater");
+	}
 	
 
 	@Override
-	public void run() {
+	public void runIntern() {
 		for(RaCPlayer racPlayer : RaCPlayerManager.get().getOnlinePlayers()){
 			PlayerRaCScoreboardManager manager = racPlayer.getScoreboardManager();
 			

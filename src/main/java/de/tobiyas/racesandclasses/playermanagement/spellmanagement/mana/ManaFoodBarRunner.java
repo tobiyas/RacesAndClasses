@@ -13,17 +13,17 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.eventprocessing.events.mana.ManaRegenerationEvent;
 import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 import de.tobiyas.util.vollotile.ParticleEffects;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
-public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
+public class ManaFoodBarRunner extends DebugBukkitRunnable implements Listener {
 
 	private final ManaManager manaManager;
 	
@@ -45,6 +45,7 @@ public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 	
 	
 	public ManaFoodBarRunner(ManaManager manaManager) {
+		super("ManaFoodbarRunner");
 		this.manaManager = manaManager;
 		this.plugin = RacesAndClasses.getPlugin();
 	}
@@ -59,7 +60,7 @@ public class ManaFoodBarRunner extends BukkitRunnable implements Listener {
 	}
 
 	@Override
-	public void run() {
+	protected void runIntern() {
 		//sprinting is always active!
 		if(isSprinting){
 			if(manaManager.getPlayer().getGameMode() != GameMode.SURVIVAL) isSprinting = false;

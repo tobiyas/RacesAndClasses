@@ -3,7 +3,6 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -18,6 +17,7 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.vollotile.ParticleContainer;
 import de.tobiyas.racesandclasses.vollotile.Vollotile;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 
 public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
@@ -87,10 +87,10 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 		player.sendTranslatedMessage(Keys.buff_activated, "buff", this.getDisplayName());
 		buffActivated(player);
 		
-		BukkitTask task = new BukkitRunnable() {
+		BukkitTask task = new DebugBukkitRunnable("BuffTrait"+getDisplayName()){
 			int i = 1;
 			@Override
-			public void run() {
+			protected void runIntern() {
 				boolean stillActive = taskMap.containsKey(player);
 				if(particlesWhileActive != null && stillActive) Vollotile.get().sendOwnParticleEffectToAll(particlesWhileActive, 
 						player.getLocation());

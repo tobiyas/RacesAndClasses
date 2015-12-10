@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,9 +29,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
+import de.tobiyas.util.vollotile.ParticleEffects;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class PoisonManager {
 
@@ -85,6 +89,7 @@ public class PoisonManager {
 						
 						if(newTicks % options.damageEveryTicks == 0){
 							damageEntity(entity, options);
+							playPoisonParticleEffects(entity);
 						}
 						
 						if(newTicks < 0){
@@ -97,6 +102,19 @@ public class PoisonManager {
 		}
 	}
 	
+	
+	/**
+	 * Plays poison particle effects on the Entity.
+	 * @param entity to use the location on.
+	 */
+	protected void playPoisonParticleEffects(LivingEntity entity) {
+		Location loc = entity.getLocation().clone().add(0,1,0);
+		VollotileCodeManager.getVollotileCode().sendParticleEffectToAll(
+				ParticleEffects.MOB_SPELL, loc, new Vector(0, 0.1, 0), 0, 10);
+	}
+	
+
+
 	/**
 	 * Damages an Entity for the Options passed
 	 * 

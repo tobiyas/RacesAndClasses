@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.gravitydevelopment.updater.Updater;
 import net.gravitydevelopment.updater.Updater.UpdateType;
@@ -467,6 +468,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_BindTrait());
 		commands.add(new CommandExecutor_UseTrait());
 		
+		
+		Map<String,String> remap = configManager.getGeneralConfig().getConfig_command_remaps();
+		for(CommandInterface command : commands){
+			command.applyRemapping(remap);
+		}
 		
 		//remove all disabled commands.
 		List<String> disabledCommands = configManager.getGeneralConfig().getConfig_general_disable_commands();

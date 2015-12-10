@@ -1,11 +1,11 @@
 package de.tobiyas.racesandclasses.entitystatusmanager.stun;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.StunAPI;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class StunReduceContainer {
 
@@ -29,9 +29,9 @@ public class StunReduceContainer {
 	
 	public void start(){
 		if(task == null){
-			task = new BukkitRunnable() {
+			task = new DebugBukkitRunnable("StunReduceTask") {
 				@Override
-				public void run() {
+				public void runIntern() {
 					if(StunAPI.StunEntity.getRemainingStunTimeInTicks(entity) <= 0){
 						reduce();
 					}

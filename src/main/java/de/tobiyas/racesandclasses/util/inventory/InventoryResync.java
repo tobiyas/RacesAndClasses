@@ -16,16 +16,17 @@
 package de.tobiyas.racesandclasses.util.inventory;
 
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 	/**
 	 * Resyncs the Inventory of a Player in the next tick
 	 * @author Tobiyas
 	 *
 	 */
-	public class InventoryResync extends BukkitRunnable {
+	public class InventoryResync extends DebugBukkitRunnable {
+		
 
 		public static void resync(Player player){
 			RacesAndClasses plugin = RacesAndClasses.getPlugin();
@@ -40,12 +41,13 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 		private final Player player;
 		
 		public InventoryResync(final Player player){
+			super("InvResyncer");
 			this.player = player;
 		}
 		
 		@SuppressWarnings("deprecation") //let's see if it still works
 		@Override
-		public void run() {			
+		protected void runIntern() {			
 			player.closeInventory();
 			
 			//it's an attempt

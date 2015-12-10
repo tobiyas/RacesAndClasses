@@ -48,11 +48,6 @@ public interface Display {
 		Chat,
 		
 		/**
-		 * Shows the display on the right side as ScoreBoard.
-		 */
-		Scoreboard,
-		
-		/**
 		 * Shows the Display in the Action bar.
 		 */
 		Actionbar,
@@ -74,11 +69,7 @@ public interface Display {
 			if(name.contains("chat")){
 				return Chat;
 			}
-			
-			if(name.contains("score") || name.contains("board")){
-				return Scoreboard;
-			}
-			
+
 			if(name.contains("action")){
 				return Actionbar;
 			}

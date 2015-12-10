@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -23,8 +22,9 @@ import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 import de.tobiyas.racesandclasses.vollotile.Vollotile;
 import de.tobiyas.util.formating.Pair;
 import de.tobiyas.util.player.PlayerUtils;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
-public class OutOfFightHealer extends BukkitRunnable {
+public class OutOfFightHealer extends DebugBukkitRunnable {
 
 	/**
 	 * The Instance Task to use.
@@ -38,11 +38,12 @@ public class OutOfFightHealer extends BukkitRunnable {
 	
 	
 	public OutOfFightHealer() {
+		super("OutOfFightHealer");
 	}
 	
 	
 	@Override
-	public void run() {
+	protected void runIntern() {
 		Pair<Double,Double> toHeal = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_magic_outOfFightRegeneration();
 		if(toHeal == null) return;
 		

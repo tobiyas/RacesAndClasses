@@ -49,6 +49,9 @@ public class Keys {
 	
 	//f
 	public static final String failed = "failed";
+	public static final String food_eat = "food_eat";
+	public static final String food_cancle = "food_cancle";
+	public static final String food_finished = "food_finished";
 	
 	//g
 	

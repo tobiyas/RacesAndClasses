@@ -18,12 +18,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class Listener_ManaPotion implements Listener {
 	
@@ -102,10 +102,9 @@ public class Listener_ManaPotion implements Listener {
 		if(item.getAmount() == 1) event.getPlayer().getInventory().remove(item);
 		if(item.getAmount() > 1) item.setAmount(item.getAmount() - 1);
 		
-		new BukkitRunnable() {
-			
+		new DebugBukkitRunnable("ManaPotionCooldownRemover"){
 			@Override
-			public void run() {
+			protected void runIntern() {
 				cooldown.remove(racPlayer.getUniqueId());
 			}
 		}.runTaskLater(RacesAndClasses.getPlugin(), MANA_POTION_COOLDOWN);

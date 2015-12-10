@@ -195,9 +195,12 @@ public class PlayerRaCScoreboardManager {
 			return;
 		}
 		
+		
 		//Set the correct Objective to display.
-		Objective obj = scoreboard.getObjective(this.selectedCategory.name());
-		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		if(selectedCategory != SBCategory.General){
+			Objective obj = scoreboard.getObjective(this.selectedCategory.name());
+			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		}
 		
 		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
 		if(!removeScoreboard) player.setScoreboard(scoreboard);

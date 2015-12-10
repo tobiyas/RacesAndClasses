@@ -79,6 +79,7 @@ public class GeneralConfigFields {
 	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	public static final String general_disable_commands = "general_disable_commands";
+	public static final String general_command_remaps = "general_command_remaps";
 	public static final String general_disable_aliases = "general_disable_aliases";
 	public static final String general_cooldown_on_wand_message = "general_cooldown_on_wand_message";
 	public static final String general_cooldown_on_bow_message = "general_cooldown_on_bow_message";
