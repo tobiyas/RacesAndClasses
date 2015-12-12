@@ -650,18 +650,20 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		//Save some generic Block infos.
 		Location playerLocation = player.getPlayer().getLocation();
-		Block feetBlock = playerLocation.getBlock();
-		Block locBlock = feetBlock.getRelative(BlockFace.DOWN);
+		boolean isOutOfWorld = playerLocation.getY() < 0 || playerLocation.getY() > 256;
 		
-		Material feetType = feetBlock.getType();
-		Material belowFeetType = locBlock.getType();
+		Block feetBlock = isOutOfWorld ? null : playerLocation.getBlock();
+		Block locBlock = isOutOfWorld ? null : feetBlock.getRelative(BlockFace.DOWN);
+		
+		Material feetType = feetBlock == null ? Material.AIR : feetBlock.getType();
+		Material belowFeetType = locBlock == null ? Material.AIR : locBlock.getType();
 
 		//check for allowed Biomes
-		Biome currentBiome = locBlock.getBiome();
+		Biome currentBiome = locBlock == null ? Biome.SKY : locBlock.getBiome();
 		if(!biomes.isEmpty() && !biomes.contains(currentBiome)) return TraitRestriction.Biomes;
 		
 		//Check if player is in water
-		if(onlyInWater){
+		if(!isOutOfWorld && onlyInWater){
 			if(feetType != Material.WATER && feetType != Material.STATIONARY_WATER){
 				triggerButHasRestriction(TraitRestriction.OnlyInWater, wrapper);
 				return TraitRestriction.OnlyInWater;
@@ -685,7 +687,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check if player is on land
-		if(onlyOnLand){
+		if(!isOutOfWorld && onlyOnLand){
 			if(feetType == Material.WATER || feetType == Material.STATIONARY_WATER){
 				triggerButHasRestriction(TraitRestriction.OnlyOnLand, wrapper);
 				return TraitRestriction.OnlyOnLand;
@@ -701,7 +703,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check if player is in lava
-		if(onlyInLava){
+		if(!isOutOfWorld && onlyInLava){
 			if(!(feetType == Material.LAVA || feetType == Material.STATIONARY_LAVA)){
 				triggerButHasRestriction(TraitRestriction.OnlyInLava, wrapper);
 				return TraitRestriction.OnlyInLava;
@@ -709,7 +711,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 
 		//check if player is on Snow
-		if(onlyOnSnow){
+		if(!isOutOfWorld && onlyOnSnow){
 			if(!(feetType == Material.SNOW || feetType == Material.SNOW_BLOCK
 					|| belowFeetType == Material.SNOW || belowFeetType == Material.SNOW_BLOCK)){
 				triggerButHasRestriction(TraitRestriction.OnlyOnSnow, wrapper);
@@ -718,7 +720,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check if player is in Rain
-		if(onlyInRain){
+		if(!isOutOfWorld && onlyInRain){
 			if(!wrapper.getWorld().hasStorm()) return TraitRestriction.OnlyInRain;
 			int ownY = feetBlock.getY();
 			int highestY = feetBlock.getWorld().getHighestBlockYAt(feetBlock.getX(), feetBlock.getZ());
@@ -752,7 +754,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check above elevation
-		if(aboveElevation != Integer.MIN_VALUE){
+		if(!isOutOfWorld && aboveElevation != Integer.MIN_VALUE){
 			if(feetBlock.getY() <= aboveElevation) {
 				triggerButHasRestriction(TraitRestriction.AboveLevitation, wrapper);
 				return TraitRestriction.AboveLevitation;
@@ -760,7 +762,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 
 		//check below elevation
-		if(belowElevation != Integer.MAX_VALUE){
+		if(!isOutOfWorld && belowElevation != Integer.MAX_VALUE){
 			if(feetBlock.getY() >= belowElevation) {
 				triggerButHasRestriction(TraitRestriction.BelowLevitation, wrapper);
 				return TraitRestriction.BelowLevitation;
@@ -786,7 +788,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 		
 		//check blocks on
-		if(!onlyOnBlocks.isEmpty()){
+		if(!isOutOfWorld && !onlyOnBlocks.isEmpty()){
 			if(!onlyOnBlocks.contains(belowFeetType)) {
 				triggerButHasRestriction(TraitRestriction.OnlyOnBlock, wrapper);
 				return TraitRestriction.OnlyOnBlock;
@@ -794,7 +796,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		}
 
 		//check blocks on
-		if(!notOnBlocks.isEmpty()){
+		if(!isOutOfWorld && !notOnBlocks.isEmpty()){
 			if(notOnBlocks.contains(belowFeetType)) {
 				triggerButHasRestriction(TraitRestriction.NotOnBlock, wrapper);
 				return TraitRestriction.NotOnBlock;
