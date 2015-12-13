@@ -24,6 +24,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -65,8 +66,6 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	}
 	
 	
-	
-	
 	/**
 	 * Removes the totem if block of totem is destroyed.
 	 */
@@ -77,25 +76,22 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 		
 		if(eventWrapper.getEvent() instanceof BlockBreakEvent){
 			BlockBreakEvent bEvent = (BlockBreakEvent) eventWrapper.getEvent();
-			Location loc = bEvent.getBlock().getLocation();
+			Block block = bEvent.getBlock();
 			
-			for(TotemInfos totem : activedTotems.values()){
-				if(loc.getWorld() == totem.topLocation.getWorld() &&
-						loc.distanceSquared(totem.topLocation) < 0.5){
+			for(TotemInfos totem : activedTotems.values()) {
+				if(block.equals(totem.topLocation.getBlock())){
 					//is part of a totem.
 					removePlacedTotem(totem);
 					bEvent.setCancelled(true);
 					return result;
 				}
 
-				if(loc.getWorld() == totem.bottomLocation.getWorld() &&
-						loc.distanceSquared(totem.bottomLocation) < 0.5){
+				if(block.equals(totem.bottomLocation.getBlock())){
 					//is part of a totem.
 					removePlacedTotem(totem);
 					bEvent.setCancelled(true);
 					return result;
 				}
-				
 			}
 		}
 		
@@ -380,11 +376,12 @@ public abstract class AbstractTotemTrait extends AbstractMagicSpellTrait{
 	 * @return true if it is
 	 */
 	protected boolean isTotem(Location location){
+		Block block = location.getBlock();
 		for(TotemInfos info : activedTotems.values()){
 			Location top = info.topLocation;
 			Location bottom = info.bottomLocation;
 			
-			if(location.distanceSquared(top) < 0.5 || location.distanceSquared(bottom) < 0.5) return true;
+			if(top.getBlock() == block || bottom.getBlock() == block) return true;
 		}
 		
 		return false;
