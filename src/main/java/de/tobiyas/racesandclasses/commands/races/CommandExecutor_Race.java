@@ -224,9 +224,9 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 				return true;
 			}
 			
-			ItemStack book = generateRacesBook();
 			if(sender instanceof Player){
 				Player pl = (Player) sender;
+				ItemStack book = generateRacesBook(RaCPlayerManager.get().getPlayer(pl));
 				pl.getInventory().addItem(book);
 			}
 			
@@ -378,7 +378,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 		}
 			
 		
-		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getRaceMaxHealth(1));
+		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getMaxHealthMod(1));
 		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getDisplayName());
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
@@ -422,40 +422,12 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 	}
 	
 	
-	/*
-	private void newRaceList(CommandSender sender){
-		List<String> races = plugin.getRaceManager().listAllVisibleHolders();
-		
-		sender.sendMessage(ChatColor.YELLOW + "====== LIST OF RACES ======");
-		for(String race : races){
-			RaceContainer rc = RaceAPI.getRaceByName(race);
-			
-			String description = "";
-			
-			description += ChatColor.AQUA + "Race health: " + ChatColor.LIGHT_PURPLE + rc.getRaceMaxHealth() + "\n";
-			description += ChatColor.AQUA + "Race name: " + ChatColor.LIGHT_PURPLE + rc.getDisplayName() + "\n";
-			description += ChatColor.AQUA + "Race tag: " + ChatColor.LIGHT_PURPLE + rc.getTag() + "\n";
-			
-			description += ChatColor.AQUA + "Armor: " + ChatColor.YELLOW + rc.getArmorString() + "\n";
-			description += ChatColor.AQUA + "Traits:" + "\n";
-			
-			for(Trait trait : rc.getVisibleTraits()){
-				description += ChatColor.AQUA + trait.getDisplayName() + " : " 
-						+ ChatColor.YELLOW + trait.getPrettyConfiguration() + "\n";
-			}
-			
-			JSONRawSender raw = new JSONRawSender();
-			raw.appendPopup(description, race);
-		}
-	} */
-	
-	
 	/**
 	 * Generates a Book with all Races.
 	 * 
 	 * @return a book
 	 */
-	private ItemStack generateRacesBook(){
+	private ItemStack generateRacesBook(RaCPlayer player){
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		BookMeta meta = (BookMeta) book.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Races");
@@ -482,7 +454,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 			if(raceName.equals(RaceAPI.getDefaultRaceName())) continue;
 			
 			RaceContainer container = RaceAPI.getRaceByName(raceName);
-			if(container != null) pages.add(generateBookPageForRace(container));
+			if(container != null) pages.add(generateBookPageForRace(container, player));
 			
 			//Add the Front page.
 			firstPage.addSimpleText(container.getDisplayName(), false, true, false, false, false, ChatColor.AQUA)
@@ -501,9 +473,10 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 	 * Generates a Book Info page for the Race.
 	 * 
 	 * @param race to generate for
+	 * @param player 
 	 * @return the Tell Raw.
 	 */
-	private TellRawChatMessage generateBookPageForRace(RaceContainer race){
+	private TellRawChatMessage generateBookPageForRace(RaceContainer race, RaCPlayer player){
 		DecimalFormat f = new DecimalFormat("0.0");
 		TellRawChatMessage page = new TellRawChatMessage();
 		
@@ -529,11 +502,11 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getRaceMaxHealth(1))))
+				.addPopupHover(ChatColor.RED + f.format(race.getMaxHealthMod(player.getLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus(1))))
+				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus(player.getLevel()))))
 		.addNewLine()
 		.addNewLine()
 		

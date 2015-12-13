@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
@@ -74,11 +74,13 @@ public class HealthManager {
 	 * Rescans Race + class + maxhealth.
 	 */
 	public void rescanPlayer(){
+		int level = player.getLevelManager().getCurrentLevel();
+		
 		RaceContainer race = player.getRace();
-		if(race != null) addMaxHealthBonus("race", race.getMaxHealthMod(player.getLevelManager().getCurrentLevel()));
+		if(race != null) addMaxHealthBonus("race", race.getMaxHealthMod(level));
 
-		ClassContainer clazz = player.getclass();
-		if(clazz != null) addMaxHealthBonus("class", clazz.getMaxHealthMod());
+		AbstractTraitHolder clazz = player.getclass();
+		if(clazz != null) addMaxHealthBonus("class", clazz.getMaxHealthMod(level));
 	}
 	
 	

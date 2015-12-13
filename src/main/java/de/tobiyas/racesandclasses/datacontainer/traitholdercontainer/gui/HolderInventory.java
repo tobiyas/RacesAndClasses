@@ -36,6 +36,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -242,17 +243,7 @@ public class HolderInventory extends InventoryView{
 	 * @return
 	 */
 	private String getHealthString(AbstractTraitHolder holder) {
-		if(holder instanceof ClassContainer){
-			ClassContainer container = (ClassContainer) holder;
-			return container.getClassHealthModify() + format.format(container.getClassHealthModValue());
-		}
-		
-		if(holder instanceof RaceContainer){
-			RaceContainer container = (RaceContainer) holder;
-			return String.valueOf(container.getRaceMaxHealth(1));
-		}
-		
-		return "";
+		return format.format(holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player)));
 	}
 
 

@@ -35,8 +35,10 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
+import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.file.FileUtils;
 
 public abstract class AbstractHolderManager extends Observable{
 
@@ -112,25 +114,10 @@ public abstract class AbstractHolderManager extends Observable{
 	}
 	
 	
-	protected Set<File> getAllFilesIn(File folder){		
-		Set<File> files = new HashSet<File>();
-		if(!folder.exists()) return files;
-		
-		File[] subs = folder.listFiles();
-
-		if(subs == null) return files;
-		for(File file : subs){
-			if(file.isFile()) files.add(file);
-			if(file.isDirectory()) files.addAll(getAllFilesIn(file));
-		}
-		
-		return files;
-	}
-	
 	protected void readTraitHolderListStep1(){
 		traitHolderList.clear();
 		
-		Set<File> files = getAllFilesIn(folder);
+		Set<File> files = FileUtils.getAllFiles(folder);
 		if(files.isEmpty()) return;
 		
 		//1st step. Load basic structure.
@@ -138,7 +125,8 @@ public abstract class AbstractHolderManager extends Observable{
 			YAMLConfigExtended config = new YAMLConfigExtended(file).load();
 			//check if we have a valid load.
 			if(!config.getValidLoad()){
-				plugin.log("Could not load " + getConfigPrefix() + " file: " + file.toString());
+				plugin.log("Could not load " + getConfigPrefix() + " file: " + file.getName()
+					+ " because the Synthax is broken.");
 				continue;
 			}
 			
@@ -338,6 +326,7 @@ public abstract class AbstractHolderManager extends Observable{
 		}else{
 			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			memberConfig.set(getConfigPrefix(), newHolderName);
+			YAMLPersistanceSaver.flushPlayerNow(player, true);
 		}
 		
 		if(rescanAfter){
@@ -349,7 +338,7 @@ public abstract class AbstractHolderManager extends Observable{
 	/**
 	 * Saves all containers.
 	 */
-	public void saveAll(){
+	/*public void saveAll(){
 		for(Map.Entry<RaCPlayer, AbstractTraitHolder> entry : memberList.entrySet()){
 			RaCPlayer player = entry.getKey();
 			AbstractTraitHolder holder = entry.getValue();
@@ -360,7 +349,7 @@ public abstract class AbstractHolderManager extends Observable{
 			
 			saveNewHolderToDB(player, holder, false);
 		}
-	}
+	}*/
 	
 	
 	/**

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +128,7 @@ public class PlayerSpellManager {
 			}
 		}
 		
+		Collections.sort(spellList);
 		this.spellList.setEntries(spellList);
 	}
 	

@@ -48,9 +48,6 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 	 */
 	public ClassHolderBuilder(ClassContainer classContainer) {
 		super(classContainer);
-		
-		this.healthOperation = classContainer.getClassHealthModify();
-		this.health = classContainer.getClassHealthModValue();
 	}
 
 

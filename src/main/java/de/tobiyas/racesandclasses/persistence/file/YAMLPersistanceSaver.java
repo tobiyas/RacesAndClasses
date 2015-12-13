@@ -118,14 +118,28 @@ public class YAMLPersistanceSaver {
 		}
 	}
 	
+
+	/**
+	 * Forces a flush of the Player passed.
+	 * @param player to flush
+	 * @param sync if flushing sync
+	 */
+	public static void flushPlayerNow(RaCPlayer player, boolean sync) {
+		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
+		if(config == null || !config.isDirty()) return;
+		
+		//Force Flush:
+		if(sync) config.save();
+		else config.saveAsync();
+	}
+	
+	/**
+	 * Saves everything again.
+	 */
 	protected static void saveEverything(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		plugin.getRaceManager().saveAll();
-		plugin.getClassManager().saveAll();
-		
 		plugin.getPlayerManager().savePlayerContainer();
-		
 		plugin.getChannelManager().saveChannels();
 	}
 	

@@ -145,7 +145,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 				AbstractTraitHolder currentClass = racPlayer.getclass();
 				if(currentClass != plugin.getClassManager().getDefaultHolder()){
 					LanguageAPI.sendTranslatedMessage(sender, already_have_class,
-							"clasname", currentClass.getDisplayName());
+							"class", currentClass.getDisplayName());
 					return true;
 				}
 				
@@ -191,9 +191,9 @@ public class CommandExecutor_Class extends AbstractCommand {
 				return true;
 			}
 			
-			ItemStack book = generateClassesBook();
 			if(sender instanceof Player){
 				Player pl = (Player) sender;
+				ItemStack book = generateClassesBook(RaCPlayerManager.get().getPlayer(pl));
 				pl.getInventory().addItem(book);
 			}
 			
@@ -290,8 +290,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 
 		
 		player.sendMessage(ChatColor.YELLOW + "ClassHealth: " 
-				+ ChatColor.LIGHT_PURPLE + classContainer.getClassHealthModify()
-				+ classContainer.getClassHealthModValue());
+				+ ChatColor.LIGHT_PURPLE + classContainer.getMaxHealthMod(1));
 		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
 		
@@ -454,7 +453,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 	 * 
 	 * @return a book
 	 */
-	private ItemStack generateClassesBook(){
+	private ItemStack generateClassesBook(RaCPlayer player){
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		BookMeta meta = (BookMeta) book.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "Classes");
@@ -481,7 +480,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 			if(raceName.equals(ClassAPI.getDefaultClassName())) continue;
 			
 			ClassContainer container = ClassAPI.getClassByName(raceName);
-			if(container != null) pages.add(generateBookPageForClass(container));
+			if(container != null) pages.add(generateBookPageForClass(container, player));
 			
 			//Add the Front page.
 			firstPage.addSimpleText(container.getDisplayName(), false, true, false, false, false, ChatColor.AQUA)
@@ -501,7 +500,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 	 * @param clazz to generate for
 	 * @return the Tell Raw.
 	 */
-	private TellRawChatMessage generateBookPageForClass(ClassContainer clazz){
+	private TellRawChatMessage generateBookPageForClass(ClassContainer clazz, RaCPlayer player){
 		DecimalFormat f = new DecimalFormat("0.0");
 		TellRawChatMessage page = new TellRawChatMessage();
 		
@@ -527,11 +526,11 @@ public class CommandExecutor_Class extends AbstractCommand {
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(clazz.getClassHealthModValue())))
+				.addPopupHover(ChatColor.RED + f.format(clazz.getMaxHealthMod(player.getLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus(1))))
+				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus(player.getLevel()))))
 		.addNewLine()
 		.addNewLine()
 		

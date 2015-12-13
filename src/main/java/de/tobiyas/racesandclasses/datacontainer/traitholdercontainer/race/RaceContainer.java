@@ -22,15 +22,12 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
-import de.tobiyas.racesandclasses.playermanagement.leveling.values.LevelValueModifyReader;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class RaceContainer extends AbstractTraitHolder{
-
-	protected LevelValueModifyReader.LevelModifier raceMaxHealth;
 	
 	protected String raceChatColor;
 	protected String raceChatFormat;
@@ -61,7 +58,6 @@ public class RaceContainer extends AbstractTraitHolder{
 		super.readConfigSection();
 		
 		try{
-			this.raceMaxHealth = new LevelValueModifyReader(config, configNodeName + ".config.raceMaxHealth").parse(20d);
 			this.raceChatColor = config.getString(configNodeName + ".config.chat.color", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_color());
 			this.raceChatFormat = config.getString(configNodeName + ".config.chat.format", RacesAndClasses.getPlugin().getConfigManager().getChannelConfig().getConfig_racechat_default_format());
 		}catch(Exception exp){
@@ -96,11 +92,6 @@ public class RaceContainer extends AbstractTraitHolder{
 		AbstractTraitHolder container = RacesAndClasses.getPlugin().getRaceManager().getHolderOfPlayer(player);
 		if(container == null) return false;
 		return container.getDisplayName().equals(configNodeName);
-	}
-
-	
-	public double getRaceMaxHealth(int level){
-		return raceMaxHealth.getForLevel(level);
 	}
 
 
@@ -139,7 +130,6 @@ public class RaceContainer extends AbstractTraitHolder{
 		container.raceChatColor = "";
 		container.raceChatFormat = "";
 
-		container.raceMaxHealth = LevelValueModifyReader.LevelModifier.single(20d);
 		container.armorUsage.clear();
 	    container.traits = new HashSet<Trait>();
 
@@ -158,12 +148,6 @@ public class RaceContainer extends AbstractTraitHolder{
 	@Override
 	public AbstractHolderManager getHolderManager() {
 		return RacesAndClasses.getPlugin().getRaceManager();
-	}
-
-
-	@Override
-	public double getMaxHealthMod(int level) {
-		return raceMaxHealth.getForLevel(level) - 20;
 	}
 
 }

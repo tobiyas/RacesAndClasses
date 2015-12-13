@@ -21,16 +21,11 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHol
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
-import de.tobiyas.racesandclasses.playermanagement.health.HealthModifier.HealthModEnum;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 
 public class ClassContainer extends AbstractTraitHolder{
-	
-	protected String classHealthModify;
-	protected double classHealthModValue;
-	
 	
 	/**
 	 * Private constructor to only build via static builder
@@ -58,7 +53,7 @@ public class ClassContainer extends AbstractTraitHolder{
 		super.readConfigSection();
 		
 		try{
-			this.classHealthModValue = evaluateValue(config.getString(configNodeName + ".config.health", "+0"));
+			//Fill more Infos here:
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}
@@ -67,33 +62,6 @@ public class ClassContainer extends AbstractTraitHolder{
 		this.holderTag = config.getString(configNodeName + ".config.classtag", holderTag);
 	}
 	
-	protected double evaluateValue(String val){
-		char firstChar = val.charAt(0);
-		
-		classHealthModify = "";
-		
-		if(firstChar == '+')
-			classHealthModify = "+";
-		
-		if(firstChar == '*')
-			classHealthModify = "*";
-		
-		if(firstChar == '-')
-			classHealthModify = "-";
-		
-		if(classHealthModify == ""){
-			classHealthModify = "*";
-		}else{
-			val = val.substring(1, val.length());
-		}
-
-		double value = 1;
-		try{
-			value = Double.valueOf(val);			
-		}catch(Exception exp){}
-		
-		return value;
-	}
 	
 	
 	@Override
@@ -123,17 +91,6 @@ public class ClassContainer extends AbstractTraitHolder{
 		return container.getDisplayName().equals(configNodeName);
 	}
 	
-	
-	public double getMaxHealthMod(){
-		HealthModEnum op = HealthModEnum.ADD;
-		char firstChar = classHealthModify.charAt(0);
-		if(firstChar == '+') op = HealthModEnum.ADD;
-		//if(firstChar == '*') op = HealthModEnum.MULT;
-		if(firstChar == '-') op = HealthModEnum.REMOVE;
-		//if(firstChar == '/') op = HealthModEnum.DIVITE;
-		
-		return op == HealthModEnum.REMOVE ? -classHealthModValue : classHealthModValue;
-	}
 
 
 	@Override
@@ -141,32 +98,10 @@ public class ClassContainer extends AbstractTraitHolder{
 		return "class";
 	}
 
-
-	/**
-	 * Returns the Class Health modifier
-	 * @return
-	 */
-	public String getClassHealthModify() {
-		return classHealthModify;
-	}
-
-
-	/**
-	 * Returns the Class Health modification value
-	 * @return
-	 */
-	public double getClassHealthModValue() {
-		return classHealthModValue;
-	}
 	
 	@Override
 	public AbstractHolderManager getHolderManager() {
 		return RacesAndClasses.getPlugin().getClassManager();
 	}
 
-
-	@Override
-	public double getMaxHealthMod(int level) {
-		return getClassHealthModValue();
-	}
 }

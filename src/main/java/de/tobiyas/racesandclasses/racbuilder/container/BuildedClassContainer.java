@@ -39,8 +39,6 @@ public class BuildedClassContainer extends ClassContainer {
 		this.holderTag = classTag;
 		this.holderPermissions.add(permissionList);
 		//this.armorUsage = armorPermissions; //TODO fixme
-		
-		this.classHealthModify = operation + healthValue;
 	}
 
 	

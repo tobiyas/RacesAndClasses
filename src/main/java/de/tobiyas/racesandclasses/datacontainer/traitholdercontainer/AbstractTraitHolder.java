@@ -89,6 +89,11 @@ public abstract class AbstractTraitHolder {
 	protected LevelValueModifyReader.LevelModifier manaBonus;
 	
 	/**
+	 * The magic bonus to the Max-Health pool.
+	 */
+	protected LevelValueModifyReader.LevelModifier healthBonus;
+	
+	/**
 	 * Logs all parsing exceptions happening during startup.
 	 */
 	protected final List<HolderTraitParseException> parsingExceptionsHappened;
@@ -141,6 +146,7 @@ public abstract class AbstractTraitHolder {
 		
 		this.holderPermissions = new HolderPermissions(getContainerTypeAsString() + "-" + configNodeName);
 		this.manaBonus = LevelValueModifyReader.LevelModifier.empty();
+		this.healthBonus = LevelValueModifyReader.LevelModifier.empty();
 		
 		//we need to set the name to start. This is needed for inheritence.
 		try{
@@ -299,6 +305,7 @@ public abstract class AbstractTraitHolder {
 		try{
 			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
 			this.manaBonus = new LevelValueModifyReader(config, configNodeName + ".config.manabonus").parse(0);
+			this.healthBonus = new LevelValueModifyReader(config, configNodeName + ".config.healthbonus").parse(0);
 			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.tag", "[" + configNodeName + "]"));
 			this.guiSlot = config.getInt(configNodeName + ".config.guislot", -1);
 		}catch(Exception exp){
@@ -526,6 +533,13 @@ public abstract class AbstractTraitHolder {
 	public double getManaBonus(int level) {
 		return manaBonus.getForLevel(level);
 	}
+	
+	/**
+	 * @return the Health Bonus for the Level
+	 */
+	public double getMaxHealthMod(int level) {
+		return healthBonus.getForLevel(level);
+	}
 
 	
 	
@@ -572,13 +586,6 @@ public abstract class AbstractTraitHolder {
 	public boolean hasHolderDescription() {
 		return holderDescription != null;
 	}
-	
-	/**
-	 * This gives the Max Health mod back.
-	 * 
-	 * @return max health mod.
-	 */
-	public abstract double getMaxHealthMod(int level);
 	
 	
 	/**
