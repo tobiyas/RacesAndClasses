@@ -65,9 +65,7 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 	 * <br>Meaning to throw the old one away and generate a new one.
 	 */
 	private void rescanDisplay(){
-		if(manaDisplay != null){
-			manaDisplay.unregister();
-		}
+		if(manaDisplay != null) manaDisplay.unregister();
 		
 		String prefered = plugin.getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace();
 		manaDisplay = DisplayGenerator.generateDisplay(racPlayer, DisplayInfos.MANA, prefered);
@@ -80,9 +78,7 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 		super.rescanPlayer();
 		
 		double max = getMaxMana();
-		if(currentMana > max){
-			currentMana = max;
-		}
+		if(currentMana > max) currentMana = max;
 		
 		outputManaToPlayer();
 	}

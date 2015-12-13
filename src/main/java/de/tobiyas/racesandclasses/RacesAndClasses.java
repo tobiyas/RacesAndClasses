@@ -105,6 +105,7 @@ import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerScoreboardUpdater;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaXPBarRunner;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
@@ -302,9 +303,17 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//Register the Events on the First Server Tick!
 		registerEvents();
+		registerTasks();
 	}
 	
 	
+	/**
+	 * Registers all tasks needed.
+	 */
+	private void registerTasks() {
+		new ManaXPBarRunner().start();
+	}
+
 	private void checkIfCBVersionGreaterRequired() {
 		BukkitVersion version = BukkitVersionBuilder.getbukkitBuildNumber();
 		if(version.getBukkitMainVersion() < Consts.minimalBukkitMainVersion &&

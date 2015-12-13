@@ -77,6 +77,8 @@ public interface Display {
 			if(name.contains("none")){
 				return None;
 			}
+			
+			if(name.startsWith("x")) return None;
 				
 				
 			return Chat;	

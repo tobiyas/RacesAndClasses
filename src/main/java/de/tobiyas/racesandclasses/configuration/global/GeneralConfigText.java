@@ -455,7 +455,7 @@ public class GeneralConfigText {
 				+ magic_manaManagerType + ": 'RaC'\n\n"
 				
 				+ "# Where the 'Mana-Bar' should be shown.\n"
-				+ "# This can be: Chat, ActionBar(needs MC 1.8+), None\n"
+				+ "# This can be: Chat, ActionBar(needs MC 1.8+), XPBar, None\n"
 				+ "# default: Chat \n"
 				+ magic_manaShowPlace + ": 'ActionBar'\n\n"
 								

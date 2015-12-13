@@ -103,6 +103,7 @@ public class GeneralConfigFields {
 	public static final String magic_sprintingManaDrainInterval = "magic_sprintingManaDrainInterval";
 	public static final String magic_manaRefillWhileSprinting = "magic_manaRefillWhileSprinting";
 	public static final String magic_manaShowPlace = "magic_manaShowPlace";
+	public static final String magic_mana_use_xp_bar = "magic_mana_use_xp_bar";
 	
 	
 	//Leveling
