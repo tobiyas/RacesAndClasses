@@ -162,6 +162,11 @@ private int schedulerTaskId = -1;
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper) {
 		RaCPlayer player = wrapper.getPlayer();
+		int level = player.getLocation().getBlockY();
+		
+		//Does not trigger outside of the World.
+		if(level < 0 || level >= 256) return false;
+		
 		int lightFromSky = player.getLocation().getBlock().getLightFromSky();
 		if(onlyOnDay){ //TODO fixme
 			if(lightFromSky > 2){

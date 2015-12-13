@@ -58,7 +58,7 @@ public class Consts {
 	 * v1.1.4 : 1.10
 	 * v1.1.5 : 1.11
 	 */
-	public static final String configVersion = "1.11";
+	public static final String configVersion = "1.12";
 	
 	
 	//Races

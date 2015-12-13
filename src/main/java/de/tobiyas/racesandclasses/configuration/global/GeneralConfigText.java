@@ -636,7 +636,7 @@ public class GeneralConfigText {
 				+ "# HINT: leaving this empty (use ''), the default race will be selected \n"
 				+ "# String: a text. Preferable a race name or an empty String \n"
 				+ "# default: '' \n"
-				+ races_takeRaceWhenNoRace + ": ''\n\n"			
+				+ races_takeRaceWhenNoRace + ": ''\n\n"
 				
 				+ "# When a player logs in and does not have a Race, the Race selection screen is shown. \n"
 				+ "# To disable this, set this option to: false \n"
@@ -648,8 +648,7 @@ public class GeneralConfigText {
 				+ "# When this option is true, the screen is reopened as long as he hasn't selected a Race. \n"
 				+ "# boolean: true or false \n"
 				+ "# default: true \n"
-				+ races_cancleGUIExitWhenNoRacePresent_enable + ""
-						+ ": true\n\n"
+				+ races_cancleGUIExitWhenNoRacePresent_enable + ": true\n\n"
 				
 				+ "# The time between login and showing of the selection screen in secods. \n"
 				+ "# int: number without comma \n"
@@ -661,6 +660,17 @@ public class GeneralConfigText {
 				+ "# boolean: true or false \n"
 				+ "# default: true \n"
 				+ races_gui_enable + ": true\n\n"
+				
+				+ "# This command will be executed when the player changes his race.\n"
+				+ "# The Key %RACE% will be replaced with the race name. \n"
+				+ "# The Key %PLAYER% will be replaced with the player name. \n"
+				+ "# The Key %DISPLAY% will be replaced with the player's display name. \n"
+				+ "# If %CONSOLE% is contained in this text, the console will run the Command. \n"
+				+ "# Hint: If empty, no command will be run.\n"
+				+ "# Example: '%CONSOLE%broadcast %PLAYER% is now a %RACE%.' \n"
+				+ "# String: a text / command.\n"
+				+ "# default: '' \n"
+				+ races_command_after_change + ": ''\n\n"
 				;
 	}
 	
@@ -725,6 +735,17 @@ public class GeneralConfigText {
 				+ "# boolean: true or false \n"
 				+ "# default: true \n"
 				+ classes_gui_enable + ": true\n\n"
+				
+				+ "# This command will be executed when the player changes his class.\n"
+				+ "# The Key %CLASS% will be replaced with the class name. \n"
+				+ "# The Key %PLAYER% will be replaced with the player name. \n"
+				+ "# The Key %DISPLAY% will be replaced with the player's display name. \n"
+				+ "# If %CONSOLE% is contained in this text, the console will run the Command. \n"
+				+ "# Hint: If empty, no command will be run.\n"
+				+ "# Example: '%CONSOLE%broadcast %PLAYER% is now a %CLASS%.' \n"
+				+ "# String: a text / command.\n"
+				+ "# default: '' \n"
+				+ classes_command_after_change + ": ''\n\n"
 				;
 	}
 

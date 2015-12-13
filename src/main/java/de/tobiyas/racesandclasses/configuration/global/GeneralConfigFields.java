@@ -137,6 +137,7 @@ public class GeneralConfigFields {
 	public static final String races_cancleGUIExitWhenNoRacePresent_enable = "races_cancleGUIExitWhenNoRacePresent_enable";
 	public static final String races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds = "races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds";
 	public static final String races_gui_enable = "races_gui_enable";
+	public static final String races_command_after_change = "races_command_after_change";
 	public static final String race_teams_enable = "race_teams_enable";
 	
 	
@@ -149,4 +150,5 @@ public class GeneralConfigFields {
 	public static final String classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable = "classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable";
 	public static final String classes_cancleGUIExitWhenNoClassPresent_enable = "classes_cancleGUIExitWhenNoClassPresent_enable";
 	public static final String classes_gui_enable = "classes_gui_enable";
+	public static final String classes_command_after_change = "classes_command_after_change";
 }
