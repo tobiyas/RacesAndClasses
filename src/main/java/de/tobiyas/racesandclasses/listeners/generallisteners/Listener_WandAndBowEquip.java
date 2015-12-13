@@ -96,8 +96,10 @@ public class Listener_WandAndBowEquip implements Listener {
 				}
 			}
 			
-			player.getScoreboardManager().updateSelectAndShow(SBCategory.Cooldown, -1);
 		}
+		
+		//If item == null, should still be changed!
+		player.getScoreboardManager().updateSelectAndShow(SBCategory.Cooldown, -1);
 	}
 
 	/**

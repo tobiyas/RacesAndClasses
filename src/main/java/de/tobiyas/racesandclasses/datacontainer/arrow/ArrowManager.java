@@ -16,6 +16,7 @@
 package de.tobiyas.racesandclasses.datacontainer.arrow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -56,8 +57,8 @@ public class ArrowManager {
 			}
 		}
 		
-		if(arrows.size() < currentPointer)
-			currentPointer = 0;
+		Collections.sort(arrows);
+		if(arrows.size() < currentPointer) currentPointer = 0;
 	}
 	
 	public AbstractArrow nextArrow(){

@@ -5,8 +5,10 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
+import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
@@ -89,13 +91,14 @@ public class ScoreboardUpdater {
 	 * Updates the Data to the Current Spell.
 	 */
 	public void updateSpells(){
-		MagicSpellTrait currentSpell = player.getSpellManager().getCurrentSpell();
+		PlayerSpellManager spellManager = player.getSpellManager();
+		MagicSpellTrait currentSpell = spellManager.getCurrentSpell();
 		manager.clearCategory(SBCategory.Spells);
 		
 		if(currentSpell != null){
 			//If spell == null, we have no spells available
-			int id = player.getSpellManager().getSpellAmount();
-			for(MagicSpellTrait spell : player.getSpellManager().getAllSpells()){
+			int id = spellManager.getSpellAmount();
+			for(MagicSpellTrait spell : spellManager.getAllSpells()){
 				boolean selected = spell == currentSpell;
 				ChatColor pre = (selected ? ChatColor.RED : ChatColor.YELLOW);
 				ChatColor after = (selected ? ChatColor.AQUA : ChatColor.BLUE);
@@ -109,25 +112,50 @@ public class ScoreboardUpdater {
 		manager.update();
 	}
 	
+
+	/**
+	 * Updates the Arrows.
+	 */
+	public void updateArrows() {
+		ArrowManager arrowManager = player.getArrowManager();
+		AbstractArrow currentArrow = arrowManager.getCurrentArrow();
+		
+		manager.clearCategory(SBCategory.Arrows);
+		
+		//If arrow == null or we only have 1, we have no Arrows available
+		if(currentArrow != null || arrowManager.getNumberOfArrowTypes() > 1){
+			int id = arrowManager.getNumberOfArrowTypes();
+			for(AbstractArrow arrow :arrowManager.getAllArrows()){
+				boolean selected = arrow == currentArrow;
+				ChatColor pre = (selected ? ChatColor.RED : ChatColor.YELLOW);
+				ChatColor after = (selected ? ChatColor.AQUA : ChatColor.BLUE);
+				
+				String name =  getFromCooldown(arrow, pre, after);
+				manager.setValue(SBCategory.Arrows, name, id);
+				id--;
+			}
+		}
+		
+		manager.update();
+	}
+	
 	
 	/**
 	 * Generates a String for the Spell.
 	 * 
-	 * @param spell
-	 * @param pre
-	 * @param after
+	 * @param trait to use
+	 * @param pre to use
+	 * @param after to use
 	 * 
 	 * @return a colorfull name.
 	 */
-	private String getFromCooldown(MagicSpellTrait spell, ChatColor pre,
-			ChatColor after) {
-		
-		String name = spell.getDisplayName();
-		double cooldown = CooldownApi.getCooldownOfPlayer(player.getName(), spell.getCooldownName());
+	private String getFromCooldown(TraitWithRestrictions trait, ChatColor pre, ChatColor after) {
+		String name = trait.getDisplayName();
+		double cooldown = CooldownApi.getCooldownOfPlayer(player.getName(), trait.getCooldownName());
 		if(cooldown <= 0) return pre + name;
 
 		
-		cooldown = cooldown / spell.getMaxUplinkTime();
+		cooldown = cooldown / trait.getMaxUplinkTime();
 		int chars = (int)(cooldown * (double)name.length());
 		String first = name.substring(0, chars);
 		String second = name.substring(chars, name.length());

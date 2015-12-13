@@ -56,6 +56,7 @@ import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.Compatibi
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 
 public abstract class AbstractArrow extends AbstractActivatableTrait {
@@ -122,7 +123,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		if(event instanceof ProjectileHitEvent){
 			ProjectileHitEvent Eevent = (ProjectileHitEvent) event;
 			if(Eevent.getEntityType() != EntityType.ARROW) return false;
-			Projectile arrow = (Projectile) Eevent.getEntity();
+			final Projectile arrow = (Projectile) Eevent.getEntity();
 
 			if(CompatibilityModifier.Shooter.getShooter(arrow) == null) return false;
 			
@@ -141,7 +142,8 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			if(!found) return false;
 			
 			//Remove the meta to not leak them.
-			arrow.removeMetadata(ARROW_META_KEY, plugin);
+			//We have to schedule this 1 tick to future, since this event is called BEFORE the damage event in 1.8+.
+			removeMetadataNextTick(arrow);
 			
 			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(arrow);
 			if(shooter.getType() != EntityType.PLAYER) return false;
@@ -161,9 +163,9 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			LivingEntity shooter = CompatibilityModifier.Shooter.getShooter(realArrow);
 			
 			if(shooter == null || realArrow == null || realArrow.isDead()) return false;
-			if(((org.bukkit.entity.LivingEntity)shooter).getType() != EntityType.PLAYER) return false;
+			if(shooter.getType() != EntityType.PLAYER) return false;
 			
-			if(Eevent.getEntity() == shooter && realArrow.getTicksLived() < 10)
+			if(Eevent.getEntity() == shooter && realArrow.getTicksLived() < 5)
 				return false;
 
 			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
@@ -358,6 +360,12 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			if(canBeTriggered(wrapper)) trigger(wrapper);
 			return true;
 		}
+
+		if(wrapper.getEvent() instanceof EntityDamageByEntityEvent){
+			//Bypass the Uplink.
+			if(canBeTriggered(wrapper)) trigger(wrapper);
+			return true;
+		}
 		
 		if(wrapper.getPlayerAction() == PlayerAction.DO_DAMAGE){
 			return true;
@@ -394,6 +402,23 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		return !boundToBow;
 	}
 	
+	
+	
+	/**
+	 * Removes the Metadata from the Projectile in the Next tick.
+	 * @param pro to remove.
+	 */
+	private void removeMetadataNextTick(final Projectile pro){
+		new DebugBukkitRunnable("ArrowMetaRemover") {
+			
+			@Override
+			protected void runIntern() {
+				try{
+					pro.removeMetadata(ARROW_META_KEY, plugin);
+				}catch(Throwable exp){}
+			}
+		};
+	}
 	
 	
 }
