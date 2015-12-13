@@ -34,6 +34,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.HolderSelectionPreconditions.HolderPreconditionResult;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.PreClassSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -66,7 +67,7 @@ public class ClassChangeSelectionListener implements Listener {
 		plugin = RacesAndClasses.getPlugin();
 		cooldownManager = plugin.getCooldownManager();
 		
-		Bukkit.getPluginManager().registerEvents(this, plugin);
+		plugin.registerEvents(this);
 	}
 	
 	
@@ -176,8 +177,15 @@ public class ClassChangeSelectionListener implements Listener {
 		player.getHotkeyInventory().clearAllSlots();
 	}
 	
+	
+	
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void sendCommandAfterChange(AfterClassSelectedEvent selectEvent){
+	public void sendCommandAfterChange(AfterClassChangedEvent event){
+		sendCommandAfterSelect((AfterClassSelectedEvent)event);
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void sendCommandAfterSelect(AfterClassSelectedEvent selectEvent){
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		

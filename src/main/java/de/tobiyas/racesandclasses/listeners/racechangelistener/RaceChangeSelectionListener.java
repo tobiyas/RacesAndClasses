@@ -31,6 +31,7 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.HolderSelectionPreconditions.HolderPreconditionResult;
+import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
@@ -157,8 +158,14 @@ public class RaceChangeSelectionListener implements Listener {
 		plugin.getPlayerManager().displayHealth(player);
 	}
 	
+	
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void sendCommandAfterChange(AfterRaceSelectedEvent selectEvent){
+	public void sendCommandAfterChange(AfterRaceChangedEvent event){
+		sendCommandAfterSelect((AfterRaceSelectedEvent) event);
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void sendCommandAfterSelect(AfterRaceSelectedEvent selectEvent){
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		
