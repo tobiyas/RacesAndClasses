@@ -97,9 +97,8 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	 * <br>Meaning to throw the old one away and generate a new one.
 	 */
 	private void rescanDisplay(){
-		if(expDisplay != null){
-			expDisplay.unregister();
-		}
+		if(expDisplay != null) expDisplay.unregister();
+		if(levelDisplay != null) levelDisplay.unregister();
 		
 		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
 		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
@@ -228,8 +227,8 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
 		
-		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
-		levelDisplay.display(currentLevel, currentLevel);
+		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
+		// levelDisplay.display(currentLevel, currentLevel);
 		
 		redrawMCLevelBar();
 		return true;
@@ -279,8 +278,8 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
 		}
 		
-		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
-		levelDisplay.display(currentLevel, currentLevel);
+		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
+		// levelDisplay.display(currentLevel, currentLevel);
 		
 		redrawMCLevelBar();
 		return true;
