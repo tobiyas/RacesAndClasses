@@ -162,8 +162,8 @@ import de.tobiyas.util.formating.Pair;
 	
 	private Material config_hotkeys_material;
 	
-	private String config_race_command_after_change;
-	private String config_class_command_after_change;
+	private List<String> config_race_commands_after_change;
+	private List<String> config_class_commands_after_change;
 
 	private int config_general_remove_old_data_days;
 	private boolean config_general_remove_old_data_check_empty;
@@ -460,8 +460,8 @@ import de.tobiyas.util.formating.Pair;
 		config_use_fireworks_on_level_up = config.getBoolean(use_fireworks_on_level_up, true);
 		config_use_levelup_message = config.getBoolean(use_levelup_message, true);
 		
-		config_race_command_after_change = config.getString(races_command_after_change, "");
-		config_class_command_after_change = config.getString(classes_command_after_change, "");
+		config_race_commands_after_change = config.getStringList(races_command_after_change);
+		config_class_commands_after_change = config.getStringList(classes_command_after_change);
 		
 		config_npc_select_race.clear();
 		config_npc_change_race.clear();
@@ -890,12 +890,12 @@ import de.tobiyas.util.formating.Pair;
 		return config_max_level;
 	}
 	
-	public String getConfig_race_command_after_change() {
-		return config_race_command_after_change;
+	public List<String> getConfig_race_commands_after_change() {
+		return config_race_commands_after_change;
 	}
 	
-	public String getConfig_class_command_after_change() {
-		return config_class_command_after_change;
+	public List<String> getConfig_class_commands_after_change() {
+		return config_class_commands_after_change;
 	}
 
 	public Map<String, String> getConfig_command_remaps() {

@@ -189,24 +189,29 @@ public class ClassChangeSelectionListener implements Listener {
 		if(selectEvent.getPlayer() == null) return;
 		if(selectEvent.getPlayer().getName() == null) return;
 		
-		String command = plugin.getConfigManager().getGeneralConfig().getConfig_class_command_after_change();
-		if(command.isEmpty()) return;
+		
+		List<String> commands = plugin.getConfigManager().getGeneralConfig().getConfig_class_commands_after_change();
+		if(commands.isEmpty()) return;
 		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
-		boolean asConsole = command.contains("%CONSOLE%");
 		
-		//Remove First char if is a dash.
-		command = command.startsWith("/") ? command.substring(1) : command;
-		
-		//Replace stuff in the Command:
-		command = command.replace("%CONSOLE%", "");
-		command = command.replace("%CLASS%", ClassAPI.getClassNameOfPlayer(player));
-		command = command.replace("%RACE%", RaceAPI.getRaceNameOfPlayer(player));
-		command = command.replace("%PLAYER%", player.getName());
-		command = command.replace("%DISPLAY%", player.getDisplayName());
-		
-		//Run the Command:
-		if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-		else player.chat("/"+command);
+		for(String command : commands){
+			if(command == null || command.isEmpty()) continue;
+			boolean asConsole = command.contains("%CONSOLE%");
+			
+			//Remove First char if is a dash.
+			command = command.startsWith("/") ? command.substring(1) : command;
+			
+			//Replace stuff in the Command:
+			command = command.replace("%CONSOLE%", "");
+			command = command.replace("%CLASS%", ClassAPI.getClassNameOfPlayer(player));
+			command = command.replace("%RACE%", RaceAPI.getRaceNameOfPlayer(player));
+			command = command.replace("%PLAYER%", player.getName());
+			command = command.replace("%DISPLAY%", player.getDisplayName());
+			
+			//Run the Command:
+			if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+			else player.chat("/"+command);
+		}
 	}
 }
