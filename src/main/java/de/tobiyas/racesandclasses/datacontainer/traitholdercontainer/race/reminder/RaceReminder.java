@@ -26,27 +26,26 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
-public class RaceReminder implements Runnable {
+public class RaceReminder extends DebugBukkitRunnable {
 
 	private RacesAndClasses plugin;
 	
 	public RaceReminder(){
+		super("RaceReminder");
 		plugin = RacesAndClasses.getPlugin();
 		int reminderTime = plugin.getConfigManager().getGeneralConfig().getConfig_reminder_interval() * 20 * 60;
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, reminderTime, reminderTime);
+		this.runTaskTimer(plugin, reminderTime, reminderTime);
 	}
 	
 	@Override
-	public void run() {
+	protected void runIntern() {
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_activate_reminder()){
 			AbstractTraitHolder defaultContainer = plugin.getRaceManager().getDefaultHolder();
 			List<RaCPlayer> list = plugin.getRaceManager().getAllPlayersOfHolder(defaultContainer);
 			for(RaCPlayer player : list){
-				if(player == null){
-					continue;
-				}
-				
+				if(player == null || !player.isOnline()) continue;
 				postSelectRace(player);
 			}
 		}
