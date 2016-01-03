@@ -88,12 +88,14 @@ public class Listener_Player implements Listener {
 		
 		plugin.getPlayerManager().checkPlayer(player);
 		RaceContainer container = player.getRace();
-		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) 
-				&& racesActive){
-			LanguageAPI.sendTranslatedMessage(player, login_no_race_selected);
-			if(container == null){
-				plugin.getRaceManager().addPlayerToHolder(player, Consts.defaultRace, true);
+		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) && racesActive){
+			String defaultName = plugin.getConfigManager().getGeneralConfig().getConfig_takeRaceWhenNoRace();
+			if(defaultName == null || defaultName.isEmpty()) {
+				defaultName = Consts.defaultRace;
+				LanguageAPI.sendTranslatedMessage(player, login_no_race_selected);
 			}
+			
+			plugin.getRaceManager().addPlayerToHolder(player, defaultName, true);
 		}
 		
 		//just to load them.
