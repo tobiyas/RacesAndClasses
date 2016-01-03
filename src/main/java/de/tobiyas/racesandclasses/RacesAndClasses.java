@@ -263,6 +263,13 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	@Override
 	public void pluginEnable(){
 		statistics = new StatisticGatherer(System.currentTimeMillis());
+		
+		//Check for Vault and warn if not present!
+		if(!isVaultPresent()){
+			this.getLogger().warning("RacesAndClasses WARNING:  Plugin Vault is not found! "
+					+ "Please download it!");
+		}
+		
 		//We seal the startup away to prevent further erroring afterwards.
 		try{
 			plugin = this;
@@ -278,7 +285,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			getDebugLogger().setAlsoToPlugin(true);
 			
 			checkIfCBVersionGreaterRequired();
-			VaultHook.getHook(); //try vault hooking.
 						
 			fullReload(false, false);
 			
@@ -304,6 +310,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		//Register the Events on the First Server Tick!
 		registerEvents();
 		registerTasks();
+		
+		//Init vault Hook if vault is present.
+		if(isVaultPresent()) VaultHook.init(this);
 	}
 	
 	
@@ -818,6 +827,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 	public DebuffManager getDebuffManager() {
 		return debuffManager;
+	}
+	
+	
+	public static boolean isVaultPresent(){
+		return Bukkit.getPluginManager().getPlugin("Vault") != null; 
 	}
 	
 }
