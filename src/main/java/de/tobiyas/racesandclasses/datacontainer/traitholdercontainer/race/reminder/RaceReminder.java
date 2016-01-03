@@ -91,6 +91,7 @@ public class RaceReminder extends DebugBukkitRunnable {
 	 * @param player
 	 */
 	private void postSelectRace(RaCPlayer player){
+		if(!player.isOnline()) return;
 		if(!hasAnyRacePermission(player)) return;
 		
 		if(player != null){

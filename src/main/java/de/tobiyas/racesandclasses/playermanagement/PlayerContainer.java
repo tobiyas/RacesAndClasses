@@ -270,7 +270,7 @@ public class PlayerContainer {
 	public PlayerContainer checkStats() {
 		if(player == null || !player.isOnline()) return null;
 		
-		arrowManager.rescanClass();
+		arrowManager.rescanPlayer();
 		armorToolManager.rescanPermission();
 		armorToolManager.checkArmorNotValidEquiped();
 		healthManager.rescanPlayer();

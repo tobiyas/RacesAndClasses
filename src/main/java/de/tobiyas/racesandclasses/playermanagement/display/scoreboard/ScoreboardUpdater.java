@@ -118,10 +118,11 @@ public class ScoreboardUpdater {
 	 */
 	public void updateArrows() {
 		ArrowManager arrowManager = player.getArrowManager();
-		AbstractArrow currentArrow = arrowManager.getCurrentArrow();
 		
 		manager.clearCategory(SBCategory.Arrows);
+		if(arrowManager.getNumberOfArrowTypes() <= 0)return;
 		
+		AbstractArrow currentArrow = arrowManager.getCurrentArrow();
 		//If arrow == null or we only have 1, we have no Arrows available
 		if(currentArrow != null || arrowManager.getNumberOfArrowTypes() > 1){
 			int id = arrowManager.getNumberOfArrowTypes();

@@ -40,9 +40,9 @@ public class DefaultContainer {
 		orcConfig.createSection("Orc.config");
 		orcConfig.createSection("Orc.traits");
 		
-		orcConfig.set("Orc.config.racetag", "[Orc]");
-		orcConfig.set("Orc.config.raceMaxHealth", 30);
-		orcConfig.set("Orc.config.guislot", 0);
+		orcConfig.set("Orc.config.tag", "[Orc]");
+		orcConfig.set("Orc.config.healthbonus", "+10");
+		orcConfig.set("Orc.config.guislot", -1);
 		orcConfig.set("Orc.config.armor", "iron,diamond,chain");
 		
 		orcConfig.createSection("Orc.traits.DamageReduceTrait");
@@ -61,9 +61,9 @@ public class DefaultContainer {
 		elvesConfig.createSection("Elv.config");
 		elvesConfig.createSection("Elv.traits");
 		
-		elvesConfig.set("Elv.config.racetag", "[Elv]");
-		elvesConfig.set("Elv.config.raceMaxHealth", 20);
-		elvesConfig.set("Elv.config.guislot", 2);
+		elvesConfig.set("Elv.config.tag", "[Elv]");
+		elvesConfig.set("Elv.config.healthbonus", "+0");
+		elvesConfig.set("Elv.config.guislot", -1);
 		elvesConfig.set("Elv.config.armor", "leather,gold,chain");
 		
 		elvesConfig.createSection("Elv.traits.FallResistanceTrait");
@@ -101,9 +101,9 @@ public class DefaultContainer {
 		warriorConfig.createSection("warrior.config");
 		warriorConfig.createSection("warrior.traits");
 		
-		warriorConfig.set("warrior.config.classtag", "[Warrior]");
-		warriorConfig.set("warrior.config.health", "+5");
-		warriorConfig.set("warrior.config.guislot", 6);
+		warriorConfig.set("warrior.config.tag", "[Warrior]");
+		warriorConfig.set("warrior.config.healthbonus", "+5");
+		warriorConfig.set("warrior.config.guislot", -1);
 		
 		
 		warriorConfig.createSection("warrior.traits.SwordDamageIncreaseTrait");
@@ -122,9 +122,9 @@ public class DefaultContainer {
 		archerConfig.createSection("archer.config");
 		archerConfig.createSection("archer.traits");
 		
-		archerConfig.set("archer.config.classtag", "[Archer]");
-		archerConfig.set("archer.config.health", "+1");
-		archerConfig.set("archer.config.guislot", 0);
+		archerConfig.set("archer.config.tag", "[Archer]");
+		archerConfig.set("archer.config.healthbonus", "+1");
+		archerConfig.set("archer.config.guislot", -1);
 		
 		archerConfig.createSection("archer.traits.PoisonArrowTrait");
 		archerConfig.set("archer.traits.PoisonArrowTrait.duration", 10);
@@ -146,10 +146,10 @@ public class DefaultContainer {
 		magicianConfig.createSection("magician.config");
 		magicianConfig.createSection("magician.traits");
 		
-		magicianConfig.set("magician.config.classtag", "[Magician]");
-		magicianConfig.set("magician.config.health", "-1");
+		magicianConfig.set("magician.config.tag", "[Magician]");
+		magicianConfig.set("magician.config.healthbonus", "-1");
 		magicianConfig.set("magician.config.manabonus", 20);
-		magicianConfig.set("magician.config.guislot", 2);
+		magicianConfig.set("magician.config.guislot", -1);
 		
 		magicianConfig.createSection("magician.traits.ManaRegenerationTrait");
 		magicianConfig.set("magician.traits.ManaRegenerationTrait.time", 10);
@@ -192,10 +192,10 @@ public class DefaultContainer {
 		shamanConfig.createSection("shaman.config");
 		shamanConfig.createSection("shaman.traits");
 		
-		shamanConfig.set("shaman.config.classtag", "[Shaman]");
-		shamanConfig.set("shaman.config.health", "+1");
+		shamanConfig.set("shaman.config.tag", "[Shaman]");
+		shamanConfig.set("shaman.config.healthbonus", "+1");
 		shamanConfig.set("shaman.config.manabonus", 20);
-		shamanConfig.set("shaman.config.guislot", 4);
+		shamanConfig.set("shaman.config.guislot", -1);
 		
 		shamanConfig.createSection("shaman.traits.HealTotemTrait");
 		shamanConfig.set("shaman.traits.HealTotemTrait.duration", 10);

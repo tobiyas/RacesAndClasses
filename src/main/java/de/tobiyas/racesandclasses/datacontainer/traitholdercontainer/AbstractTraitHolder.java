@@ -148,7 +148,7 @@ public abstract class AbstractTraitHolder {
 		this.manaBonus = LevelValueModifyReader.LevelModifier.empty();
 		this.healthBonus = LevelValueModifyReader.LevelModifier.empty();
 		
-		//we need to set the name to start. This is needed for inheritence.
+		//we need to set the name to start. This is needed for inheritance.
 		try{
 			this.displayName = config.getString(configNodeName + ".config.name", configNodeName);
 		}catch(Throwable exp){}

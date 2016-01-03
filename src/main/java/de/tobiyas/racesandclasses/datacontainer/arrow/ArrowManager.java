@@ -17,7 +17,6 @@ package de.tobiyas.racesandclasses.datacontainer.arrow;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -42,15 +41,10 @@ public class ArrowManager {
 		eventTime = 0;
 	}
 	
-	public void rescanClass(){
+	public void rescanPlayer(){
 		arrows.clear();
 		
-		if(WorldResolver.isOnDisabledWorld(player)){
-			return;
-		}
-		
 		Set<Trait> traits = TraitHolderCombinder.getReducedTraitsOfPlayer(player);
-		
 		for(Trait arrow : traits){
 			if(arrow instanceof AbstractArrow && !arrow.isBindable()){
 				arrows.add((AbstractArrow) arrow);
@@ -64,6 +58,7 @@ public class ArrowManager {
 	public AbstractArrow nextArrow(){
 		if(System.currentTimeMillis() - eventTime < 100) return null;
 		if(arrows.size() == 0) return null;
+		if(WorldResolver.isOnDisabledWorld(player))	return null;
 		
 		currentPointer ++;
 		if(currentPointer >= arrows.size()) currentPointer = 0;
@@ -78,6 +73,8 @@ public class ArrowManager {
 	
 	public AbstractArrow previousArrow() {
 		if(System.currentTimeMillis() - eventTime < 100) return null;
+		if(WorldResolver.isOnDisabledWorld(player))	return null;
+		
 		currentPointer --;
 		if(currentPointer < 0) currentPointer = arrows.size() - 1;
 		
@@ -88,6 +85,9 @@ public class ArrowManager {
 	
 	
 	public AbstractArrow getCurrentArrow(){
+		if(WorldResolver.isOnDisabledWorld(player))	return null;
+		if(arrows.size() <= 0) rescanPlayer();
+		
 		AbstractArrow arrow = arrows.get(currentPointer);
 		return arrow;
 	}
@@ -100,7 +100,7 @@ public class ArrowManager {
 	 * @return number of different arrow types
 	 */
 	public int getNumberOfArrowTypes(){
-		return arrows.size() - 1;
+		return WorldResolver.isOnDisabledWorld(player) ? 0 : arrows.size() - 1;
 	}
 
 	/**
@@ -109,6 +109,7 @@ public class ArrowManager {
 	 * @return arrows.
 	 */
 	public List<AbstractArrow> getAllArrows() {
-		return  new LinkedList<AbstractArrow>(this.arrows);
+		if(WorldResolver.isOnDisabledWorld(player)) return new ArrayList<AbstractArrow>();
+		else return new ArrayList<AbstractArrow>(this.arrows);
 	}
 }

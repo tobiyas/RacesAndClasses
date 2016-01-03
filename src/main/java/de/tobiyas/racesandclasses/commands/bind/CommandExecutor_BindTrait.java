@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -39,9 +38,9 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 	
 	
 	public CommandExecutor_BindTrait() {
-		super("bindtrait", new String[]{"bt", "bind"});
+		super("bindtrait", new String[]{"bt", "bind", "obt"});
 		
-		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+		RacesAndClasses.getPlugin().registerEvents(this);
 	}
 
 
@@ -82,7 +81,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		
 		if(useNewBindSystem){
 			boolean isBindingMode = player.getHotkeyInventory().isInSkillMode();
-			boolean openView = args.length == 1 && args[0].equalsIgnoreCase("open");
+			boolean openView = label.equalsIgnoreCase("obt") || (args.length == 1 && args[0].equalsIgnoreCase("open"));
 			
 			if(openView){
 				//opening view
