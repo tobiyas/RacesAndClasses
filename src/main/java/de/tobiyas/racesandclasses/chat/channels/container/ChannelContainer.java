@@ -308,7 +308,7 @@ public class ChannelContainer extends Observable{
 		if(player != null){
 			if(notify){
 				String joinMessage = plugin.getConfigManager().getChannelConfig().getConfig_PlayerJoinFormat();
-				sendMessageInChannel(player.getPlayer(), "", joinMessage);
+				if(!joinMessage.isEmpty()) sendMessageInChannel(player.getPlayer(), "", joinMessage);
 			}
 		}
 		
@@ -325,7 +325,7 @@ public class ChannelContainer extends Observable{
 		if(player != null){
 			if(notify){
 				String leaveMessage = plugin.getConfigManager().getChannelConfig().getConfig_PlayerLeaveFormat();
-				sendMessageInChannel(player.getPlayer(), "", leaveMessage);
+				if(!leaveMessage.isEmpty()) sendMessageInChannel(player.getPlayer(), "", leaveMessage);
 			}
 		}
 		

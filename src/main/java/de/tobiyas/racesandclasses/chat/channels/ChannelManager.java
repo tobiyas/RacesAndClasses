@@ -364,8 +364,7 @@ public class ChannelManager {
 	 */
 	public void joinChannel(RaCPlayer player, String channelName, String password, boolean notify) {
 		ChannelContainer container = getContainer(channelName);
-		if(container == null)
-			return;
+		if(container == null) return;
 		
 		container.addPlayerToChannel(player, password, notify);	
 	}
