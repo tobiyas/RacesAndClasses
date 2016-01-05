@@ -353,6 +353,8 @@ public class ChannelContainer extends Observable{
 	}
 	
 	public void sendMessageInChannel(CommandSender sender, String message, String forceFormat){
+		if(forceFormat.isEmpty()) return;
+		
 		Player player = (sender instanceof Player) ? (Player)sender : null;
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
