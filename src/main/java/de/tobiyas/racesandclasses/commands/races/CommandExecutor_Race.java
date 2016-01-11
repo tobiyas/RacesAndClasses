@@ -378,7 +378,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 		}
 			
 		
-		sender.sendMessage(ChatColor.YELLOW + "Race health: " + ChatColor.LIGHT_PURPLE + container.getMaxHealthMod(1));
+		sender.sendMessage(ChatColor.YELLOW + "Race Bonus-Health: " + ChatColor.LIGHT_PURPLE + container.getMaxHealthMod(1));
 		sender.sendMessage(ChatColor.YELLOW + "Race name: " + ChatColor.LIGHT_PURPLE + container.getDisplayName());
 		sender.sendMessage(ChatColor.YELLOW + "Race tag: " + ChatColor.LIGHT_PURPLE + container.getTag());
 		sender.sendMessage(ChatColor.YELLOW + "Allowed armor: " + ChatColor.LIGHT_PURPLE + container.getArmorString());
@@ -501,7 +501,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 				.addPopupHover( ChatColor.RED + (race.getArmorString() )) )
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
-		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
+		.append(new ChatMessageObject("HealthBonus").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
 				.addPopupHover(ChatColor.RED + f.format(race.getMaxHealthMod(player.getLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		

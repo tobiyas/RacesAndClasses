@@ -243,7 +243,7 @@ public class HolderInventory extends InventoryView{
 	 * @return
 	 */
 	private String getHealthString(AbstractTraitHolder holder) {
-		return format.format(holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player)));
+		return format.format("+"+holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player)));
 	}
 
 

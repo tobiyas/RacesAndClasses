@@ -289,7 +289,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 		}
 
 		
-		player.sendMessage(ChatColor.YELLOW + "ClassHealth: " 
+		player.sendMessage(ChatColor.YELLOW + "Class HealthBonus: " 
 				+ ChatColor.LIGHT_PURPLE + classContainer.getMaxHealthMod(1));
 		player.sendMessage(ChatColor.YELLOW + "Class: " + ChatColor.LIGHT_PURPLE + classContainer.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW + "ClassTag: " + ChatColor.LIGHT_PURPLE + classContainer.getTag());
@@ -525,7 +525,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 				.addPopupHover( ChatColor.RED + (clazz.getArmorString() )) )
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
-		.append(new ChatMessageObject("Health").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
+		.append(new ChatMessageObject("HealthBonus").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
 				.addPopupHover(ChatColor.RED + f.format(clazz.getMaxHealthMod(player.getLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
