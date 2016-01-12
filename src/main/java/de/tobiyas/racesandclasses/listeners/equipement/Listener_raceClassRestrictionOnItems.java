@@ -28,14 +28,22 @@ public class Listener_raceClassRestrictionOnItems implements Listener {
 	public final static List<String> RACE_RESTRICTION_PRE = ListCreateUtils.multi("needs race: ", "benötigt rasse: ");
 	public final static List<String> LEVEL_RESTRICTION_PRE = ListCreateUtils.multi("needs level: ", "benötigt level: ");
 	
+	/**
+	 * The plugin to use.
+	 */
+	private final RacesAndClasses plugin;
+	
 	
 	public Listener_raceClassRestrictionOnItems() {
-		Bukkit.getPluginManager().registerEvents(this, RacesAndClasses.getPlugin());
+		this.plugin = RacesAndClasses.getPlugin();
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	
 	@EventHandler
 	public void playerInteract(PlayerInteractEvent event){
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking()) return;
+		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		ItemStack item = event.getItem();
 		
@@ -48,6 +56,8 @@ public class Listener_raceClassRestrictionOnItems implements Listener {
 	
 	@EventHandler
 	public void playerEquip(PlayerEquipsArmorEvent event){
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_disableArmorChecking()) return;
+		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		ItemStack item = event.getArmorItem();
 		

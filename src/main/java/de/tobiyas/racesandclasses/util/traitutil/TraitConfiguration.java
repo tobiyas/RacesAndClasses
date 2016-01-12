@@ -158,6 +158,8 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 			}
 		}
 		
+		if(obj instanceof String) returnValue.add(obj.toString());
+		
 		return returnValue;
 	}
 	
