@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -25,15 +25,27 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
-public class Listener_ManaPotion implements Listener {
+public class ManaPotionManager implements Listener {
 	
 	/**
 	 * The Cooldown of the potion (default: 10 seconds)
 	 */
 	private final int MANA_POTION_COOLDOWN = 20 * 10;
 	
+	/**
+	 * the plugin to use.
+	 */
+	private final RacesAndClasses plugin;
 	
+	
+	/**
+	 * the list of names for mana-potions.
+	 */
 	private final List<String> MANA_POTION_NAMES = Arrays.asList("ManaPotion", "ManaTrank");
+	
+	/**
+	 * The material for a mana-potion.
+	 */
 	private final Material potionMat = Material.POTION;
 	
 	/**
@@ -42,9 +54,16 @@ public class Listener_ManaPotion implements Listener {
 	private final Set<UUID> cooldown = new HashSet<UUID>();
 	
 	
-	public Listener_ManaPotion() {
-		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		Bukkit.getPluginManager().registerEvents(this, plugin);
+	public ManaPotionManager(RacesAndClasses plugin) {
+		this.plugin = plugin; 
+	}
+	
+	
+	public void reload(){
+		cooldown.clear();
+		
+		HandlerList.unregisterAll(this);
+		plugin.registerEvents(this);
 	}
 	
 	

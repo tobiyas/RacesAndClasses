@@ -63,6 +63,7 @@ public class EN_Text {
 			+ healed + ": '&aYou have been healed.'\r\n"
 			+ healed_other + ": '&aYou have healed: &d%PLAYER%&a.'\r\n"
 			+ health + ": 'Health'\r\n"
+			+ health_full + ": 'Your health is full.'\r\n"
 			+ held_item_not_air + ": '&aYou may not have an item in your hands.'\r\n"
 			+ holder_selectiongui_header + ": '&aSelect your &d%HOLDER%&a, %PLAYER%'\r\n"
 			+ holder_not_present + ": '&cYou have to be a %HOLDER% for this.'\r\n"

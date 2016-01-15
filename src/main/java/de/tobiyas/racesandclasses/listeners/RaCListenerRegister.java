@@ -16,8 +16,6 @@
 package de.tobiyas.racesandclasses.listeners;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.addins.food.FoodListener;
-import de.tobiyas.racesandclasses.addins.manaflask.Listener_ManaPotion;
 import de.tobiyas.racesandclasses.listeners.classchangelistener.ClassChangeSelectionListener;
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_PlayerEquipItem;
 import de.tobiyas.racesandclasses.listeners.equipement.Listener_raceClassRestrictionOnItems;
@@ -88,10 +86,8 @@ public class RaCListenerRegister {
 		new StunCancelListener();
 		new Listener_WandAndBowEquip();
 		new PlayerLastDamageListener();
-		new Listener_ManaPotion();
 		new Listener_RaceSpawn();
 		new Listener_RaceTeams();
-		new FoodListener();
 		new Listener_Debuff();
 		
 		new Listener_raceClassRestrictionOnItems();

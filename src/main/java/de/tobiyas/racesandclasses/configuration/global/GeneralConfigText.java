@@ -514,7 +514,7 @@ public class GeneralConfigText {
 				
 				+ "# This tells the Plugin which level system to use. \n"
 				+ "# It can use one of the following:.\n"
-				+ "# - RaC: Races and Classes leveling System (currently not usable).\n"
+				+ "# - RaC: Races and Classes leveling System.\n"
 				+ "# - MC: Minecraft Levels.\n"
 				+ "# - SkillAPI: Leveling System from SkillAPI.\n"
 				+ "# - mcMMO: Leveling System from McMMO. also check for the calculation String above.\n"

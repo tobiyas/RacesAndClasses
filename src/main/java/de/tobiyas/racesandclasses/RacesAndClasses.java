@@ -40,9 +40,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.gravitydevelopment.updater.Updater;
-import net.gravitydevelopment.updater.Updater.UpdateType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -50,7 +47,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.avaje.ebean.EbeanServer;
 
-import de.tobiyas.racesandclasses.addins.spawning.RaceSpawnManager;
+import de.tobiyas.racesandclasses.addins.AddinManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.commands.CommandInterface;
 import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_BindTrait;
@@ -120,6 +117,8 @@ import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.metrics.SendMetrics;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 
 
 public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
@@ -210,11 +209,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	protected DebuffManager debuffManager;
 	
 	/**
-	 * The race Spawn Manager
-	 */
-	protected RaceSpawnManager raceSpawnManager;
-	
-	/**
 	 * The Hotkey Manager
 	 */
 	protected HotkeyManager hotkeyManger;
@@ -230,6 +224,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	protected InFightManager inFightManager;
 	
 	/**
+	 * the manager for the Addins.
+	 */
+	protected AddinManager addinManager;
+	
+	/**
 	 * The alternative EBean Impl of the Bukkit Ebean Interface
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
@@ -242,8 +241,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	
 	//Empty Constructor for Bukkit.
-	public RacesAndClasses(){
-	}
+	public RacesAndClasses(){}
 	
 	/**
 	 * ONLY FOR TESTING!!!
@@ -363,10 +361,10 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		if(stunManager == null) stunManager = new StunManager();
 		if(buffManager == null) buffManager = new BuffManager();
 		if(poisonManager == null) poisonManager = new PoisonManager();
-		if(raceSpawnManager == null) raceSpawnManager = new RaceSpawnManager(this);
 		if(hotkeyManger == null) hotkeyManger = new HotkeyManager();
 		if(inFightManager == null) inFightManager = new InFightManager();
 		if(debuffManager == null) debuffManager = new DebuffManager();
+		if(addinManager == null) addinManager = new AddinManager(this);
 		
 		ManagerConstructor.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -435,11 +433,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		//Debuff-Manager
 		debuffManager.init();
 		
-		//race Spawn Manager
-		raceSpawnManager.load();
-		
 		//infight Manager.
 		inFightManager.reload();
+		
+		//Init the Addin-manager.
+		addinManager.reload();
 		
 		//Start the Cooldown Updater.
 		PlayerScoreboardUpdater.start();
@@ -643,7 +641,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		cooldownManager.shutdown();
 		channelManager.saveChannels();
 		tutorialManager.shutDown();
-		raceSpawnManager.save(false);
 		Bukkit.getScheduler().cancelTasks(this);
 		TraitStore.destroyClassLoaders();
 		
@@ -651,6 +648,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		poisonManager.deinit();
 		hotkeyManger.shutdown();
 		debuffManager.shutdown();
+		
+		addinManager.shutdown();
 		
 
 		if(!Consts.disableBDSupport) {
@@ -710,6 +709,12 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		return cooldownManager;
 	}
 
+	/**
+	 * Returns the addin Manager for further addin-calls.
+	 */
+	public AddinManager getAddinManager() {
+		return addinManager;
+	}
 	
 	/**
 	 * Returns the {@link StatisticGatherer}
@@ -796,10 +801,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 	public PoisonManager getPoisonManager() {
 		return poisonManager;
-	}
-
-	public RaceSpawnManager getRaceSpawnManager() {
-		return raceSpawnManager;
 	}
 
 	/**

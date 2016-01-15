@@ -82,7 +82,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 					return true;
 				}
 				
-				plugin.getRaceSpawnManager().setRaceSpawn(race, player.getLocation());
+				plugin.getAddinManager().getRaceSpawnManager().setRaceSpawn(race, player.getLocation());
 				LanguageAPI.sendTranslatedMessage(sender, Keys.race_spawn_created, "race", container.getDisplayName());
 				return true;
 			}
@@ -140,7 +140,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 	 * @param spawn to send to
 	 */
 	private boolean sendPlayerToSpawn(Player player, String spawn){
-		Location loc = plugin.getRaceSpawnManager().getSpawnForRace(spawn);
+		Location loc = plugin.getAddinManager().getRaceSpawnManager().getSpawnForRace(spawn);
 		
 		if(loc == null){
 			LanguageAPI.sendTranslatedMessage(player, Keys.race_spawn_no_spawnpoint, "race", spawn);

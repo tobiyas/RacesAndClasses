@@ -157,6 +157,15 @@
            <scope>system</scope>
            <systemPath>${project.basedir}/libs/Misc/mcMMO.jar</systemPath>
 		</dependency>
+		
+		<!-- McMMO -->
+		<dependency>
+			<groupId>be.maximvdw</groupId>
+    		<artifactId>PlaceholderAPI</artifactId>
+    		<version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${project.basedir}/libs/Misc/MVdWPlaceholderAPI.jar</systemPath>
+		</dependency>
 				
 		<!-- Mockito -->
 		<dependency>

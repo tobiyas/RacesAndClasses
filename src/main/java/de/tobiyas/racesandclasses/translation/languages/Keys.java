@@ -60,6 +60,7 @@ public class Keys {
 	public static final String healed_other = "healed_other";
 	public static final String healed_by = "healed_by";
 	public static final String health = "health";
+	public static final String health_full = "health_full";
 	public static final String held_item_not_air = "held_item_not_air";
 	public static final String holder_not_present = "holder_not_present";
 	public static final String holder_selectiongui_header = "holder_selectiongui_header";

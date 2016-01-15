@@ -31,7 +31,7 @@ public class Listener_RaceSpawn implements Listener {
 		AbstractTraitHolder holder = racPlayer.getRace();
 		if(holder == null) return;
 		
-		Location loc = plugin.getRaceSpawnManager().getSpawnForRace(holder.getDisplayName());
+		Location loc = plugin.getAddinManager().getRaceSpawnManager().getSpawnForRace(holder.getDisplayName());
 		if(loc != null) event.setRespawnLocation(loc);
 	}
 }
