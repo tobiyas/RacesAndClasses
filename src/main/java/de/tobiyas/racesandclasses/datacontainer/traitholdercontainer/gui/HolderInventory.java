@@ -198,28 +198,30 @@ public class HolderInventory extends InventoryView{
 		//Add the Preconditions (if present).
 		lore.addAll(holder.getPreconditions().generateDescription(RaCPlayerManager.get().getPlayer(player)));
 		
-		//Trait stuff below:
-		lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
-		
-		//add trait text as lore
-		for(Trait trait: holder.getVisibleTraits()){
-			lore.add(ChatColor.DARK_AQUA + trait.getDisplayName() + ": " );
-			String traitConfig = trait.getPrettyConfiguration();
-			String[] words = traitConfig.split(" ");
+		//Trait stuff below. Only when not hidden!
+		if(!holder.isHideTraitsInGui()){
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.traits) + ":");
 			
-			String currentLine = ChatColor.YELLOW + " -" + words[0];
-			for(int i = 1; i < words.length; i++){
-				String currentWord = words[i];
+			//add trait text as lore
+			for(Trait trait: holder.getVisibleTraits()){
+				lore.add(ChatColor.DARK_AQUA + trait.getDisplayName() + ": " );
+				String traitConfig = trait.getPrettyConfiguration();
+				String[] words = traitConfig.split(" ");
 				
-				if(currentLine.length() + words.length + 1 > 29){
-					lore.add(currentLine);
-					currentLine = ChatColor.YELLOW + "  " + currentWord;
-				}else{
-					currentLine += " " + currentWord;
+				String currentLine = ChatColor.YELLOW + " -" + words[0];
+				for(int i = 1; i < words.length; i++){
+					String currentWord = words[i];
+					
+					if(currentLine.length() + words.length + 1 > 29){
+						lore.add(currentLine);
+						currentLine = ChatColor.YELLOW + "  " + currentWord;
+					}else{
+						currentLine += " " + currentWord;
+					}
 				}
-			}
-			if(currentLine.length() > 0){
-				lore.add(currentLine);
+				if(currentLine.length() > 0){
+					lore.add(currentLine);
+				}
 			}
 		}
 		
@@ -243,7 +245,8 @@ public class HolderInventory extends InventoryView{
 	 * @return
 	 */
 	private String getHealthString(AbstractTraitHolder holder) {
-		return format.format("+"+holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player)));
+		double max = holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player));
+		return (max >= 0 ? "+":"") + format.format(max);
 	}
 
 

@@ -250,7 +250,7 @@ public class HolderBuildInterface extends BasicSelectionInterface {
 	protected void notifyReopened() {
 		super.notifyReopened();
 		
-		TraitConfiguration configMap = new TraitConfiguration();
+		TraitConfiguration configMap = new TraitConfiguration(null);
 		for(TraitConfigOptionContainer container : currentTraitEditingList){
 			if(!container.isValueSet()){
 				return;

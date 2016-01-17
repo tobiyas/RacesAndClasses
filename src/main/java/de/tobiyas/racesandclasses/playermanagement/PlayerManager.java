@@ -101,7 +101,6 @@ public class PlayerManager{
 		}
 		
 		for(RaCPlayer player : players){
-			if(player == null) continue;
 			if(player == null || !player.isOnline()) continue;
 			
 			PlayerContainer container = PlayerContainer.loadPlayerContainer(player, useDB);

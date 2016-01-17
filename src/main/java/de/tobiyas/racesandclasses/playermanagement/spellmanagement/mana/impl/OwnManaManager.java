@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
@@ -25,7 +22,7 @@ import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
-public class OwnManaManager extends AbstractManaManager implements Observer{
+public class OwnManaManager extends AbstractManaManager {
 	
 	/**
 	 * The current Mana the Player contains.
@@ -69,6 +66,7 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 		
 		String prefered = plugin.getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace();
 		manaDisplay = DisplayGenerator.generateDisplay(racPlayer, DisplayInfos.MANA, prefered);
+		System.out.println("Creating Mana-Display: " + manaDisplay.getType().name());
 	}
 	
 	
@@ -123,8 +121,6 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 	}
 
 	
-	
-
 	@Override
 	public double getMaxMana() {
 		double max = 0;
@@ -142,16 +138,6 @@ public class OwnManaManager extends AbstractManaManager implements Observer{
 		return currentMana;
 	}
 
-
-
-	@Override
-	public void update(Observable o, Object arg) {
-		String changedValue = (String) arg;
-		
-		if(changedValue.equalsIgnoreCase("displayType")){
-			rescanDisplay();
-		}
-	}
 
 	@Override
 	protected void applyMaxManaBonus(double bonus) {}

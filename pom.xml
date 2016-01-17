@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 Tobias Welther
+  Copyright 2016 Tobias Welther
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -158,13 +158,20 @@
            <systemPath>${project.basedir}/libs/Misc/mcMMO.jar</systemPath>
 		</dependency>
 		
-		<!-- McMMO -->
+		<!-- Placeholder APIs -->
 		<dependency>
 			<groupId>be.maximvdw</groupId>
     		<artifactId>PlaceholderAPI</artifactId>
     		<version>1.0</version>
            <scope>system</scope>
            <systemPath>${project.basedir}/libs/Misc/MVdWPlaceholderAPI.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>me.clip.placeholderapi</groupId>
+    		<artifactId>PlaceholderAPIPlugin</artifactId>
+    		<version>1.0</version>
+           <scope>system</scope>
+           <systemPath>${project.basedir}/libs/Misc/PlaceholderAPI.jar</systemPath>
 		</dependency>
 				
 		<!-- Mockito -->

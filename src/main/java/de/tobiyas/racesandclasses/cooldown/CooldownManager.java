@@ -183,4 +183,12 @@ public class CooldownManager {
 	}
 
 
+	/**
+	 * Clears all Cooldowns.
+	 */
+	public void clearAllCooldowns() {
+		cooldownList.clear();
+	}
+
+
 }

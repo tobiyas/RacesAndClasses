@@ -525,7 +525,7 @@ public class GeneralConfigText {
 				+ "# This tells the Plugin how much Custom EXP to give the player on an Entity kill. \n"
 				+ "# It is a list of Strings, which means they have to be seperated by a comma or be written below each other.\n"
 				+ "# Each element in this list has two parts: EntityType=ExpAmount.\n"
-				+ "# EntityType can be found here: http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html\n"
+				+ "# EntityType can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n"
 				+ "# The amount of EXP is an Integer value (0,1,2,3,4, ...).\n"
 				+ "# List of String: [EntityType=AmountEXP,...]\n"
 				+ "# default: [ZOMBIE=0,SKELETON=0,CREEPER=0,BLAZE=0,WITCH=0] \n"

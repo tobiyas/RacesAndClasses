@@ -15,4 +15,10 @@ public class NoneDisplayBar implements Display {
 	@Override
 	public void unregister() {}
 
+	
+	@Override
+	public DisplayType getType() {
+		return DisplayType.None;
+	}
+	
 }

@@ -36,7 +36,7 @@ public class TraitConfigParser {
 
 	@SuppressWarnings("deprecation")
 	public static void configureTraitFromYAML(YamlConfiguration config, String traitPath, Trait trait) throws TraitConfigurationFailedException{
-		TraitConfiguration configurationMap = new TraitConfiguration();
+		TraitConfiguration configurationMap = new TraitConfiguration(config);
 		
 		String traitHolderName = "UNKNOWN";
 		if(!trait.getTraitHolders().isEmpty()) traitHolderName = trait.getTraitHolders().iterator().next().getDisplayName();

@@ -35,6 +35,11 @@ public interface Display {
 	public void unregister();
 	
 	/**
+	 * Gets the Type of the Display.
+	 */
+	public DisplayType getType();
+	
+	/**
 	 * This shows the different Types of Displays
 	 * 
 	 * @author Tobiyas

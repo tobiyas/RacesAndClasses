@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffectType;
 
 import de.tobiyas.racesandclasses.util.friend.TargetType;
@@ -15,6 +16,24 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 	private static final long serialVersionUID = 1837146794134038024L;
 	
 	
+	/**
+	 * The config this is read from.
+	 */
+	private final YamlConfiguration config;
+	
+	
+	public TraitConfiguration(YamlConfiguration config) {
+		this.config = config;
+	}
+	
+	
+	/**
+	 * Returns the Config this is load from.
+	 * @return the config.
+	 */
+	public YamlConfiguration getConfig() {
+		return config;
+	}
 	
 	/**
 	 * Retrieves the Element wanted as String.

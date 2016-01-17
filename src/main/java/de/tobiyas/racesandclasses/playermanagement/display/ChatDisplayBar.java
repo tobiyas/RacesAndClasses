@@ -61,5 +61,9 @@ public class ChatDisplayBar extends AbstractDisplay{
 	}
 	
 	
+	@Override
+	public DisplayType getType() {
+		return DisplayType.Chat;
+	}
 	
 }

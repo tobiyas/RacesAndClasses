@@ -34,5 +34,18 @@ public class ActionBarDisplay extends AbstractDisplay {
 		
 		if(player.isOnline()) messager.setMessage(player.getPlayer(), toShow);
 	}
+	
+	
+	@Override
+	public void unregister() {
+		super.unregister();
+		messager.removeMessage(player);
+	}
+	
+	
+	@Override
+	public DisplayType getType() {
+		return DisplayType.Actionbar;
+	}
 
 }

@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.playermanagement.leveling.values;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,6 +15,20 @@ public class LevelValueModifyReader {
 	
 	public LevelValueModifyReader(YAMLConfigExtended config, String start) {
 		this.config = config;
+		
+		String[] split = start.split(Pattern.quote("."));
+		if(split.length > 0){
+			List<String> list = new LinkedList<String>(Arrays.asList(split));
+			String last = list.remove(list.size()-1);
+			
+			String parent = String.join(".", list);
+			for(String val : config.getChildren(parent)){
+				if(val.equalsIgnoreCase(last)) {
+					start = parent + "." + last;
+				}
+			}
+		}
+		
 		this.start = start;
 	}
 	
@@ -25,24 +40,42 @@ public class LevelValueModifyReader {
 	 * @return the parsed Modifier.
 	 */
 	public LevelModifier parse(double defaultValue){
+		if(!config.contains(start)) return new LevelModifier();
+		
 		List<LevelModContainer> list = new LinkedList<LevelModContainer>();
-		list.add(new LevelModContainer(Integer.MIN_VALUE, Integer.MAX_VALUE, 0));
-		
-		if(!config.contains(start)) return new LevelModifier(list);
-		
-		if(config.isInt(start)){
-			list.add(new LevelModContainer(config.getInt(start)));
-			return new LevelModifier(list);
+		if(!config.isConfigurationSection(start)){
+			return new LevelModifier(new LevelModContainer(parseToDouble(start, defaultValue)));
 		}
 		
+		
 		for(String key : config.getChildren(start)){
-			double value = config.getDouble(start+"."+key, defaultValue);
+			double value = parseToDouble(start+"."+key, defaultValue);
 			LevelModContainer container = LevelModContainer.parse(key, value);
 			
 			if(container != null) list.add(container);
 		}
 		
 		return new LevelModifier(list);
+	}
+	
+	/**
+	 * Parses the Value at that point.
+	 * @param path to use
+	 * @param defaultValue to use.
+	 * @return the parsed value.
+	 */
+	private double parseToDouble(String path, double defaultValue){
+		if(!config.contains(path)) return defaultValue;
+		
+		if(config.isDouble(path)) return config.getDouble(path,defaultValue);
+		if(config.isInt(path)) return config.getInt(path,(int)defaultValue);
+		if(config.isString(path)) {
+			try{
+				return Double.parseDouble(config.getString(path,String.valueOf(defaultValue)));
+			}catch (Exception e) {}
+		}
+		
+		return defaultValue;
 	}
 	
 	
@@ -121,11 +154,25 @@ public class LevelValueModifyReader {
 	
 	public static class LevelModifier{
 		
+		/**
+		 * the default container +-0.
+		 */
+		private static final LevelModContainer defaultContainer = new LevelModContainer(0);
 		
 		private final List<LevelModContainer> list;		
 		
 		public LevelModifier(List<LevelModContainer> list) {
-			this.list = list;
+			this.list = list == null ? new LinkedList<LevelModContainer>() : list;
+			if(list.isEmpty()) list.add(defaultContainer);
+		}
+
+		public LevelModifier(LevelModContainer... containers) {
+			this(Arrays.asList(containers));
+		}
+		
+		public LevelModifier() {
+			this.list = new LinkedList<LevelModContainer>();
+			this.list.add(defaultContainer);
 		}
 
 
@@ -138,7 +185,7 @@ public class LevelValueModifyReader {
 		 * @return the best value.
 		 */
 		public double getForLevel(int level){
-			double highest = 0;
+			double highest = Integer.MIN_VALUE;
 			
 			for(LevelModContainer container : list){
 				if(container.getEndLevel() > level

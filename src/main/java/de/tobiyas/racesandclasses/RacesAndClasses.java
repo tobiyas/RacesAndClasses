@@ -117,6 +117,7 @@ import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.metrics.SendMetrics;
+import de.tobiyas.util.vollotile.helper.PermanentActionBarMessages;
 import net.gravitydevelopment.updater.Updater;
 import net.gravitydevelopment.updater.Updater.UpdateType;
 
@@ -634,6 +635,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	private void shutDownSequenz(boolean useGC){
 		PlayerScoreboardUpdater.stop();
+		PermanentActionBarMessages.kill();
 		
 		playerManager.savePlayerContainer();
 		getDebugLogger().shutDown();

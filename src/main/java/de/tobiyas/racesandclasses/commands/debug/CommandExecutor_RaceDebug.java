@@ -70,6 +70,12 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 				return true;
 			}
 			
+			if(commandString.equalsIgnoreCase("clearcd")){
+				sender.sendMessage(ChatColor.GREEN + "CDs cleared");
+				plugin.getCooldownManager().clearAllCooldowns();
+				return true;
+			}
+			
 			if(commandString.equalsIgnoreCase("clearolddata")){
 				if(YAMLOldDataRemover.isRunning()){
 					sender.sendMessage(ChatColor.RED + "Already Running.");

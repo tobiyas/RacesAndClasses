@@ -22,8 +22,7 @@ public class CooldownList extends LinkedList<CooldownContainer>{
 	private static final long serialVersionUID = 4706011594354900363L;
 
 
-	public CooldownList() {
-	}
+	public CooldownList() {}
 
 	
 	/**
