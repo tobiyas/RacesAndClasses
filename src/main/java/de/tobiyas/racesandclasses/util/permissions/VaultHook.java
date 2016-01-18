@@ -1,26 +1,9 @@
-/*******************************************************************************
- * Copyright 2014 Tobias Welther
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 package de.tobiyas.racesandclasses.util.permissions;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -32,10 +15,9 @@ import org.bukkit.plugin.ServicesManager;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.permissions.PermissionChecker.PermState;
+import net.milkbowl.vault.permission.Permission;
 
 public class VaultHook extends Permission implements Listener {
-
-	private static VaultHook hook;
 	
 	/**
 	 * The Hooked Permission.
@@ -48,8 +30,7 @@ public class VaultHook extends Permission implements Listener {
 	private final RacesAndClasses plugin;
 	
 	
-	private VaultHook(RacesAndClasses plugin) {
-		hook = this;
+	protected VaultHook(RacesAndClasses plugin) {
 		this.plugin = plugin;
 		
 		ServicesManager sm = Bukkit.getServicesManager();
@@ -85,7 +66,7 @@ public class VaultHook extends Permission implements Listener {
 		Iterator<RegisteredServiceProvider<Permission>> permsIt = perms.iterator();
 		while(permsIt.hasNext()){
 			RegisteredServiceProvider<Permission> toObserve = permsIt.next();
-			if(toObserve.getProvider() != VaultHook.this){
+			if(toObserve.getProvider() != this){
 				toSet = toObserve.getProvider();
 				break;
 			}
@@ -114,7 +95,7 @@ public class VaultHook extends Permission implements Listener {
 		ServicesManager sm = Bukkit.getServicesManager();
 		sm.unregister(this);
 		
-		sm.register(Permission.class, hook, Bukkit.getPluginManager().getPlugin("Vault"), ServicePriority.Highest);
+		sm.register(Permission.class, this, Bukkit.getPluginManager().getPlugin("Vault"), ServicePriority.Highest);
 	}
 	
 	
@@ -247,46 +228,6 @@ public class VaultHook extends Permission implements Listener {
 	public void unregisterPermissionChecker(PermissionChecker checker){
 		if(permChecker.contains(checker)){
 			permChecker.remove(checker);
-		}
-	}
-	
-	/**
-	 * Returns the Vault hook
-	 * <br>This is a lazy init.
-	 * 
-	 * @return the Vault Hook
-	 */
-	public static VaultHook getHook(){
-		if(hook == null){
-			init(RacesAndClasses.getPlugin());
-		}
-		
-		return hook;
-	}
-	
-	/**
-	 * Shuts down the Vault hook
-	 */
-	public static void shutdown(){
-		if(hook != null){
-			hook.shutDown();
-		}
-	}
-
-
-
-	/**
-	 * Inits Vault if it is present.
-	 * 
-	 * @param racesAndClasses to register to.
-	 * @return
-	 */
-	public static void init(RacesAndClasses racesAndClasses) {
-		//if vault is not present, we can't use it.
-		if(Bukkit.getPluginManager().getPlugin("Vault") == null) return;
-		
-		if(hook == null){
-			hook = new VaultHook(racesAndClasses);
 		}
 	}
 }

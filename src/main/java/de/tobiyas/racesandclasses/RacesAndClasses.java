@@ -112,7 +112,7 @@ import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
-import de.tobiyas.racesandclasses.util.permissions.VaultHook;
+import de.tobiyas.racesandclasses.util.permissions.VaultHookProvider;
 import de.tobiyas.racesandclasses.util.traitutil.DefaultTraitCopy;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
@@ -275,7 +275,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			getDebugLogger().enable();
 			getDebugLogger().setAlsoToPlugin(true);
 			
-			VaultHook.init(this);
+			VaultHookProvider.init(this);
 			
 			description = getDescription();
 			prefix = "[" + description.getName() + "] ";
@@ -311,7 +311,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		registerTasks();
 		
 		//Init vault Hook if vault is present.
-		if(isVaultPresent()) VaultHook.init(this);
+		if(isVaultPresent()) VaultHookProvider.init(this);
 	}
 	
 	
@@ -518,7 +518,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	public void onDisable(){
 		if(!errored){
 			shutDownSequenz(false);
-			VaultHook.shutdown();
+			VaultHookProvider.shutdown();
 		}
 
 		BasicSelectionInterface.closeAllInvs();
