@@ -37,9 +37,6 @@ public class CommandExecutor_Channel extends AbstractCommand {
 	
 	public CommandExecutor_Channel(){
 		super("channel");
-		
-		// TODO plugin.getTutorialManager().registerObserver(this);
-		// TODO this.setChanged();
 	}
 	
 	@Override
@@ -338,7 +335,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 	private void listChannels(CommandSender sender){
 		sender.sendMessage(ChatColor.YELLOW + "======" + ChatColor.RED + "Channel-List:" + ChatColor.YELLOW + "=====");
 		sender.sendMessage(ChatColor.YELLOW + "HINT: Format is: " + ChatColor.BLUE + "ChannelName: " + ChatColor.AQUA + "ChannelLevel");
-		for(ChannelLevel level : ChannelLevel.values())
+		for(ChannelLevel level : ChannelLevel.values()){
 			for(String channel : plugin.getChannelManager().listAllPublicChannels()){
 				if(plugin.getChannelManager().getChannelLevel(channel) == level && sender instanceof Player){
 					String addition = "";
@@ -351,11 +348,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 					sender.sendMessage(ChatColor.BLUE + channel + ": " + ChatColor.AQUA + level.name() + addition);
 				}
 			}
-		
-		// TODO if(sender instanceof Player) this.notifyObservers(
-		// TODO		new TutorialStepContainer(RaCPlayerManager.get().getPlayer((Player) sender), TutorialState.channels, 1)
-		// TODO		);
-		// TODO this.setChanged();
+		}
 	}
 	
 	private void joinChannel(RaCPlayer player, String channelName, String password){
@@ -437,11 +430,6 @@ public class CommandExecutor_Channel extends AbstractCommand {
 		
 		player.setCurrentChatChannel(changeTo);
 		player.sendMessage(ChatColor.GREEN + "You now write in the channel: " + ChatColor.AQUA + changeTo);
-		
-		if(changeTo.equalsIgnoreCase("tutorial")){
-			// TODO this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 4));
-			// TODO this.setChanged();
-		}
 	}
 	
 	private ChannelLevel getChannelLevel(String channelType){

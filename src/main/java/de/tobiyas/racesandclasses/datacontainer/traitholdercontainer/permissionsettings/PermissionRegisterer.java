@@ -24,6 +24,7 @@ import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.data.Group;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -243,17 +244,19 @@ public class PermissionRegisterer implements Runnable{
 	 * removes an Player from all groups with the passed prefix.
 	 * This only works if Vault is active.
 	 */
-	public static void removePlayer(RaCPlayer player, String prefix) {
+	public static void removePlayer(RaCPlayer racPlayer, String prefix) {
 		if(!isVaultActive()) return;
 		
+		Player player = racPlayer.getPlayer();
+		
 		Permission vaultPermissions = checkVault();
-		if(vaultPermissions != null){			
-			String[] groupNames = vaultPermissions.getPlayerGroups((String)null, player.getName());
+		if(vaultPermissions != null){
+			String[] groupNames = vaultPermissions.getPlayerGroups(player);
 			if(groupNames == null) return; //nothing to do
 			
 			for(String groupName : groupNames){
 				if(groupName.startsWith(permissionSpecificPrefix + prefix + "-")){
-					vaultPermissions.playerRemoveGroup((String)null,  player.getName(), permissionSpecificPrefix + groupName);						
+					vaultPermissions.playerRemoveGroup(player, permissionSpecificPrefix + groupName);						
 				}
 			}
 		}

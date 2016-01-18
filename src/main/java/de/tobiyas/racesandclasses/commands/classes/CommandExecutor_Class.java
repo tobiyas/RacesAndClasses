@@ -70,9 +70,6 @@ public class CommandExecutor_Class extends AbstractCommand {
 	 */
 	public CommandExecutor_Class(){
 		super("class");
-		
-		// TODO plugin.getTutorialManager().registerObserver(this);
-		// TODO this.setChanged();
 	}
 
 	@Override
@@ -120,12 +117,6 @@ public class CommandExecutor_Class extends AbstractCommand {
 		//listing of all classes
 		if(potentialCommand.equalsIgnoreCase("list")){
 			list(sender);
-			
-			if(sender instanceof Player){
-				// TODO RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
-				// TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoClass));
-				// TODO this.setChanged();
-			}
 			return true;
 		}
 		
@@ -175,10 +166,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 			}
 			
 			String potentialClass = args[1];
-			if(select(player, potentialClass)){
-				// TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.selectClass));
-				// TODO this.setChanged();
-			}
+			if(select(player, potentialClass)){}
 			
 			return true;
 		}

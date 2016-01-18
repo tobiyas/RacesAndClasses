@@ -114,7 +114,6 @@ public class HelpPage {
 		returnList.add(ChatColor.GREEN + "/racehelp page <number> " + ChatColor.YELLOW + "displays the page with the number.");
 		returnList.add(ChatColor.GREEN + "/racehelp trait <traitname> " + ChatColor.YELLOW + "displays the help to a trait.");
 		returnList.add(ChatColor.GREEN + "/playerinfo [player-name] " + ChatColor.YELLOW + "displays infos to a player.");
-		returnList.add(ChatColor.GREEN + "/racestutorial <start/stop/next>" + ChatColor.YELLOW + "gives you a step by step tutorial of the Plugin.");
 	
 		return returnList;
 	}

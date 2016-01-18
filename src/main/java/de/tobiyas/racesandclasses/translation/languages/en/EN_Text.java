@@ -184,11 +184,6 @@ public class EN_Text {
 			+ time_in_seconds + ": 'time in seconds'\r\n"
 			+ too_far_away + ": '&cTarget too far away.'\r\n"
 			+ traits + ": 'traits'\r\n"
-			+ tutorial_already_running + ": '&cYou already have a Tutorial Running.'\r\n"
-			+ tutorial_error + ": '&cCould not execute this command at your current Step.'\r\n"
-			+ tutorial_no_set_at_this_state + ": '&cCan not set state at this moment.'\r\n"
-			+ tutorial_not_running + ": '&cYou have no Tutorial running.'\r\n"
-			+ tutorial_stopped + ": '&cTutorial Stopped. To restart it, use &b/racestutorial start'\r\n"
 			
 			//trait specific
 			+ trait_backstab_success + ": '&a%NAME% backstabed.'\r\n"

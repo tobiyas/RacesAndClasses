@@ -17,6 +17,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.util.permissions.PermissionChecker.PermState;
 import net.milkbowl.vault.permission.Permission;
 
+@SuppressWarnings("deprecation")
 public class VaultHook extends Permission implements Listener {
 	
 	/**
@@ -112,9 +113,9 @@ public class VaultHook extends Permission implements Listener {
 	}
 
 	@Override
-	public String[] getPlayerGroups(String arg0, String arg1) {
+	public String[] getPlayerGroups(String world, String playerName) {
 		if(hooked == null) return new String[]{};
-		return hooked.getPlayerGroups(arg0, arg1);
+		return hooked.getPlayerGroups(world, playerName);
 	}
 
 	@Override

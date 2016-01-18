@@ -74,9 +74,6 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 
 	public CommandExecutor_Race(){
 		super("race");
-		
-		// TODO plugin.getTutorialManager().registerObserver(this);
-		// TODO this.setChanged();
 	}
 
 	@Override
@@ -209,11 +206,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 		if(raceCommand.equalsIgnoreCase("list")){
 			raceList(sender);
 			
-			if(sender instanceof Player){
-				// RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player)sender);
-				//TODO this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.infoRace));
-				//TODO this.setChanged();
-			}
+			if(sender instanceof Player){}
 			return true;
 		}
 		

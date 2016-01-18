@@ -97,12 +97,11 @@ public class ChannelManager {
 	}
 	
 	/**
-	 * Creates all channels given by default (races / local / global / tutorials)
+	 * Creates all channels given by default (races / local / global)
 	 */
 	private void createSTDChannels(){
 		registerChannel(ChannelLevel.GlobalChannel, "Global");
 		registerChannel(ChannelLevel.LocalChannel, "Local");
-		registerChannel(ChannelLevel.GlobalChannel, "Tutorial");
 		
 		for(World world : Bukkit.getWorlds()){
 			registerChannel(ChannelLevel.WorldChannel, world.getName());

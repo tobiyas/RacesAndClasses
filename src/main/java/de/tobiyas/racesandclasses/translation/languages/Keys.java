@@ -181,11 +181,6 @@ public class Keys {
 	public static final String time_in_seconds = "time_in_seconds";
 	public static final String traits = "traits";
 	public static final String too_far_away = "too_far_away";
-	public static final String tutorial_error = "tutorial_error";
-	public static final String tutorial_already_running = "tutorial_already_running";
-	public static final String tutorial_no_set_at_this_state = "tutorial_no_set_at_this_state";
-	public static final String tutorial_not_running = "tutorial_not_running";
-	public static final String tutorial_stopped = "tutorial_stopped";
 
 	//traits
 	public static final String trait_backstab_success = "trait_backstab_success";

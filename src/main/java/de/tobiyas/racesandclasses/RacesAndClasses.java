@@ -32,7 +32,6 @@ import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.Pla
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.RaceManager;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitCopy;
 import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TutorialManager;
 
 import java.io.File;
 import java.util.Iterator;
@@ -363,9 +362,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		currentTime = System.currentTimeMillis();
 		
 		//init of Managers
-		TutorialManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
-		currentTime = System.currentTimeMillis();
-		
 		//Cooldown Manager
 		cooldownManager.init();
 		

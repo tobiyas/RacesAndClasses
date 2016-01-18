@@ -20,7 +20,6 @@ public enum StartupStatisticCategory {
 	TraitCopy,
 	
 	ManagerConstructor,
-	TutorialManager,
 	CooldownManager,
 	
 	TraitManager,

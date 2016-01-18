@@ -26,7 +26,6 @@ public class Consts {
 	//Paths
 	public static final String channelConfigPathYML = racesPath + "channels" + File.separator;
 	public static final String traitConfigDir = RacesAndClasses.getPlugin().getDataFolder() + File.separator + "TraitConfig" + File.separator;
-	public static final String tutorialPath = RacesAndClasses.getPlugin().getDataFolder() + File.separator + "Tutorials" + File.separator;
 	public static String playerDataPath = racesPath + "PlayerData" + File.separator; //Not final because of testing!
 	
 	
@@ -35,7 +34,6 @@ public class Consts {
 	public static final String classesYML = racesPath +"classes.yml";
 	public static final String channelsYML = channelConfigPathYML + "channels.yml";
 	public static final String channelConfigYML = channelConfigPathYML + "config.yml";
-	public static final String tutorialYML = tutorialPath + "states.yml";
 	
 	//Health
 	public static final int displayBarLength = 20;
@@ -57,6 +55,8 @@ public class Consts {
 	 * V1.1.3 : 1.9
 	 * v1.1.4 : 1.10
 	 * v1.1.5 : 1.11
+	 * v1.1.7 : 1.12
+	 * v1.1.8 : 1.13
 	 */
 	public static final String configVersion = "1.13";
 	
