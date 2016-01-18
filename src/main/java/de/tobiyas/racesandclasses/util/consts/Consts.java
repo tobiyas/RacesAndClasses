@@ -43,8 +43,8 @@ public class Consts {
 	public static final boolean disableBDSupport = true;
 	
 	//Version
-	public static final String currentDevStage = "R T";
-	public static final String detailedVersionString = "1.1.8";
+	public static final String currentDevStage = "R S";
+	public static final String detailedVersionString = "1.1.9";
 	
 	/**
 	 * V1.0.3 RC 2: 1.3
@@ -57,8 +57,9 @@ public class Consts {
 	 * v1.1.5 : 1.11
 	 * v1.1.7 : 1.12
 	 * v1.1.8 : 1.13
+	 * v1.1.9 : 1.14
 	 */
-	public static final String configVersion = "1.13";
+	public static final String configVersion = "1.14";
 	
 	
 	//Races
