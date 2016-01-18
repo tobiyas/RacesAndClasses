@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -40,7 +39,7 @@ import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.file.FileUtils;
 
-public abstract class AbstractHolderManager extends Observable{
+public abstract class AbstractHolderManager {
 
 	/**
 	 * The Map of Members Member -> Container.

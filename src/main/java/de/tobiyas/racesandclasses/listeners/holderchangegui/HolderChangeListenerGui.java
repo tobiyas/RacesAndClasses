@@ -46,7 +46,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 	protected static final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
 	/**
-	 * The holders manager cotroling the holders
+	 * The holders manager controlling the holders
 	 */
 	protected final AbstractHolderManager manager;
 	
@@ -152,7 +152,6 @@ public abstract class HolderChangeListenerGui implements Listener {
 		if(holderInv.getHolderManager() != manager) return;
 		
 		//now we are sure to be in an HolderGUI.
-		
 		Player player = (Player) event.getView().getPlayer();
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		
@@ -180,8 +179,7 @@ public abstract class HolderChangeListenerGui implements Listener {
 		AbstractTraitHolder holder = manager.getHolderOfPlayer(racPlayer);
 		HolderPreSelectEvent selectEvent = null;
 		
-		AbstractTraitHolder newHolder= getHolder(clickedItem);
-		
+		AbstractTraitHolder newHolder = getHolder(clickedItem);
 		boolean hasNoHolder = holder == manager.getDefaultHolder();
 		if(hasNoHolder){
 			selectEvent = generateHolderSelectEvent(racPlayer, newHolder);

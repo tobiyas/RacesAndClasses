@@ -94,14 +94,12 @@ public class RaceReminder extends DebugBukkitRunnable {
 		if(!player.isOnline()) return;
 		if(!hasAnyRacePermission(player)) return;
 		
+		boolean useGui = plugin.getConfigManager().getGeneralConfig().isConfig_useRaceGUIToSelect();
+		
 		if(player != null){
 			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: You have not selected a race.");
-			if(plugin.getConfigManager().getGeneralConfig().isConfig_tutorials_enable()){
-				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: If you want to use the Tutorial, use " + ChatColor.LIGHT_PURPLE + "/racestutorial start");
-			}else{
-				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select <racename> " + ChatColor.YELLOW + "to select a race.");
-				player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
-			}
+			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: Use " + ChatColor.RED + "/race select " + (useGui?"":"<racename>") + " " + ChatColor.YELLOW + "to select a race.");
+			player.sendMessage(ChatColor.YELLOW + "[PRIVATE-INFO]: To see all races use: " + ChatColor.LIGHT_PURPLE + "/race list");
 		}
 	}
 

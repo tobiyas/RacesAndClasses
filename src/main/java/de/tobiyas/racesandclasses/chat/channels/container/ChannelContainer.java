@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,14 +35,12 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
-import de.tobiyas.racesandclasses.tutorial.TutorialStepContainer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
-import de.tobiyas.racesandclasses.util.tutorial.TutorialState;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.player.PlayerUtils;
 
-public class ChannelContainer extends Observable{
+public class ChannelContainer {
 
 	private final RacesAndClasses plugin;
 	
@@ -80,10 +77,6 @@ public class ChannelContainer extends Observable{
 		rescanPartitions(null);
 		
 		ChannelTicker.registerChannel(this);
-		if("Tutorial".equalsIgnoreCase(channelName)){
-			registerTutorial();
-		}
-		
 		if(this.channelLevel == ChannelLevel.RaceChannel){
 			boolean raceExists = plugin.getRaceManager().getHolderByName(this.channelName) != null;
 			if(!raceExists){
@@ -142,14 +135,6 @@ public class ChannelContainer extends Observable{
 		config.save();
 		
 		ChannelTicker.registerChannel(this);
-		if(channelName.equalsIgnoreCase("Tutorial")){
-			registerTutorial();
-		}
-	}
-	
-	private void registerTutorial(){
-		plugin.getTutorialManager().registerObserver(this);
-		this.setChanged();
 	}
 	
 	private void adaptFormatingToLevel(){
@@ -311,9 +296,6 @@ public class ChannelContainer extends Observable{
 				if(!joinMessage.isEmpty()) sendMessageInChannel(player.getPlayer(), "", joinMessage);
 			}
 		}
-		
-		this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 2));
-		this.setChanged();
 	}
 	
 	public void removePlayerFromChannel(RaCPlayer player, boolean notify){
@@ -343,9 +325,6 @@ public class ChannelContainer extends Observable{
 				}
 			}
 		}
-		
-		this.notifyObservers(new TutorialStepContainer(player, TutorialState.channels, 6));
-		this.setChanged();
 	}
 	
 	public ArrayList<RaCPlayer> getAllParticipants(){
@@ -367,11 +346,6 @@ public class ChannelContainer extends Observable{
 				sender.sendMessage(ChatColor.RED + "You are muted in this channel for: " + ChatColor.LIGHT_PURPLE + time);
 				return;
 			}
-		}
-		
-		if(channelName.equalsIgnoreCase("Tutorial") && sender instanceof Player){
-			this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.channels, 5));
-			this.setChanged();
 		}
 		
 		Set<Player> players = new HashSet<Player>();
@@ -528,9 +502,6 @@ public class ChannelContainer extends Observable{
 		}else{
 			sender.sendMessage(ChatColor.RED + "This channel has currently no Members.");
 		}
-		
-		if(player != null) this.notifyObservers(new TutorialStepContainer(racPlayer, TutorialState.channels, 3));
-		this.setChanged();
 	}
 
 	public ChannelLevel getChannelLevel() {

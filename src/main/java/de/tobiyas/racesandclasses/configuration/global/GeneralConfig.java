@@ -76,7 +76,6 @@ import de.tobiyas.util.formating.Pair;
 	
 	private boolean config_enable_healthbar_in_chat;
 	
-	private boolean config_tutorials_enable;
 	private boolean config_disableHealthMods;
 	
 	private boolean config_enableRaceTeams;
@@ -263,8 +262,6 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(classes_cancleGUIExitWhenNoClassPresent_enable, true);
 		config.addDefault(classes_takeClassWhenNoClass, "");
 		
-		config.addDefault(tutorials_enable, true);
-		
 		config.addDefault(language_used, "en");
 		config.addDefault(gui_level_useMCLevelBar, false);
 		config.addDefault(magic_useFoodManaBar, false);
@@ -352,8 +349,6 @@ import de.tobiyas.util.formating.Pair;
 		config_adaptListName = config.getBoolean(races_display_adaptListName, true);
 		
 		config_enable_expDropBonus = config.getBoolean(races_drops_enable, true);
-		
-		config_tutorials_enable = config.getBoolean(tutorials_enable, true);
 		
 		config_usedLanguage = config.getString(language_used, "en");
 		
@@ -584,10 +579,6 @@ import de.tobiyas.util.formating.Pair;
 
 	public boolean isConfig_enable_healthbar_in_chat() {
 		return config_enable_healthbar_in_chat;
-	}
-
-	public boolean isConfig_tutorials_enable() {
-		return config_tutorials_enable;
 	}
 
 	public boolean isConfig_usePermissionsForRaces() {

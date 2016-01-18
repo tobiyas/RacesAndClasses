@@ -118,6 +118,7 @@ public class ClassChangeSelectionListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void checkPlayerHasUplinkOnChange(PreClassSelectEvent event){
 		if(!event.isCheckCooldown()) return;
+		if(event.getClassToSelect() == plugin.getClassManager().getDefaultHolder()) return;
 		
 		String playerName = event.getPlayer().getName();
 		String commandName = "classchange";

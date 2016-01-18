@@ -81,7 +81,6 @@ import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.racespawn.CommandExecutor_RaceSpawn;
 import de.tobiyas.racesandclasses.commands.reflect.CommandMap;
 import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
-import de.tobiyas.racesandclasses.commands.tutorial.CommandExecutor_RacesTutorial;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
@@ -108,7 +107,6 @@ import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
-import de.tobiyas.racesandclasses.tutorial.TutorialManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersion;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.BukkitVersionBuilder;
 import de.tobiyas.racesandclasses.util.consts.Consts;
@@ -183,11 +181,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 * The Channel manager used to manage channel activity
 	 */
 	protected ChannelManager channelManager;
-	
-	/**
-	 * The Tutorial Manager to start / step the tutorial on.
-	 */
-	protected TutorialManager tutorialManager;
 	
 	/**
 	 * The StunManager of the plugin
@@ -352,7 +345,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		//Create all Managers //TODO check if needs reinit.
 		TraitEventManager traitEventManager = new TraitEventManager();
 		
-		if(tutorialManager == null) tutorialManager = new TutorialManager();
 		if(raceManager == null) raceManager = new RaceManager();
 		if(classManager == null) classManager = new ClassManager();
 		if(playerManager == null) playerManager = new PlayerManager();
@@ -371,12 +363,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		currentTime = System.currentTimeMillis();
 		
 		//init of Managers
-		//Tutorials
-		tutorialManager.reload();
-		if(!configManager.getGeneralConfig().isConfig_tutorials_enable()){
-			tutorialManager.disable();
-		}
-		
 		TutorialManager.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		
@@ -465,7 +451,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_BroadCast());
 		commands.add(new CommandExecutor_LocalChat());
 		commands.add(new CommandExecutor_PlayerInfo());
-		commands.add(new CommandExecutor_RacesTutorial());
 		commands.add(new CommandExecutor_PermissionCheck());
 		
 		commands.add(new CommandExecutor_RacesReload());
@@ -642,7 +627,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		plugin.reloadConfig();
 		cooldownManager.shutdown();
 		channelManager.saveChannels();
-		tutorialManager.shutDown();
 		Bukkit.getScheduler().cancelTasks(this);
 		TraitStore.destroyClassLoaders();
 		
@@ -758,14 +742,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		return playerManager;
 	}
 
-
-	/**
-	 * @return the tutorialManager
-	 */
-	public TutorialManager getTutorialManager() {
-		return tutorialManager;
-	}
-	
 	 
 	@Override
 	public EbeanServer getDatabase(){

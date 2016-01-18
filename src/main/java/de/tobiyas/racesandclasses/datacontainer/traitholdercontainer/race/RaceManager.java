@@ -48,9 +48,6 @@ public class RaceManager extends AbstractHolderManager {
 		super.init();
 
 		checkForPossiblyWrongInitialized();
-
-		plugin.getTutorialManager().registerObserver(this);
-		this.setChanged();
 	}
 
 

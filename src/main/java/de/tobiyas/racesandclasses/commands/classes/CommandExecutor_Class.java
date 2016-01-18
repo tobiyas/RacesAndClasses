@@ -153,7 +153,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
-					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					player.sendMessage(ChatColor.RED + "[RaC] " + ccEvent.getCancelMessage());
 					return true;
 				}
 				
@@ -222,7 +222,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
-					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					player.sendMessage(ChatColor.RED + "[RaC] " + ccEvent.getCancelMessage());
 					return true;
 				}
 				

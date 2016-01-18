@@ -141,6 +141,7 @@ public class RaceChangeSelectionListener implements Listener {
 	@EventHandler
 	public void givePlayerUplinkAfterSelect(AfterRaceSelectedEvent event){
 		if(!event.isGiveCooldown()) return;
+		if(event.getRaceToSelect() == plugin.getRaceManager().getDefaultHolder()) return;
 		
 		String playerName = event.getPlayer().getName();
 		String commandName = "racechange";

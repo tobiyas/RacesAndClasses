@@ -117,7 +117,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
-					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					player.sendMessage(ChatColor.RED + "[RaC] " + ccEvent.getCancelMessage());
 					return true;
 				}
 				
@@ -165,7 +165,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 				plugin.getServer().getPluginManager().callEvent(ccEvent);
 				
 				if(ccEvent.isCancelled()){
-					player.sendMessage(ChatColor.RED + "[RaC] + " + ccEvent.getCancelMessage());
+					player.sendMessage(ChatColor.RED + "[RaC] " + ccEvent.getCancelMessage());
 					return true;
 				}
 				

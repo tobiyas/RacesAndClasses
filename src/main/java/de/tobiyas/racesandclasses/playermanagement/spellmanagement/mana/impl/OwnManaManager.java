@@ -66,7 +66,6 @@ public class OwnManaManager extends AbstractManaManager {
 		
 		String prefered = plugin.getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace();
 		manaDisplay = DisplayGenerator.generateDisplay(racPlayer, DisplayInfos.MANA, prefered);
-		System.out.println("Creating Mana-Display: " + manaDisplay.getType().name());
 	}
 	
 	

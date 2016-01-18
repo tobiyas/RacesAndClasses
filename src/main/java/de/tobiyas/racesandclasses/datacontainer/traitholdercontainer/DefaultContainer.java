@@ -41,7 +41,7 @@ public class DefaultContainer {
 		orcConfig.createSection("Orc.traits");
 		
 		orcConfig.set("Orc.config.tag", "[Orc]");
-		orcConfig.set("Orc.config.healthbonus", "+10");
+		orcConfig.set("Orc.config.healthbonus", 10);
 		orcConfig.set("Orc.config.guislot", -1);
 		orcConfig.set("Orc.config.armor", "iron,diamond,chain");
 		
@@ -62,7 +62,7 @@ public class DefaultContainer {
 		elvesConfig.createSection("Elv.traits");
 		
 		elvesConfig.set("Elv.config.tag", "[Elv]");
-		elvesConfig.set("Elv.config.healthbonus", "+0");
+		elvesConfig.set("Elv.config.healthbonus", 0);
 		elvesConfig.set("Elv.config.guislot", -1);
 		elvesConfig.set("Elv.config.armor", "leather,gold,chain");
 		
@@ -102,7 +102,7 @@ public class DefaultContainer {
 		warriorConfig.createSection("warrior.traits");
 		
 		warriorConfig.set("warrior.config.tag", "[Warrior]");
-		warriorConfig.set("warrior.config.healthbonus", "+5");
+		warriorConfig.set("warrior.config.healthbonus", 5);
 		warriorConfig.set("warrior.config.guislot", -1);
 		
 		
@@ -147,7 +147,7 @@ public class DefaultContainer {
 		magicianConfig.createSection("magician.traits");
 		
 		magicianConfig.set("magician.config.tag", "[Magician]");
-		magicianConfig.set("magician.config.healthbonus", "-1");
+		magicianConfig.set("magician.config.healthbonus", -1);
 		magicianConfig.set("magician.config.manabonus", 20);
 		magicianConfig.set("magician.config.guislot", -1);
 		
@@ -193,7 +193,7 @@ public class DefaultContainer {
 		shamanConfig.createSection("shaman.traits");
 		
 		shamanConfig.set("shaman.config.tag", "[Shaman]");
-		shamanConfig.set("shaman.config.healthbonus", "+1");
+		shamanConfig.set("shaman.config.healthbonus", 1);
 		shamanConfig.set("shaman.config.manabonus", 20);
 		shamanConfig.set("shaman.config.guislot", -1);
 		

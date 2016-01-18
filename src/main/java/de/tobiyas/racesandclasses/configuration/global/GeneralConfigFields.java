@@ -38,10 +38,6 @@ public class GeneralConfigFields {
 	public static final String debug_outputs_writethrough = "debug_outputs_writethrough";
 	
 	
-	//Tutorials
-	public static final String tutorials_enable = "tutorials_enable";
-
-	
 	//Metrics
 	public static final String metrics_enable = "metrics_enable";
 	

@@ -119,24 +119,7 @@ public class GeneralConfigText {
 				+ debug_outputs_writethrough + ": true\n\n"
 				;
 	}
-	
-	
-	private static final String Tutorials(){
-		return ""
-				//Tutorials
-				+ "\n"
-				+ "###########\n"
-				+ "#TUTORIALS#\n"
-				+ "###########\n"
-				+ "\n"
-				
-				+ "# Tells the Plugin if Tutorials should be used. \n"
-				+ "# boolean: true or false \n"
-				+ "# default: true \n"
-				+ tutorials_enable + ": true\n\n"
-				;
-	}
-	
+		
 	
 	private final static String Metrics(){
 		return ""
@@ -763,7 +746,6 @@ public class GeneralConfigText {
 			+ Chat()
 			+ Health()
 			+ Debug()
-			+ Tutorials()
 			+ Metrics()
 			+ Updater()
 			+ Language()
