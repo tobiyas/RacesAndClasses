@@ -43,11 +43,14 @@ public class Listener_WandAndBowEquip implements Listener {
 
 	public Listener_WandAndBowEquip(){
 		plugin = RacesAndClasses.getPlugin();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		plugin.registerEvents(this);
 	}
 	
 	@EventHandler
 	public void onPlayerChangeItemInhands(PlayerItemHeldEvent event){
+		if(event.isCancelled()) return;
+		if(plugin.getConfigManager().getGeneralConfig().isConfig_enable_permanent_scoreboard()) return;
+		
 		World world = event.getPlayer().getWorld();
 		if(plugin.getConfigManager().getGeneralConfig().getConfig_worldsDisabled().contains(world.getName())){
 			return;

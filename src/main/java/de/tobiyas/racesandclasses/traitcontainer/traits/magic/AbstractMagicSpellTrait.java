@@ -320,7 +320,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		}
 		
 		if(nextSpell != null){
-			player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
+			if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_permanent_scoreboard()){
+				player.getScoreboardManager().updateSelectAndShow(SBCategory.Spells);
+			}
 			
 			DecimalFormat formatter = new DecimalFormat("###.#");
 			

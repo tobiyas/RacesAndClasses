@@ -270,7 +270,9 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		boolean forward = !player.isSneaking();
 		AbstractArrow newArrow = forward ? arrowManager.nextArrow() : arrowManager.previousArrow();
 		if(newArrow != null && newArrow != arrow){
-			player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+			if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_permanent_scoreboard()){
+				player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+			}
 			
 			LanguageAPI.sendTranslatedMessage(player, arrow_change, "trait_name", newArrow.getDisplayName());
 		}

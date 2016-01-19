@@ -86,6 +86,7 @@ public class GeneralConfigFields {
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";
 	public static final String gui_disableAllChatBars = "gui_disableAllChatBars";
 	public static final String gui_scoreboard_name = "gui_scoreboard_name";
+	public static final String gui_enable_permanent_scoreboard = "gui_enable_permanent_scoreboard";
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
 

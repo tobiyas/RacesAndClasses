@@ -377,8 +377,8 @@ public class GeneralConfigText {
 				
 				+ "# Enables to also use left clicks in Inventory GUIS.\n"
 				+ "# boolean: true or false\n"
-				+ "# default: false \n"
-				+ gui_also_use_leftclick_in_guis + ": false\n\n"
+				+ "# default: true \n"
+				+ gui_also_use_leftclick_in_guis + ": true\n\n"
 
 				+ "# Setting this to true will disable all Outputs to scoreboards from the plugin.\n"
 				+ "# boolean: true or false\n"
@@ -390,6 +390,13 @@ public class GeneralConfigText {
 				+ "# String: name (&eHallo)\n"
 				+ "# default: &eRaC \n"
 				+ gui_scoreboard_name + ": '&eRaC'\n\n"
+				
+				+ "# If the permanent Scoreboard should be used.\n"
+				+ "# If used, this will clash with other scoreboard plugins.\n"
+				+ "# Go to next category by leftclicking 3 ticks with air in hand.\n"
+				+ "# boolean: true or false\n"
+				+ "# default: false \n"
+				+ gui_enable_permanent_scoreboard + ": false\n\n"
 				
 				+ "# Setting this to true will disable all Outputs of bars to the chat of the players.\n"
 				+ "# boolean: true or false\n"

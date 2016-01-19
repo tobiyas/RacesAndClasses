@@ -75,6 +75,7 @@ import de.tobiyas.util.formating.Pair;
 	private boolean config_enable_expDropBonus;
 	
 	private boolean config_enable_healthbar_in_chat;
+	private boolean config_enable_permanent_scoreboard;
 	
 	private boolean config_disableHealthMods;
 	
@@ -281,6 +282,7 @@ import de.tobiyas.util.formating.Pair;
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_scoreboard_name, "&eRaC");
+		config.addDefault(gui_enable_permanent_scoreboard, false);
 		config.addDefault(gui_disableAllChatBars, false);		
 		config.addDefault(gui_also_use_leftclick_in_guis, true);
 		
@@ -376,6 +378,7 @@ import de.tobiyas.util.formating.Pair;
 		config_takeRaceWhenNoRace = config.getString(races_takeRaceWhenNoRace, "");
 		config_enableRaces = config.getBoolean(races_enable, true);
 		config_gui_level_useMCLevelBar = config.getBoolean(gui_level_useMCLevelBar, false);
+		config_enable_permanent_scoreboard = config.getBoolean(gui_enable_permanent_scoreboard, false);
 		config_useFoodManaBar = config.getBoolean(magic_useFoodManaBar, false);
 		config_food_enabled = config.getBoolean(food_enabled, true);
 		config_races_create_group_for_race = config.getBoolean(races_create_group_for_race, true);
@@ -638,6 +641,10 @@ import de.tobiyas.util.formating.Pair;
 
 	public String getConfig_defaultRaceTag() {
 		return config_defaultRaceTag;
+	}
+	
+	public boolean isConfig_enable_permanent_scoreboard() {
+		return config_enable_permanent_scoreboard;
 	}
 
 	/**

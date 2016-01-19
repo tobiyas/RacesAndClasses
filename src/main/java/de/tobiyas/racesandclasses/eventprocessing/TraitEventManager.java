@@ -188,7 +188,10 @@ public class TraitEventManager{
 					AbstractArrow newArrow = foreward ? player.getArrowManager().nextArrow() : player.getArrowManager().previousArrow();
 					
 					if(newArrow != null && newArrow != trait){
-						player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+						if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_permanent_scoreboard()){
+							player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
+						}
+						
 						LanguageAPI.sendTranslatedMessage(player.getPlayer(), arrow_change, "trait_name", newArrow.getDisplayName());
 					}
 					continue;

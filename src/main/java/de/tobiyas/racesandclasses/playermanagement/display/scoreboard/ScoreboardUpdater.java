@@ -67,6 +67,9 @@ public class ScoreboardUpdater {
 		List<Trait> traits = player.getTraits();
 		String playerName = player.getName();
 		
+		manager.clearCategory(SBCategory.Cooldown);
+		boolean hasAddedAny = false;
+		
 		//Check for Cooldown Stuff.
 		for(Trait trait : traits){
 			if(trait instanceof TraitWithRestrictions){
@@ -80,9 +83,11 @@ public class ScoreboardUpdater {
 				if(cooldown < 0) cooldown = 0;
 				
 				manager.setValue(SBCategory.Cooldown, twr.getDisplayName(), cooldown);
+				hasAddedAny = true;
 			}
 		}
 		
+		if(!hasAddedAny)  manager.setValue(SBCategory.Cooldown, ChatColor.RED + "No Cooldowns", 0);
 		manager.update();
 	}
 	
@@ -95,6 +100,7 @@ public class ScoreboardUpdater {
 		MagicSpellTrait currentSpell = spellManager.getCurrentSpell();
 		manager.clearCategory(SBCategory.Spells);
 		
+		boolean hasAddedAny = false;
 		if(currentSpell != null){
 			//If spell == null, we have no spells available
 			int id = spellManager.getSpellAmount();
@@ -106,9 +112,11 @@ public class ScoreboardUpdater {
 				String name =  getFromCooldown(spell, pre, after);
 				manager.setValue(SBCategory.Spells, name, id);
 				id--;
+				hasAddedAny = true;
 			}
 		}
 		
+		if(!hasAddedAny) manager.setValue(SBCategory.Spells, ChatColor.RED + "No Spells", 0);
 		manager.update();
 	}
 	
@@ -120,9 +128,10 @@ public class ScoreboardUpdater {
 		ArrowManager arrowManager = player.getArrowManager();
 		
 		manager.clearCategory(SBCategory.Arrows);
-		if(arrowManager.getNumberOfArrowTypes() <= 0)return;
+		if(arrowManager.getNumberOfArrowTypes() <= 0) return;
 		
 		AbstractArrow currentArrow = arrowManager.getCurrentArrow();
+		boolean hasAddedAny = false;
 		//If arrow == null or we only have 1, we have no Arrows available
 		if(currentArrow != null || arrowManager.getNumberOfArrowTypes() > 1){
 			int id = arrowManager.getNumberOfArrowTypes();
@@ -134,9 +143,11 @@ public class ScoreboardUpdater {
 				String name =  getFromCooldown(arrow, pre, after);
 				manager.setValue(SBCategory.Arrows, name, id);
 				id--;
+				hasAddedAny = true;
 			}
 		}
 		
+		if(!hasAddedAny) manager.setValue(SBCategory.Arrows, ChatColor.RED + "No Arrows", 0);
 		manager.update();
 	}
 	

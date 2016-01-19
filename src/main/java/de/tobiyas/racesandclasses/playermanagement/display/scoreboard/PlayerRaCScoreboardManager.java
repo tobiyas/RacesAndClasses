@@ -197,10 +197,8 @@ public class PlayerRaCScoreboardManager {
 		
 		
 		//Set the correct Objective to display.
-		if(selectedCategory != SBCategory.General){
-			Objective obj = scoreboard.getObjective(this.selectedCategory.name());
-			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		}
+		Objective obj = scoreboard.getObjective(this.selectedCategory.name());
+		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
 		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
 		if(!removeScoreboard) player.setScoreboard(scoreboard);
@@ -304,6 +302,14 @@ public class PlayerRaCScoreboardManager {
 	}
 	
 
+	/**
+	 * Cycles to the next View:
+	 */
+	public void cycleToNext() {
+		SBCategory nextCategory = selectedCategory.getNextCategory();
+		updateSelectAndShow(nextCategory);
+	}
+	
 
 	public enum SBCategory{
 		
@@ -326,6 +332,21 @@ public class PlayerRaCScoreboardManager {
 		
 		public String getHeadline() {
 			return headline;
+		}
+		
+		
+		/**
+		 * Returns the Next category.
+		 */
+		public SBCategory getNextCategory(){
+			switch (this) {
+				case Cooldown : return Spells;
+				case Spells : return Arrows;
+				case Arrows : return General;
+				case General : return Cooldown;
+				
+				default: return General;
+			}
 		}
 	}
 
