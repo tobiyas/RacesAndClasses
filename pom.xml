@@ -66,6 +66,13 @@
 		    <id>Citizens</id>
 		    <url>http://repo.citizensnpcs.co</url>
 		</repository>
+		
+		<!-- MVdW repo -->
+		<repository>
+		  <id>mvdw-software</id>
+		  <name>MVdW Public Repositories</name>
+		  <url>http://repo.mvdw-software.be/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<!-- Depends -->
@@ -160,11 +167,9 @@
 		
 		<!-- Placeholder APIs -->
 		<dependency>
-			<groupId>be.maximvdw</groupId>
-    		<artifactId>PlaceholderAPI</artifactId>
-    		<version>1.0</version>
-           <scope>system</scope>
-           <systemPath>${project.basedir}/libs/Misc/MVdWPlaceholderAPI.jar</systemPath>
+		  <groupId>be.maximvdw</groupId>
+		  <artifactId>MVdWPlaceholderAPI</artifactId>
+		  <version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip.placeholderapi</groupId>

@@ -93,6 +93,8 @@ public class AddinManager {
 		return kitManager;
 	}
 	
-	
+	public PlaceholderAPISupportManager getPlaceholderAPISupportManager() {
+		return placeholderAPISupportManager;
+	}
 	
 }

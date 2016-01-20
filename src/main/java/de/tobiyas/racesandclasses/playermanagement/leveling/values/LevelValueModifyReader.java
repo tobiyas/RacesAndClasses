@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class LevelValueModifyReader {
@@ -21,7 +23,7 @@ public class LevelValueModifyReader {
 			List<String> list = new LinkedList<String>(Arrays.asList(split));
 			String last = list.remove(list.size()-1);
 			
-			String parent = String.join(".", list);
+			String parent = StringUtils.join(list, ".");
 			for(String val : config.getChildren(parent)){
 				if(val.equalsIgnoreCase(last)) {
 					start = parent + "." + last;

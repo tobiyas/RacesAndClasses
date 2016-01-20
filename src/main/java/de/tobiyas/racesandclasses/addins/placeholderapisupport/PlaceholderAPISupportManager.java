@@ -1,6 +1,7 @@
 package de.tobiyas.racesandclasses.addins.placeholderapisupport;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -54,6 +55,16 @@ public class PlaceholderAPISupportManager implements Listener {
 	private void registerClipReplacer(){
 		ClipPlaceholderReplacer replacer = new ClipPlaceholderReplacer(plugin);
 		replacer.register();
+	}
+	
+	
+	/**
+	 * Replaces the Text with the placeholders.
+	 */
+	public String replace(Player player, String toReplace){
+		if(Bukkit.getPluginManager().isPluginEnabled(MVdW_PLUGIN_NAME)) toReplace = MVdWPlaceholderReplacer.replace(player, toReplace);
+		if(Bukkit.getPluginManager().isPluginEnabled(CLIP_PLUGIN_NAME)) toReplace = ClipPlaceholderReplacer.replace(player, toReplace);
+		return toReplace;
 	}
 	
 }

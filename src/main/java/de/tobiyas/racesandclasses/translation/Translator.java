@@ -23,7 +23,9 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.addins.placeholderapisupport.PlaceholderAPISupportManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 
 public class Translator {
@@ -134,6 +136,7 @@ public class Translator {
 		}
 		
 		replaceToPlayer();
+		replaceToPlaceholderAPIs();
 		
 		return decodeColor();
 	}
@@ -158,6 +161,16 @@ public class Translator {
 			Player player = playerReplace.getPlayer();
 			modifiedText = modifiedText.replace("%WORLD%", player.getWorld().getName());
 		}
+	}
+	
+	/**
+	 * Replaces some PlaceholderAPI Stuff.
+	 */
+	private void replaceToPlaceholderAPIs() {
+		if(playerReplace == null) return;
+		
+		PlaceholderAPISupportManager apiSupport = RacesAndClasses.getPlugin().getAddinManager().getPlaceholderAPISupportManager();
+		modifiedText = apiSupport.replace(playerReplace.getPlayer(), modifiedText);
 	}
 
 

@@ -61,4 +61,14 @@ public class ClipPlaceholderReplacer extends PlaceholderHook {
 		return null;
 	}
 
+	
+	/**
+	 * Replaces the Holders in the Key.
+	 * @param toReplace the text to replace.
+	 * @return the text that is replaced.
+	 */
+	public static String replace(Player player, String toReplace){
+		return PlaceholderAPI.setPlaceholders(player, toReplace);
+	}
+	
 }

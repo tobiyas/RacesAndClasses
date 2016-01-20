@@ -35,16 +35,8 @@ public class CommandExecutor_HP extends AbstractCommand {
 	public CommandExecutor_HP(){
 		super("playerhealth", new String[]{"hp"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "playerhealth";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
+	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
@@ -58,12 +50,11 @@ public class CommandExecutor_HP extends AbstractCommand {
 		
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer((Player) sender);
 		if(!racPlayer.displayHealth()){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found)
-					.build());
+			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found).build());
 		}
 		
 		racPlayer.getManaManager().outputManaToPlayer();
-		plugin.getPlayerManager().getPlayerLevelManager(racPlayer).forceDisplay();
+		plugin.getPlayerManager().getPlayerLevelManager(racPlayer).forceDisplay();		
 		return true;
 	}
 
