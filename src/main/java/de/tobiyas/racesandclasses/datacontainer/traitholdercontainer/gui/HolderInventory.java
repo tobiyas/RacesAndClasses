@@ -187,6 +187,12 @@ public class HolderInventory extends InventoryView{
 			lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
 		}
 		
+		String manaString = getManaString(holder);
+		if(manaString != null){
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.mana) + ": ");
+			lore.add(ChatColor.LIGHT_PURPLE + "  " + manaString);
+		}
+		
 		//add armor as lore
 		lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
 		if(holder.getArmorPerms().size() > 0){
@@ -230,7 +236,7 @@ public class HolderInventory extends InventoryView{
 		
 		return item;
 	}
-	
+
 
 	/**
 	 * The Decimal formatter to use.
@@ -240,13 +246,18 @@ public class HolderInventory extends InventoryView{
 	
 	/**
 	 * Returns a health String depending on the ContainerType
-	 * 
-	 * @param holders
-	 * @return
 	 */
 	private String getHealthString(AbstractTraitHolder holder) {
 		double max = holder.getMaxHealthMod(LevelAPI.getCurrentLevel(player));
 		return (max >= 0 ? "+":"") + format.format(max);
+	}
+
+	/**
+	 * Returns a Mana String depending on the ContainerType
+	 */
+	private String getManaString(AbstractTraitHolder holder) {
+		double max = holder.getManaBonus(LevelAPI.getCurrentLevel(player));
+		return max == 0 ? null : ((max >= 0 ? "+":"") + format.format(max));
 	}
 
 

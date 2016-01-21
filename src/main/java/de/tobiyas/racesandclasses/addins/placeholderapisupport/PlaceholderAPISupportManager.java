@@ -45,7 +45,7 @@ public class PlaceholderAPISupportManager implements Listener {
 	 * Registers the replacer.
 	 */
 	private void registerMVdWReplacer(){
-		MVdWPlaceholderReplacer replacer = new MVdWPlaceholderReplacer(plugin);
+		MVdWRaCPlaceholderReplacer replacer = new MVdWRaCPlaceholderReplacer(plugin);
 		replacer.register();
 	}
 	
@@ -53,7 +53,7 @@ public class PlaceholderAPISupportManager implements Listener {
 	 * Registers the replacer.
 	 */
 	private void registerClipReplacer(){
-		ClipPlaceholderReplacer replacer = new ClipPlaceholderReplacer(plugin);
+		ClipRaCPlaceholderReplacer replacer = new ClipRaCPlaceholderReplacer(plugin);
 		replacer.register();
 	}
 	
@@ -62,8 +62,8 @@ public class PlaceholderAPISupportManager implements Listener {
 	 * Replaces the Text with the placeholders.
 	 */
 	public String replace(Player player, String toReplace){
-		if(Bukkit.getPluginManager().isPluginEnabled(MVdW_PLUGIN_NAME)) toReplace = MVdWPlaceholderReplacer.replace(player, toReplace);
-		if(Bukkit.getPluginManager().isPluginEnabled(CLIP_PLUGIN_NAME)) toReplace = ClipPlaceholderReplacer.replace(player, toReplace);
+		if(Bukkit.getPluginManager().isPluginEnabled(MVdW_PLUGIN_NAME)) toReplace = MVdWRaCPlaceholderReplacer.replace(player, toReplace);
+		if(Bukkit.getPluginManager().isPluginEnabled(CLIP_PLUGIN_NAME)) toReplace = ClipRaCPlaceholderReplacer.replace(player, toReplace);
 		return toReplace;
 	}
 	

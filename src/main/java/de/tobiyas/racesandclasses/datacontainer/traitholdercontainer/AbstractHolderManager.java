@@ -36,6 +36,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissions
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.file.FileUtils;
 
@@ -87,6 +88,7 @@ public abstract class AbstractHolderManager {
 	 * Initializes the Manager
 	 */
 	public void init(){
+		clearOldTraitholders();
 		readTraitHolderList();
 		
 		initDefaultHolder();
@@ -95,7 +97,16 @@ public abstract class AbstractHolderManager {
 		setupPermissions();
 	}
 	
-	
+	/**
+	 * Clears the Old Trait-Holders
+	 */
+	private void clearOldTraitholders() {
+		Set<Trait> toDeinit = new HashSet<Trait>();
+		for(AbstractTraitHolder holder : traitHolderList)toDeinit.addAll(holder.getTraits());
+		for(Trait trait : toDeinit) trait.deInit();
+		
+		traitHolderList.clear();
+	}
 
 	/**
 	 * Here the default holders that the manager always has (without config) should be added.

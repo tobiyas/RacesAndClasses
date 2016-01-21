@@ -92,6 +92,7 @@ public class EN_Text {
 			+ magic_spell_activated + ": '&d%TRAIT_NAME% &aactivated.'\r\n"
 			+ magic_spell_deactivated + ": '&d%TRAIT_NAME% &cdeactivated.'\r\n"
 			+ mana_already_full + ": '&cYour Mana is already full.'\r\n"
+			+ mana + ": 'mana'\r\n"
 			+ member_config_not_found + ": '&cYour config could not be found. Try relogging or contact an Admin.'\r\n"
 			+ member_config_changed + ": '&aThe Attribute &d%ATTRIBUTE%&a has been changed to: &d%VALUE%&a.'\r\n"
 			+ member_config_attribute_not_found + ": '&cThe Attribute &d%ATTRIBUTE%&c could not be found.'\r\n"

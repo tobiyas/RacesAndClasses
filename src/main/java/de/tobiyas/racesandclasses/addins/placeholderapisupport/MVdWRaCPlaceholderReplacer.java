@@ -13,7 +13,7 @@ import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.APIs.ManaAPI;
 import de.tobiyas.racesandclasses.APIs.RaceAPI;
 
-public class MVdWPlaceholderReplacer implements PlaceholderReplacer {
+public class MVdWRaCPlaceholderReplacer implements PlaceholderReplacer {
 	
 	/**
 	 * the plugin to use.
@@ -23,7 +23,7 @@ public class MVdWPlaceholderReplacer implements PlaceholderReplacer {
 	private final DecimalFormat format = new DecimalFormat("0.0");
 	
 	
-	public MVdWPlaceholderReplacer(RacesAndClasses plugin) {
+	public MVdWRaCPlaceholderReplacer(RacesAndClasses plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -68,6 +68,14 @@ public class MVdWPlaceholderReplacer implements PlaceholderReplacer {
 	 */
 	public void unregister(){
 		//TODO unregister somehow?!? seems no API for that.
+	}
+
+
+	/**
+	 * Does a simple replace on the Placeholder API.
+	 */
+	public static String replace(Player player, String toReplace) {
+		return PlaceholderAPI.replacePlaceholders(player, toReplace);
 	}
 
 }

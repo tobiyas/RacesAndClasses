@@ -35,7 +35,7 @@ public class RaceTeamManager {
 			config.options().copyDefaults(true);
 			config.options().copyHeader(true);
 			
-			config.save();
+			config.forceSave();
 		}
 		
 		config.load();

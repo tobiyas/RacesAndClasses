@@ -12,7 +12,7 @@ import de.tobiyas.racesandclasses.APIs.RaceAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderHook;
 
-public class ClipPlaceholderReplacer extends PlaceholderHook {
+public class ClipRaCPlaceholderReplacer extends PlaceholderHook {
 	
 	/**
 	 * the plugin to use.
@@ -25,7 +25,7 @@ public class ClipPlaceholderReplacer extends PlaceholderHook {
 	private final DecimalFormat format = new DecimalFormat("0.0");
 	
 	
-	public ClipPlaceholderReplacer(RacesAndClasses plugin) {
+	public ClipRaCPlaceholderReplacer(RacesAndClasses plugin) {
 		this.plugin = plugin;
 	}
 	

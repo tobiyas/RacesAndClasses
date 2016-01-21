@@ -35,32 +35,6 @@ public class ScoreboardUpdater {
 	
 	
 	/**
-	 * Updates the Arrows for the Player.
-	 * 
-	 * @param racPlayer to update.
-	 */
-	public void updatePlayerArrows(){
-		AbstractArrow currentArrow = player.getArrowManager().getCurrentArrow();
-		manager.clearCategory(SBCategory.Arrows);
-		
-		int id = player.getArrowManager().getNumberOfArrowTypes();
-		if(id > 0){
-			//If no arrows we have no arrows available
-			for(AbstractArrow arrow : player.getArrowManager().getAllArrows()){
-				String name = arrow.getDisplayName();
-				boolean selected = arrow == currentArrow;
-				
-				name = (selected ? ChatColor.RED : ChatColor.YELLOW) + name;
-				manager.setValue(SBCategory.Arrows, name, id);
-				id--;
-			}				
-		}
-		
-		manager.update();
-	}
-	
-	
-	/**
 	 * Updates the Cooldown Display of the Player.
 	 */
 	public void updateCooldown(){
@@ -87,7 +61,7 @@ public class ScoreboardUpdater {
 			}
 		}
 		
-		if(!hasAddedAny)  manager.setValue(SBCategory.Cooldown, ChatColor.RED + "No Cooldowns", 0);
+		if(!hasAddedAny)  manager.setValue(SBCategory.Cooldown, ChatColor.RED + "No Cooldowns", 1);
 		manager.update();
 	}
 	
@@ -116,7 +90,7 @@ public class ScoreboardUpdater {
 			}
 		}
 		
-		if(!hasAddedAny) manager.setValue(SBCategory.Spells, ChatColor.RED + "No Spells", 0);
+		if(!hasAddedAny) manager.setValue(SBCategory.Spells, ChatColor.RED + "No Spells", 1);
 		manager.update();
 	}
 	
@@ -128,12 +102,12 @@ public class ScoreboardUpdater {
 		ArrowManager arrowManager = player.getArrowManager();
 		
 		manager.clearCategory(SBCategory.Arrows);
-		if(arrowManager.getNumberOfArrowTypes() <= 0) return;
 		
-		AbstractArrow currentArrow = arrowManager.getCurrentArrow();
 		boolean hasAddedAny = false;
 		//If arrow == null or we only have 1, we have no Arrows available
-		if(currentArrow != null || arrowManager.getNumberOfArrowTypes() > 1){
+		if(arrowManager.getNumberOfArrowTypes() >= 1){
+			AbstractArrow currentArrow = arrowManager.getCurrentArrow();
+			
 			int id = arrowManager.getNumberOfArrowTypes();
 			for(AbstractArrow arrow :arrowManager.getAllArrows()){
 				boolean selected = arrow == currentArrow;
@@ -147,7 +121,7 @@ public class ScoreboardUpdater {
 			}
 		}
 		
-		if(!hasAddedAny) manager.setValue(SBCategory.Arrows, ChatColor.RED + "No Arrows", 0);
+		if(!hasAddedAny) manager.setValue(SBCategory.Arrows, ChatColor.RED + "No Arrows", 1);
 		manager.update();
 	}
 	

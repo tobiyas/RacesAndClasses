@@ -38,7 +38,7 @@ public class PlayerRaCScoreboardManager {
 	/**
 	 * The Selected Category.
 	 */
-	private SBCategory selectedCategory = SBCategory.Cooldown;
+	private SBCategory selectedCategory = SBCategory.General;
 	
 	/**
 	 * If we need an update
@@ -195,13 +195,15 @@ public class PlayerRaCScoreboardManager {
 			return;
 		}
 		
-		
-		//Set the correct Objective to display.
-		Objective obj = scoreboard.getObjective(this.selectedCategory.name());
-		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		
+		//Only show if wanted.
 		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
-		if(!removeScoreboard) player.setScoreboard(scoreboard);
+		if(!removeScoreboard){
+			//Set the correct Objective to display.
+			Objective obj = scoreboard.getObjective(this.selectedCategory.name());
+			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+			
+			player.setScoreboard(scoreboard);
+		}
 	}
 	
 	
@@ -252,7 +254,7 @@ public class PlayerRaCScoreboardManager {
 		if(category == null) return;
 		
 		switch (category) {
-			case Arrows: updater.updatePlayerArrows(); break;
+			case Arrows: updater.updateArrows(); break;
 			case Cooldown: updater.updateCooldown(); break;
 			case Spells: updater.updateSpells(); break;
 			case General: updater.updateGeneral(); break;
