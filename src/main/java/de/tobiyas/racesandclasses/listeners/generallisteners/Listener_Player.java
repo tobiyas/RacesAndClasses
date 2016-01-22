@@ -120,10 +120,9 @@ public class Listener_Player implements Listener {
 			final HolderInventory raceInv = new HolderInventory(player.getPlayer(), plugin.getRaceManager());
 			if(raceInv.getNumberOfHolder() > 0){
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					
 					@Override
 					public void run() {
-						player.getPlayer().openInventory(raceInv);
+						if(player.isOnline()) player.getPlayer().openInventory(raceInv);
 					}
 				}, scheduledTimeToOpen * 20);
 			}
