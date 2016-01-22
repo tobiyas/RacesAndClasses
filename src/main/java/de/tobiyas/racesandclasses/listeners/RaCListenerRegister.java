@@ -31,6 +31,7 @@ import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_RaceSpawn;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_RaceTeams;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_TraitJoinLeave;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_WandAndBowEquip;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
 import de.tobiyas.racesandclasses.listeners.generallisteners.StunCancelListener;
@@ -91,6 +92,7 @@ public class RaCListenerRegister {
 		new Listener_RaceSpawn();
 		new Listener_RaceTeams();
 		new Listener_Debuff();
+		new Listener_TraitJoinLeave();
 		
 		new Listener_raceClassRestrictionOnItems();
 	}
