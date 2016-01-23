@@ -52,7 +52,7 @@ public class ClipRaCPlaceholderReplacer extends PlaceholderHook {
 		if(identifier.equalsIgnoreCase("class")) return ClassAPI.getClassNameOfPlayer(player);
 		
 		if(identifier.equalsIgnoreCase("mana")) return format.format(ManaAPI.getCurrentMana(player));
-		if(identifier.equalsIgnoreCase("maxmana")) return format.format(ManaAPI.getCurrentMana(player));
+		if(identifier.equalsIgnoreCase("maxmana")) return format.format(ManaAPI.getMaxMana(player));
 
 		if(identifier.equalsIgnoreCase("level")) return String.valueOf(LevelAPI.getCurrentLevel(player));
 		if(identifier.equalsIgnoreCase("exp")) return format.format(LevelAPI.getCurrentExpOfLevel(player));

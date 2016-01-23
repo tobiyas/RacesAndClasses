@@ -37,7 +37,7 @@ public class MVdWRaCPlaceholderReplacer implements PlaceholderReplacer {
 		if(placeholder.equalsIgnoreCase("class")) return ClassAPI.getClassNameOfPlayer(player);
 		
 		if(placeholder.equalsIgnoreCase("mana")) return format.format(ManaAPI.getCurrentMana(player));
-		if(placeholder.equalsIgnoreCase("maxmana")) return format.format(ManaAPI.getCurrentMana(player));
+		if(placeholder.equalsIgnoreCase("maxmana")) return format.format(ManaAPI.getMaxMana(player));
 
 		if(placeholder.equalsIgnoreCase("level")) return String.valueOf(LevelAPI.getCurrentLevel(player));
 		if(placeholder.equalsIgnoreCase("exp")) return format.format(LevelAPI.getCurrentExpOfLevel(player));
