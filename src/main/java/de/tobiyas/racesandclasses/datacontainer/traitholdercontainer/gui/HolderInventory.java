@@ -181,28 +181,31 @@ public class HolderInventory extends InventoryView{
 			}
 		}
 
-		String healthString = getHealthString(holder);
-		if(healthString != null){
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.health) + ": ");
-			lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
+		//Hide the Config part if wanted.
+		if(!holder.isHideConfigInGui()){
+			String healthString = getHealthString(holder);
+			if(healthString != null){
+				lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.health) + ": ");
+				lore.add(ChatColor.LIGHT_PURPLE + "  " + healthString);
+			}
+			
+			String manaString = getManaString(holder);
+			if(manaString != null){
+				lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.mana) + ": ");
+				lore.add(ChatColor.LIGHT_PURPLE + "  " + manaString);
+			}
+			
+			//add armor as lore
+			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
+			if(holder.getArmorPerms().size() > 0){
+				lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
+			}else{
+				lore.add(ChatColor.LIGHT_PURPLE + "ANY");
+			}
+			
+			//Add the Preconditions (if present).
+			lore.addAll(holder.getPreconditions().generateDescription(RaCPlayerManager.get().getPlayer(player)));
 		}
-		
-		String manaString = getManaString(holder);
-		if(manaString != null){
-			lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.mana) + ": ");
-			lore.add(ChatColor.LIGHT_PURPLE + "  " + manaString);
-		}
-		
-		//add armor as lore
-		lore.add(ChatColor.AQUA + LanguageAPI.translate(RaCPlayerManager.get().getPlayer(player), Keys.armor) + ":");
-		if(holder.getArmorPerms().size() > 0){
-			lore.add(ChatColor.LIGHT_PURPLE + holder.getArmorString());
-		}else{
-			lore.add(ChatColor.LIGHT_PURPLE + "ANY");
-		}
-		
-		//Add the Preconditions (if present).
-		lore.addAll(holder.getPreconditions().generateDescription(RaCPlayerManager.get().getPlayer(player)));
 		
 		//Trait stuff below. Only when not hidden!
 		if(!holder.isHideTraitsInGui()){

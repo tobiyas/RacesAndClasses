@@ -127,6 +127,12 @@ public abstract class AbstractTraitHolder {
 	protected boolean hideTraitsInGui = false;
 	
 	/**
+	 * If the Config should be hidden.
+	 * <br>This should be used with Description!
+	 */
+	protected boolean hideConfigInGui = false;
+	
+	/**
 	 * The parents of this holders.
 	 */
 	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
@@ -314,6 +320,7 @@ public abstract class AbstractTraitHolder {
 			this.healthBonus = new LevelValueModifyReader(config, configNodeName + ".config.healthbonus").parse(0);
 			this.holderTag = ChatColor.translateAlternateColorCodes('&', config.getString(configNodeName + ".config.tag", "[" + configNodeName + "]"));
 			this.guiSlot = config.getInt(configNodeName + ".config.guislot", -1);
+			this.hideConfigInGui= config.getBoolean(configNodeName + ".config.hideConfigInGui", false);
 			this.hideTraitsInGui = config.getBoolean(configNodeName + ".config.hideTraitsInGui", false);
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
@@ -462,6 +469,13 @@ public abstract class AbstractTraitHolder {
 	 */
 	public boolean isHideTraitsInGui() {
 		return hideTraitsInGui;
+	}
+	
+	/**
+	 * If the config is hidden in the Gui.
+	 */
+	public boolean isHideConfigInGui() {
+		return hideConfigInGui;
 	}
 	
 	/**

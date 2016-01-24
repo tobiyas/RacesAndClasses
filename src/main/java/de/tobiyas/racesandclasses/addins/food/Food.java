@@ -10,7 +10,7 @@ import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class Food {
 
-	private final String[] AMOUNT_PRE = {"value", "leben"};
+	private final String[] AMOUNT_PRE = {"value", "health", "life", "leben"};
 	private final String[] SECONDS_PRE = {"seconds", "sekunden"};
 	
 	/**
