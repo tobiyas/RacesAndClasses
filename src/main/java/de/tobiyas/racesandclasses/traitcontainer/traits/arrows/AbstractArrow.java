@@ -100,7 +100,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		//Change ArrowType
 		if(event instanceof PlayerInteractEvent){
 			PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
-			if(!(Eevent.getAction() == Action.LEFT_CLICK_AIR return false;
+			if(!(Eevent.getAction() == Action.LEFT_CLICK_AIR)) return false;
 
 			if(!isThisArrow(player)) return false;
 			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
