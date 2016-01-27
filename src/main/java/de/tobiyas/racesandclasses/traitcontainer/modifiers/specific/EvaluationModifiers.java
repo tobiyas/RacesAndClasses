@@ -20,14 +20,14 @@ public class EvaluationModifiers extends AbstractModifier {
 	private Calculation calculation;
 	
 	
-	public EvaluationModifiers(String evalString, String toModify) {
+	private EvaluationModifiers(String evalString, String toModify) {
 		super(0, toModify);
 		
 		try{
 			this.calculation = EvalEvaluator.parse(evalString);
 		}catch(Throwable exp){
-			RacesAndClasses.getPlugin().logError("Could not parse Expression: " + evalString + " because: " 
-					+ exp.getCause().getClass().getSimpleName() + " - " + exp.getLocalizedMessage());
+			RacesAndClasses.getPlugin().logError("Could not parse Expression: " 
+					+ evalString + " because: " + exp.getLocalizedMessage());
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class EvaluationModifiers extends AbstractModifier {
 		if(calculation == null) return value;
 		
 		Map<String,Double> vars = generateVariables(player);
-		vars.put("pre", value);
+		vars.put("old", value);
 		
 		return calculation.calculate(vars);
 	}
@@ -46,7 +46,9 @@ public class EvaluationModifiers extends AbstractModifier {
 	private Map<String,Double> generateVariables(RaCPlayer player){
 		Map<String,Double> variables = new HashMap<String,Double>();
 		variables.put("mana", ManaAPI.getCurrentMana(player));
+		variables.put("maxmana", ManaAPI.getMaxMana(player));
 		variables.put("level", (double) LevelAPI.getCurrentLevel(player));
+		variables.put("maxhealth", (double) HealthAPI.getMaxHealth(player));
 		variables.put("health", (double) HealthAPI.getCurrentHealth(player));
 		
 		return variables;
@@ -62,7 +64,7 @@ public class EvaluationModifiers extends AbstractModifier {
 	 * 
 	 * @return the Generated Modifier or Null if not possible.
 	 */
-	public static EvaluationModifiers generate(String descriptor, double modifier, String toModify){
+	public static EvaluationModifiers generate(String descriptor, Double modifier, String toModify){
 		return new EvaluationModifiers(descriptor, toModify);
 	}
 
