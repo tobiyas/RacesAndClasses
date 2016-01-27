@@ -36,8 +36,8 @@ public abstract class AbstractPassiveTrait extends AbstractBasicTrait{
 	 * @param oldDmg
 	 * @return
 	 */
-	protected double getNewValue(RaCPlayer player, double oldDmg) {
-		double modDamage = modifyToPlayer(player, oldDmg);
+	protected double getNewValue(RaCPlayer player, double oldDmg, String toModify) {
+		double modDamage = modifyToPlayer(player, oldDmg, toModify);
 		return TraitStringUtils.getNewValue(modDamage, operation, value);
 	}
 	

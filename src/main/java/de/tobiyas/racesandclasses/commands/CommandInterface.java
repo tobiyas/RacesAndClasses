@@ -3,10 +3,9 @@ package de.tobiyas.racesandclasses.commands;
 import java.util.Collection;
 import java.util.Map;
 
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 
-public interface CommandInterface extends CommandExecutor, TabCompleter {
+public interface CommandInterface extends TabExecutor {
 
 	
 	/**
@@ -49,5 +48,12 @@ public interface CommandInterface extends CommandExecutor, TabCompleter {
 	 * @return true if there is any command.
 	 */
 	public boolean hasAnyCommand();
+
+	/**
+	 * Returns the Description.
+	 * 
+	 * @return the Description
+	 */
+	public String getDescription();
 	
 }

@@ -530,15 +530,16 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * 
 	 * @param player to check
 	 * @param value to modify
+	 * @param the value to modify
 	 * 
 	 * @return the modified value
 	 */
-	protected double modifyToPlayer(RaCPlayer player, double value){
+	protected double modifyToPlayer(RaCPlayer player, double value, String toModify){
 		if(player == null) return value;
 		if(modifiers.isEmpty()) return value;
 
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(player)) value = mod.apply(value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
 		}
 		
 		return value;
@@ -550,15 +551,16 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * 
 	 * @param player to check
 	 * @param value to modify
+	 * @param toModify the value to modify.
 	 * 
 	 * @return the modified value
 	 */
-	protected int modifyToPlayer(RaCPlayer player, int value){
+	protected int modifyToPlayer(RaCPlayer player, int value, String toModify){
 		if(player == null) return value;
 		if(modifiers.isEmpty()) return value;
 		
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(player)) value = mod.apply(value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
 		}
 		
 		return value;
@@ -572,13 +574,13 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * 
 	 * @return the modified value
 	 */
-	protected double getModValue(RaCPlayer player){
+	protected double getModValue(RaCPlayer player, String toModify){
 		if(player == null) return 1;
 		if(modifiers.isEmpty()) return 1;
 		
 		double value = 1;
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(player)) value = mod.apply(value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
 		}
 		
 		return value;

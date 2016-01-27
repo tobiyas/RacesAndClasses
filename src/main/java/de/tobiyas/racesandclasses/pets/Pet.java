@@ -34,19 +34,31 @@ public class Pet {
 	 */
 	private final boolean invincible;
 	
+	/**
+	 * If the pet is a baby.
+	 */
+	private final boolean baby;
+	
+	/**
+	 * If the pet is a baby.
+	 */
+	private final boolean autoRevive;
+	
 	
 	
 
 	
 	
 	public Pet(EntityType petType, String petName, double petMaxHealth,
-			double petDamage, boolean passive, boolean invincible) {
+			double petDamage, boolean passive, boolean invincible, boolean baby, boolean autoRevive) {
 		this.petType = petType;
 		this.petName = petName;
 		this.petMaxHealth = petMaxHealth;
 		this.petDamage = petDamage;
 		this.passive = passive;
 		this.invincible = invincible;
+		this.baby = baby;
+		this.autoRevive = autoRevive;
 	}
 
 
@@ -79,5 +91,11 @@ public class Pet {
 		return invincible;
 	}
 	
+	public boolean isBaby() {
+		return baby;
+	}
 	
+	public boolean isAutoRevive() {
+		return autoRevive;
+	}
 }

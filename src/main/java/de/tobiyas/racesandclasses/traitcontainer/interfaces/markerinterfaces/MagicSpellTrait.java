@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import org.bukkit.Material;
 
+import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 
 /**
@@ -31,9 +32,11 @@ public interface MagicSpellTrait extends TraitWithRestrictions {
 	 * Returns the cost of the Spell.
 	 * The Cost can vary on which Cost Type used.
 	 * 
+	 * @param the player to check for.
+	 * 
 	 * @return the costs of the spell
 	 */
-	public double getCost();
+	public double getCost(RaCPlayer player);
 	
 	
 	/**
@@ -51,7 +54,7 @@ public interface MagicSpellTrait extends TraitWithRestrictions {
 	 * returns the Material Type of CostType.
 	 * <br> Returns null if no Material costType is needed
 	 * 
-	 * @return
+	 * @return the material for casting.
 	 */
 	public Material getCastMaterialType();
 	

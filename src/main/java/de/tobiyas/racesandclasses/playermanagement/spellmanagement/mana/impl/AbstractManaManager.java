@@ -57,14 +57,14 @@ public abstract class AbstractManaManager implements ManaManager {
 	public boolean playerCastSpell(MagicSpellTrait spellToCast) {
 		if(!hasEnoughMana(spellToCast)) return false;
 		
-		drownMana(spellToCast.getCost());
+		drownMana(spellToCast.getCost(racPlayer));
 		outputManaToPlayer();
 		return true;
 	}
 
 	@Override
 	public boolean hasEnoughMana(MagicSpellTrait spell) {
-		return hasEnoughMana(spell.getCost());
+		return hasEnoughMana(spell.getCost(racPlayer));
 	}
 
 

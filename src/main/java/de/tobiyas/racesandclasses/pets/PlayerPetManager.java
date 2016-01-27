@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.pets;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,8 +39,12 @@ public class PlayerPetManager {
 		
 		Location ownerLocation = owner.getLocation();
 		for(SpawnedPet pet : spawnedPets){
+			double distToOwner = pet.getDistanceToOwner();
+			boolean revive = !pet.isSpawned() && pet.getPet().isAutoRevive();
+			
 			//Spawn when not present.
-			if(!pet.isSpawned()) {
+			if(revive || distToOwner > 50) {
+				pet.despawn();
 				pet.spawnAt(LocationOffsetUtils.getRandomAround(ownerLocation));
 				continue;
 			}
@@ -57,10 +62,7 @@ public class PlayerPetManager {
 	 * Despawns all Pets and clears them.
 	 */
 	public void despawnAndClear(){
-		for(SpawnedPet pet : spawnedPets){
-			pet.despawn();
-		}
-		
+		for(SpawnedPet pet : spawnedPets) pet.despawn();
 		spawnedPets.clear();
 	}
 
@@ -101,6 +103,8 @@ public class PlayerPetManager {
 
 	/**
 	 * Registerd a new Pet.
+	 * <br>Mainly for showing stuff.
+	 * <br>If you need more infos as location and so on, use {@link #getSpawnedPets()}
 	 * 
 	 * @param pet to register
 	 */
@@ -108,6 +112,59 @@ public class PlayerPetManager {
 		SpawnedPet newPet = new SpawnedPet(pet, owner);
 		spawnedPets.add(newPet);
 	}
-
 	
+	/**
+	 * Registerd a new Pet.
+	 * <br>Mainly for showing stuff.
+	 * <br>If you need more infos as location and so on, use {@link #getSpawnedPets()}
+	 * 
+	 * @param pet to register
+	 */
+	public void removePet(Pet pet) {
+		for(SpawnedPet spawned : spawnedPets){
+			if(spawned.getPet() == pet) {
+				spawnedPets.remove(pet);
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Revives the Pet at the given Location.
+	 * @param pet to revive.
+	 */
+	public void revivePet(Pet pet, Location location) {
+		for(SpawnedPet spawned : spawnedPets){
+			if(spawned.getPet() == pet) spawned.spawnAt(location);
+		}
+	}
+	
+	/**
+	 * Revives the Pet at the given Location.
+	 * @param pet to revive.
+	 */
+	public SpawnedPet getSpawnedPet(Pet pet) {
+		for(SpawnedPet spawned : spawnedPets){
+			if(spawned.getPet() == pet) return spawned;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the Registered Pets.
+	 * @return the pets.
+	 */
+	public Collection<Pet> getRegisteredPets(){
+		Collection<Pet> pets = new HashSet<Pet>();
+		for(SpawnedPet pet : this.spawnedPets) pets.add(pet.getPet());
+		return pets;
+	}
+	
+	/**
+	 * Returns the Pets present.
+	 * @return the pets.
+	 */
+	public Collection<SpawnedPet> getSpawnedPets(){
+		return new HashSet<SpawnedPet>(spawnedPets);
+	}
 }

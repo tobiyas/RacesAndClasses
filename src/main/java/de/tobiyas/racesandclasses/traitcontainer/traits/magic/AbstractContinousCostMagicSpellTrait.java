@@ -71,7 +71,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		if(!activateIntern(player)) return false;
 		
 		int tickDuration = everyXSeconds <= 0 ? durationInSeconds : everyXSeconds;
-		tickDuration = (int) (tickDuration / getModValue(player));
+		tickDuration = (int) (tickDuration / getModValue(player,"duration"));
 		
 		tick(player, true, true);
 		

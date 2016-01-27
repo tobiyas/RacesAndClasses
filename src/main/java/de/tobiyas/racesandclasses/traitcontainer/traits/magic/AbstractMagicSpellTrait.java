@@ -326,7 +326,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			
 			DecimalFormat formatter = new DecimalFormat("###.#");
 			
-			String costName = formatter.format(nextSpell.getCost());
+			String costName = formatter.format(nextSpell.getCost(player));
 			String costTypeString = nextSpell.getCostType() == CostType.ITEM 
 							? nextSpell.getCastMaterialType().name() 
 							: nextSpell.getCostType().name();
@@ -398,8 +398,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 
 
 	@Override
-	public double getCost(){
-		return cost;
+	public double getCost(RaCPlayer player){
+		return modifyToPlayer(player, cost, "cost");
 	}
 
 	

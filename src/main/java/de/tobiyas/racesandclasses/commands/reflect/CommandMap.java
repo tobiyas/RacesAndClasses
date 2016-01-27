@@ -57,6 +57,8 @@ public class CommandMap {
 				
 				for(PluginCommand subCommand : commandWrapper){
 					subCommand.setAliases(Arrays.asList(command.getAliases()));
+					subCommand.setDescription(command.getDescription());
+					subCommand.setTabCompleter(command);
 					subCommand.setExecutor(command);
 					toRegister.add(subCommand);					
 				}

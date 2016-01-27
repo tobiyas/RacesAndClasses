@@ -238,7 +238,7 @@ public class PlayerSpellManager {
 	 * @return true if he can, false if not
 	 */
 	public boolean canCastSpell(MagicSpellTrait trait){
-		double cost = trait.getCost();
+		double cost = trait.getCost(player);
 		
 		switch(trait.getCostType()){
 			case HEALTH: return player.getHealth() > cost;
@@ -262,20 +262,20 @@ public class PlayerSpellManager {
 	 */
 	public void removeCost(MagicSpellTrait trait) {
 		switch(trait.getCostType()){
-			case HEALTH: player.getHealthManager().damage(trait.getCost());
+			case HEALTH: player.getHealthManager().damage(trait.getCost(player));
 							break;
 			
 			case MANA: getManaManager().playerCastSpell(trait); break;
 			
-			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost())); break;
+			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost(player))); break;
 			
 			case HUNGER: 
 				int oldFoodLevel = player.getPlayer().getFoodLevel();
-				int newFoodLevel = (int) (oldFoodLevel - trait.getCost());
+				int newFoodLevel = (int) (oldFoodLevel - trait.getCost(player));
 				player.getPlayer().setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 				
 			case EXP:
-				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) trait.getCost());
+				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) trait.getCost(player));
 		}
 	}
 

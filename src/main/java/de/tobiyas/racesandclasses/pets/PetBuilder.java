@@ -29,12 +29,22 @@ public class PetBuilder {
 	/**
 	 * if the pet is passive
 	 */
-	private  boolean passive = false;
+	private boolean passive = false;
 	
 	/**
 	 * If the pet is invincible
 	 */
-	private  boolean invincible = false;
+	private boolean invincible = false;
+	
+	/**
+	 * If the pet is a baby
+	 */
+	private boolean baby = false;
+
+	/**
+	 * If the pet is auto-revived
+	 */
+	private boolean autoRevive = false;
 
 	
 	
@@ -97,14 +107,32 @@ public class PetBuilder {
 		return this;
 	}
 	
+	public boolean isBaby() {
+		return baby;
+	}
+
+	public PetBuilder setBaby(boolean baby) {
+		this.baby = baby;
+		return this;
+	}
+
+	public boolean isAutoRevive() {
+		return autoRevive;
+	}
+
+	public PetBuilder setAutoRevive(boolean autoRevive) {
+		this.autoRevive = autoRevive;
+		return this;
+	}
 	
+
 	/**
 	 * Builds the Pet.
 	 * 
 	 * @return build pet.
 	 */
 	public Pet build(){
-		return new Pet(petType, petName, petMaxHealth, petDamage, passive, invincible);
+		return new Pet(petType, petName, petMaxHealth, petDamage, passive, invincible, baby, autoRevive);
 	}
 	
 	

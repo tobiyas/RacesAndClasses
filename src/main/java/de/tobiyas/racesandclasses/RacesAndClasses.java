@@ -76,6 +76,7 @@ import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RaceHelp;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
 import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
 import de.tobiyas.racesandclasses.commands.level.Command_RACLevel;
+import de.tobiyas.racesandclasses.commands.pets.Command_RaCPet;
 import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
 import de.tobiyas.racesandclasses.commands.racespawn.CommandExecutor_RaceSpawn;
 import de.tobiyas.racesandclasses.commands.reflect.CommandMap;
@@ -463,6 +464,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		commands.add(new CommandExecutor_RaceSpawn());
 		
 		commands.add(new Command_RACLevel());
+		commands.add(new Command_RaCPet());
 		commands.add(new CommandExecutor_BindTrait());
 		commands.add(new CommandExecutor_UseTrait());
 		
@@ -618,7 +620,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		PlayerScoreboardUpdater.stop();
 		PermanentActionBarMessages.kill();
 		
-		playerManager.savePlayerContainer();
+		playerManager.shutdown();
 		getDebugLogger().shutDown();
 		plugin.reloadConfig();
 		cooldownManager.shutdown();

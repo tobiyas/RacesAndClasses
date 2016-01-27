@@ -34,6 +34,8 @@ import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.pets.Pet;
 import de.tobiyas.racesandclasses.pets.PetBuilder;
+import de.tobiyas.racesandclasses.pets.PlayerPetManager;
+import de.tobiyas.racesandclasses.pets.SpawnedPet;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
@@ -62,7 +64,7 @@ public class Command_RACLevel extends AbstractCommand {
 		
 		
 		//TODO remove below:
-		if(args.length == 1 && args[0].equalsIgnoreCase("pet")){
+		if(sender.isOp() && args.length == 1 && args[0].equalsIgnoreCase("pet")){
 			Player player = (Player) sender;
 			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 			
@@ -71,7 +73,23 @@ public class Command_RACLevel extends AbstractCommand {
 			player.sendMessage("Done");
 			return true;
 		}
+
+		//TODO remove below:
+		if(sender.isOp() && args.length == 1 && args[0].equalsIgnoreCase("petlist")){
+			Player player = (Player) sender;
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			
+			PlayerPetManager petManager = racPlayer.getPlayerPetManager();
+			player.sendMessage(ChatColor.GREEN + "Pets:");
+			for(SpawnedPet pet : petManager.getSpawnedPets()){
+				player.sendMessage(ChatColor.AQUA + pet.getPet().getPetName() + " - Dead: " + pet.getPetEntity().isDead());
+			}
+			
+			if(petManager.getRegisteredPets().isEmpty()) player.sendMessage(ChatColor.RED + "Keine");
+			return true;
+		}
 		
+		//TODO remove below:
 		if(args.length == 1 && args[0].equalsIgnoreCase("cleanpet")){
 			Player player = (Player) sender;
 			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);

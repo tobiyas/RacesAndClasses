@@ -9,10 +9,11 @@ public interface TraitSituationModifier {
 	 * If the Trait can be applied to the Player.
 	 * 
 	 * @param player to check if it is appliable.
+	 * @param toModify the parameter to modify.
 	 * 
 	 * @return true if applyable.
 	 */
-	public boolean canBeApplied(RaCPlayer player);
+	public boolean canBeApplied(String toModify, RaCPlayer player);
 	
 	
 	/**
@@ -22,7 +23,7 @@ public interface TraitSituationModifier {
 	 * 
 	 * @return the modified Value.
 	 */
-	public double apply(double value);
+	public double apply(RaCPlayer player, double value);
 	
 	
 	/**
@@ -32,5 +33,5 @@ public interface TraitSituationModifier {
 	 * 
 	 * @return the modified Value.
 	 */
-	public int apply(int value);
+	public int apply(RaCPlayer player, int value);
 }

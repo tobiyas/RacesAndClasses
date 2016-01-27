@@ -17,15 +17,17 @@ public class BiomeModifier extends AbstractModifier {
 	protected final Set<Biome> biomes;
 	
 	
-	public BiomeModifier(Set<Biome> biomes, double modifier) {
-		super(modifier);
+	public BiomeModifier(Set<Biome> biomes, double modifier, String toModify) {
+		super(modifier, toModify);
 		
 		this.biomes = biomes;
 	}
 	
 	
 	@Override
-	public boolean canBeApplied(RaCPlayer player) {
+	public boolean canBeApplied(String toModify, RaCPlayer player) {
+		if(!super.canBeApplied(toModify, player)) return false;
+		
 		Location loc = player.getLocation();
 		int x = loc.getBlockX();
 		int z = loc.getBlockZ();
@@ -42,7 +44,7 @@ public class BiomeModifier extends AbstractModifier {
 	 * 
 	 * @return the Generated Modifier or Null if not possible.
 	 */
-	public static BiomeModifier generate(String descriptor, double modifier){
+	public static BiomeModifier generate(String descriptor, double modifier, String toModify){
 		String[] biomeSplit = descriptor.split(",");
 		Set<Biome> biomes = new HashSet<Biome>();
 		
@@ -57,6 +59,6 @@ public class BiomeModifier extends AbstractModifier {
 		//Keine Arme, Keine Kekse!
 		if(biomes.isEmpty()) return null;
 		
-		return new BiomeModifier(biomes, modifier);
+		return new BiomeModifier(biomes, modifier, toModify);
 	}
 }

@@ -360,4 +360,11 @@ public class PlayerContainer {
 		return this.petManager;
 	}
 	
+	/**
+	 * Clears everything in the Containers.
+	 */
+	public void shutdown(){
+		petManager.despawnAndClear();
+	}
+	
 }

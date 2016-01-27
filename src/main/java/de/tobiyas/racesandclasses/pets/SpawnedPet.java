@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -84,9 +85,16 @@ public class SpawnedPet {
 				tameable.setOwner(owner.getRealPlayer());
 			}
 			
+			//Set baby or not.
+			if(petEntity instanceof Ageable){
+				Ageable ageable = (Ageable) petEntity;
+				if(pet.isBaby()) ageable.setBaby(); else ageable.setAdult();
+			}
+			
 			//Name stuff
 			petEntity.setCustomName(pet.getPetName());
 			petEntity.setCustomNameVisible(true);
+			
 			
 			//Targeting
 			revalidateTarget();
@@ -166,9 +174,7 @@ public class SpawnedPet {
 		if(!isSpawned()) return;
 		
 		Target current = getTarget();
-		if(current != null) {
-			current.setTarget((LivingEntity) getPetEntity());
-		}
+		if(current != null) current.setTarget((LivingEntity) getPetEntity());
 	}
 	
 	
@@ -193,6 +199,19 @@ public class SpawnedPet {
 		}
 		
 		return current;
+	}
+
+
+	/**
+	 * Returns the Distance to the Owner.
+	 * @return the distance to the Owner.
+	 */
+	public double getDistanceToOwner() {
+		if(!owner.isOnline()) return Double.MAX_VALUE;
+		if(!isSpawned()) return Double.MAX_VALUE;
+		if(owner.getWorld() != petEntity.getWorld()) return Double.MAX_VALUE;
+		
+		return owner.getLocation().distance(petEntity.getLocation());
 	}
 	
 	

@@ -9,15 +9,17 @@ public class LevelModifier extends AbstractModifier {
 	private final int maxLevel;
 	
 	
-	public LevelModifier(int minLevel, int maxLevel, double modifier) {
-		super(modifier);
+	public LevelModifier(int minLevel, int maxLevel, double modifier, String toModify) {
+		super(modifier, toModify);
 		
 		this.minLevel = minLevel;
 		this.maxLevel = maxLevel;
 	}
 	
 	@Override
-	public boolean canBeApplied(RaCPlayer player) {
+	public boolean canBeApplied(String toModify, RaCPlayer player) {
+		if(!super.canBeApplied(toModify, player)) return false;
+		
 		int current = player.getLevelManager().getCurrentLevel();
 		return current >= minLevel && current <= maxLevel;
 	}
@@ -31,7 +33,7 @@ public class LevelModifier extends AbstractModifier {
 	 * 
 	 * @return
 	 */
-	public static LevelModifier generate(String desriptor, Double modifier){
+	public static LevelModifier generate(String desriptor, Double modifier, String toModify){
 		String[] split = desriptor.split("-");
 		if(split.length != 2) return null;
 		
@@ -39,7 +41,7 @@ public class LevelModifier extends AbstractModifier {
 			int minLevel = Integer.parseInt(split[0]);
 			int maxLevel = Integer.parseInt(split[1]);
 			
-			return new LevelModifier(minLevel, maxLevel, modifier);
+			return new LevelModifier(minLevel, maxLevel, modifier, toModify);
 		}catch(NumberFormatException exp){
 			//not parseable.
 			return null;

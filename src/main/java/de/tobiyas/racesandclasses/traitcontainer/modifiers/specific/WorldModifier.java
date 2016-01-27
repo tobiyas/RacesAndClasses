@@ -7,14 +7,16 @@ public class WorldModifier extends AbstractModifier {
 
 	protected final String worldName;
 	
-	public WorldModifier(String worldName, double modifier) {
-		super(modifier);
+	public WorldModifier(String worldName, double modifier, String toModify) {
+		super(modifier, toModify);
 		this.worldName = worldName;
 	}
 	
 	
 	@Override
-	public boolean canBeApplied(RaCPlayer player) {
+	public boolean canBeApplied(String toModify, RaCPlayer player) {
+		if(!super.canBeApplied(toModify, player)) return false;
+		
 		return player.getWorld().getName().equalsIgnoreCase(worldName);
 	}
 	
@@ -27,8 +29,8 @@ public class WorldModifier extends AbstractModifier {
 	 * 
 	 * @return the modifier.
 	 */
-	public static WorldModifier generate(String descriptor, double modifier){
-		return new WorldModifier(descriptor, modifier);
+	public static WorldModifier generate(String descriptor, double modifier, String toModify){
+		return new WorldModifier(descriptor, modifier, toModify);
 	}
 
 }

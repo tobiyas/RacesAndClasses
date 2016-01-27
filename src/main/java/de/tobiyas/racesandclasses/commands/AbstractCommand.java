@@ -31,6 +31,11 @@ public abstract class AbstractCommand implements CommandInterface {
 	 */
 	protected final RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
+	/**
+	 * the Description of the Command.
+	 */
+	protected String description = "No description provided.";
+	
 	
 	public AbstractCommand(String commandName) {
 		this.commandNames.add(commandName);
@@ -102,6 +107,11 @@ public abstract class AbstractCommand implements CommandInterface {
 	@Override
 	public boolean hasAnyCommand() {
 		return !commandNames.isEmpty();
+	}
+	
+	@Override
+	public String getDescription() {
+		return description;
 	}
 	
 	

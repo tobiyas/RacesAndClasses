@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.BiomeModifier;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.EvaluationModifiers;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.LevelModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.TimeModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.WorldModifier;
@@ -19,9 +20,10 @@ public class ModifierFactory {
 	
 	static{
 		modifierMap.put("biome", BiomeModifier.class);
+		modifierMap.put("eval", EvaluationModifiers.class);
 		modifierMap.put("level", LevelModifier.class);
 		modifierMap.put("time", TimeModifier.class);
-		modifierMap.put("world", WorldModifier.class);		
+		modifierMap.put("world", WorldModifier.class);
 	}
 	
 	
@@ -39,6 +41,7 @@ public class ModifierFactory {
 		String type = split[0].toLowerCase();
 		String descriptor = split[1];
 		String mod = split[2];
+		String toUseOn = split.length <=3 ? "*" : split[3];
 		
 		double parsedMod = 0;
 		try{ parsedMod = Double.parseDouble(mod); }catch(IllegalArgumentException exp){ return null; }
@@ -47,8 +50,8 @@ public class ModifierFactory {
 		if(generator == null) return null;
 		
 		try{
-			Method method = generator.getMethod("generate", String.class, Double.class);
-			return (TraitSituationModifier) method.invoke(null, descriptor, parsedMod);
+			Method method = generator.getMethod("generate", String.class, Double.class, String.class);
+			return (TraitSituationModifier) method.invoke(null, descriptor, parsedMod, toUseOn);
 		}catch(Throwable exp){
 			//not parseable.
 			return null;

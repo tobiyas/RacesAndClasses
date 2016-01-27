@@ -83,6 +83,18 @@ public class PlayerManager{
 	}
 	
 	/**
+	 * Shuts down the Player Manager.
+	 */
+	public void shutdown(){
+		savePlayerContainer();
+		for(PlayerContainer container: playerData.values()){
+			container.shutdown();
+		}
+		
+		playerData.clear();
+	}
+	
+	/**
 	 * loads the health manager internally
 	 */
 	private void loadPlayerContainer(){

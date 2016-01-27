@@ -12,8 +12,8 @@ public class TimeModifier extends AbstractModifier {
 	
 	
 	
-	public TimeModifier(int minTime, int maxTime, double modifier) {
-		super(modifier);
+	public TimeModifier(int minTime, int maxTime, double modifier, String toModify) {
+		super(modifier, toModify);
 	
 		this.minTime = minTime;
 		this.maxTime = maxTime;
@@ -21,7 +21,9 @@ public class TimeModifier extends AbstractModifier {
 
 
 	@Override
-	public boolean canBeApplied(RaCPlayer player) {
+	public boolean canBeApplied(String toModify, RaCPlayer player) {
+		if(!super.canBeApplied(toModify, player)) return false;
+		
 		World world = player.getWorld();
 		long currentTime = world.getTime();
 		int hour = (int) (currentTime / 1000);
@@ -30,7 +32,7 @@ public class TimeModifier extends AbstractModifier {
 	}
 
 	
-	public static TimeModifier generate(String descriptor, double modifier){
+	public static TimeModifier generate(String descriptor, double modifier, String toModify){
 		String[] split = descriptor.split("-");
 		if(split.length != 2) return null;
 		
@@ -38,7 +40,7 @@ public class TimeModifier extends AbstractModifier {
 			int minTime = Integer.parseInt(split[0]);
 			int maxTime = Integer.parseInt(split[1]);
 			
-			return new TimeModifier(minTime, maxTime, modifier);
+			return new TimeModifier(minTime, maxTime, modifier, toModify);
 		}catch(NumberFormatException exp){
 			//not parseable.
 			return null;
