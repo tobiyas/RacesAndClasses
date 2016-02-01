@@ -32,6 +32,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.HeroesLevelM
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
+import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -89,6 +90,11 @@ public class PlayerContainer {
 	 */
 	private final PlayerRaCScoreboardManager playerScoreboardManager;
 	
+	/**
+	 * The Skill-Tree manager for the Player.
+	 */
+	private final PlayerSkillTreeManager playerSkillTreeManager;
+	
 	
 	/**
 	 * This constructor only sets the most important stuff.
@@ -105,6 +111,7 @@ public class PlayerContainer {
 		this.healthManager = new HealthManager(player);
 		this.playerScoreboardManager = new PlayerRaCScoreboardManager(player);
 		this.petManager = new PlayerPetManager(player);
+		this.playerSkillTreeManager = new PlayerSkillTreeManager(player).reloadFromConfig();
 		
 		this.hasGod = false;
 		
@@ -174,6 +181,8 @@ public class PlayerContainer {
 			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
 			config.set("hasGod", hasGod);
 			levelManager.save();
+			playerSkillTreeManager.save();
+			config.save();
 			return true;			
 		}
 		
@@ -255,12 +264,10 @@ public class PlayerContainer {
 				&& plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder()){
 			plugin.getClassManager().changePlayerHolder(player, savedClass, false);
 		}
-			
+		
 		PlayerContainer container = new PlayerContainer(player).checkStats();
 		boolean hasGod = config.getBoolean("hasGod");
-		if(hasGod){
-			container.switchGod();
-		}
+		if(hasGod) container.switchGod();
 		return container;
 	}
 
@@ -365,6 +372,14 @@ public class PlayerContainer {
 	 */
 	public void shutdown(){
 		petManager.despawnAndClear();
+	}
+
+
+	/**
+	 * Returns the SkillTree Manager
+	 */
+	public PlayerSkillTreeManager getSkillTreeManager() {
+		return playerSkillTreeManager;
 	}
 	
 }

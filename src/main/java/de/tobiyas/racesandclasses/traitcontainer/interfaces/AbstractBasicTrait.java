@@ -73,6 +73,38 @@ public abstract class AbstractBasicTrait implements Trait,
 	 */
 	public static final String ON_USE_PARTICLES_PATH = "onUseParticles";	
 	
+	/**
+	 * The cost for SkillPoints
+	 */
+	public static final String SKILL_POINTS_COST_PATH = "skillPoints";	
+	
+	/**
+	 * If the Skill is a permanent Trait.
+	 */
+	public static final String PERMANENT_TRAIT_PATH= "permanentTrait";	
+	
+	/**
+	 * The slot for the SkillTree.
+	 */
+	public static final String SKILL_TREE_SLOT_PATH = "skillTreeSlot";	
+	
+	/**
+	 * The material for the SkillTree.
+	 */
+	public static final String SKILL_TREE_MATERIAL_PATH = "skillTreeMaterial";	
+	
+	/**
+	 * The damage value for the SkillTree.
+	 */
+	public static final String SKILL_TREE_DAMAGE_PATH = "skillTreeDamage";
+	
+	/**
+	 * The prequesits for the SkillTree.
+	 */
+	public static final String SKILL_TREE_PREQUISITS_PATH = "skillTreePrequisits";
+	
+	
+	
 	
 	/**
 	 * The plugin to call stuff on.
@@ -95,12 +127,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The Set of biomes restricted.
 	 */
-	protected final Set<Biome> biomes = new HashSet<Biome>();
+	protected final Set<Biome> biomes = new HashSet<>();
 	
 	/**
 	 * The set of Items NEEDED to be weared.s
 	 */
-	protected final Set<Material> wearing = new HashSet<Material>();
+	protected final Set<Material> wearing = new HashSet<>();
 	
 	/**
 	 * Tells if the Trait only works in the water
@@ -184,12 +216,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * Tells the Trait can be activated only on certain blocks.
 	 */
-	protected final List<Material> onlyOnBlocks = new LinkedList<Material>();
+	protected final List<Material> onlyOnBlocks = new LinkedList<>();
 	
 	/**
 	 * Tells the Trait can NOT activated be activated on certain blocks.
 	 */
-	protected final List<Material> notOnBlocks = new LinkedList<Material>();
+	protected final List<Material> notOnBlocks = new LinkedList<>();
 	
 	/**
 	 * Tells the Trait can be activated while the player sneaks.
@@ -221,7 +253,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The holders of the Trait.
 	 */
-	protected final Set<AbstractTraitHolder> holders = new HashSet<AbstractTraitHolder>();
+	protected final Set<AbstractTraitHolder> holders = new HashSet<>();
 	
 	
 	/**
@@ -237,12 +269,38 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The map of Uplink that can be notified.
 	 */
-	protected final HashMap<String,Long> uplinkNotifyList = new HashMap<String, Long>();
+	protected final HashMap<String,Long> uplinkNotifyList = new HashMap<>();
 	
 	/**
 	 * The Modifiers to use.
 	 */
-	protected final Set<TraitSituationModifier> modifiers = new HashSet<TraitSituationModifier>();
+	protected final Set<TraitSituationModifier> modifiers = new HashSet<>();
+	
+	/**
+	 * The cost for this skill.
+	 */
+	protected int skillPointCost = 0;
+	
+	/**
+	 * The cost for this skill.
+	 */
+	protected boolean permanentSkill = false;
+	
+	/**
+	 * The slot for the SkillTree.
+	 */
+	protected int skillTreeSlot = -1;
+	
+	/**
+	 * The symbol for the SkillTree.
+	 */
+	protected ItemStack skillTreeSymbol = new ItemStack(Material.BOOK);
+	
+	/**
+	 * The symbol for the SkillTree.
+	 */
+	protected List<String> skillTreePrequisits = new LinkedList<>();
+	
 	
 
 	@Override
@@ -283,67 +341,55 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = DISABLE_COOLDOWN_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = MODIFIERS_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = VISIBLE_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_POINTS_COST_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_SLOT_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_MATERIAL_PATH, classToExpect = Material.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_PREQUISITS_PATH, classToExpect = List.class, optional = true),
 	})
 	
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
 		
-		//If a permission is needed
-		if(configMap.containsKey(TraitWithRestrictions.NEEDED_PERMISSION_PATH)){
-			this.neededPermission = configMap.getAsString(TraitWithRestrictions.NEEDED_PERMISSION_PATH);
-		}
-		
-		//checks if the Trait is visible.
-		if(configMap.containsKey(TraitWithRestrictions.VISIBLE_PATH)){
-			this.visible = configMap.getAsBool(TraitWithRestrictions.VISIBLE_PATH);
-		}
+		this.visible = configMap.getAsBool(VISIBLE_PATH, true);
 		if(!TraitVisible.isVisible(this)) this.visible = false;
 		
-		//Gets the Cooldown of the Trait.
-		if(configMap.containsKey(TraitWithRestrictions.COOLDOWN_TIME_PATH)){
-			this.cooldownTime = (Integer) configMap.get(TraitWithRestrictions.COOLDOWN_TIME_PATH);
-		}
-		
-		//Description
-		if(configMap.containsKey(TraitWithRestrictions.DESCRIPTION_PATH)){
-			this.traitDiscription = (String) configMap.get(TraitWithRestrictions.DESCRIPTION_PATH);
-		}
-		
-		//Reads the min level for the trait if present
-		if(configMap.containsKey(TraitWithRestrictions.MIN_LEVEL_PATH)){
-			this.minimumLevel = (Integer) configMap.get(TraitWithRestrictions.MIN_LEVEL_PATH);
-		}
+		this.neededPermission = configMap.getAsString(NEEDED_PERMISSION_PATH, "");
+		this.cooldownTime = configMap.getAsInt(COOLDOWN_TIME_PATH, 0);
+		this.traitDiscription = configMap.getAsString(DESCRIPTION_PATH, "");
+		this.minimumLevel = configMap.getAsInt(MIN_LEVEL_PATH, -1);
+		this.maximumLevel = configMap.getAsInt(MAX_LEVEL_PATH, 90000000);
+		this.onUseParticles = configMap.getAsParticle(ON_USE_PARTICLES_PATH, ParticleEffects.SPELL);
+		this.onlyAfterDamaged = configMap.getAsInt(ONLY_AFTER_DAMAGED_PATH, -1);
+		this.onlyAfterNotDamaged = configMap.getAsInt(ONLY_AFTER_NOT_DAMAGED_PATH,-1);
+		this.aboveElevation = configMap.getAsInt(ABOVE_ELEVATION_PATH, Integer.MIN_VALUE);
+		this.belowElevation = configMap.getAsInt(BELOW_ELEVATION_PATH, Integer.MAX_VALUE);
+		this.skillPointCost = configMap.getAsInt(SKILL_POINTS_COST_PATH, 0);
+		this.skillTreeSlot = configMap.getAsInt(SKILL_TREE_SLOT_PATH, -1);
 
-		//Reads the max level for the trait if present
-		if(configMap.containsKey(TraitWithRestrictions.MAX_LEVEL_PATH)){
-			this.maximumLevel = (Integer) configMap.get(TraitWithRestrictions.MAX_LEVEL_PATH);
-		}
 		
-		//Reads the Particle Effect on Cast
-		if(configMap.containsKey(ON_USE_PARTICLES_PATH)){
-			this.onUseParticles = configMap.getAsParticle(ON_USE_PARTICLES_PATH);
-		}
+		this.onlyInWater = configMap.getAsBool(ONLY_IN_WATER_PATH, false);
+		this.onlyInLava = configMap.getAsBool(ONLY_IN_LAVA_PATH, false);
+		this.onlyInRain = configMap.getAsBool(ONLY_IN_RAIN_PATH, false);
+		this.onlyOnSnow = configMap.getAsBool(ONLY_ON_SNOW, false);
+		this.onlyOnLand = configMap.getAsBool(ONLY_ON_LAND_PATH, false);
+		this.onlyOnDay = configMap.getAsBool(ONLY_ON_DAY_PATH, false);
+		this.onlyInNight = configMap.getAsBool(ONLY_IN_NIGHT_PATH, false);
+		this.displayName = configMap.getAsString(DISPLAY_NAME_PATH, null);
+		this.onlyWhileSneaking = configMap.getAsBool(ONLY_WHILE_SNEAKING_PATH, false);
+		this.onlyWhileNotSneaking = configMap.getAsBool(ONLY_WHILE_NOT_SNEAKING_PATH, false);
+		this.minUplinkShowTime = configMap.getAsInt(MIN_UPLINK_SHOW_PATH, 3);
+		this.disableCooldownNotice = configMap.getAsBool(DISABLE_COOLDOWN_NOTICE_PATH, false);
 		
-		//Reads the only after damage value
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_AFTER_DAMAGED_PATH)){
-			this.onlyAfterDamaged = (Integer) configMap.get(TraitWithRestrictions.ONLY_AFTER_DAMAGED_PATH);
-		}
-
-		//Reads the only after damage value
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_AFTER_NOT_DAMAGED_PATH)){
-			this.onlyAfterNotDamaged = (Integer) configMap.get(TraitWithRestrictions.ONLY_AFTER_NOT_DAMAGED_PATH);
-		}
-
-		//above elevation
-		if(configMap.containsKey(TraitWithRestrictions.ABOVE_ELEVATION_PATH)){
-			this.aboveElevation = (Integer) configMap.get(TraitWithRestrictions.ABOVE_ELEVATION_PATH);
-		}
 		
-		//below elevation
-		if(configMap.containsKey(TraitWithRestrictions.BELOW_ELEVATION_PATH)){
-			this.belowElevation = (Integer) configMap.get(TraitWithRestrictions.BELOW_ELEVATION_PATH);
-		}
+		//Read the Slot Item:
+		Material skillTreeMat = configMap.getAsMaterial(SKILL_TREE_MATERIAL_PATH, Material.BOOK);
+		short skillTreeDamage = (short)configMap.getAsInt(SKILL_TREE_DAMAGE_PATH, 0);
+		this.skillTreeSymbol = new ItemStack(skillTreeMat, 1, skillTreeDamage);
+		
 		
 		//Reads the biomes for the trait if present
 		if(configMap.containsKey(TraitWithRestrictions.BIOME_PATH)){
@@ -440,66 +486,6 @@ public abstract class AbstractBasicTrait implements Trait,
 			}catch(Exception exp){}
 		}
 		
-		//Only in water
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_WATER_PATH)){
-			this.onlyInWater = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_WATER_PATH);
-		}
-		
-		//Only in lava
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_LAVA_PATH)){
-			this.onlyInLava = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_LAVA_PATH);
-		}
-		
-		//Only in Rain
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_RAIN_PATH)){
-			this.onlyInRain = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_RAIN_PATH);
-		}
-
-		//Only on snow
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_SNOW)){
-			this.onlyOnSnow = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_SNOW);
-		}
-
-		//Only on land
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_LAND_PATH)){
-			this.onlyOnLand = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_LAND_PATH);
-		}
-		
-		//Only on Day
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_ON_DAY_PATH)){
-			this.onlyOnDay = (Boolean) configMap.get(TraitWithRestrictions.ONLY_ON_DAY_PATH);
-		}
-		
-		//Only in Night
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_IN_NIGHT_PATH)){
-			this.onlyInNight = (Boolean) configMap.get(TraitWithRestrictions.ONLY_IN_NIGHT_PATH);
-		}
-				
-		//Display Name
-		if(configMap.containsKey(TraitWithRestrictions.DISPLAY_NAME_PATH)){
-			this.displayName = (String) configMap.get(TraitWithRestrictions.DISPLAY_NAME_PATH);
-		}
-		
-		//Sneaking
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_SNEAKING_PATH)){
-			this.onlyWhileSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_SNEAKING_PATH);
-		}
-		
-		//Not sneaking
-		if(configMap.containsKey(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH)){
-			this.onlyWhileNotSneaking = (Boolean) configMap.get(TraitWithRestrictions.ONLY_WHILE_NOT_SNEAKING_PATH);
-		}
-		
-		//min uplink to show.
-		if(configMap.containsKey(TraitWithRestrictions.MIN_UPLINK_SHOW_PATH)){
-			this.minUplinkShowTime = (Integer) configMap.get(TraitWithRestrictions.MIN_UPLINK_SHOW_PATH);
-		}
-		
-		//disable uplink Notice.
-		if(configMap.containsKey(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH)){
-			this.disableCooldownNotice = (Boolean) configMap.get(TraitWithRestrictions.DISABLE_COOLDOWN_NOTICE_PATH);
-		}
-		
 		//read modifiers Path.
 		if(configMap.containsKey(MODIFIERS_PATH)){
 			List<String> mods = configMap.getAsStringList(MODIFIERS_PATH);
@@ -520,7 +506,12 @@ public abstract class AbstractBasicTrait implements Trait,
 					if(mod != null) modifiers.add(mod);
 				}
 			}
-			
+		}
+		
+		//Read prequisits.
+		if(configMap.containsKey(SKILL_TREE_PREQUISITS_PATH)){
+			this.skillTreePrequisits.clear();
+			this.skillTreePrequisits.addAll(configMap.getAsStringList(SKILL_TREE_PREQUISITS_PATH));
 		}
 	}
 	
@@ -1015,6 +1006,32 @@ public abstract class AbstractBasicTrait implements Trait,
 	@Override
 	public int compareTo(Trait other) {
 		return getDisplayName().compareTo(other.getDisplayName());
+	}
+	
+	
+	@Override
+	public int getSkillPointCost() {
+		return skillPointCost;
+	}
+	
+	@Override
+	public boolean isPermanentSkill() {
+		return permanentSkill;
+	}
+	
+	@Override
+	public int getSkillTreePlace(){
+		return skillTreeSlot;
+	}
+	
+	@Override
+	public ItemStack getSkillTreeSymbol(){
+		return skillTreeSymbol.clone();
+	}
+	
+	@Override
+	public List<String> getSkillTreePrequisits() {
+		return skillTreePrequisits;
 	}
 	
 }

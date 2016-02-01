@@ -148,7 +148,7 @@ public class TraitConfiguration extends CaseInsenesitveMap<Object> {
 	 */
 	public boolean getAsBool(String key, boolean defaultValue){
 		Object obj = get(key);
-		if(obj == null) return false;
+		if(obj == null) return defaultValue;
 		
 		if(obj instanceof Boolean) return (Boolean)obj;
 		return defaultValue;

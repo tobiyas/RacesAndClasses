@@ -61,6 +61,10 @@ public class GeneralConfigFields {
 	public static final String hotkeys_material = "hotkeys_material";
 	public static final String disabled_hotkey_slots = "disabled_hotkey_slots";
 	
+	//Skill System
+	public static final String skills_useSkillSystem = "skills_useSkillSystem";
+	public static final String skills_skillpointEveryXLevel = "skills_skillpointEveryXLevel";
+	
 	//Race-Spawns
 	public static final String race_spawns_enabled = "race_spawns_enabled";
 	public static final String race_spawn_cooldown = "race_spawn_cooldown";

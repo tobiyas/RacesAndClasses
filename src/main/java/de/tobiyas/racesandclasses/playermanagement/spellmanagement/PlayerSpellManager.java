@@ -121,7 +121,8 @@ public class PlayerSpellManager {
 			return;
 		}
 		
-		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
+		//Obtain all spells:
+		Set<Trait> traits = TraitHolderCombinder.getSpellTreeReducedTraitsOfPlayer(player);
 		for(Trait trait : traits){
 			if(trait instanceof MagicSpellTrait){
 				spellList.add((MagicSpellTrait) trait);

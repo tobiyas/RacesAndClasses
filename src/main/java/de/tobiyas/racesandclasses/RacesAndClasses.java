@@ -23,21 +23,9 @@
 package de.tobiyas.racesandclasses;
 
 
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ChannelManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ClassManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ConfigTotal;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.CooldownManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ManagerConstructor;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.PlayerManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.RaceManager;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitCopy;
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.*;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -48,39 +36,7 @@ import com.avaje.ebean.EbeanServer;
 
 import de.tobiyas.racesandclasses.addins.AddinManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
-import de.tobiyas.racesandclasses.commands.CommandInterface;
-import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_BindTrait;
-import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_UseTrait;
-import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_LocalChat;
-import de.tobiyas.racesandclasses.commands.chat.CommandExecutor_Whisper;
-import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_BroadCast;
-import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Channel;
-import de.tobiyas.racesandclasses.commands.chat.channels.CommandExecutor_Racechat;
-import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
-import de.tobiyas.racesandclasses.commands.config.CommandExecutor_ConfigRegenerate;
-import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
-import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
-import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_SaveNow;
-import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceClass;
-import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceRace;
-import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
-import de.tobiyas.racesandclasses.commands.general.CommandExecutor_PlayerInfo;
-import de.tobiyas.racesandclasses.commands.general.CommandExecutor_RacesReload;
-import de.tobiyas.racesandclasses.commands.health.CommandExecutor_HP;
-import de.tobiyas.racesandclasses.commands.health.CommandExecutor_Mana;
-import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceGod;
-import de.tobiyas.racesandclasses.commands.health.CommandExecutor_RaceHeal;
-import de.tobiyas.racesandclasses.commands.health.CommandExecutor_ShowTraits;
-import de.tobiyas.racesandclasses.commands.help.CommandExecutor_PermissionCheck;
-import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RaceHelp;
-import de.tobiyas.racesandclasses.commands.help.CommandExecutor_RacesVersion;
-import de.tobiyas.racesandclasses.commands.help.CommandExecutor_TraitList;
-import de.tobiyas.racesandclasses.commands.level.Command_RACLevel;
-import de.tobiyas.racesandclasses.commands.pets.Command_RaCPet;
-import de.tobiyas.racesandclasses.commands.races.CommandExecutor_Race;
-import de.tobiyas.racesandclasses.commands.racespawn.CommandExecutor_RaceSpawn;
-import de.tobiyas.racesandclasses.commands.reflect.CommandMap;
-import de.tobiyas.racesandclasses.commands.statistics.CommandExecutor_Statistics;
+import de.tobiyas.racesandclasses.commands.CommandRegisterer;
 import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
@@ -227,11 +183,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 */
 	protected AlternateEbeanServerImpl alternateEbeanServer;
 	
-	/**
-	 * A list of commands registered.
-	 */
-	protected final List<CommandInterface> commands = new LinkedList<CommandInterface>();
-	
 	
 	
 	//Empty Constructor for Bukkit.
@@ -262,6 +213,10 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 					+ "Please download it!");
 		}
 		
+		
+		//Use the Command register here.
+		CommandRegisterer commandRegister = new CommandRegisterer(this);
+		
 		//We seal the startup away to prevent further erroring afterwards.
 		try{
 			plugin = this;
@@ -280,7 +235,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 						
 			fullReload(false, false);
 			
-			registerCommands();
+			commandRegister.registerCommands();
 			
 			initMetrics();
 			loadingDoneMessage();
@@ -290,7 +245,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			getDebugLogger().logStackTrace(e);
 			
 			errored = true;
-			registerAllCommandsAsError();
+			commandRegister.registerAllCommandsAsError();
 		}
 	}
 	
@@ -425,69 +380,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//Start the Cooldown Updater.
 		PlayerScoreboardUpdater.start();
-	}
-	
-
-	private void registerCommands(){
-		long currentTime = System.currentTimeMillis();
 		
-		commands.clear();
-		
-		commands.add(new CommandExecutor_Race());
-		commands.add(new CommandExecutor_Racechat());
-		commands.add(new CommandExecutor_RaceHelp());
-		commands.add(new CommandExecutor_Whisper());
-		commands.add(new CommandExecutor_TraitList());
-		commands.add(new CommandExecutor_RaceHeal());
-		commands.add(new CommandExecutor_RaceDebug());
-		commands.add(new CommandExecutor_Class());
-		commands.add(new CommandExecutor_HP());
-		commands.add(new CommandExecutor_Mana());
-		commands.add(new CommandExecutor_Channel());
-		commands.add(new CommandExecutor_RaceGod());
-		commands.add(new CommandExecutor_BroadCast());
-		commands.add(new CommandExecutor_LocalChat());
-		commands.add(new CommandExecutor_PlayerInfo());
-		commands.add(new CommandExecutor_PermissionCheck());
-		
-		commands.add(new CommandExecutor_RacesReload());
-		commands.add(new CommandExecutor_RacesVersion());
-		commands.add(new CommandExecutor_Statistics());
-		commands.add(new CommandExecutor_ShowTraits());
-		commands.add(new CommandExecutor_Edit());
-		commands.add(new CommandExecutor_SaveNow());
-		
-		commands.add(new CommandExecutor_ForceRace());
-		commands.add(new CommandExecutor_ForceClass());
-		commands.add(new CommandExecutor_ConfigRegenerate());
-		
-		commands.add(new CommandExecutor_RaceSpawn());
-		
-		commands.add(new Command_RACLevel());
-		commands.add(new Command_RaCPet());
-		commands.add(new CommandExecutor_BindTrait());
-		commands.add(new CommandExecutor_UseTrait());
-		
-		
-		Map<String,String> remap = configManager.getGeneralConfig().getConfig_command_remaps();
-		for(CommandInterface command : commands){
-			command.applyRemapping(remap);
-		}
-		
-		//remove all disabled commands.
-		List<String> disabledCommands = configManager.getGeneralConfig().getConfig_general_disable_commands();
-		Iterator<CommandInterface> it = commands.iterator();
-		while(it.hasNext()){
-			CommandInterface command = it.next();
-			command.filterToDisabledCommands(disabledCommands);
-			
-			if(!command.hasAnyCommand()) it.remove();
-		}
-		
-		CommandMap.registerCommands(commands, this);		
-		if(System.currentTimeMillis() - currentTime > 1000){
-			log("Took too long to Init all commands! Please report this. Time taken: " + (System.currentTimeMillis() - currentTime) + " mSecs.");
-		}
+		//Init translation-Manager:
+		TranslationManagerHolder.init();
 	}
 	
 	
@@ -587,14 +482,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 		getDebugLogger().setAlsoToPlugin(true);
 	}
-	
-	
-	private void registerAllCommandsAsError() {
-		for(CommandInterface command : this.commands){
-			new CommandExecutor_EmptyCommand(command.getCommandNames());
-		}
-	}
-
 	
 	
 	public ConfigManager getConfigManager(){

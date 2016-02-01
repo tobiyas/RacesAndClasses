@@ -29,7 +29,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
-public interface Trait extends Comparable<Trait> {
+public interface Trait extends Comparable<Trait>, SkillTreeTrait {
 	
 	/**
 	 * This method is called when the Trait is load the first time.
@@ -185,8 +185,8 @@ public interface Trait extends Comparable<Trait> {
 	/**
 	 * The Trait gets triggered by the bind action.
 	 * 
-	 * @param player
-	 * @return
+	 * @param player that used the Trait
+	 * @return the reuslt of the Trigger.
 	 */
 	public TraitResults triggerOnBind(RaCPlayer player);
 }

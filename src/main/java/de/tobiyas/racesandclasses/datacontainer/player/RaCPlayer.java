@@ -23,6 +23,7 @@ import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
@@ -250,6 +251,11 @@ public class RaCPlayer extends PlayerProxy {
 		return plugin.getPlayerManager().getScoreboardManager(this);
 	}
 	
+
+	public PlayerSkillTreeManager getSkillTreeManager() {
+		return plugin.getPlayerManager().getSkillTreeManager(this);
+	}
+	
 	
 	/**
 	 * Returns a list of Traits the Player has.
@@ -411,5 +417,6 @@ public class RaCPlayer extends PlayerProxy {
 			return false;
 		return true;
 	}
+
 	
 }

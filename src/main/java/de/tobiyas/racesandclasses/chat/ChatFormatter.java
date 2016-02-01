@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.chat;
 import org.bukkit.ChatColor;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
@@ -56,18 +57,18 @@ public class ChatFormatter{
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
 		
-		String displayName;
-		String realName;
-		String world;
+		String displayName, realName, world, level;
 		
 		if(player == null){
 			displayName = "CONSOLE";
 			realName = "CONSOLE";
 			world = "None";
+			level = "";
 		}else{
 			displayName = player.getDisplayName();
 			realName = player.getName();
 			world = player.getWorld().getName();
+			level = String.valueOf(LevelAPI.getCurrentLevel(player));
 		}
 		
 		String messageFormat = "";
@@ -91,7 +92,8 @@ public class ChatFormatter{
 		messageFormat = messageFormat.replace("{realname}", realName);
 		messageFormat = messageFormat.replace("{race}", raceTag);
 		messageFormat = messageFormat.replace("{world}", world);
-		messageFormat = messageFormat.replace("{channeltype}", level.name());
+		messageFormat = messageFormat.replace("{level}", level);
+		messageFormat = messageFormat.replace("{channeltype}", this.level.name());
 		messageFormat = ChatColor.translateAlternateColorCodes('&', messageFormat);
 		if(replaceMessage) messageFormat = messageFormat.replace("{msg}", msg);
 		

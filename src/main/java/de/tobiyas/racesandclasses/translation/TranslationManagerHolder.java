@@ -31,12 +31,7 @@ public class TranslationManagerHolder {
 	 * @return TranslationManager of the Plugin.
 	 */
 	public static TranslationManager getTranslationManager(){
-		if(manager == null){
-			String language = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_usedLanguage();
-			manager = new DefaultTranslationManager(language);
-			manager.init();
-		}
-		
+		init();
 		return manager;
 	}
 	
@@ -57,6 +52,17 @@ public class TranslationManagerHolder {
 		if(manager != null){
 			manager.shutdown();
 			manager = null;
+		}
+	}
+
+	/**
+	 * Inits if not inited.
+	 */
+	public static void init() {
+		if(manager == null){
+			String language = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_usedLanguage();
+			manager = new DefaultTranslationManager(language);
+			manager.init();
 		}
 	}
 }

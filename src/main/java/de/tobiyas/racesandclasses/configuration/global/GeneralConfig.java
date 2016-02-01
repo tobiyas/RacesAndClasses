@@ -91,6 +91,10 @@ import de.tobiyas.util.formating.Pair;
 	private boolean config_useRaceClassSelectionMatrix;
 	private boolean config_convertDatabaseOnStartup;
 	private boolean config_food_enabled;
+	
+	
+	private boolean config_useSkillSystem;
+	private int config_skillpointEveryXLevel;
 
 	//language to use
 	private String config_usedLanguage;
@@ -314,6 +318,9 @@ import de.tobiyas.util.formating.Pair;
 		
 		config.addDefault(food_enabled, true);
 
+		config.addDefault(skills_useSkillSystem, false);
+		config.addDefault(skills_skillpointEveryXLevel, 5);
+
 		
 		config.options().copyDefaults(true);
 	}
@@ -345,6 +352,9 @@ import de.tobiyas.util.formating.Pair;
 		
 		config_classes_enable = config.getBoolean(classes_enable, true);
 		config_metrics_enabled = config.getBoolean(metrics_enable, true);
+
+		config_useSkillSystem = config.getBoolean(skills_useSkillSystem, false);
+		config_skillpointEveryXLevel = config.getInt(skills_skillpointEveryXLevel, 5);
 		
 		config_activate_reminder = config.getBoolean(races_remindDefaultRace_enable, true);
 		config_reminder_interval = config.getInt(races_remindDefaultRace_interval, 10);
@@ -898,6 +908,14 @@ import de.tobiyas.util.formating.Pair;
 
 	public Map<String, String> getConfig_command_remaps() {
 		return config_command_remaps;
+	}
+
+	public boolean isConfig_useSkillSystem() {
+		return config_useSkillSystem;
+	}
+	
+	public int getConfig_skillpointEveryXLevel() {
+		return config_skillpointEveryXLevel;
 	}
 	
 }

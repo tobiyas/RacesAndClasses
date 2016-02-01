@@ -36,15 +36,6 @@ public class CommandExecutor_ShowTraits extends AbstractCommand {
 	public CommandExecutor_ShowTraits() {
 		super("showtraits", new String[]{"rst"});
 		RacesAndClasses.getPlugin();
-
-//		String command = "showtraits";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 

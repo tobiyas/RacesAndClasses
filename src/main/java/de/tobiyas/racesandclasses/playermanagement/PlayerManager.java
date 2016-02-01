@@ -31,6 +31,7 @@ import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.util.player.PlayerUtils;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
@@ -303,6 +304,16 @@ public class PlayerManager{
 	public PlayerPetManager getPlayerPetManager(RaCPlayer player) {
 		PlayerContainer containerOfPlayer = getCreate(player);
 		return containerOfPlayer.getPlayerPetManager();
+	}
+
+	/**
+	 * Returns the Player SkillTreeManager.
+	 * @param raCPlayer to use.
+	 * @return the Skill-Tree Manager.
+	 */
+	public PlayerSkillTreeManager getSkillTreeManager(RaCPlayer player) {
+		PlayerContainer containerOfPlayer = getCreate(player);
+		return containerOfPlayer.getSkillTreeManager();
 	}
 
 }

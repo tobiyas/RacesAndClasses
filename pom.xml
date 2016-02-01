@@ -259,6 +259,7 @@
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
+		<finalName>RacesAndClasses</finalName>
 		<!-- Remove Tests for the Moment -->
 		<!-- <testSourceDirectory>src/test/java</testSourceDirectory> -->
 		<plugins>

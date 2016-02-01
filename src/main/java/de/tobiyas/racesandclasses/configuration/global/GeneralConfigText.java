@@ -239,6 +239,27 @@ public class GeneralConfigText {
 	}
 	
 	
+	private static final String SkillSystem(){
+		return ""
+				+ "\n"
+				+ "##############\n"
+				+ "#Skill-System#\n"
+				+ "##############\n"
+				+ "\n"
+				
+				+ "# If the SkillSystem is enabled. \n"
+				+ "# If true, the users may pick their skills.\n"
+				+ "# default: false \n"
+				+ skills_useSkillSystem + ": false\n\n"
+				
+				+ "# If the SkillSystem is enabled, the player get points. \n"
+				+ "# This defines every how many levels the player get a point.\n"
+				+ "# default: 5 \n"
+				+ skills_skillpointEveryXLevel + ": 5\n\n"
+				;
+	}
+	
+	
 	private static final String RaceSpawns(){
 		return ""
 				//Race-Spawns
@@ -758,6 +779,7 @@ public class GeneralConfigText {
 			+ Language()
 			+ Multiworld()
 			+ Hotkeys()
+			+ SkillSystem()
 			+ RaceSpawns()
 			+ Food()
 			+ General()

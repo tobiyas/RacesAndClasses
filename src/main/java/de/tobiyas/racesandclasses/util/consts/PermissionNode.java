@@ -193,5 +193,10 @@ public class PermissionNode {
 	 * The Permission to edit your level.
 	 */
 	public static final String levelEdit = prePlugin + "level.edit";
+	
+	/**
+	 * The Permission to edit your level.
+	 */
+	public static final String skillTreeClear = prePlugin + "skilltree.clear";
 
 }

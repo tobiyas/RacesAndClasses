@@ -15,14 +15,24 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitHolderCombinder {
 
+	
+	/**
+	 * If the SkillSystem is used.
+	 */
+	private static boolean useSkillSystem(){
+		return RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_useSkillSystem();
+	}
 	
 	
 	/**
@@ -34,6 +44,20 @@ public class TraitHolderCombinder {
 	 * @return true if the player has access to the trait passed, false otherwise
 	 */
 	public static boolean checkContainer(RaCPlayer player, Trait trait){
+		return checkContainer(player, trait, false);
+	}
+	
+	/**
+	 * Checks if the player passed has access to the trait passed.
+	 * 
+	 * @param playerRaCPlayer the player to check
+	 * @param trait to check against
+	 * 
+	 * @return true if the player has access to the trait passed, false otherwise
+	 */
+	public static boolean checkContainer(RaCPlayer player, Trait trait, boolean ignoreSkilling){
+		if(!ignoreSkilling && useSkillSystem()) return player.getSkillTreeManager().hasTrait(trait);
+		
 		Set<AbstractTraitHolder> holder = trait.getTraitHolders();
 		if(holder == null || holder.isEmpty()) return true;
 		
@@ -43,9 +67,7 @@ public class TraitHolderCombinder {
 		}
 		
 		AbstractTraitHolder classHolder = player.getclass();
-		if(holder.contains(classHolder)){
-			return true;
-		}
+		if(holder.contains(classHolder)) return true;
 		
 		return false;
 	}
@@ -71,6 +93,31 @@ public class TraitHolderCombinder {
 			traits.addAll(classContainer.getTraits());
 		}
 			
+		return traits;
+	}
+	
+	/**
+	 * Returns a Set of all Traits that a player has.
+	 * This combines Race- + Class-Traits
+	 * 
+	 * @param offlinePlayer to check
+	 
+	 * @return set of all Traits of player
+	 */
+	public static Set<Trait> getSpellTreeReducedTraitsOfPlayer(RaCPlayer player){
+		Set<Trait> traits = getReducedTraitsOfPlayer(player);
+		
+		
+		//Filter for SkillSystem.
+		if(useSkillSystem()){
+			Collection<Trait> has = player.getSkillTreeManager().getTraits();
+			Iterator<Trait> it = traits.iterator();
+			while(it.hasNext()) {
+				Trait check = it.next();
+				if(!check.isPermanentSkill() && !has.contains(check)) it.remove();
+			}
+		}
+		
 		return traits;
 	}
 	
