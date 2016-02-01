@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -374,6 +375,13 @@ public abstract class AbstractTraitHolder {
 					String configPath = configNodeName + ".traits." + traitName;
 					configureTraitFromYAML(config, configPath, trait);
 					trait.generalInit();
+					
+					
+					//Register as listener!
+					if(trait instanceof Listener) {
+						RacesAndClasses.getPlugin().registerEvents((Listener)trait);
+					}
+					
 					
 					traits.add(trait);
 				}

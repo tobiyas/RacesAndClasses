@@ -56,8 +56,13 @@ public class TraitHolderCombinder {
 	 * @return true if the player has access to the trait passed, false otherwise
 	 */
 	public static boolean checkContainer(RaCPlayer player, Trait trait, boolean ignoreSkilling){
-		if(!ignoreSkilling && useSkillSystem()) return player.getSkillTreeManager().hasTrait(trait);
+		//Check if player has skill first + check if not permanent:
+		if(!ignoreSkilling && useSkillSystem()) {
+			if(player.getSkillTreeManager().hasTrait(trait)) return true;
+			if(!trait.isPermanentSkill()) return false;
+		}
 		
+		//Rest, check if holder == player holder.
 		Set<AbstractTraitHolder> holder = trait.getTraitHolders();
 		if(holder == null || holder.isEmpty()) return true;
 		
@@ -98,7 +103,8 @@ public class TraitHolderCombinder {
 	
 	/**
 	 * Returns a Set of all Traits that a player has.
-	 * This combines Race- + Class-Traits
+	 * This combines Race- + Class-Traits.
+	 * <br>This gets all Permanent + learned spells!
 	 * 
 	 * @param offlinePlayer to check
 	 
@@ -114,7 +120,11 @@ public class TraitHolderCombinder {
 			Iterator<Trait> it = traits.iterator();
 			while(it.hasNext()) {
 				Trait check = it.next();
-				if(!check.isPermanentSkill() && !has.contains(check)) it.remove();
+				if(check.isPermanentSkill()) continue;
+				if(has.contains(check)) continue;
+				
+				//Does not have and is not permanent!
+				it.remove();
 			}
 		}
 		

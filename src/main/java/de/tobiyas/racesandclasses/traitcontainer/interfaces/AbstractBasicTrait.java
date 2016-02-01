@@ -81,7 +81,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * If the Skill is a permanent Trait.
 	 */
-	public static final String PERMANENT_TRAIT_PATH= "permanentTrait";	
+	public static final String SKILL_TREE_PERMANENT_TRAIT_PATH= "permanentTrait";	
 	
 	/**
 	 * The slot for the SkillTree.
@@ -284,7 +284,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The cost for this skill.
 	 */
-	protected boolean permanentSkill = false;
+	protected boolean permanentSkill = true;
 	
 	/**
 	 * The slot for the SkillTree.
@@ -343,7 +343,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = VISIBLE_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_POINTS_COST_PATH, classToExpect = Integer.class, optional = true),
-		@TraitConfigurationField(fieldName = PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_SLOT_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MATERIAL_PATH, classToExpect = Material.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
@@ -371,6 +371,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		this.skillTreeSlot = configMap.getAsInt(SKILL_TREE_SLOT_PATH, -1);
 
 		
+		this.permanentSkill = configMap.getAsBool(SKILL_TREE_PERMANENT_TRAIT_PATH, true);
 		this.onlyInWater = configMap.getAsBool(ONLY_IN_WATER_PATH, false);
 		this.onlyInLava = configMap.getAsBool(ONLY_IN_LAVA_PATH, false);
 		this.onlyInRain = configMap.getAsBool(ONLY_IN_RAIN_PATH, false);
