@@ -46,4 +46,15 @@ public class TraitInfoContainer {
 	public boolean isVisible(){
 		return visible;
 	}
+	
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

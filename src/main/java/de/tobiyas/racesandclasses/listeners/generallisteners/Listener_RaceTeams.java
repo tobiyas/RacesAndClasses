@@ -56,7 +56,7 @@ public class Listener_RaceTeams implements Listener {
 				CooldownApi.setPlayerCooldown(damagerP.getName(), "friendly.fire", 2);
 				
 				//Send message.
-				LanguageAPI.sendTranslatedMessage(damagerP, Keys.same_race_team);
+				LanguageAPI.sendTranslatedMessage(damagerP, Keys.same_race_team, "other", damageeP.getDisplayName());
 			}
 		}
 	}

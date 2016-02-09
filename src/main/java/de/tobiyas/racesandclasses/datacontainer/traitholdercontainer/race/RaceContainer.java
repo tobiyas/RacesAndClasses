@@ -26,6 +26,8 @@ import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class RaceContainer extends AbstractTraitHolder{
 	
@@ -100,7 +102,8 @@ public class RaceContainer extends AbstractTraitHolder{
 		
 		if(!RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_adaptListName()) return;
 		String total = holderTag + player.getName();
-		if(total.length() > 16) total = total.substring(0, 15);
+		boolean isMc1_8 = VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R1);
+		if(!isMc1_8 && total.length() > 16) total = total.substring(0, 15);
 		
 		player.getPlayer().setPlayerListName(total);
 	}

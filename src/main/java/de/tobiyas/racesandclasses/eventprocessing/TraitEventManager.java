@@ -77,7 +77,10 @@ public class TraitEventManager{
 	 */
 	public TraitEventManager(){
 		plugin = RacesAndClasses.getPlugin();
-		TraitsList.initTraits();
+		TraitsList.initStaticTraits();
+		TraitsList.initInternalTraits();
+		TraitStore.importFromFileSystem();
+		
 		manager = this;
 		traitList = new HashMap<Class<?>, Set<Trait>>();
 		eventIDs = new HashMap<Integer, Long>();
@@ -180,6 +183,7 @@ public class TraitEventManager{
 				//check if the Arrow needs changed
 				if(trait instanceof AbstractArrow 
 						&& eventWrapper.getPlayerAction() == PlayerAction.CHANGE_ARROW
+						&& player.getArrowManager().getNumberOfArrowTypes() > 0
 						&& player.getArrowManager().getCurrentArrow() == trait
 						&& !hasBypassForEvent){
 					
@@ -207,7 +211,7 @@ public class TraitEventManager{
 				if(!hasBypassForEvent && !trait.canBeTriggered(eventWrapper)){
 					continue;
 				}
-					
+				
 				if(trait instanceof MagicSpellTrait && !hasBypassForEvent){
 					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
 					if(!player.getSpellManager().canCastSpell(magicTrait)){

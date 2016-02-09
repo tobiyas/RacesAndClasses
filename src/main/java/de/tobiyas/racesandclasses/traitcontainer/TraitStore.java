@@ -187,7 +187,6 @@ public class TraitStore {
 		}
 		
 		List<File> possibleTraits = getAllTraitsOfDir(traitDir);
-				
 		for(File file : possibleTraits){
 			try{
 				loadExternalTrait(file);
@@ -196,7 +195,6 @@ public class TraitStore {
 				continue;
 			}
 		}
-
 	}
 	
 	/**
