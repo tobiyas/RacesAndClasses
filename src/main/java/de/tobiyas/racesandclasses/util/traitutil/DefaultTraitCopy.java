@@ -25,6 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.util.file.FileUtils;
 
 public class DefaultTraitCopy {
 
@@ -121,6 +122,20 @@ public class DefaultTraitCopy {
 		}
 		return count;
 	}
+
+	
+	/**
+	 * Removes old Traits if present.
+	 */
+	public static void removeOldDefaultTraits() {
+		RacesAndClasses plugin = RacesAndClasses.getPlugin();
+		File oldTraitsDir = new File(plugin.getDataFolder(), "traits");
+		
+		FileUtils.deleteFileRecursivly(oldTraitsDir);
+	}
+	
+	
+	
 	
 }
 	

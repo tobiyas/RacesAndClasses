@@ -180,7 +180,7 @@ public class TraitStore {
 	public static void importFromFileSystem(){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		File traitDir = new File(plugin.getDataFolder() + File.separator + "traits" + File.separator);
+		File traitDir = new File(plugin.getDataFolder() + File.separator + "ExternalTraits" + File.separator);
 		if(!traitDir.exists()){
 			traitDir.mkdirs();
 			return;
