@@ -86,8 +86,6 @@ import de.tobiyas.util.formating.Pair;
 	private boolean config_usePermissionsForRaces;
 	private boolean config_usePermissionsForClasses;
 	
-	private boolean config_copyDefaultTraitsOnStartup;
-	
 	private boolean config_useRaceClassSelectionMatrix;
 	private boolean config_convertDatabaseOnStartup;
 	private boolean config_food_enabled;
@@ -145,6 +143,7 @@ import de.tobiyas.util.formating.Pair;
 	private boolean config_disableAllScoreboardOutputs;
 	
 	private boolean config_enableRaces;
+	private boolean config_classes_removeClassOnRaceChange;
 	
 	private boolean config_disableArmorChecking;
 	
@@ -261,6 +260,7 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(races_takeRaceWhenNoRace, "");
 		
 		config.addDefault(classes_permissions_usePermissionsForEachClasses, false);
+		config.addDefault(classes_removeClassOnRaceChange, false);
 		config.addDefault(classes_useRaceClassSelectionMatrix, false);
 		config.addDefault(classes_change_uplinkInSeconds, 0);
 		config.addDefault(classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable, true);
@@ -274,7 +274,6 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(worlds_disableOn, Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		config.addDefault(keep_max_hp_on_disabled_worlds, true);
 		
-		config.addDefault(general_copyDefaultTraitsOnStartup, true);
 		config.addDefault(general_saving_savePlayerDataToDB, false);
 		config.addDefault(general_convert_database_on_startup, true);
 		config.addDefault(general_disable_commands, new LinkedList<String>());
@@ -369,7 +368,6 @@ import de.tobiyas.util.formating.Pair;
 		config_usePermissionsForRaces = config.getBoolean(races_permissions_usePermissionsForEachRace, false);
 		config_usePermissionsForClasses = config.getBoolean(classes_permissions_usePermissionsForEachClasses, false);
 		
-		config_copyDefaultTraitsOnStartup = config.getBoolean(general_copyDefaultTraitsOnStartup, true);
 		config_disableArmorChecking = config.getBoolean(general_armor_disableArmorChecking, false);
 		
 		config_useRaceClassSelectionMatrix = config.getBoolean(classes_useRaceClassSelectionMatrix, false);
@@ -381,6 +379,7 @@ import de.tobiyas.util.formating.Pair;
 		config_useRaceGUIToSelect = config.getBoolean(races_gui_enable, true);
 		config_useClassGUIToSelect = config.getBoolean(classes_gui_enable, true);
 		
+		config_classes_removeClassOnRaceChange = config.getBoolean(classes_removeClassOnRaceChange, false);
 		config_defaultRaceName = config.getString(races_defaultrace_name, "DefaultRace");
 		config_defaultRaceTag = config.getString(races_defaultrace_tag, "[NoRace]");
 		
@@ -604,10 +603,6 @@ import de.tobiyas.util.formating.Pair;
 
 	public boolean isConfig_usePermissionsForClasses() {
 		return config_usePermissionsForClasses;
-	}
-
-	public boolean isConfig_copyDefaultTraitsOnStartup() {
-		return config_copyDefaultTraitsOnStartup;
 	}
 
 	public boolean isConfig_useRaceClassSelectionMatrix() {
@@ -916,6 +911,10 @@ import de.tobiyas.util.formating.Pair;
 	
 	public int getConfig_skillpointEveryXLevel() {
 		return config_skillpointEveryXLevel;
+	}
+	
+	public boolean isConfig_classes_removeClassOnRaceChange() {
+		return config_classes_removeClassOnRaceChange;
 	}
 	
 }

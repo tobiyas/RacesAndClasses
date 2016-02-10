@@ -28,6 +28,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.RaceAPI;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
@@ -194,5 +195,22 @@ public class RaceChangeSelectionListener implements Listener {
 			if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 			else player.chat("/"+command);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void removeClassAfterChange(AfterRaceChangedEvent event){
+		sendCommandAfterSelect((AfterRaceSelectedEvent) event);
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void removeClassAfterChange(AfterRaceSelectedEvent selectEvent){
+		GeneralConfig config = plugin.getConfigManager().getGeneralConfig();
+		if(!config.isConfig_classes_removeClassOnRaceChange()) return;
+		if(!config.isConfig_enableRaces()) return;
+		if(!config.isConfig_classes_enable()) return;
+		
+		//Reset!
+		String defaultClass = ClassAPI.getDefaultClassName();
+		ClassAPI.addPlayerToClass(selectEvent.getPlayer(), defaultClass);
 	}
 }

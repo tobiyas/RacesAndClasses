@@ -316,12 +316,6 @@ public class GeneralConfigText {
 				+ "#GENERAL#\n"
 				+ "#########\n"
 				+ "\n"
-				
-				+ "# Copys all Traits to the Trait folder on Plugin loading. \n"
-				+ "# If you modify Traits used by the Plugin by code, turn this off.\n"
-				+ "# boolean: true or false\n"
-				+ "# default: true \n"
-				+ general_copyDefaultTraitsOnStartup + ": true\n\n"
 
 				//+ "# This tells the Plugin to use the Build in DB service to save data. \n"
 				//+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
@@ -706,6 +700,11 @@ public class GeneralConfigText {
 				+ "# boolean: true or false \n"
 				+ "# default: false \n"
 				+ classes_permissions_usePermissionsForEachClasses + ": false\n\n"
+				
+				+ "# Removes the current Class (set to default) when the Race is changed. \n"
+				+ "# boolean: true or false \n"
+				+ "# default: false \n"
+				+ classes_removeClassOnRaceChange + ": false\n\n"
 				
 				+ "# Tells the plugin to check every class selection against a Race / Class matrix. \n"
 				+ "# The matrix can be found in: 'plugins/RacesAndClasses/racesClassesSelectionMatrix.yml'\n"

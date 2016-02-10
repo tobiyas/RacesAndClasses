@@ -74,7 +74,6 @@ public class GeneralConfigFields {
 	public static final String food_enabled = "food_enabled";
 	
 	//General
-	public static final String general_copyDefaultTraitsOnStartup = "general_copyDefaultTraitsOnStartup";
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
 	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
@@ -146,6 +145,7 @@ public class GeneralConfigFields {
 	//Classes
 	public static final String classes_enable = "classes_enable";
 	public static final String classes_permissions_usePermissionsForEachClasses = "classes_permissions_usePermissionsForEachClasses";
+	public static final String classes_removeClassOnRaceChange = "classes_removeClassOnRaceChange";
 	public static final String classes_useRaceClassSelectionMatrix = "classes_useRaceClassSelectionMatrix";
 	public static final String classes_takeClassWhenNoClass = "classes_takeClassWhenNoClass";
 	public static final String classes_change_uplinkInSeconds = "classes_change_uplinkInSeconds";

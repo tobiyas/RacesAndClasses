@@ -288,14 +288,9 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		ConfigTotal.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
-		
-		//copy default traits if non existent and enabled
-		if(configManager.getGeneralConfig().isConfig_copyDefaultTraitsOnStartup()){
-			DefaultTraitCopy.copyDefaultTraits();
-		}
 
-		TraitCopy.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
-		currentTime = System.currentTimeMillis();
+		//Remove old traits:
+		DefaultTraitCopy.removeOldDefaultTraits();
 		
 		//Create all Managers //TODO check if needs reinit.
 		TraitEventManager traitEventManager = new TraitEventManager();
