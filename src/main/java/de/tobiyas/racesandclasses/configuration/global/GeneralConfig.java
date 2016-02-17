@@ -157,6 +157,11 @@ import de.tobiyas.util.formating.Pair;
 	private int config_cooldown_on_bow_message;
 	private int config_cooldown_on_wand_message;
 	private int config_max_level;
+
+	
+	private boolean config_groups_enable;
+	private String config_groups_system;
+	
 	
 	private String config_magic_manaShowPlace;
 
@@ -317,6 +322,9 @@ import de.tobiyas.util.formating.Pair;
 		
 		config.addDefault(food_enabled, true);
 
+		config.addDefault(groups_enabled, true);
+		config.addDefault(groups_system, "RaC");
+
 		config.addDefault(skills_useSkillSystem, false);
 		config.addDefault(skills_skillpointEveryXLevel, 5);
 
@@ -389,8 +397,11 @@ import de.tobiyas.util.formating.Pair;
 		config_gui_level_useMCLevelBar = config.getBoolean(gui_level_useMCLevelBar, false);
 		config_enable_permanent_scoreboard = config.getBoolean(gui_enable_permanent_scoreboard, false);
 		config_useFoodManaBar = config.getBoolean(magic_useFoodManaBar, false);
-		config_food_enabled = config.getBoolean(food_enabled, true);
 		config_races_create_group_for_race = config.getBoolean(races_create_group_for_race, true);
+
+		config_food_enabled = config.getBoolean(food_enabled, true);
+		config_groups_enable = config.getBoolean(groups_enabled, true);
+		config_groups_system = config.getString(groups_system, "RaC");
 		
 		config_disabledHotkeySlots.clear();
 		config_disabledHotkeySlots.addAll(config.getIntegerList(disabled_hotkey_slots));
@@ -916,5 +927,14 @@ import de.tobiyas.util.formating.Pair;
 	public boolean isConfig_classes_removeClassOnRaceChange() {
 		return config_classes_removeClassOnRaceChange;
 	}
+
+	public boolean isConfig_groups_enable() {
+		return config_groups_enable;
+	}
+
+	public String getConfig_groups_system() {
+		return config_groups_system;
+	}
+	
 	
 }

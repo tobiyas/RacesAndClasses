@@ -165,20 +165,30 @@
            <systemPath>${project.basedir}/libs/Misc/mcMMO.jar</systemPath>
 		</dependency>
 		
+		<!-- Parties -->
+		<dependency>
+			<groupId>me.alessiodp.parties</groupId>
+    		<artifactId>Parties</artifactId>
+    		<version>1.5.9</version>
+           <scope>system</scope>
+           <systemPath>${project.basedir}/libs/Misc/Parties.jar</systemPath>
+		</dependency>
+		
 		<!-- Placeholder APIs -->
 		<dependency>
 		  <groupId>be.maximvdw</groupId>
 		  <artifactId>MVdWPlaceholderAPI</artifactId>
 		  <version>1.0.1-SNAPSHOT</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>me.clip.placeholderapi</groupId>
-    		<artifactId>PlaceholderAPIPlugin</artifactId>
-    		<version>1.0</version>
-           <scope>system</scope>
-           <systemPath>${project.basedir}/libs/Misc/PlaceholderAPI.jar</systemPath>
+	   		<artifactId>PlaceholderAPIPlugin</artifactId>
+	   		<version>1.0</version>
+	        <scope>system</scope>
+	        <systemPath>${project.basedir}/libs/Misc/PlaceholderAPI.jar</systemPath>
 		</dependency>
-				
+			
 		<!-- Mockito -->
 		<dependency>
 			<groupId>org.powermock</groupId>

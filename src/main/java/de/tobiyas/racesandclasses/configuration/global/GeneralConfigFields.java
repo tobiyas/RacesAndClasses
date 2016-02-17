@@ -70,8 +70,13 @@ public class GeneralConfigFields {
 	public static final String race_spawn_cooldown = "race_spawn_cooldown";
 	public static final String race_spawn_when_dead = "race_spawn_when_dead";
 	
+	//ADDINS:
 	//Food
 	public static final String food_enabled = "food_enabled";
+
+	//Groups:
+	public static final String groups_enabled = "groups_enabled";
+	public static final String groups_system = "groups_system";
 	
 	//General
 	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";

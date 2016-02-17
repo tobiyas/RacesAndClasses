@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.util.friend;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.APIs.GroupAPI;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.Shooter;
 
 public class EnemyChecker implements Listener {
@@ -26,6 +28,7 @@ public class EnemyChecker implements Listener {
 			event.setCancelled(true);
 		}
 	}
+	
 	public static class FriendDetectEvent extends EntityDamageByEntityEvent{
 		boolean realCancle = false;
 		@SuppressWarnings("deprecation") //still safe.
@@ -54,11 +57,17 @@ public class EnemyChecker implements Listener {
 		}
 		
 		
-		FriendDetectEvent event = 
-				//CertainVersionChecker.isAbove1_7()
-				new FriendDetectEvent(attacker, receiver);
-				//: EntityDamageByEntity.safeCreateEvent(attacker, receiver, DamageCause.CUSTOM, 0.1);
-				
+		//Check if is in Group:
+		if(attacker instanceof Player && receiver instanceof Player){
+			Player p1 = (Player) attacker;
+			Player p2 = (Player) receiver;
+			
+			//Check if in same Group!
+			if(GroupAPI.isInSameGroup(p1, p2)) return true;
+		}
+		
+		
+		FriendDetectEvent event = new FriendDetectEvent(attacker, receiver);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
 		
 		//only check cancles!

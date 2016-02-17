@@ -44,4 +44,7 @@ public class DisabledGroupManager implements GroupManager {
 		return Arrays.asList(player);
 	}
 	
+	@Override
+	public void deinit() {}
+	
 }

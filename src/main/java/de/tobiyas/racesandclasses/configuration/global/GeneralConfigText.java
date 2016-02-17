@@ -288,8 +288,16 @@ public class GeneralConfigText {
 				+ race_spawn_cooldown + ": 300\n\n"
 				;
 	}
+
 	
 	
+	private static final String Addins(){
+		return ""
+				+ Food()
+				+ Groups();
+	}
+	
+		
 	private static final String Food(){
 		return ""
 				///FOOOOOD
@@ -304,6 +312,33 @@ public class GeneralConfigText {
 				+ "# boolean: true or false \n"
 				+ "# default: true \n"
 				+ food_enabled + ": true\n\n"
+				;
+	}
+	
+	private static final String Groups(){
+		return ""
+				///Grooooooooooooups
+				+ "\n"
+				+ "########\n"
+				+ "#Groups#\n"
+				+ "########\n"
+				+ "\n"
+				
+				+ "# This tells the Plugin to use Groups.\n"
+				+ "# If it is enabled, players can group up (with this plugin or another one).\n"
+				+ "# boolean: true or false \n"
+				+ "# default: true \n"
+				+ groups_enabled + ": true\n\n"
+				
+				+ "# This tells the Plugin which Group System to use.\n"
+				+ "# There are currently the internal + some external plugins.\n"
+				+ "# - RaC: RacesAndClasses own Group system.\n"
+				+ "# - None: Disables the group system.\n"
+				+ "# - Heroes: Use the party system of Heroes.\n"
+				+ "# - McMMO: Use the party system of McMMO.\n"
+				+ "# Group System: RaC, None, Heroes, Parties, McMMO\n"
+				+ "# default: RaC \n"
+				+ groups_system + ": RaC\n\n"
 				;
 	}
 	
@@ -523,7 +558,8 @@ public class GeneralConfigText {
 				+ "# - MC: Minecraft Levels.\n"
 				+ "# - SkillAPI: Leveling System from SkillAPI.\n"
 				+ "# - mcMMO: Leveling System from McMMO. also check for the calculation String above.\n"
-				+ "# String: RaC or MC or SkillAPI or MCMMO\n"
+				+ "# - Heroes: Leveling System from Heroes. Level editing is not supported here. Only reading.\n"
+				+ "# String: RaC or MC or SkillAPI or MCMMO or Heroes\n"
 				+ "# default: RaC \n"
 				+ level_useLevelSystem + ": RaC\n\n"
 				
@@ -780,7 +816,7 @@ public class GeneralConfigText {
 			+ Hotkeys()
 			+ SkillSystem()
 			+ RaceSpawns()
-			+ Food()
+			+ Addins()
 			+ General()
 			+ Gui()
 			+ Magic()

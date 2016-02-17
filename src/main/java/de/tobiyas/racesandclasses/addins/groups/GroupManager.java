@@ -57,4 +57,9 @@ public interface GroupManager {
 	 */
 	public boolean isEnabled();
 	
+	/**
+	 * Deinits the Manager.
+	 */
+	public void deinit();
+	
 }
