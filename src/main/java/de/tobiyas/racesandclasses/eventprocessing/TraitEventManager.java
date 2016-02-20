@@ -204,7 +204,8 @@ public class TraitEventManager{
 				
 				//Check restrictions before calling.
 				if(player != null && trait instanceof TraitWithRestrictions && !hasBypassForEvent){
-					if(((TraitWithRestrictions) trait).checkRestrictions(eventWrapper) != TraitRestriction.None) continue;
+					TraitRestriction restriction = ((TraitWithRestrictions) trait).checkRestrictions(eventWrapper);
+					if(restriction != TraitRestriction.None && restriction != TraitRestriction.NotSkilled) continue;
 				}
 				
 				//Trait is not interested in the event

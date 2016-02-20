@@ -27,14 +27,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
+import de.tobiyas.racesandclasses.APIs.DotAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -126,25 +128,26 @@ public class PoisonedWeaponTrait extends AbstractBasicTrait{
 		if(chance > randValue){
 			if(EnemyChecker.areAllies(causer, target)) return TraitResults.False();
 			
-			int time = (int) seconds * 20;
-			int amplifier = (int) modifyToPlayer(RaCPlayerManager.get().getPlayer(causer), totalDamage, "totalDamage");
+			RaCPlayer racCauser = RaCPlayerManager.get().getPlayer(causer);
+			double totalDamage = modifyToPlayer(racCauser, this.totalDamage, "totalDamage");
 			
-			PotionEffect effect = new PotionEffect(PotionEffectType.POISON, time, amplifier);
-			target.addPotionEffect(effect, true);
+			DotBuilder builder = new DotBuilder(getName(), RaCPlayerManager.get().getPlayer(causer))
+					.setCause(DamageCause.POISON)
+					.setDamageEverySecond()
+					.setDotType(DotType.Poison)
+					.setTotalDamage(totalDamage)
+					.setTotalTimeInSeconds((int)seconds);
+					
+			//If does not work -> break!
+			if(!DotAPI.addDot(target, builder)) return TraitResults.False();
 			
 			//since addPotionEffect returnValue is uselesse, we use our own detection.
 			String targetName = target instanceof Player ? ((Player) target).getName() : target.getType().name();
-			if(!target.hasPotionEffect(PotionEffectType.POISON)){
-				LanguageAPI.sendTranslatedMessage(causer, Keys.trait_poison_imun, "target", targetName);
-				return TraitResults.False();
-			}
-			
 			reducePoisonOnWeapon(causer.getItemInHand());
 			LanguageAPI.sendTranslatedMessage(causer, Keys.trait_poison_success, "target", targetName);
 			
 			if(target instanceof Player){
-				LanguageAPI.sendTranslatedMessage((Player)target, Keys.trait_poison_notify_other,
-						"player", causer.getName());
+				LanguageAPI.sendTranslatedMessage((Player)target, Keys.trait_poison_notify_other, "player", causer.getName());
 			}
 		}
 		

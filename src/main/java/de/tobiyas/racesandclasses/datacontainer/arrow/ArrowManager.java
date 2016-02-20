@@ -57,7 +57,7 @@ public class ArrowManager {
 	
 	public AbstractArrow nextArrow(){
 		if(System.currentTimeMillis() - eventTime < 100) return null;
-		if(arrows.size() == 0) return null;
+		if(arrows.size() <= 0) return null;
 		if(WorldResolver.isOnDisabledWorld(player))	return null;
 		
 		currentPointer ++;
@@ -74,6 +74,7 @@ public class ArrowManager {
 	public AbstractArrow previousArrow() {
 		if(System.currentTimeMillis() - eventTime < 100) return null;
 		if(WorldResolver.isOnDisabledWorld(player))	return null;
+		if(arrows.size() <= 0) return null;
 		
 		currentPointer --;
 		if(currentPointer < 0) currentPointer = arrows.size() - 1;
@@ -87,6 +88,7 @@ public class ArrowManager {
 	public AbstractArrow getCurrentArrow(){
 		if(WorldResolver.isOnDisabledWorld(player))	return null;
 		if(arrows.size() <= 0) rescanPlayer();
+		if(arrows.size() <= 0) return null;
 		
 		AbstractArrow arrow = arrows.get(currentPointer);
 		return arrow;

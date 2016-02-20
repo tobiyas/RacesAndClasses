@@ -30,9 +30,11 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
+import de.tobiyas.racesandclasses.APIs.DotAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
-import de.tobiyas.racesandclasses.playermanagement.health.damagetickers.DamageTicker;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
@@ -74,8 +76,8 @@ public class FireArrowTrait extends AbstractArrow {
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		duration = (Integer) configMap.get("duration");
-		totalDamage = (Double) configMap.get("totalDamage");
+		duration = configMap.getAsInt("duration", 5);
+		totalDamage = configMap.getAsDouble("totalDamage", 3);
 	}
 
 	
@@ -99,12 +101,18 @@ public class FireArrowTrait extends AbstractArrow {
 		
 		if(!(damager instanceof Player)) return false;
 		RaCPlayer shooter = RaCPlayerManager.get().getPlayer((Player) damager);
+		if(shooter == null) return false;
 		
-		double damagePerTick = modifyToPlayer(shooter ,totalDamage, "damage") / duration;
-		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.FIRE_TICK, event.getDamager());
-		ticker.playEffectOnDmg(Effect.MOBSPAWNER_FLAMES, 4);
-		hitTarget.setFireTicks(duration * 20);
-		return true;
+		double totalDamage = modifyToPlayer(shooter ,this.totalDamage, "damage");
+		DotBuilder builder = new DotBuilder(getName(), shooter)
+			.setCause(DamageCause.FIRE_TICK)
+			.setDotType(DotType.Fire)
+			.setDamageEverySecond()
+			.setTotalDamage(totalDamage)
+			.setTotalTimeInSeconds(duration);
+		
+		LivingEntity target = (LivingEntity) hitTarget;
+		return DotAPI.addDot(target, builder);
 	}
 
 	@Override

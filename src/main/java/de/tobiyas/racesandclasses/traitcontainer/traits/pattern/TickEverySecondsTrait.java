@@ -15,8 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -31,11 +30,12 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public abstract class TickEverySecondsTrait extends AbstractBasicTrait {
 
 	
-private int schedulerTaskId = -1;
+	private BukkitTask schedulerTask;
 	
 	/**
 	 * The Seconds when this is fired.
@@ -46,13 +46,17 @@ private int schedulerTaskId = -1;
 	@TraitEventsUsed(registerdClasses = {  })
 	@Override
 	public void generalInit() {
-		schedulerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask((JavaPlugin)plugin, new Runnable() {
-			
+		schedulerTask = new DebugBukkitRunnable(getName()) {
 			@Override
-			public void run() {
+			public void runIntern() {
 				for(AbstractTraitHolder holder : holders){
 					for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
 						if(player == null || !player.isOnline()) continue;
+						
+						//If use the skill system, check if player has this skill!
+						if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
+							if(!player.getSkillTreeManager().hasTrait(TickEverySecondsTrait.this)) continue;
+						}
 						
 						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
 						if(checkRestrictions(fakeEventWrapper) != TraitRestriction.None || !canBeTriggered(fakeEventWrapper)) {
@@ -66,7 +70,7 @@ private int schedulerTaskId = -1;
 					}
 				}
 			}
-		}, seconds * 20, seconds * 20);
+		}.runTaskTimer(plugin, seconds * 20, seconds * 20);
 	}
 	
 	/**
@@ -90,7 +94,8 @@ private int schedulerTaskId = -1;
 	@Override
 	public void deInit(){
 		super.deInit();
-		Bukkit.getScheduler().cancelTask(schedulerTaskId);
+		
+		if(schedulerTask != null) schedulerTask.cancel();
 	}
 
 

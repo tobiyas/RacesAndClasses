@@ -50,7 +50,7 @@ public class ParticleContainer {
 	
 	/**
 	 * Generates a {@link ParticleContainer}.
-	 * Parseable: EFFECT#AMOUNT#DATA#VECTOR_X#VECTOR_Y#VECTOR_Z
+	 * Parseable: EFFECT#AMOUNT#DATA#VECTOR_X#VECTOR_Y#VECTOR_Y#VECTOR_Z
 	 * 
 	 * @param toParse the String to parse.
 	 * 

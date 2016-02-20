@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -46,6 +47,7 @@ public class RaceAPI {
 	 */
 	@Deprecated
 	public static RaceContainer getRaceOfPlayer(String playerName){
+		if(!isRaceSystemActive()) return null;
 		return getRaceOfPlayer(Bukkit.getPlayer(playerName));
 	}
 	
@@ -57,8 +59,9 @@ public class RaceAPI {
 	 * @return the {@link RaceContainer} of the player
 	 */
 	public static RaceContainer getRaceOfPlayer(Player player){
-		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		if(!isRaceSystemActive()) return null;
 		
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		RaceManager raceManager = plugin.getRaceManager();
 		RaceContainer race = racPlayer.getRace();
 		if(race != null){
@@ -77,6 +80,8 @@ public class RaceAPI {
 	 * @return the Race corresponding to the name
 	 */
 	public static RaceContainer getRaceByName(String raceName){
+		if(!isRaceSystemActive()) return null;
+		
 		RaceManager raceManager = plugin.getRaceManager();
 		return (RaceContainer) raceManager.getHolderByName(raceName);
 	}
@@ -91,6 +96,8 @@ public class RaceAPI {
 	* @return the {@link RaceContainer} of the player
 	*/
 	public static String getRaceNameOfPlayer(Player player){
+		if(!isRaceSystemActive()) return null;
+		
 		RaceContainer container = getRaceOfPlayer(player);
 		return (container == null) ? "" : container.getDisplayName();
 	}
@@ -102,6 +109,7 @@ public class RaceAPI {
 	 * @return list of Race names
 	 */
 	public static List<String> getAllRaceNames(){
+		if(!isRaceSystemActive()) return new ArrayList<>();
 		return plugin.getRaceManager().getAllHolderNames();
 	}
 	
@@ -123,16 +131,19 @@ public class RaceAPI {
 	 * @deprecated use {@link #addPlayerToRace(OfflinePlayer, String)} instead
 	 */
 	public static boolean addPlayerToRace(String playerName, String raceName){
+		if(!isRaceSystemActive()) return false;
 		return addPlayerToRace(Bukkit.getPlayer(playerName), raceName);
 	}
 	
 	
 	/**
 	 * Returns the Default Race name.
+	 * <br>Returns null if races are disabled!
 	 * 
 	 * @return name of default race.
 	 */
 	public static String getDefaultRaceName(){
+		if(!isRaceSystemActive()) return null;
 		return plugin.getRaceManager().getDefaultHolder().getDisplayName();
 	}
 	
@@ -152,6 +163,7 @@ public class RaceAPI {
 	 */
 	public static boolean addPlayerToRace(Player player, String raceName){
 		if(player == null) return false;
+		if(!isRaceSystemActive()) return false;
 		
 		RaceManager manager = plugin.getRaceManager();
 		RaceContainer wantedRace = (RaceContainer) manager.getHolderByName(raceName);
@@ -172,4 +184,5 @@ public class RaceAPI {
 	public static boolean isRaceSystemActive(){
 		return plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 	}
+	
 }

@@ -44,8 +44,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerro
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.buffs.BuffManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.debuff.DebuffManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
-import de.tobiyas.racesandclasses.entitystatusmanager.poison.PoisonManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
@@ -146,7 +146,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	/**
 	 * The poisonManager of the Plugin
 	 */
-	protected PoisonManager poisonManager;
+	protected DotManager dotManager;
 	
 	/**
 	 * The Buffmanager to use.
@@ -303,7 +303,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		if(cooldownManager == null) cooldownManager = new CooldownManager();
 		if(stunManager == null) stunManager = new StunManager();
 		if(buffManager == null) buffManager = new BuffManager();
-		if(poisonManager == null) poisonManager = new PoisonManager();
+		if(dotManager == null) dotManager = new DotManager();
 		if(hotkeyManger == null) hotkeyManger = new HotkeyManager();
 		if(inFightManager == null) inFightManager = new InFightManager();
 		if(debuffManager == null) debuffManager = new DebuffManager();
@@ -359,7 +359,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		stunManager.init();
 		
 		//Poison manager
-		poisonManager.init();
+		dotManager.init();
 		
 		//Buff-Manager
 		buffManager.init();
@@ -511,7 +511,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		TraitStore.destroyClassLoaders();
 		
 		stunManager.deinit();
-		poisonManager.deinit();
+		dotManager.deinit();
 		hotkeyManger.shutdown();
 		debuffManager.shutdown();
 		
@@ -657,8 +657,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	}
 
 
-	public PoisonManager getPoisonManager() {
-		return poisonManager;
+	public DotManager getDotManager() {
+		return dotManager;
 	}
 
 	/**

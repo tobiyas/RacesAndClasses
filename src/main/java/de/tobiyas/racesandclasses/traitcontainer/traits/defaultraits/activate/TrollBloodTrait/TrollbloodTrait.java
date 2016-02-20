@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.TrollBloodTrait;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotContainer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -83,9 +85,7 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 		PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 		Player player = Eevent.getPlayer();
 
-		if(!plugin.getPoisonManager().removePoisons(player)){
-			return TraitResults.False();
-		}
+		if(!plugin.getDotManager().removeAllDots(player)) return TraitResults.False();
 		
 		LanguageAPI.sendTranslatedMessage(player, Keys.trait_toggled, "name", getDisplayName());
 		MessageScheduleApi.scheduleTranslateMessageToPlayer(player.getName(), duration, Keys.trait_faded, "name", getDisplayName());
@@ -122,8 +122,9 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 		
 		RaCPlayer player = wrapper.getPlayer();
 		if(player.getPlayer().getItemInHand().getType() != itemIDInHand) return false;
-		if(!plugin.getPoisonManager().isPoisoned(player.getPlayer())) return false;
-		return true;
+		
+		Collection<DotContainer> dots = plugin.getDotManager().getAllDotsOnEntity(player.getPlayer());
+		return dots != null && !dots.isEmpty();
 	}
 
 	@Override

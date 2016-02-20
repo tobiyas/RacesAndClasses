@@ -282,7 +282,7 @@ public abstract class AbstractBasicTrait implements Trait,
 	protected int skillPointCost = 0;
 	
 	/**
-	 * The cost for this skill.
+	 * If the Skill is a permanent skill or if it needs to be skilled.
 	 */
 	protected boolean permanentSkill = true;
 	
@@ -641,6 +641,11 @@ public abstract class AbstractBasicTrait implements Trait,
 		int playerLevel = player.getLevelManager().getCurrentLevel();
 		if(playerLevel < minimumLevel) return TraitRestriction.MinimumLevel;
 		if(playerLevel > maximumLevel) return TraitRestriction.MaximumLevel;
+		
+		//Check if is skilled in tree:
+		if(!permanentSkill){
+			if(!player.getSkillTreeManager().hasTrait(this)) return TraitRestriction.NotSkilled;
+		}
 		
 		//Save some generic Block infos.
 		Location playerLocation = player.getPlayer().getLocation();

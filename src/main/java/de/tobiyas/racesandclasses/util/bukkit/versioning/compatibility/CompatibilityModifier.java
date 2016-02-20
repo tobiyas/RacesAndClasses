@@ -451,8 +451,9 @@ public class CompatibilityModifier {
 		/**
 		 * Does damage to an entity safely to healthVersions.
 		 * 
-		 * @param entity to damage
-		 * @param value to do damage
+		 * @param entity to damage.
+		 * @param damager to use.
+		 * @param value to do damage.
 		 */
 		public static void safeDamageEntityByEntity(org.bukkit.entity.LivingEntity entity, 
 				org.bukkit.entity.LivingEntity damager, double value){

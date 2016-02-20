@@ -29,11 +29,12 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.potion.PotionEffectTypeWrapper;
 
+import de.tobiyas.racesandclasses.APIs.DotAPI;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
-import de.tobiyas.racesandclasses.playermanagement.health.damagetickers.DamageTicker;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
@@ -95,10 +96,15 @@ public class PoisonArrowTrait extends AbstractArrow {
 		if(!(damager instanceof Player)) return false;
 		RaCPlayer shooter = RaCPlayerManager.get().getPlayer((Player) damager);
 		
-		double damagePerTick = modifyToPlayer(shooter, totalDamage, "totalDamage") / duration;
-		DamageTicker ticker = new DamageTicker((LivingEntity) hitTarget, duration, damagePerTick, DamageCause.POISON, event.getDamager());
-		ticker.linkPotionEffect(PotionEffectTypeWrapper.POISON.createEffect(duration, 0));
-		return false;
+		double totalDamage = modifyToPlayer(shooter, this.totalDamage, "totalDamage") / duration;
+		DotBuilder builder = new DotBuilder(getName(), RaCPlayerManager.get().getPlayer(shooter))
+				.setCause(DamageCause.POISON)
+				.setDamageEverySecond()
+				.setDotType(DotType.Poison)
+				.setTotalDamage(totalDamage)
+				.setTotalTimeInSeconds(this.duration);
+		
+		return DotAPI.addDot((LivingEntity)hitTarget, builder);
 	}
 
 	@Override

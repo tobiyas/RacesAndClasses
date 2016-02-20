@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.APIs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -49,6 +50,7 @@ public class ClassAPI {
 	 */
 	@Deprecated
 	public static ClassContainer getClassOfPlayer(String playerName){
+		if(!isClassSystemActive()) return null;
 		return getClassOfPlayer(Bukkit.getPlayer(playerName));
 	}
 	
@@ -61,8 +63,9 @@ public class ClassAPI {
 	 * @return the {@link RaceContainer} of the player
 	 */
 	public static ClassContainer getClassOfPlayer(Player player){
-		RaCPlayer raCPlayer = RaCPlayerManager.get().getPlayer(player);
+		if(!isClassSystemActive()) return null;
 		
+		RaCPlayer raCPlayer = RaCPlayerManager.get().getPlayer(player);
 		ClassManager classManager = plugin.getClassManager();
 		ClassContainer clazz = raCPlayer.getclass();
 		if(clazz != null){
@@ -81,6 +84,8 @@ public class ClassAPI {
 	* @return the {@link RaceContainer} of the player
 	*/
 	public static String getClassNameOfPlayer(Player player){
+		if(!isClassSystemActive()) return null;
+		
 		ClassContainer container = getClassOfPlayer(player);
 		return (container == null) ? "" : container.getDisplayName();
 	}
@@ -95,6 +100,8 @@ public class ClassAPI {
 	 * @return the Class corresponding to the name
 	 */
 	public static ClassContainer getClassByName(String className){
+		if(!isClassSystemActive()) return null;
+		
 		ClassManager classManager = plugin.getClassManager();
 		return (ClassContainer) classManager.getHolderByName(className);
 	}
@@ -106,6 +113,7 @@ public class ClassAPI {
 	 * @return list of Class names
 	 */
 	public static List<String> getAllClassNames(){
+		if(!isClassSystemActive()) return new ArrayList<>();
 		return plugin.getClassManager().getAllHolderNames();
 	}
 	
@@ -128,6 +136,7 @@ public class ClassAPI {
 	 */
 	@Deprecated
 	public static boolean addPlayerToClass(String playerName, String className){
+		if(!isClassSystemActive()) return false;
 		return addPlayerToClass(Bukkit.getPlayer(playerName), className);
 	}
 	
@@ -146,7 +155,8 @@ public class ClassAPI {
 	 * @return true if worked, false otherwise
 	 */
 	public static boolean addPlayerToClass(Player player, String className){
-		if(player == null) return false;
+		if(player == null || className == null) return false;
+		if(!isClassSystemActive()) return false;
 		
 		ClassManager manager = plugin.getClassManager();
 		ClassContainer wantedClass = (ClassContainer) manager.getHolderByName(className);
