@@ -1003,7 +1003,6 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 	
 	
-	
 	/**
 	 * Returns if the Player passed is contained in this trait.
 	 * 

@@ -199,6 +199,7 @@ public class EN_Text {
 			+ trait_heal_target_full + ": '&aTarget does not need any healing.'\r\n"			
 			+ trait_healed_target_success + ": '&d%TARGET% &ahealed.'\r\n"
 			+ trait_healed_other_success + ": '&aHealed by &d%HEALER%&a.'\r\n"
+			+ trait_mana_refill + ": '&a%VALUE% mana refilled.'\r\n"
 			+ trait_pickup_success + ": '&aItem picked up.'\r\n"
 			+ trait_pickup_inv_full + ": '&aInventory is full.'\r\n"
 			+ trait_poison_success + ": '&a%TARGET% poisoned.'\r\n"

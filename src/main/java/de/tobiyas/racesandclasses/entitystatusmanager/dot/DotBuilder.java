@@ -32,7 +32,7 @@ public class DotBuilder {
 	/**
 	 * The Type of the Dot.
 	 */
-	private DamageType dotType = DamageType.MAGIC;
+	private DamageType damageType = DamageType.MAGIC;
 	
 	
 	public DotBuilder(String name, RaCPlayer damager) {
@@ -82,11 +82,32 @@ public class DotBuilder {
 
 
 	public DotBuilder setDamageType(DamageType dotType) {
-		this.dotType = dotType;
+		this.damageType = dotType;
 		return this;
 	}
 	
 	
+	public String getName() {
+		return name;
+	}
+	public RaCPlayer getDamager() {
+		return damager;
+	}
+	public int getTotalTimeInTicks() {
+		return totalTimeInTicks;
+	}
+	public double getTotalDamage() {
+		return totalDamage;
+	}
+	public int getDamageEveryTicks() {
+		return damageEveryTicks;
+	}
+	public DamageType getDamageType() {
+		return damageType;
+	}
+	
+	
+
 	/**
 	 * Checks if the Builder is valid.
 	 * @return true if is valid.
@@ -94,11 +115,24 @@ public class DotBuilder {
 	public boolean valid(){
 		if(name == null || name.isEmpty()) return false;
 		if(damageEveryTicks <= 0) return false;
-		if(dotType == null) return false;
+		if(damageType == null) return false;
 		if(totalDamage <= 0) return false;
 		if(totalTimeInTicks <= 0) return false;
 		
 		return true;
+	}
+	
+	
+	/**
+	 * Copies the Dot to a new builder.
+	 * @return the copied builder
+	 */
+	public DotBuilder copy(){
+		return new DotBuilder(name, damager)
+				.setDamageEveryTicks(damageEveryTicks)
+				.setDamageType(damageType)
+				.setTotalDamage(totalDamage)
+				.setTotalTimeInTicks(totalTimeInTicks);
 	}
 	
 	
@@ -114,7 +148,7 @@ public class DotBuilder {
 		int realdamageEveryTicks = damageEveryTicks / 5;
 		double damageOnTick = (totalDamage / totalTimeInTicks) * damageEveryTicks;
 		
-		return new DotContainer(name, damager, dotType, realTicks, damageOnTick, realdamageEveryTicks);
+		return new DotContainer(name, damager, damageType, realTicks, damageOnTick, realdamageEveryTicks);
 	}
 	
 }

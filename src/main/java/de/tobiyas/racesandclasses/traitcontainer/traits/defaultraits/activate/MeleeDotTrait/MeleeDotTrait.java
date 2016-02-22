@@ -18,6 +18,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.entitysearch.SearchEntity;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
@@ -29,6 +30,11 @@ public class MeleeDotTrait extends AbstractBasicTrait {
 	 * The Dot to apply.
 	 */
 	private DotBuilder dotBuilderToApply = null;
+	
+	/**
+	 * the range to use.
+	 */
+	private int range = 4;
 	
 	
 	@TraitEventsUsed(registerdClasses = {})
@@ -52,11 +58,14 @@ public class MeleeDotTrait extends AbstractBasicTrait {
 				@TraitConfigurationField(fieldName = "damage", classToExpect = Double.class, optional = true),
 				@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional = true),
 				@TraitConfigurationField(fieldName = "damageEvery", classToExpect = Integer.class, optional = true),
-				@TraitConfigurationField(fieldName = "damageType", classToExpect = String.class, optional = true)
+				@TraitConfigurationField(fieldName = "damageType", classToExpect = String.class, optional = true),
+				@TraitConfigurationField(fieldName = "range", classToExpect = Integer.class, optional = true)
 		})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
+		
+		this.range = configMap.getAsInt("range", 3);
 		
 		double damage = configMap.getAsDouble("damage", 2);
 		int duration = configMap.getAsInt("duration", 4)*20;
@@ -113,11 +122,18 @@ public class MeleeDotTrait extends AbstractBasicTrait {
 	
 	@Override
 	protected TraitResults bindCastIntern(RaCPlayer player) {
-		LivingEntity target = SearchEntity.inLineOfSight(5, player.getPlayer());
-		if(target == null) return TraitResults.False();
+		LivingEntity target = SearchEntity.inLineOfSight(modifyToPlayer(player, range, "range"), player.getPlayer());
+		if(target == null) {
+			player.sendTranslatedMessage(Keys.no_taget_found);
+			return TraitResults.False();
+		}
 		
 		//Add the Dot:
-		dotBuilderToApply.setDamager(player);
+		DotBuilder builder = dotBuilderToApply.copy();
+		builder.setDamager(player);
+		builder.setTotalDamage(modifyToPlayer(player, builder.getTotalDamage(), "damage"));
+		builder.setTotalTimeInTicks(modifyToPlayer(player, builder.getTotalTimeInTicks(), "duration"));
+		
 		DotAPI.addDot(target, dotBuilderToApply);
 		return TraitResults.True();
 	}

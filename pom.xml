@@ -317,9 +317,25 @@
 			    </manifest></archive></configuration>
 			</plugin>
 			
+			<!-- Deploy plugin: -->
+	        <plugin>
+	          <groupId>org.apache.maven.plugins</groupId>
+	          <artifactId>maven-deploy-plugin</artifactId>
+	          <version>2.8.2</version>
+	        </plugin>
+				
 		</plugins>
-
-		<!-- Resources to add -->
+			
+		<!-- Pushing to Maven -->
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.10</version>
+			</extension>
+		</extensions>
+		
+			<!-- Resources to add -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -340,4 +356,12 @@
 			</resource>
 		</resources>
 	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>home-pi-maven</id>
+			<url>sftp://192.168.192.48/var/www/maven/</url>
+		</repository>
+	</distributionManagement>
+	
 </project>

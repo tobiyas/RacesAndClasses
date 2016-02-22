@@ -22,26 +22,47 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractContinousCostMagicSpellTrait;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
+import de.tobiyas.racesandclasses.util.friend.EnemyChecker.FriendDetectEvent;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
+import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 
+	/**
+	 * If it should abort when damage is received.
+	 */
+	private boolean abortOnReceiveDamage = false;
+	
+	/**
+	 * Abort if do damage.
+	 */
+	private boolean abortOnDoDamage = false;
+	
+	
 	@TraitEventsUsed(registerdClasses = {PlayerInteractEvent.class, EntityTargetEvent.class})
 	@Override
-	public void generalInit() {
-	}
+	public void generalInit() {}
 
 	
 	
@@ -61,6 +82,35 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 		return super.otherEventTriggered(eventWrapper, result);
 	}
 
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerDamage(EntityDamageEvent event){
+		if(!abortOnReceiveDamage) return;
+		if(event.isCancelled()) return;
+		if(event instanceof FriendDetectEvent) return;
+		
+		//If player has active and is breaking!
+		if(event.getEntity().getType() == EntityType.PLAYER){
+			RaCPlayer pl = RaCPlayerManager.get().getPlayer(event.getEntity().getUniqueId());
+			//Is active -> Deactivate!
+			if(isActivated(pl)) deactivate(pl);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerDamage(EntityDamageByEntityEvent event){
+		if(!abortOnDoDamage) return;
+		if(event.isCancelled()) return;
+		if(event instanceof FriendDetectEvent) return;
+		
+		//If player has active and is breaking!
+		if(event.getDamager().getType() == EntityType.PLAYER){
+			RaCPlayer pl = RaCPlayerManager.get().getPlayer(event.getDamager().getUniqueId());
+			//Is active -> Deactivate!
+			if(isActivated(pl)) deactivate(pl);
+		}
+	}
+	
 
 	@Override
 	public String getName() {
@@ -143,6 +193,17 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 	}
 
 
+	@TraitConfigurationNeeded(fields = {
+			@TraitConfigurationField(classToExpect=Boolean.class, fieldName="removeOnReceiveDamage", optional=true),
+			@TraitConfigurationField(classToExpect=Boolean.class, fieldName="removeOnDoDamage", optional=true)
+	})
+	@Override
+	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
+		super.setConfiguration(configMap);
+		
+		this.abortOnReceiveDamage = configMap.getAsBool("removeOnReceiveDamage", false);
+		this.abortOnDoDamage = configMap.getAsBool("removeOnDoDamage", false);
+	}
 
 	@Override
 	protected boolean tickInternal(RaCPlayer player) {

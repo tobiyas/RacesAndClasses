@@ -43,19 +43,20 @@ public abstract class AbstractWeaponDamageIncreaseTrait extends AbstractPassiveT
 	}
 
 	@TraitConfigurationNeeded( fields = {
-			@TraitConfigurationField(fieldName = "operation", classToExpect = String.class, optional = false), 
-			@TraitConfigurationField(fieldName = "value", classToExpect = Double.class, optional = false)
+			@TraitConfigurationField(fieldName = "operation", classToExpect = String.class, optional = true), 
+			@TraitConfigurationField(fieldName = "value", classToExpect = Double.class, optional = true)
 		})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		operation = (String) configMap.get("operation");
-		value = (Double) configMap.get("value");
+		operation = configMap.getAsString("operation", "+");
+		value = configMap.getAsDouble("value", 0);
 	}
 	
 	@Override
-	public TraitResults trigger(EventWrapper eventWrapper) {   Event event = eventWrapper.getEvent();
+	public TraitResults trigger(EventWrapper eventWrapper) {   
+		Event event = eventWrapper.getEvent();
 		EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 		double newValue = getNewValue(eventWrapper.getPlayer(), Eevent.getDamage(), "damage");
 		

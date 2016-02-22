@@ -27,10 +27,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
-import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotContainer;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DamageType;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotContainer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
@@ -46,20 +46,12 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedExcepti
 
 public class TrollbloodTrait extends AbstractBasicTrait {
 
-	private int duration;
+	private int duration = 0;
 	
-	private static Material itemIDInHand = Material.APPLE;
-
 	
-	@SuppressWarnings("deprecation")
 	@TraitEventsUsed(registerdClasses = {PlayerInteractEvent.class})
 	@Override
-	public void generalInit() {
-		TraitConfig config = plugin.getConfigManager().getTraitConfigManager().getConfigOfTrait(getName());
-		if(config != null){
-			itemIDInHand = Material.getMaterial((Integer) config.getValue("trait.iteminhand", Material.APPLE.getId()));
-		}
-	}
+	public void generalInit() {}
 	
 	@Override
 	public String getName() {
@@ -73,12 +65,12 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 	}
 
 	@TraitConfigurationNeeded(fields = {
-			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class)
+			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional=true)
 		})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
-		duration = (Integer) configMap.get("duration");
+		duration = configMap.getAsInt("duration", 0);
 	}
 
 	@Override
@@ -86,7 +78,7 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 		PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 		Player player = Eevent.getPlayer();
 
-		int removed = plugin.getDotManager().removeAllDots(player, DamageType.POISON);
+		int removed = plugin.getDotManager().removeAllDots(player);
 		if(removed <= 0) return TraitResults.False();
 		
 		LanguageAPI.sendTranslatedMessage(player, Keys.trait_toggled, "name", getDisplayName());
@@ -97,8 +89,7 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 	
 	public static List<String> getHelpForTrait(){
 		List<String> helpList = new LinkedList<String>();
-		helpList.add(ChatColor.YELLOW + "The trait removes all poison effects on you.");
-		helpList.add(ChatColor.YELLOW + "It can be used by 'left-click' with a " + ChatColor.LIGHT_PURPLE + itemIDInHand.name() + ChatColor.YELLOW + " in hands.");
+		helpList.add(ChatColor.YELLOW + "The trait removes all dot effects on you.");
 		return helpList;
 	}
 	
@@ -117,13 +108,19 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 	public void importTrait() {
 	}
 
+	
+	@Override
+	protected TraitResults bindCastIntern(RaCPlayer player) {
+		return trigger(EventWrapperFactory.buildOnlyWithplayer(player));
+	}
+	
 
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper) {
 		if(!(wrapper.getPlayerAction() == PlayerAction.HIT_BLOCK || wrapper.getPlayerAction() == PlayerAction.HIT_AIR)) return false;
 		
 		RaCPlayer player = wrapper.getPlayer();
-		if(player.getPlayer().getItemInHand().getType() != itemIDInHand) return false;
+		if(player.getPlayer().getItemInHand().getType() != Material.APPLE) return false;
 		
 		Collection<DotContainer> dots = plugin.getDotManager().getAllDotsOnEntity(player.getPlayer(), DamageType.POISON);
 		return dots != null && !dots.isEmpty();
@@ -133,6 +130,12 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 	public boolean triggerButHasUplink(EventWrapper wrapper) {
 		//Not needed
 		return false;
+	}
+	
+	
+	@Override
+	public boolean isBindable() {
+		return true;
 	}
 
 }

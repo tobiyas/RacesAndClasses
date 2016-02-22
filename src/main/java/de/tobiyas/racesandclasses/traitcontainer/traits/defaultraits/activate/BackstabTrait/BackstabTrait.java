@@ -46,7 +46,7 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 	/**
 	 * the amount of blocks searched.
 	 */
-	private int blocks = 0;
+	private int range = 0;
 	
 	//The Potion effects done.
 	private int strength = 0;
@@ -67,11 +67,11 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 	
 	@Override
 	protected String getPrettyConfigIntern(){
-		return "distance: " + blocks + " blocks.";
+		return "distance: " + range + " blocks.";
 	}
 
 	@TraitConfigurationNeeded(fields = {
-			@TraitConfigurationField(fieldName = "blocks", classToExpect = Integer.class, optional = false),
+			@TraitConfigurationField(fieldName = "range", classToExpect = Integer.class, optional = false),
 			@TraitConfigurationField(fieldName = "strength", classToExpect = Integer.class, optional = true),
 			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional = true),			
 		})
@@ -79,15 +79,9 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		blocks = configMap.getAsInt("blocks");
-		
-		if(configMap.containsKey("strength")){
-			strength = configMap.getAsInt("strength");
-		}
-		
-		if(configMap.containsKey("duration")){
-			duration = configMap.getAsInt("duration");
-		}
+		range = configMap.getAsInt("range");
+		strength = configMap.getAsInt("strength", 0);
+		duration = configMap.getAsInt("duration", 0);
 	}
 
 	
@@ -104,7 +98,7 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 		if(!(trait instanceof BackstabTrait)) return false;
 		BackstabTrait otherTrait = (BackstabTrait) trait;
 		
-		return blocks >= otherTrait.blocks;
+		return range >= otherTrait.range;
 	}
 
 
@@ -132,7 +126,7 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 
 	@Override
 	public TraitResults trigger(RaCPlayer player) {
-		LivingEntity target = SearchEntity.inLineOfSight(blocks, player.getPlayer());
+		LivingEntity target = SearchEntity.inLineOfSight(range, player.getPlayer());
 		
 		if(target == null){
 			return TraitResults.False();
@@ -147,7 +141,7 @@ public class BackstabTrait extends AbstractActivatableTrait implements Listener 
 		}
 		
 		//check distance
-		if(targetLocation.distance(playerLocation) > blocks){
+		if(targetLocation.distance(playerLocation) > range){
 			return TraitResults.False();
 		}
 		

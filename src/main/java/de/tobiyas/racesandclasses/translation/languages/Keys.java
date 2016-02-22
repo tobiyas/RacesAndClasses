@@ -222,6 +222,7 @@ public class Keys {
 	public static final String trait_heal_target_full = "trait_heal_target_full";
 	public static final String trait_healed_target_success = "trait_healed_target_success";
 	public static final String trait_healed_other_success = "trait_healed_other_success";
+	public static final String trait_mana_refill = "trait_mana_refill";
 	public static final String trait_pickup_success = "trait_pickup_success";
 	public static final String trait_pickup_inv_full = "trait_pickup_inv_full";
 	public static final String trait_poison_success = "trait_poison_success";
