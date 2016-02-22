@@ -38,13 +38,14 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
-import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.PostTraitTriggerEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.PreTraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.PlayerLastDamageListener;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
@@ -863,6 +864,11 @@ public abstract class AbstractBasicTrait implements Trait,
 			return furtherRestriction;
 		}
 		
+		//Check if someone else does not want to trigger:
+		PreTraitTriggerEvent event = new PreTraitTriggerEvent(player.getPlayer(), this, player.getWorld());
+		Bukkit.getPluginManager().callEvent(event);
+		if(event.isCancelled()) return event.getRestriction();
+		
 		return TraitRestriction.None;
 	}
 	
@@ -970,7 +976,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(!using.isOnline()) return TraitResults.False();
 		
 		EventWrapper wrapper = EventWrapperFactory.buildOnlyWithplayer(using);
-		if(this.checkRestrictions(wrapper) != TraitRestriction.None){
+		if(this.checkRestrictions(wrapper) != TraitRestriction.None) {
 			return TraitResults.False();
 		}
 		
@@ -979,7 +985,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		//If triggered -> Fire trigger event!
 		if(result.isTriggered()){
-			TraitTriggerEvent event = new TraitTriggerEvent(wrapper, this);
+			PostTraitTriggerEvent event = new PostTraitTriggerEvent(wrapper, this);
 			Bukkit.getPluginManager().callEvent(event);
 		}
 		

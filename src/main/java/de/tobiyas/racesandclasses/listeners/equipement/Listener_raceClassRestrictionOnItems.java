@@ -14,12 +14,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LevelAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.inventoryitemevents.PlayerEquipsArmorEvent;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.util.collections.ListCreateUtils;
 
 public class Listener_raceClassRestrictionOnItems implements Listener {

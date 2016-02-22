@@ -21,9 +21,9 @@ import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.player.PlayerClass;
 import com.sucy.skill.api.player.PlayerData;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class SkillAPILevelManager implements PlayerLevelManager {
 	

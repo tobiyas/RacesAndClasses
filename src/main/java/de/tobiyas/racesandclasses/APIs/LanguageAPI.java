@@ -23,8 +23,8 @@ import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.translation.TranslationManagerHolder;
 import de.tobiyas.racesandclasses.translation.Translator;
 import de.tobiyas.racesandclasses.translation.exception.TranslationNotFoundException;

@@ -15,12 +15,12 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.holderchangegui;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderPreSelectEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceChangeEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class RaceChangeListenerGui extends HolderChangeListenerGui {
 

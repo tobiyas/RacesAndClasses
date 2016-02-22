@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public interface PlayerLevelManager {
 

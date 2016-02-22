@@ -6,7 +6,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
 
 public class BiomeModifier extends AbstractModifier {

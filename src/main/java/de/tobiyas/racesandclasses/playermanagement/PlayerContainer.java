@@ -21,7 +21,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
@@ -32,6 +31,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.HeroesLevelM
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.util.config.YAMLConfigExtended;

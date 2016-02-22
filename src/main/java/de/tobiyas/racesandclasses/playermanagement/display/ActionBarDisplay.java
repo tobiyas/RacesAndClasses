@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.playermanagement.display;
 import org.bukkit.ChatColor;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.util.vollotile.helper.PermanentActionBarMessages;
 
 public class ActionBarDisplay extends AbstractDisplay {

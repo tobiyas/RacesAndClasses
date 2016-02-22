@@ -45,6 +45,32 @@ public class Keys {
 	//d
 	public static final String disabled_region = "disabled_region";
 	
+	//Damage types:
+	public static final String damage_poison = "damage_poison";
+	public static final String damage_fire = "damage_fire";
+	public static final String damage_magic = "damage_magic";
+	public static final String damage_bleeding = "damage_bleeding";
+	public static final String damage_contact = "damage_contact";
+	public static final String damage_entity_attack = "damage_entity_attack";
+	public static final String damage_projectile = "damage_projectile";
+	public static final String damage_suffocation = "damage_suffocation";
+	public static final String damage_fall = "damage_fall";
+	public static final String damage_fire_tick = "damage_fire_tick";
+	public static final String damage_melting = "damage_melting";
+	public static final String damage_lava = "damage_lava";
+	public static final String damage_drowning = "damage_drowning";
+	public static final String damage_block_explosion = "damage_block_explosion";
+	public static final String damage_entity_explosion = "damage_entity_explosion";
+	public static final String damage_void = "damage_void";
+	public static final String damage_lightning = "damage_lightning";
+	public static final String damage_suicide = "damage_suicide";
+	public static final String damage_starvation = "damage_starvation";
+	public static final String damage_wither = "damage_wither";
+	public static final String damage_falling_block = "damage_falling_block";
+	public static final String damage_thorns = "damage_thorns";
+	public static final String damage_custom = "damage_custom";
+	
+	
 	//e
 	
 	//f

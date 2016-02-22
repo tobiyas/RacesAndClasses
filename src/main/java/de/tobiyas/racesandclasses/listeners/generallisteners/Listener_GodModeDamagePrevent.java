@@ -25,8 +25,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 
 public class Listener_GodModeDamagePrevent implements Listener{
 

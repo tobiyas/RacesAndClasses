@@ -7,7 +7,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.location.LocationOffsetUtils;
 
 public class PlayerPetManager {

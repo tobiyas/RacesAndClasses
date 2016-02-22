@@ -21,10 +21,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.PersistenceStorage;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 import de.tobiyas.util.config.YAMLConfigExtended;
 

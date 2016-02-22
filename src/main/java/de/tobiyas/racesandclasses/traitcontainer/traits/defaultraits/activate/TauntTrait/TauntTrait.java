@@ -33,8 +33,8 @@ import org.bukkit.plugin.Plugin;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -91,13 +91,8 @@ public class TauntTrait extends AbstractMagicSpellTrait implements Listener {
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		if(configMap.containsKey("seconds")){
-			seconds = configMap.getAsInt("seconds");
-		}
-		
-		if(configMap.containsKey("range")){
-			range = configMap.getAsInt("range");
-		}
+		seconds = configMap.getAsInt("seconds", 3);
+		range = configMap.getAsInt("range", 5);
 	}
 
 	

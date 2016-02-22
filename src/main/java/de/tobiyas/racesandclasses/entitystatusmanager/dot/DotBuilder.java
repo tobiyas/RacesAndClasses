@@ -1,8 +1,6 @@
 package de.tobiyas.racesandclasses.entitystatusmanager.dot;
 
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class DotBuilder {
 
@@ -14,7 +12,7 @@ public class DotBuilder {
 	/**
 	 * The person who damaged.
 	 */
-	private final RaCPlayer damager;
+	private RaCPlayer damager;
 	
 	/**
 	 * The total ticks to use.
@@ -32,19 +30,18 @@ public class DotBuilder {
 	private int damageEveryTicks = 10000;
 	
 	/**
-	 * the cause of the Damage.
-	 */
-	private DamageCause cause;
-	
-	/**
 	 * The Type of the Dot.
 	 */
-	private DotType dotType = DotType.Magic;
+	private DamageType dotType = DamageType.MAGIC;
 	
 	
 	public DotBuilder(String name, RaCPlayer damager) {
-		this.name = name;
+		this(name);
 		this.damager = damager;
+	}
+	
+	public DotBuilder(String name) {
+		this.name = name;
 	}
 
 
@@ -60,6 +57,12 @@ public class DotBuilder {
 
 	public DotBuilder setTotalDamage(double totalDamage) {
 		this.totalDamage = totalDamage;
+		return this;
+	}
+	
+	
+	public DotBuilder setDamager(RaCPlayer damager) {
+		this.damager = damager;
 		return this;
 	}
 
@@ -78,13 +81,7 @@ public class DotBuilder {
 	}
 
 
-	public DotBuilder setCause(DamageCause cause) {
-		this.cause = cause;
-		return this;
-	}
-
-
-	public DotBuilder setDotType(DotType dotType) {
+	public DotBuilder setDamageType(DamageType dotType) {
 		this.dotType = dotType;
 		return this;
 	}
@@ -96,7 +93,6 @@ public class DotBuilder {
 	 */
 	public boolean valid(){
 		if(name == null || name.isEmpty()) return false;
-		if(cause == null) return false;
 		if(damageEveryTicks <= 0) return false;
 		if(dotType == null) return false;
 		if(totalDamage <= 0) return false;
@@ -118,7 +114,7 @@ public class DotBuilder {
 		int realdamageEveryTicks = damageEveryTicks / 5;
 		double damageOnTick = (totalDamage / totalTimeInTicks) * damageEveryTicks;
 		
-		return new DotContainer(name, damager, cause, dotType, realTicks, damageOnTick, realdamageEveryTicks);
+		return new DotContainer(name, damager, dotType, realTicks, damageOnTick, realdamageEveryTicks);
 	}
 	
 }

@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.APIs;
 import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class InFightAPI {
 

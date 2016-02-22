@@ -2,7 +2,7 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana;
 
 import java.util.Map;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 
 public interface ManaManager {

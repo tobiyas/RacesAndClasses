@@ -7,7 +7,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.HealthAPI;
 import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.APIs.ManaAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
 import de.tobiyas.util.evaluations.EvalEvaluator;
 import de.tobiyas.util.evaluations.parts.Calculation;

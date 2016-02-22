@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 
 public class NoneDisplayBar implements Display {

@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.util.player.PlayerUtils;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 

@@ -9,7 +9,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotContainer;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotManager;
-import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DamageType;
 
 public class DotAPI {
 
@@ -52,8 +52,8 @@ public class DotAPI {
 	 * @param entity to un poison.
 	 * @return true if worked, false otherwise.
 	 */
-	public static boolean removeAllDots(LivingEntity entity){
-		if(entity == null) return false;
+	public static int removeAllDots(LivingEntity entity){
+		if(entity == null) return 0;
 		return m().removeAllDots(entity);
 	}
 	
@@ -65,9 +65,9 @@ public class DotAPI {
 	 * 
 	 * @return true if worked, false otherwise.
 	 */
-	public static boolean removeDot(LivingEntity entity, String name){
-		if(entity == null || name == null || name.isEmpty()) return false;
-		return m().removeDot(entity, name);
+	public static int removeDot(LivingEntity entity, String name){
+		if(entity == null || name == null || name.isEmpty()) return 0;
+		return m().removeAllDots(entity, name);
 	}
 	
 	/**
@@ -78,8 +78,8 @@ public class DotAPI {
 	 * 
 	 * @return true if worked, false otherwise.
 	 */
-	public static boolean removeDots(LivingEntity entity, DotType type){
-		if(entity == null || type == null) return false;
-		return m().removeDots(entity, type);
+	public static int removeDots(LivingEntity entity, DamageType type){
+		if(entity == null || type == null) return 0;
+		return m().removeAllDots(entity, type);
 	}
 }

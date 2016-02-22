@@ -19,11 +19,11 @@ import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DBConverter {

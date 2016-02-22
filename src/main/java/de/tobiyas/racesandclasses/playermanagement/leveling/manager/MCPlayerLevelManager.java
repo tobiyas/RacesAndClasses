@@ -18,12 +18,12 @@ package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MCPlayerLevelManager implements PlayerLevelManager{

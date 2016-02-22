@@ -23,13 +23,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper.RegainResource;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventActionResolver;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventDamageHealResolver;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventPlayerResolver;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.EventTargetResolver;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 
 public class EventWrapperFactory {
 

@@ -33,14 +33,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
-import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.PostTraitTriggerEvent;
 import de.tobiyas.racesandclasses.listeners.interneventproxy.Listener_Proxy;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.container.TraitsList;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
@@ -227,7 +227,7 @@ public class TraitEventManager{
 					changedSomething = true;
 					
 					//fire event to event system. To let others see.
-					RacesAndClasses.getPlugin().fireEventToBukkit(new TraitTriggerEvent(eventWrapper, trait));
+					RacesAndClasses.getPlugin().fireEventToBukkit(new PostTraitTriggerEvent(eventWrapper, trait));
 					
 					if(trait instanceof TraitWithRestrictions && player != null && result.isSetCooldownOnPositiveTrigger()){
 						TraitWithRestrictions restrictionTrait = (TraitWithRestrictions) trait;

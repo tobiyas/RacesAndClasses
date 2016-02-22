@@ -12,9 +12,9 @@ import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.eventprocessing.events.entitydamage.EntityHealEvent;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.EntityRegainHealth;
 import de.tobiyas.racesandclasses.util.traitutil.TraitRegionChecker;
 import de.tobiyas.racesandclasses.vollotile.ParticleContainer;

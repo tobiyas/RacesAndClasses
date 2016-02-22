@@ -8,7 +8,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaBar;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
 
 public class MagicSpellsManaManager extends AbstractManaManager {

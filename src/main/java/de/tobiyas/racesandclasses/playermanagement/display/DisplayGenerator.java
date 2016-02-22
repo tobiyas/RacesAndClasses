@@ -15,9 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.display;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayType;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class DisplayGenerator {

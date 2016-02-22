@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.traitcontainer.modifiers.specific;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
 
 public class LevelModifier extends AbstractModifier {

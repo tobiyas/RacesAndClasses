@@ -16,7 +16,7 @@
 package de.tobiyas.racesandclasses.playermanagement.display;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 
 public class ChatDisplayBar extends AbstractDisplay{

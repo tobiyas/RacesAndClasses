@@ -30,8 +30,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.LevelAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.pets.Pet;
 import de.tobiyas.racesandclasses.pets.PetBuilder;
 import de.tobiyas.racesandclasses.pets.PlayerPetManager;
@@ -39,6 +37,8 @@ import de.tobiyas.racesandclasses.pets.SpawnedPet;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class Command_RACLevel extends AbstractCommand {

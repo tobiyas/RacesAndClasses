@@ -27,8 +27,6 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
@@ -36,6 +34,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissions
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.file.FileUtils;

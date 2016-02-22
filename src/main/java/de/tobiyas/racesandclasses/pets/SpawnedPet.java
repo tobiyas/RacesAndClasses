@@ -12,12 +12,12 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.pets.target.EntityAttackTarget;
 import de.tobiyas.racesandclasses.pets.target.LocationTarget;
 import de.tobiyas.racesandclasses.pets.target.OwnerTarget;
 import de.tobiyas.racesandclasses.pets.target.Target;
 import de.tobiyas.racesandclasses.pets.target.Target.TargetType;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class SpawnedPet {
 

@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public interface ContinousCostMagicTrait {
 

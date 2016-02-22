@@ -44,7 +44,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.chatevent.PlayerSendChannelChatMessageEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
-import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.TraitTriggerEvent;
+import de.tobiyas.racesandclasses.eventprocessing.events.traittrigger.PostTraitTriggerEvent;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 
@@ -186,7 +186,7 @@ public class EventPlayerResolver {
 			return ((PlayerSendChannelChatMessageEvent)event).getPlayer();
 		}
 		
-		if(event instanceof TraitTriggerEvent){
+		if(event instanceof PostTraitTriggerEvent){
 			return null; //This can not be interesting for a Trait.
 		}
 		

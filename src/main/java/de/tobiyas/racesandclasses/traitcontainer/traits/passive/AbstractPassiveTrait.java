@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.passive;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitStringUtils;
 

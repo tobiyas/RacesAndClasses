@@ -15,9 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaFoodBarRunner;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;

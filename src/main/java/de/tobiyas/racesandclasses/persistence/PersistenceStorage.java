@@ -18,9 +18,9 @@ package de.tobiyas.racesandclasses.persistence;
 import java.util.List;
 
 import de.tobiyas.racesandclasses.chat.channels.container.ChannelSaveContainer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.PlayerHolderAssociation;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public interface PersistenceStorage {
 

@@ -19,11 +19,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LevelAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelDownEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
@@ -36,10 +34,10 @@ import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
+public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem implements Observer{
 
 	/**
 	 * The Path to the current Level of the Player
@@ -50,13 +48,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	 * The Path to the current EXP of the Level of the Player
 	 */
 	public static final String CURRENT_PLAYER_LEVEL_EXP_PATH =".level.currentLevelEXP";
-	
-	
-	/**
-	 * The player this levelManager belongs to
-	 */
-	private final RaCPlayer player;
-	
+
 	/**
 	 * The current currentLevel of a player
 	 */
@@ -84,7 +76,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	 * @param player
 	 */
 	public CustomPlayerLevelManager(RaCPlayer player) {
-		this.player = player;
+		super(player);
 		
 		this.currentLevel = 1;
 		this.currentExpOfLevel = 0;
@@ -230,7 +222,7 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
 		// levelDisplay.display(currentLevel, currentLevel);
 		
-		redrawMCLevelBar();
+		tick();
 		return true;
 	}
 	
@@ -281,14 +273,8 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
 		// levelDisplay.display(currentLevel, currentLevel);
 		
-		redrawMCLevelBar();
+		tick();
 		return true;
-	}
-	
-
-	@Override
-	public void tick() {
-		redrawMCLevelBar();
 	}
 	
 
@@ -333,19 +319,6 @@ public class CustomPlayerLevelManager implements PlayerLevelManager, Observer{
 	public boolean canRemove(int toRemove) {
 		toRemove -= getCurrentExpOfLevel();
 		return toRemove > 0;
-	}
-
-	
-	private void redrawMCLevelBar(){
-		if(!RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_gui_level_useMCLevelBar()) return;
-		if(!player.isOnline()) return;
-		
-		Player realPlayer = player.getPlayer();
-		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
-		double percent = (double)getCurrentExpOfLevel() / (double)levelPack.getMaxEXP();
-		
-		realPlayer.setExp((float)percent);
-		realPlayer.setLevel(getCurrentLevel());
 	}
 
 	@Override

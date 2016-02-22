@@ -26,15 +26,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import de.tobiyas.racesandclasses.APIs.DotAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DamageType;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
-import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
@@ -105,8 +104,7 @@ public class FireArrowTrait extends AbstractArrow {
 		
 		double totalDamage = modifyToPlayer(shooter ,this.totalDamage, "damage");
 		DotBuilder builder = new DotBuilder(getName(), shooter)
-			.setCause(DamageCause.FIRE_TICK)
-			.setDotType(DotType.Fire)
+			.setDamageType(DamageType.FIRE)
 			.setDamageEverySecond()
 			.setTotalDamage(totalDamage)
 			.setTotalTimeInSeconds(duration);

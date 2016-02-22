@@ -28,10 +28,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfig;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotContainer;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DamageType;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
@@ -85,7 +86,8 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 		PlayerInteractEvent Eevent = (PlayerInteractEvent) event;
 		Player player = Eevent.getPlayer();
 
-		if(!plugin.getDotManager().removeAllDots(player)) return TraitResults.False();
+		int removed = plugin.getDotManager().removeAllDots(player, DamageType.POISON);
+		if(removed <= 0) return TraitResults.False();
 		
 		LanguageAPI.sendTranslatedMessage(player, Keys.trait_toggled, "name", getDisplayName());
 		MessageScheduleApi.scheduleTranslateMessageToPlayer(player.getName(), duration, Keys.trait_faded, "name", getDisplayName());
@@ -123,7 +125,7 @@ public class TrollbloodTrait extends AbstractBasicTrait {
 		RaCPlayer player = wrapper.getPlayer();
 		if(player.getPlayer().getItemInHand().getType() != itemIDInHand) return false;
 		
-		Collection<DotContainer> dots = plugin.getDotManager().getAllDotsOnEntity(player.getPlayer());
+		Collection<DotContainer> dots = plugin.getDotManager().getAllDotsOnEntity(player.getPlayer(), DamageType.POISON);
 		return dots != null && !dots.isEmpty();
 	}
 

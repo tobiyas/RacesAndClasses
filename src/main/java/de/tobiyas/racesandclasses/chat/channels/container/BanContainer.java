@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 ;

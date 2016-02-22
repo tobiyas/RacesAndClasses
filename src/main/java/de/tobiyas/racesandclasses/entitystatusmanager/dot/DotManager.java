@@ -33,7 +33,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.vollotile.ParticleContainer;
 import de.tobiyas.racesandclasses.vollotile.Vollotile;
@@ -114,7 +114,7 @@ public class DotManager implements Listener {
 	protected void playDotParticleEffects(LivingEntity entity, DotContainer option) {
 		Location loc = entity.getLocation().clone().add(0,1,0);
 		
-		ParticleContainer effect = option.getDotType().getParticleContainer();
+		ParticleContainer effect = option.getDamageType().getParticleContainer();
 		Vollotile.get().sendOwnParticleEffectToAll(effect, loc);
 	}
 	
@@ -128,7 +128,7 @@ public class DotManager implements Listener {
 	 */
 	protected boolean damageEntity(LivingEntity entity, DotContainer options) {
 		double damagePerTick = options.getDamageOnTick();
-		EntityDamageEvent event = CompatibilityModifier.EntityDamage.safeCreateEvent(entity, options.getDamageType(), damagePerTick);
+		EntityDamageEvent event = CompatibilityModifier.EntityDamage.safeCreateEvent(entity, options.getDamageType().getCause(), damagePerTick);
 		plugin.fireEventToBukkit(event);
 		
 		RaCPlayer damager = options.getDamager();
@@ -190,11 +190,11 @@ public class DotManager implements Listener {
 	 * @param entity to un poison.
 	 * @return true if worked, false otherwise.
 	 */
-	public boolean removeAllDots(LivingEntity entity){
-		if(entity == null) return false;
+	public int removeAllDots(LivingEntity entity){
+		if(entity == null) return 0;
 		
-		dotDamageMap.remove(entity);
-		return true;
+		Collection<DotContainer> removed = dotDamageMap.remove(entity);
+		return removed == null ? 0 : removed.size();
 	}
 	
 	/**
@@ -205,18 +205,19 @@ public class DotManager implements Listener {
 	 * 
 	 * @return true if worked, false otherwise.
 	 */
-	public boolean removeDot(LivingEntity entity, String name){
-		if(entity == null) return false;
+	public int removeAllDots(LivingEntity entity, String name){
+		if(entity == null) return 0;
 
-		Collection<DotContainer> containers = getAllDotsOnEntity(entity);
-		if(containers == null) return false;
+		Collection<DotContainer> containers = dotDamageMap.get(entity);
+		if(containers == null) return 0;
 		
 		//Remove every dot with that name.
+		int removed = 0;
 		for(Iterator<DotContainer> it = containers.iterator(); it.hasNext(); ){
-			if(it.next().getName().equalsIgnoreCase(name)) it.remove();
+			if(it.next().getName().equalsIgnoreCase(name)) { it.remove(); removed++; }
 		}
 		
-		return true;
+		return removed;
 	}
 	
 	/**
@@ -227,29 +228,54 @@ public class DotManager implements Listener {
 	 * 
 	 * @return true if worked, false otherwise.
 	 */
-	public boolean removeDots(LivingEntity entity, DotType type){
-		if(entity == null) return false;
+	public int removeAllDots(LivingEntity entity, DamageType type){
+		if(entity == null) return 0;
 		
-		Collection<DotContainer> containers = getAllDotsOnEntity(entity);
-		if(containers == null) return false;
+		Collection<DotContainer> containers = dotDamageMap.get(entity);
+		if(containers == null) return 0;
 		
 		//Remove every dot with that name.
+		int removed = 0;
 		for(Iterator<DotContainer> it = containers.iterator(); it.hasNext(); ){
-			if(it.next().getDotType() == type) it.remove();
+			if(it.next().getDamageType() == type) { it.remove(); removed++; }
 		}
 		
-		return true;
+		return removed;
 	}
 	
 	
 	/**
 	 * Gets all Dots of the entity.
+	 * <br>This passes a copy!
+	 * 
 	 * @param entity to use.
 	 * @return all Dots.
 	 */
 	public Collection<DotContainer> getAllDotsOnEntity(LivingEntity entity){
+		if(entity == null) return new ArrayList<>(0); 
+		
 		Collection<DotContainer> dots = dotDamageMap.get(entity);
 		return dots == null ? new ArrayList<DotContainer>(0) : dots;
+	}
+	
+
+	/**
+	 * Gets all Dots of the entity of a type.
+	 * <br>This passes a copy!
+	 * 
+	 * @param entity to use.
+	 * @param type type to filter.
+	 * @return all Dots of the passed type.
+	 */
+	public Collection<DotContainer> getAllDotsOnEntity(LivingEntity entity, DamageType type) {
+		if(entity == null || type == null) return new ArrayList<>(0); 
+		
+		Collection<DotContainer> dots = getAllDotsOnEntity(entity);
+		for(Iterator<DotContainer> it = dots.iterator(); it.hasNext();){
+			if(it.next().getDamageType() != type) it.remove();
+		}
+		
+		return dots;
 	}
 	
 	

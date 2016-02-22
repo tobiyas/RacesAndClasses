@@ -18,7 +18,7 @@ package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class PlayerReceiveEXPEvent extends LevelEvent implements Cancellable{
 

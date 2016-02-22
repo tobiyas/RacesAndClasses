@@ -2,7 +2,7 @@ package de.tobiyas.racesandclasses.traitcontainer.modifiers;
 
 import java.util.regex.Pattern;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public abstract class AbstractModifier implements TraitSituationModifier {	
 

@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.player.PlayerData;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class SkillAPIManaManager extends AbstractManaManager {
 

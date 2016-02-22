@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.addins.food;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
 import de.tobiyas.util.vollotile.ParticleEffects;
 import de.tobiyas.util.vollotile.VollotileCodeManager;

@@ -17,8 +17,8 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
 import org.bukkit.Material;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 /**
  * This interface indicates that the Trait is a magic Spell.

@@ -19,18 +19,19 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class McMMOLevelManager implements PlayerLevelManager {
 	
@@ -209,7 +210,7 @@ public class McMMOLevelManager implements PlayerLevelManager {
 				return false;
 			}
 			
-		    
+			generatorString = generatorString.replace("{powerlevel}", String.valueOf(42));
 		    for(SkillType type : SkillType.values()){
 		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(42));
 		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(42));
@@ -238,7 +239,7 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	 * @return the level of the Player or 1 if something gone wrong.
 	 */
 	private int calcCurrentLevel(){
-		String generatorString = this.calcString;
+		String generatorString = this.calcString.toLowerCase();
 		try{
 			ScriptEngineManager mgr = null;
 			ScriptEngine engine = null;
@@ -250,8 +251,13 @@ public class McMMOLevelManager implements PlayerLevelManager {
 			}
 			
 		    
+			Player pl = getPlayer().getPlayer();
+			int powerLevel = ExperienceAPI.getPowerLevel(player);
+			generatorString = generatorString.replace("{powerlevel}", String.valueOf(powerLevel));
+			
+			
 		    for(SkillType type : SkillType.values()){
-		    	int skillLevel = ExperienceAPI.getLevel(getPlayer().getPlayer(), type.name());
+		    	int skillLevel = ExperienceAPI.getLevel(pl, type.name());
 		    	
 		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(skillLevel));
 		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(skillLevel));

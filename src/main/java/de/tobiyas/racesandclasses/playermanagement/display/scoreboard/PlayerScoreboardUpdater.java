@@ -3,8 +3,8 @@ package de.tobiyas.racesandclasses.playermanagement.display.scoreboard;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class PlayerScoreboardUpdater extends DebugBukkitRunnable {

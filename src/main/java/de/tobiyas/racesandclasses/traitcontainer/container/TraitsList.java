@@ -32,6 +32,7 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.Ar
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.BackstabTrait.BackstabTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.GrapplingHookTrait.GrapplingHookTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.HealOthersTrait.HealOthersTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.MeleeDotTrait.MeleeDotTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.PoisonedWeaponTrait.PoisonedWeaponTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.SprintTrait.SprintTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.TauntTrait.TauntTrait;
@@ -154,6 +155,7 @@ public class TraitsList{
 		registerClass(BackstabTrait.class);
 		registerClass(GrapplingHookTrait.class);
 		registerClass(HealOthersTrait.class);
+		registerClass(MeleeDotTrait.class);
 		registerClass(PoisonedWeaponTrait.class);
 		registerClass(SprintTrait.class);
 		registerClass(TauntTrait.class);

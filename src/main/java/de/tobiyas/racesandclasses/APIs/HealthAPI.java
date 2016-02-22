@@ -2,8 +2,8 @@ package de.tobiyas.racesandclasses.APIs;
 
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 
 public class HealthAPI {
 

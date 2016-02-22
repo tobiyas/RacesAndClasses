@@ -17,7 +17,7 @@ package de.tobiyas.racesandclasses.APIs;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.chat.ChannelLevel;
 
 public class ChatAPI {

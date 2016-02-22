@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.datacontainer.player;
+package de.tobiyas.racesandclasses.playermanagement.player;
 
 import java.io.File;
 import java.util.Collection;

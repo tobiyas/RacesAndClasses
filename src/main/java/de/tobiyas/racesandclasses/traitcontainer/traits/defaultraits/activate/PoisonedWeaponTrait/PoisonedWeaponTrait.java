@@ -27,18 +27,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.APIs.DotAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.dot.DamageType;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotBuilder;
-import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotType;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
@@ -132,9 +131,8 @@ public class PoisonedWeaponTrait extends AbstractBasicTrait{
 			double totalDamage = modifyToPlayer(racCauser, this.totalDamage, "totalDamage");
 			
 			DotBuilder builder = new DotBuilder(getName(), RaCPlayerManager.get().getPlayer(causer))
-					.setCause(DamageCause.POISON)
 					.setDamageEverySecond()
-					.setDotType(DotType.Poison)
+					.setDamageType(DamageType.POISON)
 					.setTotalDamage(totalDamage)
 					.setTotalTimeInSeconds((int)seconds);
 					

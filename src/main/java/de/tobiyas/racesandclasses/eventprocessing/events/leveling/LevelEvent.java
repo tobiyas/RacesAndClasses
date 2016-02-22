@@ -18,7 +18,7 @@ package de.tobiyas.racesandclasses.eventprocessing.events.leveling;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public abstract class LevelEvent extends PlayerEvent {
 

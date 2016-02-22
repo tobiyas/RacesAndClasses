@@ -1,6 +1,6 @@
 package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana;
 
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.MagicSpellsManaManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.OwnManaManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.SkillAPIManaManager;

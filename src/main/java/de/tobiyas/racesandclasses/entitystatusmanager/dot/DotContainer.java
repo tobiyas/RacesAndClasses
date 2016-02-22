@@ -1,8 +1,6 @@
 package de.tobiyas.racesandclasses.entitystatusmanager.dot;
 
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import de.tobiyas.racesandclasses.datacontainer.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public class DotContainer {
 	
@@ -19,12 +17,7 @@ public class DotContainer {
 	/**
 	 * The Effect to trigger
 	 */
-	private final DamageCause damageType;
-	
-	/**
-	 * The Effect to trigger
-	 */
-	private final DotType dotType;
+	private final DamageType damageType;
 	
 	/**
 	 * ticks left to trigger
@@ -43,14 +36,12 @@ public class DotContainer {
 
 	
 
-	public DotContainer(String name, RaCPlayer damager, 
-			DamageCause damageType, DotType dotType, 
+	public DotContainer(String name, RaCPlayer damager, DamageType dotType, 
 			int ticks, double damageOnTick, int damageEveryTicks) {
 		
 		this.name = name;
 		this.damager = damager;
-		this.damageType = damageType;
-		this.dotType = dotType;
+		this.damageType = dotType;
 		this.ticks = ticks;
 		this.damageOnTick = damageOnTick;
 		this.damageEveryTicks = damageEveryTicks;
@@ -81,12 +72,8 @@ public class DotContainer {
 		return damager;
 	}
 	
-	public DamageCause getDamageType() {
+	public DamageType getDamageType() {
 		return damageType;
-	}
-	
-	public DotType getDotType() {
-		return dotType;
 	}
 	
 }
