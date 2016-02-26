@@ -30,10 +30,14 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.AreaAirDropTrait.AreaAirDropTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.AreaDamageTrait.AreaDamageTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.BackstabTrait.BackstabTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.ExecuteTrait.ExecuteTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.GrapplingHookTrait.GrapplingHookTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.HealOthersTrait.HealOthersTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.InstantMeleeDamageTrait.InstantMeleeDamageTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.KickTrait.KickTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.MeleeDotTrait.MeleeDotTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.PoisonedWeaponTrait.PoisonedWeaponTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.SilenceTrait.SilenceTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.SprintTrait.SprintTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.TauntTrait.TauntTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.ThrowItemTrait.ThrowItemTrait;
@@ -52,6 +56,7 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.Absor
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.AreaAirDropSpellTrait.AreaAirDropSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.BlockDisguiseTrait.BlockDisguiseTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.ColdFeetTrait.ColdFeetTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.DamageIncreaseBuffTrait.DamageIncreaseBuffTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.ExplosionTrait.ExplosionTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.FireballTrait.FireballTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.FirebreathTrait.FirebreathTrait;
@@ -63,6 +68,8 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.Light
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicAreaHealTrait.MagicAreaHealTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicDamageTrait.MagicDamageTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicHealTrait.MagicHealTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicKickTrait.MagicKickTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicSilenceTrait.MagicSilenceTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.MagicSpellsSpellTrait.MagicSpellsSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.PickupItemTrait.PickupItemTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.magic.PullToSelfTrait.PullToSelfTrait;
@@ -154,10 +161,14 @@ public class TraitsList{
 		registerClass(AreaAirDropTrait.class);
 		registerClass(AreaDamageTrait.class);
 		registerClass(BackstabTrait.class);
+		registerClass(ExecuteTrait.class);
 		registerClass(GrapplingHookTrait.class);
 		registerClass(HealOthersTrait.class);
+		registerClass(InstantMeleeDamageTrait.class);
+		registerClass(KickTrait.class);
 		registerClass(MeleeDotTrait.class);
 		registerClass(PoisonedWeaponTrait.class);
+		registerClass(SilenceTrait.class);
 		registerClass(SprintTrait.class);
 		registerClass(TauntTrait.class);
 		registerClass(ThrowItemTrait.class);
@@ -180,6 +191,7 @@ public class TraitsList{
 		registerClass(AreaAirDropSpellTrait.class);
 		registerClass(BlockDisguiseTrait.class);
 		registerClass(ColdFeetTrait.class);
+		registerClass(DamageIncreaseBuffTrait.class);
 		registerClass(ExplosionTrait.class);
 		registerClass(FireballTrait.class);
 		registerClass(FirebreathTrait.class);
@@ -191,7 +203,9 @@ public class TraitsList{
 		registerClass(MagicAreaHealTrait.class);
 		registerClass(MagicDamageTrait.class);
 		registerClass(MagicHealTrait.class);
+		registerClass(MagicKickTrait.class);
 		registerClass(MagicSpellsSpellTrait.class);
+		registerClass(MagicSilenceTrait.class);
 		registerClass(PickupItemTrait.class);
 		registerClass(PullToSelfTrait.class);
 		registerClass(PushAwayTrait.class);

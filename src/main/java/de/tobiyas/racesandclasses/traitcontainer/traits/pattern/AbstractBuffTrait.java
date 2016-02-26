@@ -25,7 +25,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 	/**
 	 * The Time the Buff is active before it's down.
 	 */
-	protected int timeActive = 5;
+	protected int duration = 5;
 	
 	/**
 	 * The Map of the Tasks running.
@@ -49,7 +49,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 	
 	
 	@TraitConfigurationNeeded(fields = {
-			@TraitConfigurationField(fieldName = "timeActive", classToExpect = Integer.class, optional = true),
+			@TraitConfigurationField(fieldName = "duration", classToExpect = Integer.class, optional = true),
 			@TraitConfigurationField(fieldName = "stayActiveTillTimeout", classToExpect = Boolean.class, optional = true),
 			@TraitConfigurationField(fieldName = "particlesWhileActive", classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = "particlesWhenUsed", classToExpect = String.class, optional = true),
@@ -59,21 +59,10 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 			throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		if(configMap.containsKey("timeActive")){
-			timeActive = configMap.getAsInt("timeActive");
-		}
-		
-		if(configMap.containsKey("stayActiveTillTimeout")){
-			stayActiveTillTimeout = configMap.getAsBool("stayActiveTillTimeout");
-		}
-		
-		if(configMap.containsKey("particlesWhileActive")){
-			particlesWhileActive = configMap.getAsParticleContainer("particlesWhileActive");
-		}
-		
-		if(configMap.containsKey("particlesWhenUsed")){
-			particlesWhenUsed = configMap.getAsParticleContainer("particlesWhenUsed");
-		}
+		duration = configMap.getAsInt("duration", 5);
+		stayActiveTillTimeout = configMap.getAsBool("stayActiveTillTimeout", false);
+		particlesWhileActive = configMap.getAsParticleContainer("particlesWhileActive", null);
+		particlesWhenUsed = configMap.getAsParticleContainer("particlesWhenUsed", null);
 	}
 
 	
@@ -95,7 +84,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 				if(particlesWhileActive != null && stillActive) Vollotile.get().sendOwnParticleEffectToAll(particlesWhileActive, 
 						player.getLocation());
 				
-				if(i >= timeActive){
+				if(i >= duration){
 					cancel();
 					
 					if(stillActive) {
@@ -112,7 +101,7 @@ public abstract class AbstractBuffTrait extends AbstractMagicSpellTrait {
 		}.runTaskTimer(RacesAndClasses.getPlugin(), 1, 20);
 		
 		taskMap.put(player, task);
-		BuffAPI.addBuff(player.getUniqueId(), getDisplayName(), System.currentTimeMillis() + (timeActive * 1000));
+		BuffAPI.addBuff(player.getUniqueId(), getDisplayName(), System.currentTimeMillis() + (duration * 1000));
 		result.copyFrom(TraitResults.True());
 	}
 	

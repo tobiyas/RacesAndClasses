@@ -46,6 +46,7 @@ import de.tobiyas.racesandclasses.entitystatusmanager.buffs.BuffManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.debuff.DebuffManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.dot.DotManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.hots.HotsManager;
+import de.tobiyas.racesandclasses.entitystatusmanager.silence.SilenceAndKickManager;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
 import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
@@ -167,6 +168,11 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 * The Hots Manger
 	 */
 	protected HotsManager hotsManager;
+	
+	/**
+	 * The Manager for silences and kicks.
+	 */
+	protected SilenceAndKickManager silenceAndKickManager;
 	
 	/**
 	 * The InFight Manager to use.
@@ -304,6 +310,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		if(stunManager == null) stunManager = new StunManager();
 		if(buffManager == null) buffManager = new BuffManager();
 		if(dotManager == null) dotManager = new DotManager();
+		if(hotsManager == null) hotsManager = new HotsManager();
+		if(silenceAndKickManager == null) silenceAndKickManager = new SilenceAndKickManager();
 		if(hotkeyManger == null) hotkeyManger = new HotkeyManager();
 		if(inFightManager == null) inFightManager = new InFightManager();
 		if(debuffManager == null) debuffManager = new DebuffManager();
@@ -663,13 +671,14 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 	/**
 	 * This gets the HotsManager of the Plugin.
-	 * <br>It's loaded over an Lazy init.
-	 * 
 	 * @return {@link HotsManager}
 	 */
 	public HotsManager getHotsManager() {
-		if(hotsManager == null) hotsManager = new HotsManager();
 		return hotsManager;
+	}
+	
+	public SilenceAndKickManager getSilenceAndKickManager() {
+		return silenceAndKickManager;
 	}
 
 	public HotkeyManager getHotkeyManager() {

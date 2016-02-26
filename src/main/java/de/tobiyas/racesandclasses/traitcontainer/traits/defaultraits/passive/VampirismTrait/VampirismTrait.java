@@ -45,9 +45,6 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedExcepti
 public class VampirismTrait extends AbstractPassiveTrait{
 	
 	
-	public VampirismTrait(){
-	}
-	
 	@TraitEventsUsed(registerdClasses = {EntityDamageByEntityEvent.class})
 	@Override
 	public void generalInit(){
@@ -85,9 +82,7 @@ public class VampirismTrait extends AbstractPassiveTrait{
 				Eevent.getDamager());
 		
 		double regain = damage * (modifyToPlayer(eventWrapper.getPlayer(), value, "value"));
-		EntityRegainHealthEvent healEvent 
-			= new EntityRegainHealthEvent(damager, regain, RegainReason.MAGIC);
-		
+		EntityRegainHealthEvent healEvent = new EntityRegainHealthEvent(damager, regain, RegainReason.MAGIC);
 		regain = CompatibilityModifier.EntityRegainHealth.safeGetAmount(healEvent);
 		
 		double before = CompatibilityModifier.BukkitPlayer.safeGetHealth(damager);
@@ -96,13 +91,12 @@ public class VampirismTrait extends AbstractPassiveTrait{
 		}else{
 			CompatibilityModifier.BukkitPlayer.safeDamage(-regain, damager);
 		}
-		double after = CompatibilityModifier.BukkitPlayer.safeGetHealth(damager);
 		
+		double after = CompatibilityModifier.BukkitPlayer.safeGetHealth(damager);
 		if(Math.abs(before - after) > 0.001 && Eevent.getEntity() instanceof LivingEntity){
 			LivingEntity damagee = (LivingEntity) Eevent.getEntity();
 
-			damagee.getWorld().playEffect(damagee.getEyeLocation(), 
-					Effect.STEP_SOUND, Material.REDSTONE_WIRE);
+			damagee.getWorld().playEffect(damagee.getEyeLocation(), Effect.STEP_SOUND, Material.REDSTONE_WIRE);
 		}
 		
 		return TraitResults.True();

@@ -159,6 +159,7 @@ public class EN_Text {
 			+ restrictions_not_met_OnlyAfterNotDamage + ": '&cCan only be used after not beeing damaged.'\r\n"
 			+ restrictions_not_met_OnlyOnBlock + ": '&cCan only be used on specific blocks.'\r\n"
 			+ restrictions_not_met_Skilled + ": '&cYou did not skill this trait.'\r\n"
+			+ restrictions_not_met_Silence + ": '&cYou are currently silenced.'\r\n"
 			+ restrictions_not_met_OnlyWhileSneaking + ": '&cCan only be used while sneaking.'\r\n"
 			+ restrictions_not_met_OnlyWhileNotSneaking + ": '&cCan only be used while not sneaking.'\r\n"
 			+ restrictions_not_met_NotOnBlock + ": '&cCan not be used on this block.'\r\n"
@@ -190,10 +191,12 @@ public class EN_Text {
 			//trait specific
 			+ trait_backstab_success + ": '&a%NAME% backstabed.'\r\n"
 			+ trait_bash_success + ": '&a%NAME% stunned.'\r\n"
+			+ trait_consume_success + ": '&aYou have been given &d%VALUE% &aMana. &d%MATERIAL% &aconsumed.'\r\n"
 			+ trait_dodged + ": '&aYou dodged the Attack.'\r\n"
 			+ trait_fly_toggle + ": '&aYou can now &dfly &afor &d%DURATION% &aseconds.'\r\n"
 			+ trait_invisible_toggle + ": '&aYou are now &dinvisible &afor &d%DURATION% &aseconds.'\r\n"
-			+ trait_consume_success + ": '&aYou have been given &d%VALUE% &aMana. &d%MATERIAL% &aconsumed.'\r\n"
+			+ trait_kick_sucess + ": '&d%NAME% &akicked.'\r\n"
+			+ trait_kick_failed + ": '&d%NAME% &akicked but did not abort anything.'\r\n"
 			+ trait_laststand_success + ": '&d%NAME% &atoggled. You were healed &d%VALUE%&a.'\r\n"
 			+ trait_lifetap_success + ": '&aYou have been given &d%VALUE% &aMana. You take &d%DAMAGE% &adamage.'\r\n"
 			+ trait_heal_target_full + ": '&aTarget does not need any healing.'\r\n"			
@@ -209,6 +212,7 @@ public class EN_Text {
 			+ trait_horse_no_tame + ": '&cYou may not tame this Horse.'\r\n"
 			+ trait_horse_no_leash + ": '&cYou may not leash this Horse.'\r\n"
 			+ trait_horse_no_jump + ": '&cYou may not jump with this Horse.'\r\n"
+			+ trait_silence_sucess + ": '&aYou silenced &d%NAME% &afor &d%DURATION% &aSeconds.'\r\n"
 			+ trait_stun_arrow_success + ": '&aYou stunned &d%TARGET% &afor &d%DURATION% &aSeconds.'\r\n"
 			+ trait_taunt_success + ": '&d%TARGET% &atauneted.'\r\n"
 			+ trait_taunt_fade + ": '&aTaunt on &d%TARGET% &afaded.'\r\n"
@@ -224,6 +228,7 @@ public class EN_Text {
 			+ trait_faded + ": '&d%NAME% &cfaded.'\r\n"
 			+ trait_failed + ": '&d%NAME% &cfailed.'\r\n"
 			+ trait_toggled + ": '&d%NAME% &atoggled.'\r\n"
+			+ trait_kicked + ": '&d%NAME% &cgot kicked.'\r\n"
 			
 			
 			//u

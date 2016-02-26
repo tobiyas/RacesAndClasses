@@ -28,6 +28,7 @@ public enum TraitRestriction {
 	NeededPermission(restrictions_not_met_NeededPermission),
 	Costs(restrictions_not_met_Costs),
 	NotSkilled(restrictions_not_met_Skilled),
+	Silenced(restrictions_not_met_Silence),
 	Unknown(restrictions_not_met_Unknown),
 	
 	NoTarget(restrictions_not_met_NoTarget),

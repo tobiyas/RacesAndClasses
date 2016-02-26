@@ -20,6 +20,7 @@ import static de.tobiyas.racesandclasses.translation.languages.Keys.magic_spell_
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
@@ -27,12 +28,16 @@ import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.ContinousCostMagicTrait;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.vollotile.ParticleEffects;
+import de.tobiyas.util.vollotile.helper.ParticleHelper;
 
 public abstract class AbstractContinousCostMagicSpellTrait extends
 		AbstractMagicSpellTrait implements ContinousCostMagicTrait {
@@ -234,5 +239,18 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		}
 	}
 
+	
+	@Override
+	public void gotKicked(UUID player) {
+		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		if(deactivate(racPlayer)){
+			if(racPlayer.isOnline()){
+				ParticleHelper.sendXParticleEffectToAllWithRandWidth(ParticleEffects.CRIT, racPlayer.getEyeLocation(), 0, 10);
+				racPlayer.sendTranslatedMessage(Keys.trait_kicked, "name", getName());
+			}
+		}
+		
+		super.gotKicked(player);
+	}
 	
 }

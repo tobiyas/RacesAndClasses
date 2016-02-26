@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces;
 
+import java.util.UUID;
+
 import org.bukkit.Material;
 
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
@@ -162,5 +164,24 @@ public interface MagicSpellTrait extends TraitWithRestrictions {
 	 * @return true if costCheck needed, false otherwise.
 	 */
 	public boolean needsCostCheck(EventWrapper wrapper);
+	
+	
+	/**
+	 * Returns the channeling time in Seconds.
+	 * <br>Double because of example 1.5 seconds.
+	 */
+	public double getChannelingTime();
+
+
+	/**
+	 * Notifies that the Channeling got kicked.
+	 * @param player the Player that got kicked.
+	 */
+	public void gotKicked(UUID player);
+	
+	/**
+	 * Returns if the Trait is kickable.
+	 */
+	public boolean isKickable();
 	
 }

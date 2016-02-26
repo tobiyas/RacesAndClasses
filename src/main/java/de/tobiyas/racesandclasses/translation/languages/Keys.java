@@ -185,6 +185,7 @@ public class Keys {
 	public static final String restrictions_not_met_OnlyWhileNotSneaking = "restrictions_not_met_OnlyWhileNotSneaking";
 	public static final String restrictions_not_met_NotOnBlock = "restrictions_not_met_NotOnBlock";
 	public static final String restrictions_not_met_Skilled = "restrictions_not_met_Skilled";
+	public static final String restrictions_not_met_Silence = "restrictions_not_met_Silence";
 	public static final String restrictions_not_met_NeededPermission = "restrictions_not_met_NeededPermission";
 	public static final String restrictions_not_met_Costs = "restrictions_not_met_Costs";
 	public static final String restrictions_not_met_Unknown = "restrictions_not_met_Unknown";
@@ -217,6 +218,8 @@ public class Keys {
 	public static final String trait_dodged = "trait_dodged";
 	public static final String trait_fly_toggle = "trait_fly_toggle";
 	public static final String trait_invisible_toggle = "trait_invisible_toggle";
+	public static final String trait_kick_sucess = "trait_kick_sucess";
+	public static final String trait_kick_failed = "trait_kick_failed";
 	public static final String trait_laststand_success = "trait_laststand_success";
 	public static final String trait_lifetap_success = "trait_lifetap_success";
 	public static final String trait_heal_target_full = "trait_heal_target_full";
@@ -232,6 +235,7 @@ public class Keys {
 	public static final String trait_horse_no_tame = "trait_horse_no_tame";	
 	public static final String trait_horse_no_leash = "trait_horse_no_leash";	
 	public static final String trait_horse_no_jump = "trait_horse_no_jump";	
+	public static final String trait_silence_sucess = "trait_silence_sucess";
 	public static final String trait_stun_arrow_success = "trait_stun_arrow_success";
 	public static final String trait_taunt_success = "trait_taunt_success";
 	public static final String trait_taunt_fade = "trait_taunt_fade";
@@ -247,6 +251,7 @@ public class Keys {
 	public static final String trait_faded = "trait_faded";
 	public static final String trait_failed = "trait_failed";
 	public static final String trait_toggled = "trait_toggled";
+	public static final String trait_kicked = "trait_kicked";
 	
 	//u
 	

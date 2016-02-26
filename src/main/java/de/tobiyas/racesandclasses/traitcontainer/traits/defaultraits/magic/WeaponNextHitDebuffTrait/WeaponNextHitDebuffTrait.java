@@ -161,7 +161,7 @@ public class WeaponNextHitDebuffTrait extends AbstractBuffTrait implements Liste
 	 * @return
 	 */
 	private Debuff generateDebuff(UUID uniqueId) {
-		return new Debuff(getDisplayName(), timeActive, 20, uniqueId) {
+		return new Debuff(getDisplayName(), duration, 20, uniqueId) {
 			
 			@Override
 			protected void realTick() {}

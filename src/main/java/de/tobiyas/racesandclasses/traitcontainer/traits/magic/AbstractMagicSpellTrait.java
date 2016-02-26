@@ -36,6 +36,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.APIs.SilenceAndKickAPI;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
@@ -55,6 +56,8 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.vollotile.Vollotile;
 import de.tobiyas.util.naming.MCPrettyName;
+import de.tobiyas.util.vollotile.ParticleEffects;
+import de.tobiyas.util.vollotile.helper.ParticleHelper;
 
 public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait implements MagicSpellTrait {
 
@@ -129,6 +132,10 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 							
 							entryIt.remove();
 							entry.getValue().task.cancel();
+							
+							//Notifies that the Channeling ends:
+							RacesAndClasses.getPlugin().getSilenceAndKickManager().endChannel(player.getUniqueId(), AbstractMagicSpellTrait.this);
+							
 							LanguageAPI.sendTranslatedMessage(player, Keys.magic_chaneling_failed, "trait_name", 
 									AbstractMagicSpellTrait.this.getDisplayName());
 						}
@@ -365,9 +372,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		super.setConfiguration(configMap);
 		
-		if(configMap.containsKey(COST_PATH)){
-			cost = configMap.getAsDouble(COST_PATH);
-		}
+		cost = configMap.getAsDouble(COST_PATH, 0);
 		
 		if(configMap.containsKey(COST_TYPE_PATH)){
 			String costTypeName = configMap.getAsString(COST_TYPE_PATH);
@@ -391,9 +396,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			}
 		}
 		
-		if(configMap.containsKey(CHANNELING_PATH)){
-			channelingTime = configMap.getAsDouble(CHANNELING_PATH);
-		}
+		channelingTime = configMap.getAsDouble(CHANNELING_PATH, 0);
 	}
 
 
@@ -445,6 +448,10 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		return true;
 	}
 	
+	@Override
+	public double getChannelingTime() {
+		return channelingTime;
+	}
 	
 	@Override
 	public TraitResults trigger(final RaCPlayer player) {
@@ -455,6 +462,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 				@Override
 				public void run() {
 					if(channelingMap.containsKey(player.getUniqueId())){
+						//Notifies that the Channeling ends:
+						RacesAndClasses.getPlugin().getSilenceAndKickManager().endChannel(player.getUniqueId(), AbstractMagicSpellTrait.this);
+						
 						//check restrictions for the New Trigger.
 						if(checkRestrictions(EventWrapperFactory.buildOnlyWithplayer(player)) != TraitRestriction.None) return;
 						
@@ -469,6 +479,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 				}
 			}, (long) (channelingTime * 20));
 			
+			//Notifies that the Channeling ends:
+			RacesAndClasses.getPlugin().getSilenceAndKickManager().startsChannel(player.getUniqueId(), this);
 			channelingMap.put(player.getUniqueId(), new ChannelingContainer(player.getLocation(), task));
 			result.setTriggered(false);
 		}else{
@@ -501,10 +513,38 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	
 	
 	@Override
+	public void gotKicked(UUID player) {
+		ChannelingContainer container = channelingMap.remove(player);
+		if(container != null && isKickable()){
+			container.task.cancel();
+			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+			if(racPlayer.isOnline()){
+				ParticleHelper.sendXParticleEffectToAllWithRandWidth(
+						ParticleEffects.CRIT, racPlayer.getEyeLocation(), 0, 10);
+				racPlayer.sendTranslatedMessage(Keys.trait_kicked, "name", getName());
+			}
+		}
+	}
+	
+	
+	@Override
+	public boolean isKickable() {
+		return true;
+	}
+	
+	
+	@Override
 	protected TraitRestriction checkForFurtherRestrictions(EventWrapper wrapper) {
+		RaCPlayer player = wrapper.getPlayer();
+		
 		if(!wrapper.getPlayer().getSpellManager().canCastSpell(this)){
 			return TraitRestriction.Costs;
 		}
+		
+		if(SilenceAndKickAPI.isSilenced(player.getUniqueId())) {
+			return TraitRestriction.Silenced;
+		}
+		
 		return super.checkForFurtherRestrictions(wrapper);
 	}
 	
@@ -517,7 +557,5 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			this.loc = loc;
 			this.task = task;
 		}
-		
-		
 	}
 }
