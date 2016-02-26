@@ -37,6 +37,7 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.OwnManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 
@@ -240,18 +241,27 @@ public class PlayerSpellManager {
 	 */
 	public boolean canCastSpell(MagicSpellTrait trait){
 		double cost = trait.getCost(player);
+		CostType type = trait.getCostType();
+		Material material = trait.getCastMaterialType();
 		
-		switch(trait.getCostType()){
+		return canCastSpell(type, cost, material);
+	}
+	
+	/**
+	 * Checks if the player can cast the spell
+	 * @param type to check
+	 * @param cost to check
+	 * @param castMaterial to check (may be null if type != ITEM)
+	 * 
+	 * @return true if he can, false if not
+	 */
+	public boolean canCastSpell(CostType type, double cost, Material castMaterial){
+		switch(type){
 			case HEALTH: return player.getHealth() > cost;
-			
-			case MANA: return getManaManager().hasEnoughMana(trait);
-			
-			case ITEM: return player.getPlayer().getInventory().contains(trait.getCastMaterialType(), (int) cost);
-			
+			case MANA: return getManaManager().hasEnoughMana(cost);
+			case ITEM: return player.getPlayer().getInventory().contains(castMaterial, (int) cost);
 			case HUNGER : return player.getPlayer().getFoodLevel() >= cost;
-			
 			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).canRemove((int)cost);
-			
 			default: return false;
 		}
 	}
@@ -262,21 +272,30 @@ public class PlayerSpellManager {
 	 * @param trait to remove the cost from
 	 */
 	public void removeCost(MagicSpellTrait trait) {
-		switch(trait.getCostType()){
-			case HEALTH: player.getHealthManager().damage(trait.getCost(player));
-							break;
-			
-			case MANA: getManaManager().playerCastSpell(trait); break;
-			
-			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(trait.getCastMaterialType(), (int) trait.getCost(player))); break;
-			
+		double cost = trait.getCost(player);
+		CostType type = trait.getCostType();
+		Material material = trait.getCastMaterialType();
+		
+		removeCost(type, cost, material);
+	}
+	
+	/**
+	 * Removes the spell cost from the player
+	 * 
+	 * @param trait to remove the cost from
+	 */
+	public void removeCost(CostType type, double cost, Material material) {
+		switch(type){
+			case HEALTH: player.getHealthManager().damage(cost);break;
+			case MANA: getManaManager().drownMana(cost); break;
+			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(material, (int) cost)); break;
 			case HUNGER: 
 				int oldFoodLevel = player.getPlayer().getFoodLevel();
-				int newFoodLevel = (int) (oldFoodLevel - trait.getCost(player));
+				int newFoodLevel = (int) (oldFoodLevel - cost);
 				player.getPlayer().setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 				
 			case EXP:
-				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) trait.getCost(player));
+				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) cost);
 		}
 	}
 

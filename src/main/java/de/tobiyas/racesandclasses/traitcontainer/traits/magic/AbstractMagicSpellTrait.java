@@ -373,7 +373,6 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		super.setConfiguration(configMap);
 		
 		cost = configMap.getAsDouble(COST_PATH, 0);
-		
 		if(configMap.containsKey(COST_TYPE_PATH)){
 			String costTypeName = configMap.getAsString(COST_TYPE_PATH);
 			costType = CostType.tryParse(costTypeName);
@@ -390,7 +389,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 				if(materialForCasting == null){
 					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
 							+ " 'costType' was ITEM but the item read is not an Item. Items are CAPITAL. "
-							+ "See 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' for all Materials. "
+							+ "See 'https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html' for all Materials. "
 							+ "Alternative use an ItemID.");
 				}
 			}

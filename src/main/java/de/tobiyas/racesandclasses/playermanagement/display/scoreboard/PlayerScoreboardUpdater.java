@@ -38,7 +38,6 @@ public class PlayerScoreboardUpdater extends DebugBukkitRunnable {
 	}
 	
 	
-	
 	/**
 	 * Starts the Updater.
 	 */
@@ -56,6 +55,12 @@ public class PlayerScoreboardUpdater extends DebugBukkitRunnable {
 	public static void stop() {
 		if(instance != null) {
 			instance.cancel();
+			
+			//Hide -> remove all scoreboards!
+			for(RaCPlayer player : RaCPlayerManager.get().getOnlinePlayers()){
+				player.getScoreboardManager().hide();
+			}
+			
 			instance = null;
 		}
 	}

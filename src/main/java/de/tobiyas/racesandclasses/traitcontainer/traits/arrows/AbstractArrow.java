@@ -50,8 +50,12 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
+import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractMagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.pattern.AbstractActivatableTrait;
+import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
@@ -66,15 +70,51 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
 	
+	/**
+	 * The duration to use.
+	 */
 	protected int duration;
+	
+	/**
+	 * Total damage var.
+	 */
 	protected double totalDamage;
 	
+	/**
+	 * If the trait is bound to the Bow or on-use.
+	 */
 	protected boolean boundToBow = true;
+	
+	
+	////Mana part:
+	
+	/**
+	 * The Cost of the Spell.
+	 * 
+	 * It has the default Cost of 0.
+	 */
+	protected double cost = 0;
+	
+	/**
+	 * The Material for casting with {@link CostType#ITEM}
+	 */
+	protected Material materialForCasting = Material.FEATHER;
+	
+	/**
+	 * The CostType of the Spell.
+	 * 
+	 * It has the Default CostType: {@link CostType#MANA}.
+	 */
+	protected CostType costType = CostType.MANA;
+	
 	
 	
 	
 	@TraitConfigurationNeeded(fields = {
-			@TraitConfigurationField(fieldName = BOUND_TO_BOW_PATH, classToExpect = Boolean.class, optional = true)
+			@TraitConfigurationField(fieldName = BOUND_TO_BOW_PATH, classToExpect = Boolean.class, optional = true),
+			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_PATH, classToExpect = Double.class, optional = true),
+			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_TYPE_PATH, classToExpect = String.class, optional = true),
+			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.ITEM_TYPE_PATH, classToExpect = Material.class, optional = true)
 	})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap)
@@ -82,9 +122,34 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		
 		super.setConfiguration(configMap);
 		
-		if(configMap.containsKey(BOUND_TO_BOW_PATH)){
-			boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH);
+		//Bow related stuff:
+		boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH, true);
+		
+		
+		//Magic costs:
+		cost = configMap.getAsDouble(AbstractMagicSpellTrait.COST_PATH, 0);
+		if(configMap.containsKey(AbstractMagicSpellTrait.COST_TYPE_PATH)){
+			String costTypeName = configMap.getAsString(AbstractMagicSpellTrait.COST_TYPE_PATH);
+			costType = CostType.tryParse(costTypeName);
+			if(costType == null){
+				throw new TraitConfigurationFailedException(getName() + " is incorrect configured. costType could not be read.");
+			}
+			
+			if(costType == CostType.ITEM){
+				if(!configMap.containsKey(AbstractMagicSpellTrait.ITEM_TYPE_PATH)){
+					throw new TraitConfigurationFailedException(getName() + " is incorrect configured. 'costType' was ITEM but no Item is specified at 'item'.");
+				}
+				
+				materialForCasting = configMap.getAsMaterial(AbstractMagicSpellTrait.ITEM_TYPE_PATH);
+				if(materialForCasting == null){
+					throw new TraitConfigurationFailedException(getName() + " is incorrect configured."
+							+ " 'costType' was ITEM but the item read is not an Item. Items are CAPITAL. "
+							+ "See 'https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html' for all Materials. "
+							+ "Alternative use an ItemID.");
+				}
+			}
 		}
+		
 	}
 	
 	
@@ -196,6 +261,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		return false;
 	}
 	
+	
 	/**
 	 * Checks if the Arrow is active at the moment from the passed player
 	 * 
@@ -238,6 +304,11 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			}));
 			
 			boolean triggered = onShoot(Eevent);
+			if(triggered){
+				//Do not forget to remove the Cost for spells:
+				eventWrapper.getPlayer().getSpellManager().removeCost(costType, cost, materialForCasting);
+			}
+			
 			return result.setTriggered(triggered).setSetCooldownOnPositiveTrigger(triggered).setRemoveCostsAfterTrigger(triggered);
 		}
 		
@@ -340,6 +411,9 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 			ItemStack item = new ItemStack(Material.BOW);
 			item.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 			
+			//Do not forget to remove the Cost for spells:
+			player.getSpellManager().removeCost(costType, cost, materialForCasting);
+			
 			onShoot(new EntityShootBowEvent(realPlayer, item, arrow, 1f));
 			return TraitResults.True();
 		}
@@ -395,7 +469,6 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 	@Override
 	public boolean notifyTriggeredUplinkTime(EventWrapper wrapper) {
 		if(wrapper.getPlayer().getArrowManager().getCurrentArrow() != this) return false;
-		
 		return super.notifyTriggeredUplinkTime(wrapper);
 	}
 	
@@ -422,5 +495,22 @@ public abstract class AbstractArrow extends AbstractActivatableTrait {
 		};
 	}
 	
+	
+	@Override
+	protected TraitRestriction checkForFurtherRestrictions(EventWrapper wrapper) {
+		ArrowManager aManager = wrapper.getPlayer().getArrowManager();
+		if(cost > 0 && wrapper.getEvent() instanceof EntityShootBowEvent
+				&& aManager.getNumberOfArrowTypes() > 0 && aManager.getCurrentArrow() == this) {
+			
+			//Check for Mana / Manatype:
+			RaCPlayer player = wrapper.getPlayer();
+			if(!player.getSpellManager().canCastSpell(costType, cost, materialForCasting)){
+				player.sendTranslatedMessage(Keys.restrictions_not_met_Costs);
+				return TraitRestriction.Costs;
+			}
+		}
+		
+		return super.checkForFurtherRestrictions(wrapper);
+	}
 	
 }

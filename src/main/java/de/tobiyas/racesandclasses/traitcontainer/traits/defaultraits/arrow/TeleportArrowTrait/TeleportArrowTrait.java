@@ -30,13 +30,10 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
-import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
-import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 
 public class TeleportArrowTrait extends AbstractArrow {
 	
@@ -61,12 +58,6 @@ public class TeleportArrowTrait extends AbstractArrow {
 		return "Cooldown: " + cooldownTime + " seconds";
 	}
 
-	@TraitConfigurationNeeded
-	@Override
-	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
-		super.setConfiguration(configMap);
-	}
-
 	@Override
 	protected boolean onShoot(EntityShootBowEvent event) {
 		LivingEntity shooter = event.getEntity();
@@ -78,8 +69,7 @@ public class TeleportArrowTrait extends AbstractArrow {
 		
 		shootedArrows.put(arrow, player);
 		
-		LanguageAPI.sendTranslatedMessage(player, Keys.launched_something, 
-				"name", getDisplayName());
+		LanguageAPI.sendTranslatedMessage(player, Keys.launched_something, "name", getDisplayName());
 		return true;
 	}
 

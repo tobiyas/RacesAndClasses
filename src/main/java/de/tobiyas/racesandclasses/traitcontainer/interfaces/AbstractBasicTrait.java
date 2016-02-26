@@ -644,7 +644,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(playerLevel > maximumLevel) return TraitRestriction.MaximumLevel;
 		
 		//Check if is skilled in tree:
-		if(!permanentSkill){
+		if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
 			if(!player.getSkillTreeManager().hasTrait(this)) return TraitRestriction.NotSkilled;
 		}
 		
