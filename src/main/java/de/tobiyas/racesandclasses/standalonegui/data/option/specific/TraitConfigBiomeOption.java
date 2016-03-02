@@ -21,7 +21,7 @@ public class TraitConfigBiomeOption extends AbstractTraitConfigOption {
 	/**
 	 * The current Biome.
 	 */
-	private Biome biome = Biome.BEACH;
+	private Biome biome = Biome.BEACHES;
 	
 	
 

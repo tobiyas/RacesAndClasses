@@ -31,6 +31,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EntityEquipment;
@@ -112,11 +113,13 @@ public abstract class PlayerProxy implements Player {
 		getRealPlayer().closeInventory();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public ItemStack getItemInHand() {
 		return getRealPlayer().getItemInHand();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setItemInHand(ItemStack item) {
 		getRealPlayer().setItemInHand(item);
@@ -127,6 +130,7 @@ public abstract class PlayerProxy implements Player {
 		return getRealPlayer().getItemOnCursor();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setItemOnCursor(ItemStack item) {
 		getRealPlayer().setItemInHand(item);
@@ -213,22 +217,19 @@ public abstract class PlayerProxy implements Player {
 		return getRealPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
+	//@Override
 	public Egg throwEgg() {
-		return getRealPlayer().throwEgg();
+		return getRealPlayer().launchProjectile(Egg.class);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
+	//@Override
 	public Snowball throwSnowball() {
-		return getRealPlayer().throwSnowball();
+		return getRealPlayer().launchProjectile(Snowball.class);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
+	//@Override
 	public Arrow shootArrow() {
-		return getRealPlayer().shootArrow();
+		return getRealPlayer().launchProjectile(Arrow.class);
 	}
 
 	@Override
@@ -1360,4 +1361,116 @@ public abstract class PlayerProxy implements Player {
 		getRealPlayer().resetTitle();
 	}
 
+	
+	
+	//////////////
+	///MC 1.9 ////
+	//////////////
+	
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, Location location, int count) {
+		getRealPlayer().spawnParticle(particle, location , count);
+	}
+
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count) {
+		getRealPlayer().spawnParticle(particle, x,y,z , count);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, Location location, int count, T data) {
+		getRealPlayer().spawnParticle(particle, location , count, data);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count, T data) {
+		getRealPlayer().spawnParticle(particle, x,y,z , count, data);
+	}
+
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, Location location, int count, double offsetX, double offsetY,
+			double offsetZ) {
+		getRealPlayer().spawnParticle(particle, location , count, offsetX, offsetY, offsetZ);
+	}
+
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count, double offsetX,
+			double offsetY, double offsetZ) {
+		getRealPlayer().spawnParticle(particle, x,y,z , count, offsetX, offsetY, offsetZ);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, Location location, int count, double offsetX, double offsetY,
+			double offsetZ, T data) {
+		getRealPlayer().spawnParticle(particle, location , count, offsetX, offsetY, offsetZ, data);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count, double offsetX,
+			double offsetY, double offsetZ, T data) {
+		getRealPlayer().spawnParticle(particle, x,y,z , count, offsetX, offsetY, offsetZ, data);
+	}
+
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, Location location, int count, double offsetX, double offsetY,
+			double offsetZ, double extra) {
+		getRealPlayer().spawnParticle(particle, location , count, offsetX, offsetY, offsetZ, extra);
+	}
+
+
+	@Override
+	public void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count, double offsetX,
+			double offsetY, double offsetZ, double extra) {
+		getRealPlayer().spawnParticle(particle, x,y,z , count, offsetX, offsetY, offsetZ, extra);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, Location location, int count, double offsetX, double offsetY,
+			double offsetZ, double extra, T data) {
+		getRealPlayer().spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra, data);
+	}
+
+
+	@Override
+	public <T> void spawnParticle(org.bukkit.Particle particle, double x, double y, double z, int count, double offsetX,
+			double offsetY, double offsetZ, double extra, T data) {
+		getRealPlayer().spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, data);
+	}
+
+
+	@Override
+	public InventoryView openMerchant(Villager trader, boolean force) {
+		return getRealPlayer().openMerchant(trader, force);
+	}
+
+
+	@Override
+	public org.bukkit.attribute.AttributeInstance getAttribute(org.bukkit.attribute.Attribute attribute) {
+		return getRealPlayer().getAttribute(attribute);
+	}
+
+
+	@Override
+	public void setGlowing(boolean flag) {
+		getRealPlayer().setGlowing(flag);
+	}
+
+
+	@Override
+	public boolean isGlowing() {
+		return getRealPlayer().isGlowing();
+	}
+
+	
+	
 }

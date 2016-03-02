@@ -28,9 +28,6 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 
 public class NormalArrow extends AbstractArrow {
 	
-	public NormalArrow(){
-	}
-	
 	@TraitEventsUsed(registerdClasses = {EntityDamageByEntityEvent.class, PlayerInteractEvent.class})
 	@Override
 	public void generalInit(){
@@ -69,7 +66,6 @@ public class NormalArrow extends AbstractArrow {
 
 	@Override
 	protected boolean onHitLocation(ProjectileHitEvent event) {
-		//Not needed
 		return false;
 	}
 	
@@ -83,6 +79,5 @@ public class NormalArrow extends AbstractArrow {
 	public boolean isVisible() {
 		return false;
 	}
-
 
 }

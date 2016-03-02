@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.PermissionTrait;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -126,10 +127,9 @@ public class PermissionTrait extends TickEverySecondsTrait implements Listener {
 	@Override
 	public void deInit() {
 		super.deInit();
-		for(RaCPlayer player : playersWithPerms){
-			if(player.isOnline()){
-				checkPerms(player, false);
-			}
+		
+		for(RaCPlayer player : new HashSet<>(playersWithPerms)){
+			if(player.isOnline()) checkPerms(player, false);
 		}
 	}
 	

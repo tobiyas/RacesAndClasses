@@ -3,6 +3,7 @@ package de.tobiyas.racesandclasses.traitcontainer.modifiers;
 import java.util.regex.Pattern;
 
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public abstract class AbstractModifier implements TraitSituationModifier {	
 
@@ -34,13 +35,13 @@ public abstract class AbstractModifier implements TraitSituationModifier {
 	
 	
 	@Override
-	public double apply(RaCPlayer player, double value) {
+	public double apply(RaCPlayer player, double value, Trait trait) {
 		return modifier * value;
 	}
 	
 	@Override
-	public int apply(RaCPlayer player, int value) {
-		return (int) Math.round(apply(player, (double) value));
+	public int apply(RaCPlayer player, int value, Trait trait) {
+		return (int) Math.round(apply(player, (double) value, trait));
 	}
 
 }

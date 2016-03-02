@@ -187,10 +187,10 @@ public class PlayerRaCScoreboardManager {
 	 * Shows the Scoreboard.
 	 */
 	public void show(){
+		if(!player.isOnline()) return;
+		
 		//If nothing is present, hide.
-		if(displayTimer.shouldBeHidden() 
-				|| toShow.get(this.selectedCategory).size() == 0){
-			
+		if(displayTimer.shouldBeHidden() || toShow.get(this.selectedCategory).size() == 0){
 			hide();
 			return;
 		}
@@ -211,6 +211,8 @@ public class PlayerRaCScoreboardManager {
 	 * Hides the Display and shows the Main board again.
 	 */
 	public void hide(){
+		if(!player.isOnline()) return;
+		
 		//If not our board -> nothing to do.
 		if(player.getScoreboard() != scoreboard) return;
 		
@@ -258,6 +260,7 @@ public class PlayerRaCScoreboardManager {
 			case Cooldown: updater.updateCooldown(); break;
 			case Spells: updater.updateSpells(); break;
 			case General: updater.updateGeneral(); break;
+			case Group: updater.updateGroup(); break;
 	
 			default: return;
 		}
@@ -318,7 +321,8 @@ public class PlayerRaCScoreboardManager {
 		Cooldown(ChatColor.RED + "Cooldowns:"),
 		Spells(ChatColor.GREEN + "Spells:"),
 		Arrows(ChatColor.AQUA + "Arrows:"),
-		General(ChatColor.YELLOW + "General:");
+		General(ChatColor.YELLOW + "General:"),
+		Group(ChatColor.DARK_BLUE + "Group:");
 		
 		
 		/**
@@ -345,7 +349,8 @@ public class PlayerRaCScoreboardManager {
 				case Cooldown : return Spells;
 				case Spells : return Arrows;
 				case Arrows : return General;
-				case General : return Cooldown;
+				case General : return Group;
+				case Group : return Cooldown;
 				
 				default: return General;
 			}

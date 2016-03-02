@@ -55,7 +55,7 @@ public abstract class TickEverySecondsTrait extends AbstractBasicTrait {
 						
 						//If use the skill system, check if player has this skill!
 						if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
-							if(!player.getSkillTreeManager().hasTrait(TickEverySecondsTrait.this)) continue;
+							if(player.getSkillTreeManager().getLevel(TickEverySecondsTrait.this) <= 0) continue;
 						}
 						
 						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());

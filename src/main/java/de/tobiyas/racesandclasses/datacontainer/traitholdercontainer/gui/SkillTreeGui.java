@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -27,8 +28,11 @@ import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.util.formating.StringFormatUtils;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 import de.tobiyas.util.math.Math2;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class SkillTreeGui extends BasicSelectionInterface {
 
@@ -43,14 +47,25 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	private final Map<Trait,ItemStack> buttons = new HashMap<>();
 	
 	/**
-	 * The traits to add after apply!
+	 * The traits that should be applied!
 	 */
-	private final Collection<Trait> toAdd = new HashSet<>();
+	private final Map<Trait,Integer> toApply = new HashMap<>();
 	
 	/**
 	 * The Apply button.
 	 */
 	private final ItemStack applyItem;
+	
+	/**
+	 * The Apply button.
+	 */
+	private final ItemStack discardItem;
+	
+	/**
+	 * the temp free points to remove.
+	 */
+	private int tempFreePointsToRemove = 0;
+
 	
 	
 	@SuppressWarnings("deprecation")
@@ -62,7 +77,10 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		
 		this.racPlayer = RaCPlayerManager.get().getPlayer(player);
 		this.applyItem = generateItem(Material.WOOL, DyeColor.GREEN.getWoolData(), ChatColor.GREEN + "Apply", ChatColor.AQUA + "Applies the changes");
+		this.discardItem = generateItem(Material.WOOL, DyeColor.RED.getWoolData(), ChatColor.RED + "Discard", ChatColor.AQUA + "Discards the changes");
 		
+		//Copy traits + levels!
+		this.toApply.putAll(racPlayer.getSkillTreeManager().getTraitsWithLevels());
 		redraw();
 	}
 	
@@ -74,15 +92,11 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		getTopInventory().clear();
 		buttons.clear();
 		
-		int freePoints = racPlayer.getSkillTreeManager().getFreeSkillpoints();
-		for(Trait trait : toAdd) freePoints -= trait.getSkillPointCost();
+		int freePoints = racPlayer.getSkillTreeManager().getFreeSkillpoints() - tempFreePointsToRemove;
 		
 		int level = LevelAPI.getCurrentLevel(racPlayer);
 		
 		Collection<Trait> allTraits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
-		Collection<Trait> traitsHas = racPlayer.getSkillTreeManager().getTraits();
-		traitsHas.addAll(toAdd);
-		
 		Collection<Trait> permanent = getPermanent(allTraits);
 		
 		//Now generate items and populate!
@@ -95,7 +109,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 			//Filter items that are outside of the Box.
 			if(slot >= getTopInventory().getSize()) continue;
 			
-			ItemStack item = generateItemForTrait(trait, traitsHas, level, freePoints);
+			ItemStack item = generateItemForTrait(trait, toApply, level, freePoints);
 			
 			//If already present -> Skip!
 			if(getTopInventory().getItem(slot) != null) continue;
@@ -106,6 +120,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		
 		getTopInventory().setItem(8, generateFreeItem(freePoints, level));
 		getTopInventory().setItem((9*5)+8, applyItem);
+		getTopInventory().setItem((9*5)+7, discardItem);
 	}
 	
 	
@@ -116,26 +131,26 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	 * @param hasLevel
 	 * @return
 	 */
-	private ItemStack generateItemForTrait(Trait trait, Collection<Trait> traitsHas, int playerLevel, int freePoints){
+	private ItemStack generateItemForTrait(Trait trait, Map<Trait,Integer> traitsHasWithLevels, int playerLevel, int freePoints){
 		//First generate flags:
-		boolean hasTrait = traitsHas.contains(trait);
-		int traitLevelNeeded = (trait instanceof TraitWithRestrictions) ? ((TraitWithRestrictions)trait).getMinLevel() : -1;
-		boolean traitHasLevelReq = traitLevelNeeded > 0;
+		int maxSkillLevel = trait.getSkillMaxLevel();
+		int playerSkillLevel = traitsHasWithLevels.containsKey(trait) ? traitsHasWithLevels.get(trait) : 0;
+		boolean playerHasMaxLevel = playerSkillLevel >= maxSkillLevel;
+		int traitLevelNeeded = trait.getSkillMinLevel(playerSkillLevel+1);
 		boolean playerHasLevel = playerLevel >= traitLevelNeeded;
-		if(traitHasLevelReq) ((TraitWithRestrictions)trait).getMinLevel();
 		
-		boolean hasPoints = freePoints >= trait.getSkillPointCost();
-		boolean hasPrequisits = hasPrequisits(trait, traitsHas);
+		boolean hasPoints = freePoints >= trait.getSkillPointCost(playerSkillLevel+1);
+		boolean hasPrequisits = hasPrequisits(trait, traitsHasWithLevels);
 		boolean canUse = hasPoints && hasPrequisits && playerHasLevel;
-		String title = (hasTrait ? ChatColor.BLUE : (canUse ? ChatColor.RED : ChatColor.GREEN )) + trait.getDisplayName();
-		String levelString = (traitHasLevelReq ? ((playerHasLevel ? ChatColor.GREEN : ChatColor.RED) + "Needs level: " + traitLevelNeeded) : ChatColor.GREEN + "No level required");
-		String pointsString = (hasPoints ? ChatColor.GREEN : ChatColor.RED) + "Needs: " + trait.getSkillPointCost() + " Points";
-		String prequisitString = trait.getSkillTreePrequisits().isEmpty() ? "" : (ChatColor.YELLOW + "Prequisits: " + generatePrequisitString(trait, traitsHas));
+		String title = (playerHasMaxLevel ? ChatColor.BLUE : (canUse ? ChatColor.GREEN : ChatColor.DARK_RED )) + trait.getDisplayName() + " (" + playerSkillLevel + "/" + maxSkillLevel + ")";
+		String levelString = (playerHasLevel ? ChatColor.GREEN : ChatColor.RED) + "Needs level: " + traitLevelNeeded;
+		String pointsString = (hasPoints ? ChatColor.GREEN : ChatColor.RED) + "Needs: " + trait.getSkillPointCost(playerSkillLevel+1) + " Points";
+		String prequisitString = trait.getSkillTreePrequisits(playerSkillLevel+1).isEmpty() ? "" : (ChatColor.YELLOW + "Prequisits: " + generatePrequisitString(trait, traitsHasWithLevels));
 		
 		List<String> lore = new LinkedList<>();
 		lore.addAll(Arrays.asList(trait.getPrettyConfiguration().split(Pattern.quote("#n"))));
 		lore.add("");
-		if(hasTrait) lore.add(ChatColor.AQUA + "Already learned");
+		if(playerHasMaxLevel) lore.add(ChatColor.AQUA + "Already learned");
 		else{
 			lore.add(pointsString);
 			lore.add(levelString);
@@ -146,37 +161,57 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(title);
 		meta.setLore(lore);
-		item.setItemMeta(meta);
 		
+		//Add enchantment if has:
+		if(playerHasMaxLevel) {
+			meta.addEnchant(Enchantment.DURABILITY, 1, true);
+			if(VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R3)){
+				meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+			}
+		}
+		
+		item.setItemMeta(meta);
 		return item;
 	}
 	
-	private String generatePrequisitString(Trait trait, Collection<Trait> traitsHas){
+	private String generatePrequisitString(Trait trait, Map<Trait,Integer> traitsHas){
+		int playerSkillLevel = traitsHas.containsKey(trait) ? traitsHas.get(trait) : 0;
 		StringBuilder builder = new StringBuilder();
-		for (Iterator<String> iterator = trait.getSkillTreePrequisits().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = trait.getSkillTreePrequisits(playerSkillLevel+1).iterator(); iterator.hasNext();) {
 			String pre = iterator.next();
+			String[] split = pre.split(Pattern.quote("@"));
+			String preName = split[0];
+			int level = split.length == 1 ? 1 : StringFormatUtils.parseInt(split[1], 1);
+			
 			Trait found = null;
-			for(Trait has : traitsHas){
-				if(has.getDisplayName().equalsIgnoreCase(pre)){
+			for(Trait has : traitsHas.keySet()){
+				if(has.getDisplayName().equalsIgnoreCase(preName)){
 					found = has;
 					break;
 				}
 			}
 			
-			builder.append(found==null?ChatColor.RED: ChatColor.GREEN);
-			builder.append(found==null?pre:found.getDisplayName());
-			if(iterator.hasNext()) builder.append(ChatColor.WHITE).append(",");
+			boolean has = found != null && traitsHas.get(found) >= level;
+			builder.append(has?ChatColor.GREEN:ChatColor.RED);
+			builder.append(has?found.getDisplayName():preName).append(" ").append(level);
+			if(iterator.hasNext()) builder.append(ChatColor.WHITE).append(", ");
 		}
 		
 		return builder.toString();
 	}
 	
 	
-	private boolean hasPrequisits(Trait trait, Collection<Trait> traitsHas){
-		for(String pre : trait.getSkillTreePrequisits()){
+	private boolean hasPrequisits(Trait trait, Map<Trait,Integer> traitsHas){
+		int playerSkillLevel = traitsHas.containsKey(trait) ? traitsHas.get(trait) : 0;
+		for(String pre : trait.getSkillTreePrequisits(playerSkillLevel+1)){
+			String[] preSplit = pre.split(Pattern.quote("@"));
+			String preName = preSplit[0];
+			int level = preSplit.length == 1 ? 1 : StringFormatUtils.parseInt(preSplit[1], 1);
+			
 			boolean found = false;
-			for(Trait has : traitsHas){
-				if(has.getDisplayName().equalsIgnoreCase(pre)){
+			for(Map.Entry<Trait,Integer> has : traitsHas.entrySet()){
+				if(has.getKey().getDisplayName().equalsIgnoreCase(preName)
+						&& has.getValue() >= level){
 					found = true;
 					break;
 				}
@@ -210,7 +245,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		Collection<Trait> permanent = new HashSet<>();
 		if(traits == null || traits.isEmpty()) return permanent;
 		for(Trait trait : traits){
-			if(trait.isPermanentSkill() || trait.getSkillPointCost() < 0){
+			if(trait.isPermanentSkill()){
 				permanent.add(trait);
 			}
 		}
@@ -228,11 +263,15 @@ public class SkillTreeGui extends BasicSelectionInterface {
 
 	
 	@Override
-	protected void onControlItemPressed(int slot, ItemStack item) {
+	protected void onSelectionItemPressed(int slot, ItemStack item) {
 		if(item == null || item.getType() == Material.AIR) return;
-		
 		if(applyItem.isSimilar(item)){
 			applyCurrentSettings();
+			return;
+		}
+
+		if(discardItem.isSimilar(item)){
+			discardCurrentSettings();
 			return;
 		}
 		
@@ -240,29 +279,24 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		Trait trait = getTraitForItem(item);
 		if(trait == null) return;
 		
-		
-		int freePoints = racPlayer.getSkillTreeManager().getFreeSkillpoints();
-		for(Trait tr : toAdd) freePoints -= tr.getSkillPointCost();
-		
+		int playerTraitLevel = this.toApply.containsKey(trait) ? this.toApply.get(trait) : 0;
+		int freePoints = racPlayer.getSkillTreeManager().getFreeSkillpoints() - tempFreePointsToRemove;
 		int level = LevelAPI.getCurrentLevel(racPlayer);
 		
-		Collection<Trait> traitsHas = racPlayer.getSkillTreeManager().getTraits();
-		traitsHas.addAll(toAdd);
-		
 		//If already has:
-		if(traitsHas.contains(trait)){
-			player.sendMessage(ChatColor.RED + "You alreadsy have this Trait.");
+		if(playerTraitLevel >= trait.getSkillMaxLevel()){
+			player.sendMessage(ChatColor.RED + "You alreadsy have this Trait at max level.");
 			return;
 		}
 		
 		//If SkillPoints too low:
-		if(freePoints < trait.getSkillPointCost()){
+		if(freePoints < trait.getSkillPointCost(playerTraitLevel+1)){
 			player.sendMessage(ChatColor.RED + "You do not have enough free Skill-Points.");
 			return;
 		}
 		
 		//If not has prequisits:
-		if(!hasPrequisits(trait, traitsHas)){
+		if(!hasPrequisits(trait, toApply)){
 			player.sendMessage(ChatColor.RED + "You do not have all prequisits!");
 			return;
 		}
@@ -275,19 +309,33 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		}
 		
 		//Seems like the player wants to learn the Trait:
-		toAdd.add(trait);
+		this.toApply.put(trait, playerTraitLevel+1);
+		this.tempFreePointsToRemove += trait.getSkillPointCost(playerTraitLevel+1);
+		
 		redraw();
 	}
 	
+	/**
+	 * Discards the Current Changes.
+	 */
+	private void discardCurrentSettings() {
+		this.toApply.clear();
+		this.toApply.putAll(racPlayer.getSkillTreeManager().getTraitsWithLevels());
+		this.tempFreePointsToRemove = 0;
+		redraw();
+	}
+
+
 	/**
 	 * Applies + closes.
 	 */
 	private void applyCurrentSettings() {
 		this.close();
-		if(toAdd.isEmpty()) return;
 		
 		PlayerSkillTreeManager manager = racPlayer.getSkillTreeManager();
-		for(Trait trait : toAdd) manager.addTrait(trait);
+		for(Map.Entry<Trait,Integer> entry : toApply.entrySet()) {
+			manager.setTraitLevel(entry.getKey(), entry.getValue());
+		}
 		
 		//Rescan after:
 		racPlayer.getArrowManager().rescanPlayer();

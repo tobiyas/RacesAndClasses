@@ -15,13 +15,13 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitHolderCombinder {
@@ -58,7 +58,7 @@ public class TraitHolderCombinder {
 	public static boolean checkContainer(RaCPlayer player, Trait trait, boolean ignoreSkilling){
 		//Check if player has skill first + check if not permanent:
 		if(!ignoreSkilling && useSkillSystem()) {
-			if(player.getSkillTreeManager().hasTrait(trait)) return true;
+			if(player.getSkillTreeManager().getLevel(trait)>0) return true;
 			if(!trait.isPermanentSkill()) return false;
 		}
 		
@@ -116,12 +116,12 @@ public class TraitHolderCombinder {
 		
 		//Filter for SkillSystem.
 		if(useSkillSystem()){
-			Collection<Trait> has = player.getSkillTreeManager().getTraits();
+			PlayerSkillTreeManager skillTreeManager = player.getSkillTreeManager();
 			Iterator<Trait> it = traits.iterator();
 			while(it.hasNext()) {
 				Trait check = it.next();
 				if(check.isPermanentSkill()) continue;
-				if(has.contains(check)) continue;
+				if(skillTreeManager.getLevel(check) > 0) continue;
 				
 				//Does not have and is not permanent!
 				it.remove();

@@ -3,7 +3,7 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana;
 import java.util.Map;
 
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 
 public interface ManaManager {
 
@@ -30,7 +30,7 @@ public interface ManaManager {
 	 * @param spellToCast to cast
 	 * @return true if spell cast is permitted, false otherwise.
 	 */
-	public abstract boolean playerCastSpell(MagicSpellTrait spellToCast);
+	public abstract boolean playerCastSpell(TraitWithCost spellToCast);
 
 	/**
 	 * Checks if the Player has enough Mana for the Spell.
@@ -40,7 +40,7 @@ public interface ManaManager {
 	 * @param spell to check
 	 * @return true if has enough Mana, false if not, or no Mana spell.
 	 */
-	public abstract boolean hasEnoughMana(MagicSpellTrait spell);
+	public abstract boolean hasEnoughMana(TraitWithCost spell);
 
 	/**
 	 * Fills the current Mana Pool of the player by a specific Value.

@@ -67,4 +67,14 @@ public class NoMagicTrait extends AbstractMagicSpellTrait {
 	protected void magicSpellTriggered(RaCPlayer player, TraitResults result) {
 	}
 
+	@Override
+	public byte getCastMaterialDamage() {
+		return 0;
+	}
+
+	@Override
+	public String getCastMaterialName() {
+		return null;
+	}
+
 }

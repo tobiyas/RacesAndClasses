@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -173,6 +174,25 @@ public class RaceAPI {
 		
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		return manager.changePlayerHolder(racPlayer, raceName, true);
+	}
+	
+	
+	/**
+	 * Gets the Location for the Race spawn.
+	 * @param name race to get for.
+	 * @return the Location or null if none present.
+	 */
+	public static Location getRaceSpawn(String name){
+		return RacesAndClasses.getPlugin().getAddinManager().getRaceSpawnManager().getSpawnForRace(name);
+	}
+	
+	/**
+	 * Gets the Location for the Race spawn.
+	 * @param name race to get for.
+	 * @return the Location or null if none present.
+	 */
+	public static void setRaceSpawn(String name, Location target){
+		RacesAndClasses.getPlugin().getAddinManager().getRaceSpawnManager().setRaceSpawn(name, target);
 	}
 	
 	

@@ -190,7 +190,7 @@ public class BlockDisguiseTrait extends AbstractContinousCostMagicSpellTrait  {
 		DisguiseData data = getData(player);
 		if(data != null) this.data.remove(data);
 		
-		LanguageAPI.sendTranslatedMessage(player, Keys.trait_faded, "name", getDisplayName());
+		player.sendTranslatedMessage(Keys.trait_faded, "name", getDisplayName());
 		return true;
 	}
 

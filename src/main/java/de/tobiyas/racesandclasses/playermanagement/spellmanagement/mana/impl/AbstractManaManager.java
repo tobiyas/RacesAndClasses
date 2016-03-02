@@ -9,7 +9,7 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceCo
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 
 public abstract class AbstractManaManager implements ManaManager {
 
@@ -54,7 +54,7 @@ public abstract class AbstractManaManager implements ManaManager {
 
 
 	@Override
-	public boolean playerCastSpell(MagicSpellTrait spellToCast) {
+	public boolean playerCastSpell(TraitWithCost spellToCast) {
 		if(!hasEnoughMana(spellToCast)) return false;
 		
 		drownMana(spellToCast.getCost(racPlayer));
@@ -63,7 +63,7 @@ public abstract class AbstractManaManager implements ManaManager {
 	}
 
 	@Override
-	public boolean hasEnoughMana(MagicSpellTrait spell) {
+	public boolean hasEnoughMana(TraitWithCost spell) {
 		return hasEnoughMana(spell.getCost(racPlayer));
 	}
 

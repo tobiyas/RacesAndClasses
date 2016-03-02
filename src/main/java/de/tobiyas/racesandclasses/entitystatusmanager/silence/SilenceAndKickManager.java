@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 
 public class SilenceAndKickManager {
 
@@ -43,7 +44,7 @@ public class SilenceAndKickManager {
 	 * Ends the current Channel.
 	 * @param id to remove.
 	 */
-	public void endChannel(UUID entityID, MagicSpellTrait trait){
+	public void endChannel(UUID entityID, TraitWithCost trait){
 		Set<MagicSpellTrait> traits = currentlyCastingMap.get(entityID);
 		if(traits == null) return;
 		

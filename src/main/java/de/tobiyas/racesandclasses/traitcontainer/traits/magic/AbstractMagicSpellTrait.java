@@ -47,9 +47,11 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitEventsUsed;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.CostType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 import de.tobiyas.racesandclasses.traitcontainer.traits.pattern.AbstractActivatableTrait;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
@@ -65,6 +67,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	public static final String COST_TYPE_PATH= "costType";
 	public static final String COST_PATH= "cost";
 	public static final String ITEM_TYPE_PATH= "item";
+	public static final String ITEM_DAMAGE_PATH= "itemDamage";
+	public static final String ITEM_NAME_PATH= "itemName";
 	
 	public static final String CHANNELING_PATH = "channeling";
 	
@@ -90,6 +94,16 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	 * The Material for casting with {@link CostType#ITEM}
 	 */
 	protected Material materialForCasting = Material.FEATHER;
+	
+	/**
+	 * The Material damage for casting.
+	 */
+	protected byte materialDamageForCasting = 0;
+	
+	/**
+	 * The Material Name for casting.
+	 */
+	protected String materialNameForCasting = null;
 	
 	/**
 	 * The CostType of the Spell.
@@ -319,7 +333,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 
 		boolean toPrev = player.getPlayer().isSneaking();
 		
-		MagicSpellTrait nextSpell = null;
+		TraitWithCost nextSpell = null;
 		if(toPrev){
 			nextSpell = player.getSpellManager().changeToPrevSpell();
 		}else{
@@ -366,6 +380,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			@TraitConfigurationField(fieldName = COST_PATH, classToExpect = Double.class, optional = true),
 			@TraitConfigurationField(fieldName = COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = ITEM_TYPE_PATH, classToExpect = Material.class, optional = true),
+			@TraitConfigurationField(fieldName = ITEM_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
+			@TraitConfigurationField(fieldName = ITEM_NAME_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = CHANNELING_PATH, classToExpect = Double.class, optional = true),
 		})
 	@Override
@@ -392,6 +408,9 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 							+ "See 'https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html' for all Materials. "
 							+ "Alternative use an ItemID.");
 				}
+				
+				materialDamageForCasting = (byte) configMap.getAsInt(ITEM_DAMAGE_PATH, 0);
+				materialNameForCasting = configMap.getAsString(ITEM_NAME_PATH, null);
 			}
 		}
 		
@@ -414,6 +433,16 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	@Override
 	public Material getCastMaterialType() {
 		return materialForCasting;
+	}
+	
+	@Override
+	public byte getCastMaterialDamage() {
+		return materialDamageForCasting;
+	}
+	
+	@Override
+	public String getCastMaterialName() {
+		return materialNameForCasting;
 	}
 
 	@Override
@@ -503,8 +532,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	
 	@Override
 	protected void evaluateIntern(RaCPlayer player, TraitResults result) {
-		if(result.isTriggered() 
-				&& result.isRemoveCostsAfterTrigger()){
+		if(result.isTriggered() && result.isRemoveCostsAfterTrigger()){
 			//The spell was triggered! So start removing stuff!
 			player.getSpellManager().removeCost(this);
 		}

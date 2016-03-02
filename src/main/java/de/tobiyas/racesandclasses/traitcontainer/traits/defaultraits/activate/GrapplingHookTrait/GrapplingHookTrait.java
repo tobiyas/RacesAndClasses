@@ -271,6 +271,7 @@ public class GrapplingHookTrait extends AbstractBasicTrait{
 	public void importTrait() {
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper) {
 		Event event = wrapper.getEvent(); //TODO fix sometime...

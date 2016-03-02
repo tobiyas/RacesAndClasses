@@ -69,8 +69,7 @@ public class CommandExecutor_SkillTree extends AbstractCommand {
 		
 		//If no player -> return.
 		if(!(sender instanceof Player)){
-			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players)
-					.build());
+			sender.sendMessage(LanguageAPI.translateIgnoreError(only_players).build());
 			return true;
 		}
 		
@@ -87,7 +86,7 @@ public class CommandExecutor_SkillTree extends AbstractCommand {
 		Collection<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 		boolean hasAnySkillable = false;
 		for(Trait trait : traits){
-			if(!trait.isPermanentSkill() && trait.isVisible() && trait.getSkillPointCost() > 0) {
+			if(!trait.isPermanentSkill() && trait.isVisible() && trait.getSkillPointCost(1) > 0) {
 				hasAnySkillable = true;
 			}
 		}

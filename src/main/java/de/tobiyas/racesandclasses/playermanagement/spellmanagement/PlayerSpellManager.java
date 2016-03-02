@@ -21,12 +21,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -37,8 +40,8 @@ import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaMana
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl.OwnManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait.CostType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 
 public class PlayerSpellManager {
@@ -165,13 +168,13 @@ public class PlayerSpellManager {
 	 * 
 	 * @return the next Spell.
 	 */
-	public MagicSpellTrait changeToPrevSpell() {
+	public TraitWithCost changeToPrevSpell() {
 		if(spellList.size() == 0) return null;
 		if(System.currentTimeMillis() - lastEventTime < 100) return null;
 		lastEventTime = System.currentTimeMillis();
 		
 		for(int i = 0; i < spellList.size(); i++){
-			MagicSpellTrait next = spellList.previous();
+			TraitWithCost next = spellList.previous();
 			if(next instanceof TraitWithRestrictions){
 				boolean canUse = ((TraitWithRestrictions) next).isInLevelRange(player.getLevelManager().getCurrentLevel());
 				if(canUse) return next;
@@ -232,20 +235,7 @@ public class PlayerSpellManager {
 		return current;
 	}
 	
-	
-	/**
-	 * Checks if the player can cast the spell
-	 * 
-	 * @param trait to check
-	 * @return true if he can, false if not
-	 */
-	public boolean canCastSpell(MagicSpellTrait trait){
-		double cost = trait.getCost(player);
-		CostType type = trait.getCostType();
-		Material material = trait.getCastMaterialType();
-		
-		return canCastSpell(type, cost, material);
-	}
+
 	
 	/**
 	 * Checks if the player can cast the spell
@@ -255,14 +245,98 @@ public class PlayerSpellManager {
 	 * 
 	 * @return true if he can, false if not
 	 */
-	public boolean canCastSpell(CostType type, double cost, Material castMaterial){
-		switch(type){
+	public boolean canCastSpell(TraitWithCost trait){
+		double cost = trait.getCost(player);
+		switch(trait.getCostType()){
 			case HEALTH: return player.getHealth() > cost;
 			case MANA: return getManaManager().hasEnoughMana(cost);
-			case ITEM: return player.getPlayer().getInventory().contains(castMaterial, (int) cost);
+			case ITEM: return playerHasItem(trait.getCastMaterialType(), trait.getCastMaterialDamage(), trait.getCastMaterialName(), (int)cost);
 			case HUNGER : return player.getPlayer().getFoodLevel() >= cost;
 			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).canRemove((int)cost);
 			default: return false;
+		}
+	}
+	
+	/**
+	 * Checks if the player has the Item.
+	 * @param material to check
+	 * @param damage to check
+	 * @param name to check
+	 * @return true if has.
+	 */
+	private boolean playerHasItem(Material material, byte damage, String name, int amount){
+		if(!player.isOnline()) return false;
+		if(name != null) name = ChatColor.stripColor(name);
+		
+		Player player = this.player.getPlayer();
+		PlayerInventory inv = player.getInventory();
+		
+		//Check for items:
+		for(ItemStack item : inv){
+			if(item == null) continue;
+			
+			//Check if item is correct:
+			if(item.getType() != material) continue;
+			if(item.getDurability() != damage) continue;
+			
+			//Check for name.
+			if(name != null && !name.isEmpty()){
+				if(!item.getItemMeta().hasDisplayName()) continue;
+				
+				String itemName = item.getItemMeta().getDisplayName();
+				itemName = ChatColor.stripColor(itemName);
+				
+				if(!itemName.equalsIgnoreCase(name)) continue;
+			}
+			
+			//If done, check!
+			amount -= item.getAmount();
+			if(amount <= 0) return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Removes the Item.
+	 * @param material to check
+	 * @param damage to check
+	 * @param name to check
+	 * @param amount to remove
+	 */
+	private void removeItem(Material material, byte damage, String name, int amount){
+		if(!player.isOnline()) return;
+		if(name != null) name = ChatColor.stripColor(name);
+		
+		Player player = this.player.getPlayer();
+		PlayerInventory inv = player.getInventory();
+		
+		//Check for items:
+		for(int i = 0; i < inv.getSize(); i++){
+			ItemStack item = inv.getItem(i);
+			if(item == null) continue;
+			
+			//Check if item is correct:
+			if(item.getType() != material) continue;
+			if(item.getDurability() != damage) continue;
+			
+			//Check for name.
+			if(name != null && !name.isEmpty()){
+				if(!item.getItemMeta().hasDisplayName()) continue;
+				
+				String itemName = item.getItemMeta().getDisplayName();
+				itemName = ChatColor.stripColor(itemName);
+				
+				if(!itemName.equalsIgnoreCase(name)) continue;
+			}
+			
+			//If done, remove!
+			int newAmount = item.getAmount() - amount;
+			item.setAmount(newAmount);
+			inv.setItem(i, item);
+			
+			amount = -newAmount;
+			if(amount <= 0) return;
 		}
 	}
 	
@@ -271,24 +345,12 @@ public class PlayerSpellManager {
 	 * 
 	 * @param trait to remove the cost from
 	 */
-	public void removeCost(MagicSpellTrait trait) {
+	public void removeCost(TraitWithCost trait) {
 		double cost = trait.getCost(player);
-		CostType type = trait.getCostType();
-		Material material = trait.getCastMaterialType();
-		
-		removeCost(type, cost, material);
-	}
-	
-	/**
-	 * Removes the spell cost from the player
-	 * 
-	 * @param trait to remove the cost from
-	 */
-	public void removeCost(CostType type, double cost, Material material) {
-		switch(type){
+		switch(trait.getCostType()){
 			case HEALTH: player.getHealthManager().damage(cost);break;
 			case MANA: getManaManager().drownMana(cost); break;
-			case ITEM: player.getPlayer().getInventory().removeItem(new ItemStack(material, (int) cost)); break;
+			case ITEM: removeItem(trait.getCastMaterialType(), trait.getCastMaterialDamage(), trait.getCastMaterialName(), (int)cost); break;
 			case HUNGER: 
 				int oldFoodLevel = player.getPlayer().getFoodLevel();
 				int newFoodLevel = (int) (oldFoodLevel - cost);
@@ -298,7 +360,7 @@ public class PlayerSpellManager {
 				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) cost);
 		}
 	}
-
+	
 	
 	/**
 	 * Returns the amount of spells the SpellManager contains.
@@ -321,7 +383,7 @@ public class PlayerSpellManager {
 		if(getSpellAmount() == 0) return false;
 		
 		for(int i = 0; i < spellList.size(); i++){
-			MagicSpellTrait spell = spellList.currentEntry();
+			TraitWithCost spell = spellList.currentEntry();
 			if(spell instanceof AbstractBasicTrait){
 				//first check Display name
 				String name = ((AbstractBasicTrait) spell).getDisplayName();
@@ -349,7 +411,7 @@ public class PlayerSpellManager {
 	 * @return true if worked, false otherwise.
 	 */
 	public boolean tryCastCurrentSpell() {
-		MagicSpellTrait currentSpell = spellList.currentEntry();
+		TraitWithCost currentSpell = spellList.currentEntry();
 		if(currentSpell == null) return false;
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		

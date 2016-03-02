@@ -46,6 +46,7 @@ import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker.FriendDetectEvent;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 
@@ -155,7 +156,7 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 		
 		LanguageAPI.sendTranslatedMessage(player, Keys.trait_invisible_toggle, 
 				"duration", String.valueOf(time));
-		player.getWorld().playSound(player.getLocation(), Sound.SPLASH, 10, 1);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_SPLASH_POTION_BREAK, 10, 1);
 		
 		setInvisibleToEverything(player);
 		return true;
@@ -163,7 +164,9 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 	
 	
 	private void setInvisibleToEverything(RaCPlayer player){
-		for(Player otherPlayer : player.getWorld().getPlayers()){
+		if(!player.isOnline()) return;
+		
+		for(Player otherPlayer : PlayerUtils.getOnlinePlayers()){
 			otherPlayer.hidePlayer(player.getPlayer());
 		}
 		
@@ -179,7 +182,9 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 	
 	
 	private void setVisibleAgain(RaCPlayer player){
-		for(Player otherPlayer : player.getWorld().getPlayers()){
+		if(!player.isOnline()) return;
+		
+		for(Player otherPlayer : PlayerUtils.getOnlinePlayers()){
 			otherPlayer.showPlayer(player.getPlayer());
 		}
 	}
@@ -188,7 +193,7 @@ public class InvisibleTrait extends AbstractContinousCostMagicSpellTrait  {
 	@Override
 	protected boolean deactivateIntern(RaCPlayer player){
 		setVisibleAgain(player);
-		LanguageAPI.sendTranslatedMessage(player, Keys.trait_faded, "name", getDisplayName());
+		player.sendTranslatedMessage(Keys.trait_faded, "name", getDisplayName());
 		return true;
 	}
 

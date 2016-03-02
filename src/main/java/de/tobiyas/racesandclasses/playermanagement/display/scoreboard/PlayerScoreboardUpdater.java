@@ -32,6 +32,7 @@ public class PlayerScoreboardUpdater extends DebugBukkitRunnable {
 			manager.getUpdater().updateSpells();
 			manager.getUpdater().updateArrows();
 			manager.getUpdater().updateGeneral();
+			manager.getUpdater().updateGroup();
 			
 			manager.tick();
 		}

@@ -25,6 +25,7 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.World
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
+import de.tobiyas.racesandclasses.traitcontainer.traits.statictraits.NormalArrow;
 
 public class ArrowManager {
 	
@@ -104,10 +105,24 @@ public class ArrowManager {
 	public int getNumberOfArrowTypes(){
 		return WorldResolver.isOnDisabledWorld(player) ? 0 : arrows.size() - 1;
 	}
+	
+	
+	/**
+	 * If the player has any arrow (except for default arrow).
+	 * @return true if has any.
+	 */
+	public boolean hasAnyArrow(){
+		int size = arrows.size();
+		switch(size){
+			case 0 : return false;
+			case 1 : return !(arrows.get(0) instanceof NormalArrow);
+			default : return true;
+		}
+	}
+	
 
 	/**
 	 * Returns all available Arrows.
-	 * 
 	 * @return arrows.
 	 */
 	public List<AbstractArrow> getAllArrows() {

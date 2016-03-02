@@ -56,7 +56,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	/**
 	 * On which players the Trait is currently active.
 	 */
-	protected Map<String,Integer> activePlayersSchedulerMap = new HashMap<String,Integer>();
+	protected Map<UUID,Integer> activePlayersSchedulerMap = new HashMap<>();
 	
 
 	/**
@@ -92,7 +92,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		
 		
 		LanguageAPI.sendTranslatedMessage(player, magic_spell_activated, "trait_name", this.getDisplayName());
-		activePlayersSchedulerMap.put(player.getName(), bukkitID);
+		activePlayersSchedulerMap.put(player.getUniqueId(), bukkitID);
 		return true;
 	}
 	
@@ -111,11 +111,9 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		if(!isActivated(player)) return false;
 		if(!deactivateIntern(player)) return false;
 		
-		int schedulerID = activePlayersSchedulerMap.get(player.getName());
+		int schedulerID = activePlayersSchedulerMap.remove(player.getUniqueId());
 		Bukkit.getScheduler().cancelTask(schedulerID);
-		
-		activePlayersSchedulerMap.remove(player.getName());
-		LanguageAPI.sendTranslatedMessage(player, magic_spell_deactivated, "trait_name", this.getDisplayName());
+		player.sendTranslatedMessage(magic_spell_deactivated, "trait_name", this.getDisplayName());
 		return true;
 	}
 
@@ -133,7 +131,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 	@Override
 	public final boolean isActivated(RaCPlayer player) {
 		if(player == null) return false;
-		return activePlayersSchedulerMap.containsKey(player.getName());
+		return activePlayersSchedulerMap.containsKey(player.getUniqueId());
 	}
 
 	@Override

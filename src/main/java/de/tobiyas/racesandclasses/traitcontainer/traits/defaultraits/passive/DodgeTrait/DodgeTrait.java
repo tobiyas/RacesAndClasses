@@ -76,7 +76,7 @@ public class DodgeTrait extends AbstractPassiveTrait{
 		if(num <= modifyToPlayer(eventWrapper.getPlayer(), value, "chance")){
 			Eevent.setCancelled(true);
 			Player player = (Player) Eevent.getEntity();
-			player.getWorld().playSound(player.getLocation(), Sound.SHOOT_ARROW, 10, 1);
+			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 10, 1);
 			
 			LanguageAPI.sendTranslatedMessage(player, Keys.trait_dodged);
 		}

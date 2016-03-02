@@ -1,10 +1,11 @@
 package de.tobiyas.racesandclasses.playermanagement.skilltree;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
@@ -24,7 +25,7 @@ public class PlayerSkillTreeManager {
 	/**
 	 * The set of Traits the player has selected.
 	 */
-	private final Set<Trait> presentTraits = new HashSet<>();
+	private final Map<Trait,Integer> presentTraits = new HashMap<>();
 	
 	/**
 	 * The player this belongs to.
@@ -43,14 +44,14 @@ public class PlayerSkillTreeManager {
 	 * @param trait to check
 	 * @return true if has.
 	 */
-	public boolean hasTrait(Trait trait){
-		return presentTraits.contains(trait);
+	public int getLevel(Trait trait){
+		return presentTraits.containsKey(trait) ? presentTraits.get(trait) : 0;
 	}
 	
 	
 	/**
 	 * removes the Trait from the list of traits present.
-	 * @param trait
+	 * @param trait to remove.
 	 */
 	public void removeTrait(Trait trait){
 		presentTraits.remove(trait);
@@ -61,8 +62,8 @@ public class PlayerSkillTreeManager {
 	 * Adds the Trait to the Player.
 	 * @param trait to add.
 	 */
-	public void addTrait(Trait trait){
-		if(!hasTrait(trait)) presentTraits.add(trait);
+	public void setTraitLevel(Trait trait, int level){
+		presentTraits.put(trait, level);
 	}
 	
 	
@@ -70,8 +71,8 @@ public class PlayerSkillTreeManager {
 	 * Gets all Traits of the Player
 	 * @return all traits.
 	 */
-	public Collection<Trait> getTraits(){
-		return new HashSet<>(presentTraits);
+	public Map<Trait,Integer> getTraitsWithLevels(){
+		return new HashMap<>(presentTraits);
 	}
 	
 	
@@ -84,7 +85,12 @@ public class PlayerSkillTreeManager {
 		int free = level / every;
 		
 		//Remove points for the Skills already present.
-		for(Trait trait : presentTraits) free -= trait.getSkillPointCost();
+		for(Map.Entry<Trait,Integer> entry : presentTraits.entrySet()) {
+			for(int i = 1; i <= entry.getValue(); i++){
+				free -= entry.getKey().getSkillPointCost(i);
+			}
+		}
+		
 		return Math.max(0, free);
 	}
 
@@ -97,7 +103,10 @@ public class PlayerSkillTreeManager {
 		if(!config.getValidLoad()) return;
 		
 		List<String> learned = new LinkedList<>();
-		for(Trait trait : presentTraits) learned.add(trait.getDisplayName());
+		for(Map.Entry<Trait,Integer> entry : presentTraits.entrySet()) {
+			learned.add(entry.getKey().getDisplayName() + "@" + entry.getValue());
+		}
+		
 		config.set(PRESENT_TRAITS_PATH, learned);
 	}
 	
@@ -112,10 +121,14 @@ public class PlayerSkillTreeManager {
 		
 		List<String> learned = config.getStringList(PRESENT_TRAITS_PATH);
 		Collection<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
-		for(String name : learned){
+		for(String line : learned){
+			String[] split = line.split(Pattern.quote("@"));
+			String name = split[0];
+			int level = 1; try{level = Integer.parseInt(split[1]);}catch(Throwable exp){}
+			
 			for(Trait trait : traits){
 				if(name.equalsIgnoreCase(trait.getDisplayName())){
-					addTrait(trait);
+					setTraitLevel(trait, level);
 					break;
 				}
 			}

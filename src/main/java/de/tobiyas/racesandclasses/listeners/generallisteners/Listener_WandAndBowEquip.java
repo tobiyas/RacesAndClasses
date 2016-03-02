@@ -83,7 +83,7 @@ public class Listener_WandAndBowEquip implements Listener {
 			
 			
 			if(mat == Material.BOW){
-				if(player.getArrowManager().getNumberOfArrowTypes() > 0){
+				if(player.getArrowManager().hasAnyArrow()){
 					player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
 					
 					if(plugin.getCooldownManager().stillHasCooldown(player.getName(), "message.bow") <= 0){

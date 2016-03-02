@@ -23,6 +23,8 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTra
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderParsingException;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -62,7 +64,9 @@ public class ClassContainer extends AbstractTraitHolder{
 	
 	@Override
 	protected void addSTDTraits(){
-		//None needed
+		Trait normalArrow = TraitStore.buildTraitByName("NormalArrow", this);
+		normalArrow.addTraitHolder(this);
+		traits.add(normalArrow);
 	}
 	
 	/**

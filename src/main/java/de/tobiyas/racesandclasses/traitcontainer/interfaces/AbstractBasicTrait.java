@@ -51,6 +51,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.skills.SkillLevelPrequisits;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.ModifierFactory;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.TraitSituationModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
@@ -59,8 +60,7 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedExcepti
 import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
 import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 
-public abstract class AbstractBasicTrait implements Trait,
-		TraitWithRestrictions, Listener {
+public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions, Listener {
 
 	
 	
@@ -77,12 +77,17 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The cost for SkillPoints
 	 */
-	public static final String SKILL_POINTS_COST_PATH = "skillPoints";	
+	public static final String SKILL_LEVELS_PRE_PATH = "skillLevelsPre";
+	
+	/**
+	 * The MAX-Level for a Skill.
+	 */
+	public static final String SKILL_TREE_MAX_LEVEL_PATH = "skillTreeMaxLevel";	
 	
 	/**
 	 * If the Skill is a permanent Trait.
 	 */
-	public static final String SKILL_TREE_PERMANENT_TRAIT_PATH= "permanentTrait";	
+	public static final String SKILL_TREE_PERMANENT_TRAIT_PATH= "permanentTrait";
 	
 	/**
 	 * The slot for the SkillTree.
@@ -98,12 +103,6 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * The damage value for the SkillTree.
 	 */
 	public static final String SKILL_TREE_DAMAGE_PATH = "skillTreeDamage";
-	
-	/**
-	 * The prequesits for the SkillTree.
-	 */
-	public static final String SKILL_TREE_PREQUISITS_PATH = "skillTreePrequisits";
-	
 	
 	
 	
@@ -280,7 +279,12 @@ public abstract class AbstractBasicTrait implements Trait,
 	/**
 	 * The cost for this skill.
 	 */
-	protected int skillPointCost = 0;
+	protected final SkillLevelPrequisits skillPrequisits = new SkillLevelPrequisits();
+	
+	/**
+	 * The max level for the Skill.
+	 */
+	protected int skillTreeMaxLevel = 1;
 	
 	/**
 	 * If the Skill is a permanent skill or if it needs to be skilled.
@@ -296,11 +300,6 @@ public abstract class AbstractBasicTrait implements Trait,
 	 * The symbol for the SkillTree.
 	 */
 	protected ItemStack skillTreeSymbol = new ItemStack(Material.BOOK);
-	
-	/**
-	 * The symbol for the SkillTree.
-	 */
-	protected List<String> skillTreePrequisits = new LinkedList<>();
 	
 	
 
@@ -343,12 +342,12 @@ public abstract class AbstractBasicTrait implements Trait,
 		@TraitConfigurationField(fieldName = MODIFIERS_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = VISIBLE_PATH, classToExpect = Boolean.class, optional = true),
-		@TraitConfigurationField(fieldName = SKILL_POINTS_COST_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_LEVELS_PRE_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_SLOT_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MATERIAL_PATH, classToExpect = Material.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
-		@TraitConfigurationField(fieldName = SKILL_TREE_PREQUISITS_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),
 	})
 	
 	@Override
@@ -368,8 +367,9 @@ public abstract class AbstractBasicTrait implements Trait,
 		this.onlyAfterNotDamaged = configMap.getAsInt(ONLY_AFTER_NOT_DAMAGED_PATH,-1);
 		this.aboveElevation = configMap.getAsInt(ABOVE_ELEVATION_PATH, Integer.MIN_VALUE);
 		this.belowElevation = configMap.getAsInt(BELOW_ELEVATION_PATH, Integer.MAX_VALUE);
-		this.skillPointCost = configMap.getAsInt(SKILL_POINTS_COST_PATH, 0);
 		this.skillTreeSlot = configMap.getAsInt(SKILL_TREE_SLOT_PATH, -1);
+		this.skillTreeMaxLevel = configMap.getAsInt(SKILL_TREE_MAX_LEVEL_PATH, 1);
+		this.skillPrequisits.parse(configMap.getAsStringList(SKILL_LEVELS_PRE_PATH));
 
 		
 		this.permanentSkill = configMap.getAsBool(SKILL_TREE_PERMANENT_TRAIT_PATH, true);
@@ -509,12 +509,6 @@ public abstract class AbstractBasicTrait implements Trait,
 				}
 			}
 		}
-		
-		//Read prequisits.
-		if(configMap.containsKey(SKILL_TREE_PREQUISITS_PATH)){
-			this.skillTreePrequisits.clear();
-			this.skillTreePrequisits.addAll(configMap.getAsStringList(SKILL_TREE_PREQUISITS_PATH));
-		}
 	}
 	
 	
@@ -532,7 +526,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(modifiers.isEmpty()) return value;
 
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value, this);
 		}
 		
 		return value;
@@ -553,7 +547,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		if(modifiers.isEmpty()) return value;
 		
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value, this);
 		}
 		
 		return value;
@@ -573,7 +567,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		double value = 1;
 		for(TraitSituationModifier mod : modifiers){
-			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value);
+			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value, this);
 		}
 		
 		return value;
@@ -645,7 +639,7 @@ public abstract class AbstractBasicTrait implements Trait,
 		
 		//Check if is skilled in tree:
 		if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
-			if(!player.getSkillTreeManager().hasTrait(this)) return TraitRestriction.NotSkilled;
+			if(player.getSkillTreeManager().getLevel(this) <= 0) return TraitRestriction.NotSkilled;
 		}
 		
 		//Save some generic Block infos.
@@ -1021,8 +1015,13 @@ public abstract class AbstractBasicTrait implements Trait,
 	
 	
 	@Override
-	public int getSkillPointCost() {
-		return skillPointCost;
+	public int getSkillPointCost(int level) {
+		return skillPrequisits.getPointsForLevel(level);
+	}
+	
+	@Override
+	public int getSkillMinLevel(int level) {
+		return skillPrequisits.getMinLevel(level);
 	}
 	
 	@Override
@@ -1041,8 +1040,13 @@ public abstract class AbstractBasicTrait implements Trait,
 	}
 	
 	@Override
-	public List<String> getSkillTreePrequisits() {
-		return skillTreePrequisits;
+	public int getSkillMaxLevel() {
+		return skillTreeMaxLevel;
+	}
+	
+	@Override
+	public List<String> getSkillTreePrequisits(int level) {
+		return skillPrequisits.getTraitPreForLevel(level);
 	}
 	
 }

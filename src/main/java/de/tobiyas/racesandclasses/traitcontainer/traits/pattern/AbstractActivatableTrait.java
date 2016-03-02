@@ -2,6 +2,7 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.pattern;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.cooldown_is_ready_again;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.disabled_region;
+
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;

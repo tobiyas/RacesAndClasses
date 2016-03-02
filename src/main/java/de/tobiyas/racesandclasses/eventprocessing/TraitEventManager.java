@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.APIs.MessageScheduleApi;
+import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapperFactory;
@@ -50,6 +51,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.traitcontainer.traits.arrows.AbstractArrow;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker.FriendDetectEvent;
@@ -174,7 +176,7 @@ public class TraitEventManager{
 				//check if the Spell is changed.
 				if(trait instanceof MagicSpellTrait && event instanceof PlayerInteractEvent && !hasBypassForEvent){
 					//only let the current magic spell continue for interaction events
-					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
+					TraitWithCost magicTrait = (TraitWithCost) trait;
 					if(player.getSpellManager().getCurrentSpell() != magicTrait){
 						continue;
 					}
@@ -183,7 +185,7 @@ public class TraitEventManager{
 				//check if the Arrow needs changed
 				if(trait instanceof AbstractArrow 
 						&& eventWrapper.getPlayerAction() == PlayerAction.CHANGE_ARROW
-						&& player.getArrowManager().getNumberOfArrowTypes() > 0
+						&& player.getArrowManager().hasAnyArrow()
 						&& player.getArrowManager().getCurrentArrow() == trait
 						&& !hasBypassForEvent){
 					
@@ -200,6 +202,13 @@ public class TraitEventManager{
 					}
 					continue;
 				}
+				
+				
+				//Check if arrow is currently equiped:
+				if(trait instanceof AbstractArrow && !hasBypassForEvent) {
+					ArrowManager arrowManager = player.getArrowManager();
+					if(!arrowManager.hasAnyArrow() || arrowManager.getCurrentArrow() != trait) continue;
+				}
 
 				
 				//Check restrictions before calling.
@@ -213,10 +222,10 @@ public class TraitEventManager{
 					continue;
 				}
 				
-				if(trait instanceof MagicSpellTrait && !hasBypassForEvent){
-					MagicSpellTrait magicTrait = (MagicSpellTrait) trait;
-					if(!player.getSpellManager().canCastSpell(magicTrait)){
-						magicTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
+				if(trait instanceof TraitWithCost && !hasBypassForEvent){
+					TraitWithCost costTrait = (TraitWithCost) trait;
+					if(!player.getSpellManager().canCastSpell(costTrait)){
+						costTrait.triggerButDoesNotHaveEnoghCostType(eventWrapper);
 						continue;
 					}
 				}
