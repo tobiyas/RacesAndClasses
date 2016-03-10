@@ -146,6 +146,7 @@ public class EN_Text {
 			+ restrictions_not_met_Biomes + ": '&cCan not be used in this biome'\r\n"
 			+ restrictions_not_met_Wearing + ": '&cYou are not wearing the correct clothings.'\r\n"
 			+ restrictions_not_met_OnlyInWater + ": '&cCan be used only in water.'\r\n"
+			+ restrictions_not_met_OnlyInWorld + ": '&cCan be used only on another world.'\r\n"
 			+ restrictions_not_met_OnlyOnLand + ": '&cCan be used only on land.'\r\n"
 			+ restrictions_not_met_OnlyInLava + ": '&cCan be used only in lava.'\r\n"
 			+ restrictions_not_met_OnlyOnSnow + ": '&cCan be used only on snow.'\r\n"

@@ -148,7 +148,12 @@ public interface TraitWithRestrictions extends Trait {
 	/**
 	 * The Path to see if the Trait is visible in the lists.
 	 */
-	public static final String VISIBLE_PATH = "visible";	
+	public static final String VISIBLE_PATH = "visible";
+	
+	/**
+	 * The Path to see if only on a specific world.
+	 */
+	public static final String ONLY_IN_WORLDS_PATH = "onlyInWorlds";
 
 	
 	

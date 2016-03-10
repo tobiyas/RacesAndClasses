@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.traitgui;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class TraitInventory extends InventoryView {
@@ -54,7 +56,8 @@ public class TraitInventory extends InventoryView {
 	 */
 	public TraitInventory(RaCPlayer player) {
 		this.player = player;
-		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(this.player);
+		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(this.player);
+		for(Iterator<Trait> it = traits.iterator(); it.hasNext();) if(it.next() instanceof StaticTrait) it.remove();
 		
 		int size = traits.size();
 		size = ((size / 9) + 1) * 9;

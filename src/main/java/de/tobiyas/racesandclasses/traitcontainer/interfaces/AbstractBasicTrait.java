@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -73,36 +75,12 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	 * On Cast Particles
 	 */
 	public static final String ON_USE_PARTICLES_PATH = "onUseParticles";	
+
 	
 	/**
-	 * The cost for SkillPoints
+	 * The path to 
 	 */
-	public static final String SKILL_LEVELS_PRE_PATH = "skillLevelsPre";
-	
-	/**
-	 * The MAX-Level for a Skill.
-	 */
-	public static final String SKILL_TREE_MAX_LEVEL_PATH = "skillTreeMaxLevel";	
-	
-	/**
-	 * If the Skill is a permanent Trait.
-	 */
-	public static final String SKILL_TREE_PERMANENT_TRAIT_PATH= "permanentTrait";
-	
-	/**
-	 * The slot for the SkillTree.
-	 */
-	public static final String SKILL_TREE_SLOT_PATH = "skillTreeSlot";	
-	
-	/**
-	 * The material for the SkillTree.
-	 */
-	public static final String SKILL_TREE_MATERIAL_PATH = "skillTreeMaterial";	
-	
-	/**
-	 * The damage value for the SkillTree.
-	 */
-	public static final String SKILL_TREE_DAMAGE_PATH = "skillTreeDamage";
+	public static final String REPLACES_OTHER_TRAITS_PATH = "replacesOtherTraits";
 	
 	
 	
@@ -272,6 +250,11 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	protected final HashMap<String,Long> uplinkNotifyList = new HashMap<>();
 	
 	/**
+	 * Only on specific worlds.
+	 */
+	protected final Set<World> onlyInWorlds = new HashSet<>();
+	
+	/**
 	 * The Modifiers to use.
 	 */
 	protected final Set<TraitSituationModifier> modifiers = new HashSet<>();
@@ -295,6 +278,16 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	 * The slot for the SkillTree.
 	 */
 	protected int skillTreeSlot = -1;
+	
+	/**
+	 * Traits that are excluded for this Trait in the Skill-Tree.
+	 */
+	protected List<String> excludeOtherTraits = new ArrayList<>();
+	
+	/**
+	 * Traits this trait replaces.
+	 */
+	protected List<String> replacesOtherTraits = new ArrayList<>();
 	
 	/**
 	 * The symbol for the SkillTree.
@@ -340,14 +333,17 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		@TraitConfigurationField(fieldName = MIN_UPLINK_SHOW_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = DISABLE_COOLDOWN_NOTICE_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = MODIFIERS_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = ONLY_IN_WORLDS_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = VISIBLE_PATH, classToExpect = Boolean.class, optional = true),
+		@TraitConfigurationField(fieldName = REPLACES_OTHER_TRAITS_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_LEVELS_PRE_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_SLOT_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MATERIAL_PATH, classToExpect = Material.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_EXCLUDE_OTHERS_PATH, classToExpect = List.class, optional = true),
 	})
 	
 	@Override
@@ -391,6 +387,15 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		Material skillTreeMat = configMap.getAsMaterial(SKILL_TREE_MATERIAL_PATH, Material.BOOK);
 		short skillTreeDamage = (short)configMap.getAsInt(SKILL_TREE_DAMAGE_PATH, 0);
 		this.skillTreeSymbol = new ItemStack(skillTreeMat, 1, skillTreeDamage);
+		
+		
+		//Read replacements:
+		this.replacesOtherTraits.clear();
+		this.replacesOtherTraits.addAll(configMap.getAsStringList(REPLACES_OTHER_TRAITS_PATH));
+		
+		//Read replacements:
+		this.excludeOtherTraits.clear();
+		this.excludeOtherTraits.addAll(configMap.getAsStringList(SKILL_TREE_EXCLUDE_OTHERS_PATH));
 		
 		
 		//Reads the biomes for the trait if present
@@ -507,6 +512,15 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 					
 					if(mod != null) modifiers.add(mod);
 				}
+			}
+		}
+		
+		//Read if only on World:
+		if(configMap.containsKey(ONLY_IN_WORLDS_PATH)){
+			this.onlyInWorlds.clear();
+			for(String worldName : configMap.getAsStringList(ONLY_IN_WORLDS_PATH)){
+				World world = Bukkit.getWorld(worldName);
+				if(world != null) onlyInWorlds.add(world);
 			}
 		}
 	}
@@ -655,6 +669,14 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		//check for allowed Biomes
 		Biome currentBiome = locBlock == null ? Biome.SKY : locBlock.getBiome();
 		if(!biomes.isEmpty() && !biomes.contains(currentBiome)) return TraitRestriction.Biomes;
+		
+		//Check if on correct world:
+		if(!onlyInWorlds.isEmpty()){
+			if(!onlyInWorlds.contains(player.getWorld())){
+				triggerButHasRestriction(TraitRestriction.OnlyInWorld, wrapper);
+				return TraitRestriction.OnlyInWorld;
+			}
+		}
 		
 		//Check if player is in water
 		if(!isOutOfWorld && onlyInWater){
@@ -1047,6 +1069,17 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	@Override
 	public List<String> getSkillTreePrequisits(int level) {
 		return skillPrequisits.getTraitPreForLevel(level);
+	}
+	
+	@Override
+	public List<String> getExcludesOtherTraits() {
+		return excludeOtherTraits;
+	}
+	
+	
+	@Override
+	public List<String> getReplacesOtherTraits() {
+		return replacesOtherTraits;
 	}
 	
 }

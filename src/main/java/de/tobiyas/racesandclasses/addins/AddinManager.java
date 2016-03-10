@@ -3,8 +3,9 @@ package de.tobiyas.racesandclasses.addins;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.addins.food.FoodManager;
 import de.tobiyas.racesandclasses.addins.kits.RaCKitManager;
-import de.tobiyas.racesandclasses.addins.manaflask.ManaPotionManager;
 import de.tobiyas.racesandclasses.addins.placeholderapisupport.PlaceholderAPISupportManager;
+import de.tobiyas.racesandclasses.addins.potions.HealthPotionManager;
+import de.tobiyas.racesandclasses.addins.potions.ManaPotionManager;
 import de.tobiyas.racesandclasses.addins.spawning.RaceSpawnManager;
 
 public class AddinManager {
@@ -24,6 +25,11 @@ public class AddinManager {
 	 * the Manager for Mana-Potions.
 	 */
 	private final ManaPotionManager manaPotionManager;
+	
+	/**
+	 * the Manager for Mana-Potions.
+	 */
+	private final HealthPotionManager healthPotionManager;
 	
 	/**
 	 * the manager for kits.
@@ -46,6 +52,7 @@ public class AddinManager {
 		this.raceSpawnManager = new RaceSpawnManager(plugin);
 		this.foodManager = new FoodManager(plugin);
 		this.manaPotionManager = new ManaPotionManager(plugin);
+		this.healthPotionManager = new HealthPotionManager(plugin);
 		this.kitManager = new RaCKitManager(plugin);
 		this.placeholderAPISupportManager = new PlaceholderAPISupportManager(plugin);
 	}
@@ -58,6 +65,7 @@ public class AddinManager {
 		raceSpawnManager.load();
 		foodManager.reload();
 		manaPotionManager.reload();
+		healthPotionManager.reload();
 		kitManager.reload();
 		placeholderAPISupportManager.reload();
 	}
@@ -87,7 +95,10 @@ public class AddinManager {
 	public ManaPotionManager getManaPotionManager() {
 		return manaPotionManager;
 	}
-
+	
+	public HealthPotionManager getHealthPotionManager() {
+		return healthPotionManager;
+	}
 
 	public RaCKitManager getKitManager() {
 		return kitManager;

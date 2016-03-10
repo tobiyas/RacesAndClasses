@@ -267,7 +267,7 @@ public class RaCPlayer extends PlayerProxy {
 		int level = getLevelManager().getCurrentLevel();
 		
 		List<Trait> returnList = new LinkedList<Trait>();
-		Set<Trait> traits = TraitHolderCombinder.getReducedVisibleTraitsOfPlayer(this);
+		Set<Trait> traits = TraitHolderCombinder.getSkillTreeReducedTraitsOfPlayer(this);
 		
 		for(Trait trait : traits){
 			if(trait instanceof StaticTrait) continue;

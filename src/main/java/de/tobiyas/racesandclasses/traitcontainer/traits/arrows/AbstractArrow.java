@@ -65,6 +65,7 @@ import de.tobiyas.util.schedule.DebugBukkitRunnable;
 public abstract class AbstractArrow extends AbstractActivatableTrait implements TraitWithCost {
 	
 	protected static final String BOUND_TO_BOW_PATH = "boundToBow";
+	protected static final String INITIAL_DAMAGE_PATH = "initialDamage";
 	
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
@@ -78,6 +79,11 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 	 * Total damage var.
 	 */
 	protected double totalDamage;
+	
+	/**
+	 * The initial damage to deal.
+	 */
+	protected double initialDamage = -1;
 	
 	/**
 	 * If the trait is bound to the Bow or on-use.
@@ -121,6 +127,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 	
 	@TraitConfigurationNeeded(fields = {
 			@TraitConfigurationField(fieldName = BOUND_TO_BOW_PATH, classToExpect = Boolean.class, optional = true),
+			@TraitConfigurationField(fieldName = INITIAL_DAMAGE_PATH, classToExpect = double.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_PATH, classToExpect = Double.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.ITEM_TYPE_PATH, classToExpect = Material.class, optional = true),
@@ -134,7 +141,8 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 		super.setConfiguration(configMap);
 		
 		//Bow related stuff:
-		boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH, true);
+		this.boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH, true);
+		this.initialDamage = configMap.getAsDouble(INITIAL_DAMAGE_PATH, -1);
 		
 		
 		//Magic costs:
@@ -338,6 +346,9 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 			EntityDamageByEntityEvent Eevent = (EntityDamageByEntityEvent) event;
 			boolean change = onHitEntity(Eevent);
 			Eevent.getDamager().remove();
+			
+			double modInitDamage = modifyToPlayer(eventWrapper.getPlayer(), initialDamage, "initialDamage");
+			if(modInitDamage > 0) Eevent.setDamage(modInitDamage);
 			return result.setTriggered(change);
 		}
 		

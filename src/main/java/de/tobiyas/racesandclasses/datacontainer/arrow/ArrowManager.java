@@ -45,7 +45,7 @@ public class ArrowManager {
 	public void rescanPlayer(){
 		arrows.clear();
 		
-		Set<Trait> traits = TraitHolderCombinder.getSpellTreeReducedTraitsOfPlayer(player);
+		Set<Trait> traits = TraitHolderCombinder.getSkillTreeReducedTraitsOfPlayer(player);
 		for(Trait arrow : traits){
 			if(arrow instanceof AbstractArrow && !arrow.isBindable()){
 				arrows.add((AbstractArrow) arrow);

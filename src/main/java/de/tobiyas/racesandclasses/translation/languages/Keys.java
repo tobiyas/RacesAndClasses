@@ -169,6 +169,7 @@ public class Keys {
 	public static final String restrictions_not_met_Biomes = "restrictions_not_Biomes";
 	public static final String restrictions_not_met_Wearing = "restrictions_not_met_Wearing";
 	public static final String restrictions_not_met_OnlyInWater = "restrictions_not_met_OnlyInWater";
+	public static final String restrictions_not_met_OnlyInWorld = "restrictions_not_met_OnlyInWorld";
 	public static final String restrictions_not_met_OnlyOnLand = "restrictions_not_met_OnlyOnLand";
 	public static final String restrictions_not_met_OnlyInLava = "restrictions_not_met_OnlyInLava";
 	public static final String restrictions_not_met_OnlyOnSnow = "restrictions_not_met_OnlyOnSnow";

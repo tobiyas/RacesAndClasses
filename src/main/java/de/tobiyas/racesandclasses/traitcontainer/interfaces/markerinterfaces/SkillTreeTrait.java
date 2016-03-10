@@ -6,6 +6,44 @@ import org.bukkit.inventory.ItemStack;
 
 public interface SkillTreeTrait {
 
+	
+	/**
+	 * The cost for SkillPoints
+	 */
+	public static final String SKILL_LEVELS_PRE_PATH = "skillLevelsPre";
+	
+	/**
+	 * The MAX-Level for a Skill.
+	 */
+	public static final String SKILL_TREE_MAX_LEVEL_PATH = "skillTreeMaxLevel";	
+	
+	/**
+	 * If the Skill is a permanent Trait.
+	 */
+	public static final String SKILL_TREE_PERMANENT_TRAIT_PATH= "permanentTrait";
+	
+	/**
+	 * The slot for the SkillTree.
+	 */
+	public static final String SKILL_TREE_SLOT_PATH = "skillTreeSlot";	
+	
+	/**
+	 * The material for the SkillTree.
+	 */
+	public static final String SKILL_TREE_MATERIAL_PATH = "skillTreeMaterial";	
+	
+	/**
+	 * The damage value for the SkillTree.
+	 */
+	public static final String SKILL_TREE_DAMAGE_PATH = "skillTreeDamage";
+	
+	/**
+	 * The damage value for the SkillTree.
+	 */
+	public static final String SKILL_TREE_EXCLUDE_OTHERS_PATH = "skillTreeExcludeOthers";
+	
+	
+	
 	/**
 	 * Returns the cost for this skill
 	 * @return the cost to choose this skill.
@@ -43,5 +81,11 @@ public interface SkillTreeTrait {
 	 * @return the level to learn.
 	 */
 	public int getSkillMinLevel(int level);
+	
+	/**
+	 * Gets the Traits this Trait excludes
+	 * @return the traits this trait excludes. 
+	 */
+	public List<String> getExcludesOtherTraits();
 	
 }

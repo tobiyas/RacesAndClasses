@@ -80,6 +80,7 @@ public class FoodManager implements Listener {
 
 	
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void playerInteract(PlayerInteractEvent event){
 		//only RightClick is accepted.

@@ -10,6 +10,7 @@ public enum TraitRestriction {
 	Biomes(restrictions_not_met_Biomes),
 	Wearing(restrictions_not_met_Wearing),
 	OnlyInWater(restrictions_not_met_OnlyInWater),
+	OnlyInWorld(restrictions_not_met_OnlyInWorld),
 	OnlyOnLand(restrictions_not_met_OnlyOnLand),
 	OnlyInLava(restrictions_not_met_OnlyInLava),
 	OnlyOnSnow(restrictions_not_met_OnlyOnSnow),

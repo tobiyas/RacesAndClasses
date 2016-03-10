@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -110,7 +111,7 @@ public class TraitHolderCombinder {
 	 
 	 * @return set of all Traits of player
 	 */
-	public static Set<Trait> getSpellTreeReducedTraitsOfPlayer(RaCPlayer player){
+	public static Set<Trait> getSkillTreeReducedTraitsOfPlayer(RaCPlayer player){
 		Set<Trait> traits = getReducedTraitsOfPlayer(player);
 		
 		
@@ -128,32 +129,31 @@ public class TraitHolderCombinder {
 			}
 		}
 		
+		filterForReplacementTraits(traits);
 		return traits;
 	}
 	
+	
 	/**
-	 * Returns all visible Traits of a Player.
-	 * This combines Race- and Class-Traits
-	 * 
-	 * @param player to check
-	 * 
-	 * @return a set of Traits
+	 * Filters out replacement Traits.
+	 * @param traits to filter.
 	 */
-	public static Set<Trait> getVisibleTraitsOfPlayer(RaCPlayer player){
-		Set<Trait> traits = new HashSet<Trait>();
+	private static void filterForReplacementTraits(Collection<Trait> traits){
+		if(traits.isEmpty()) return;
 		
-		AbstractTraitHolder raceContainer = player.getRace();
-		if(raceContainer != null){
-			traits.addAll(raceContainer.getVisibleTraits());
+		Set<String> toRemove = new HashSet<>();
+		for(Trait trait : traits) toRemove.addAll(trait.getReplacesOtherTraits());
+		
+		if(toRemove.isEmpty()) return;
+		Iterator<Trait> traitIt = traits.iterator();
+		while(traitIt.hasNext()){
+			Trait trait = traitIt.next();
+			if(trait != null && toRemove.contains(trait.getDisplayName())){
+				traitIt.remove();
+			}
 		}
-		
-		AbstractTraitHolder classContainer = player.getclass();
-		if(classContainer != null){
-			traits.addAll(classContainer.getVisibleTraits());
-		}
-		
-		return traits;
 	}
+
 	
 	/**
 	 * Gets all Traits of Player.
@@ -170,23 +170,7 @@ public class TraitHolderCombinder {
 		traits = filterForDoubles(traits);
 		return traits;
 	}
-	
-	/**
-	 * Gets all Traits of Player.
-	 * This includes Races- and Classes-Trait.
-	 * Only visible Traits will be returned.
-	 * 
-	 * It is filtered for doubled Traits and only the strong ones survive. ;)
-	 * 
-	 * @param player to check
-	 *
-	 * @return a set of Traits
-	 */
-	public static Set<Trait> getReducedVisibleTraitsOfPlayer(RaCPlayer player){
-		Set<Trait> traits = getVisibleTraitsOfPlayer(player);
-		traits = filterForDoubles(traits);
-		return traits;
-	}
+
 	
 	/**
 	 * Filters a Set of Traits to only contain max. 1 of each Trait.

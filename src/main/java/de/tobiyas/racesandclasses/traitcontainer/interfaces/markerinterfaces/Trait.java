@@ -189,4 +189,11 @@ public interface Trait extends Comparable<Trait>, SkillTreeTrait {
 	 * @return the reuslt of the Trigger.
 	 */
 	public TraitResults triggerOnBind(RaCPlayer player);
+
+
+	/**
+	 * This trait names replaces other traits.
+	 * @return the traits this trait replaces.
+	 */
+	public List<String> getReplacesOtherTraits();
 }

@@ -83,6 +83,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 */
 	public boolean testingMode = false;
 	
+	
 	/**
 	 * The Plugin description File. AKA plugin.yml
 	 */
@@ -211,6 +212,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 
 	@Override
 	public void pluginEnable(){
+		isInShutdown = false;
 		statistics = new StatisticGatherer(System.currentTimeMillis());
 		
 		//Check for Vault and warn if not present!
@@ -397,6 +399,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	@Override
 	public void onDisable(){
+		isInShutdown = true;
+		
 		if(!errored){
 			shutDownSequenz(false);
 			VaultHookProvider.shutdown();
@@ -405,7 +409,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		BasicSelectionInterface.closeAllInvs();
 		plugin = null;
 		log("disabled " + description.getFullName());
-
 	}
 	
 
@@ -700,6 +703,12 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	
 	public static boolean isVaultPresent(){
 		return Bukkit.getPluginManager().getPlugin("Vault") != null; 
+	}
+	
+	
+	private static boolean isInShutdown = false;
+	public static boolean isBukkitInShutdownMode(){
+		return isInShutdown;
 	}
 	
 }
