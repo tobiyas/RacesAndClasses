@@ -23,7 +23,14 @@
 package de.tobiyas.racesandclasses;
 
 
-import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.*;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ChannelManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ClassManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ConfigTotal;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.CooldownManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.ManagerConstructor;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.PlayerManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.RaceManager;
+import static de.tobiyas.racesandclasses.statistics.StartupStatisticCategory.TraitManager;
 
 import java.io.File;
 
@@ -31,8 +38,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import com.avaje.ebean.EbeanServer;
 
 import de.tobiyas.racesandclasses.addins.AddinManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
@@ -52,13 +57,10 @@ import de.tobiyas.racesandclasses.eventprocessing.TraitEventManager;
 import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
 import de.tobiyas.racesandclasses.infight.InFightManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
-import de.tobiyas.racesandclasses.persistence.PersistenceStorageManager;
-import de.tobiyas.racesandclasses.persistence.converter.ConverterChecker;
-import de.tobiyas.racesandclasses.persistence.db.AlternateEbeanServerImpl;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerScoreboardUpdater;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaXPBarRunner;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
@@ -185,11 +187,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 */
 	protected AddinManager addinManager;
 	
-	/**
-	 * The alternative EBean Impl of the Bukkit Ebean Interface
-	 */
-	protected AlternateEbeanServerImpl alternateEbeanServer;
-	
 	
 	
 	//Empty Constructor for Bukkit.
@@ -247,7 +244,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			
 			initMetrics();
 			loadingDoneMessage();
-			
 		}catch(Exception e){
 			log("An Error has occured during startup sequence: " + e.getLocalizedMessage());
 			getDebugLogger().logStackTrace(e);
@@ -292,7 +288,7 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		long currentTime = System.currentTimeMillis();
 		
 		setupConfiguration();
-		YAMLPersistanceSaver.start(true);
+		PlayerSavingManager.reload();
 		
 		ConfigTotal.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
@@ -441,8 +437,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		String events = ", hooked " + TraitEventManager.getInstance().getRegisteredEventsAsName().size() + " Events";
 		
-		log("loaded: " + traits + races + classes + channels + events);
-		log(description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
+		log(" loaded: " + traits + races + classes + channels + events);
+		log(" " + description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
 				+ getPermissionManager().getPermissionsName());
 		
 		if(configManager.getGeneralConfig().isConfig_useAutoUpdater()){
@@ -466,8 +462,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		//We pre reload this to have global vars ready.
 		configManager.getGeneralConfig().reload();
-		PersistenceStorageManager.startup();
-		ConverterChecker.checkAllConvertionsNeeded();
 		
 		long currentTime = System.currentTimeMillis();
 		configManager.reload();
@@ -504,7 +498,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 			shutDownSequenz(useGC);
 		}
 		
-		checkDBAccess();
 		initManagers();
 		return System.currentTimeMillis() - time;
 	}
@@ -528,36 +521,12 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		
 		addinManager.shutdown();
 		
-
-		if(!Consts.disableBDSupport) {
-			alternateEbeanServer.onShutdown();
-			alternateEbeanServer = null;
-		}
-		
 		TranslationManagerHolder.shutdown();
 		
-		if(!configManager.getGeneralConfig().isConfig_savePlayerDataToDB()){
-			log("Doing some YML file flushing. This can take a while.");
-			YAMLPersistanceSaver.flushNow(false, false);
-			YAMLPersistanceSaver.stop();
-			log("YML file flushing done.");
-		}
-		
-		if(useGC){
-			System.gc();
-		}
+		if(useGC) System.gc();
 		
 		//Close all open persistence connections
-		PersistenceStorageManager.shutdownPersistence();
-	}
-	
-	
-	/**
-	 * Checks if the DB has already created all important ORMs or not.
-	 * If not it generates everything.
-	 */
-	private void checkDBAccess(){
-		getDatabase();
+		PlayerSavingManager.shutdown();
 	}
 	
 	
@@ -631,26 +600,6 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 	 */
 	public PlayerManager getPlayerManager() {
 		return playerManager;
-	}
-
-	 
-	@Override
-	public EbeanServer getDatabase(){
-		if(Consts.disableBDSupport) return super.getDatabase();
-		
-		if(alternateEbeanServer == null){
-			initEbeanServer();
-		}
-
-		return alternateEbeanServer.getDatabase();
-	}
-
-
-	private void initEbeanServer() {
-		if(Consts.disableBDSupport) return;
-		
-		alternateEbeanServer = new AlternateEbeanServerImpl(this);
-		alternateEbeanServer.initializeLocalSQLite();
 	}
 	
 	/**

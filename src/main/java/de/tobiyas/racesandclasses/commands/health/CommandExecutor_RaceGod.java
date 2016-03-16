@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.health;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.failed;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.only_players;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.player_not_exist;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.success;
@@ -41,19 +40,11 @@ public class CommandExecutor_RaceGod extends AbstractCommand {
 	public CommandExecutor_RaceGod(){
 		super("racegod", new String[]{"rgod"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racegod";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
+	
+	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.god))
 			return true;
 		
@@ -73,24 +64,20 @@ public class CommandExecutor_RaceGod extends AbstractCommand {
 		}
 		
 		if(args.length > 1){
-			LanguageAPI.sendTranslatedMessage(sender, wrong_command_use,
-					"command", "/racegod [playername]");
+			LanguageAPI.sendTranslatedMessage(sender, wrong_command_use, "command", "/racegod [playername]");
 			return true;
 		}
 		
 		if(target == null){
-			LanguageAPI.sendTranslatedMessage(sender, player_not_exist,
-					"player", args[0]);
+			LanguageAPI.sendTranslatedMessage(sender, player_not_exist, "player", args[0]);
 			return true;
 		}
 		
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(target);
-		if(plugin.getPlayerManager().switchGod(racPlayer)){
-			LanguageAPI.sendTranslatedMessage(sender, success);
-		}else{
-			LanguageAPI.sendTranslatedMessage(sender, failed);
-		}
-			
+		boolean god = !racPlayer.getPlayerSaveData().isGodModeEnabled();
+		racPlayer.getPlayerSaveData().setGodMode(god);
+		
+		LanguageAPI.sendTranslatedMessage(sender, success);
 		return true;
 	}
 

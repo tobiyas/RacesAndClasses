@@ -28,9 +28,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.remind
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.player.PlayerUtils;
@@ -108,10 +108,6 @@ public class RaceManager extends AbstractHolderManager {
 		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
 		
 		memberList.remove(player);
-		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		config.set(getConfigPrefix(), null);
-		
 		if(plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			plugin.getChannelManager().playerLeaveRace(oldRace, player);
 		}
@@ -149,11 +145,6 @@ public class RaceManager extends AbstractHolderManager {
 	}
 
 	@Override
-	protected String getDBFieldName() {
-		return "raceName";
-	}
-
-	@Override
 	protected void saveContainerToDBField(PlayerHolderAssociation container,
 			String name) {
 		container.setRaceName(name);
@@ -180,9 +171,19 @@ public class RaceManager extends AbstractHolderManager {
 	}
 
 	@Override
-	protected HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player,
-			AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
+	protected HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder) {
 		return new AfterRaceChangedEvent(player.getPlayer(), (RaceContainer) newHolder, (RaceContainer) oldHolder);
 	}
+	
+	@Override
+	protected AbstractTraitHolder getHolder(PlayerSavingData data) {
+		return getHolderByName(data.getRaceName());
+	}
+
+	@Override
+	protected void saveToContainer(PlayerSavingData data, AbstractTraitHolder holder) {
+		data.setRaceName(holder.getDisplayName());
+	}
+	
 
 }

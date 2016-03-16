@@ -21,7 +21,6 @@ import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.player.PlayerClass;
 import com.sucy.skill.api.player.PlayerData;
 
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
@@ -96,28 +95,7 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 	}
 
 	@Override
-	public void save() {
-		//this is done via Skill-API
-	}
-
-	@Override
-	public void saveTo(PlayerSavingContainer container) {
-		container.setPlayerLevel(getCurrentLevel());
-		container.setPlayerLevelExp(getCurrentExpOfLevel());
-	}
-
-	@Override
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container) {
-		//not supported by Skill-API
-	}
-
-	@Override
 	public void checkLevelChanged() {
-		//nothing to do.
-	}
-
-	@Override
-	public void reloadFromYaml() {
 		//nothing to do.
 	}
 

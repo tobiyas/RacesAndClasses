@@ -34,6 +34,6 @@ public class Listener_PlayerRespawn implements Listener{
 	@EventHandler
 	public void resetPlayerMaxHealthAfterDeath(PlayerRespawnEvent event){
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
-		plugin.getPlayerManager().checkPlayer(racPlayer);
+		plugin.getPlayerManager().getContainer(racPlayer).init();
 	}
 }

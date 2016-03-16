@@ -22,7 +22,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
@@ -30,11 +29,8 @@ import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 
 public class CommandExecutor_HP extends AbstractCommand {
 
-	private RacesAndClasses plugin;
-	
 	public CommandExecutor_HP(){
 		super("playerhealth", new String[]{"hp"});
-		plugin = RacesAndClasses.getPlugin();
 	}
 	
 	
@@ -54,7 +50,7 @@ public class CommandExecutor_HP extends AbstractCommand {
 		}
 		
 		racPlayer.getManaManager().outputManaToPlayer();
-		plugin.getPlayerManager().getPlayerLevelManager(racPlayer).forceDisplay();		
+		racPlayer.getLevelManager().forceDisplay();
 		return true;
 	}
 

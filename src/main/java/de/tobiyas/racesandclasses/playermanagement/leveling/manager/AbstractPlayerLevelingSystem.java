@@ -3,9 +3,9 @@ package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
 public abstract class AbstractPlayerLevelingSystem implements PlayerLevelManager {
 
@@ -19,9 +19,15 @@ public abstract class AbstractPlayerLevelingSystem implements PlayerLevelManager
 	 */
 	protected final RacesAndClasses plugin;
 	
+	/**
+	 * The Data for saving.
+	 */
+	protected final PlayerSavingData data;
 	
-	public AbstractPlayerLevelingSystem(RaCPlayer player) {
+	
+	public AbstractPlayerLevelingSystem(RaCPlayer player, PlayerSavingData data) {
 		this.player = player;
+		this.data = data;
 		this.plugin = RacesAndClasses.getPlugin();
 	}
 	
@@ -50,80 +56,6 @@ public abstract class AbstractPlayerLevelingSystem implements PlayerLevelManager
 		
 		realPlayer.setExp(percent);
 		realPlayer.setLevel(getCurrentLevel());
-	}
-	
-	
-
-	@Override
-	public boolean addExp(int exp) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeExp(int exp) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void saveTo(PlayerSavingContainer container) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void checkLevelChanged() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void reloadFromYaml() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void forceDisplay() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean canRemove(int toRemove) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void addLevel(int value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeLevel(int value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int getMaxEXPToNextLevel() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }

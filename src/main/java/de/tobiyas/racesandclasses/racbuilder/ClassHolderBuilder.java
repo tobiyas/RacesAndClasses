@@ -15,8 +15,9 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.racbuilder;
 
+import java.io.File;
+
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.racbuilder.container.BuildedClassContainer;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -95,7 +96,7 @@ public class ClassHolderBuilder extends AbstractHolderBuilder {
 
 	@Override
 	protected YAMLConfigExtended getHolderYAMLFile() {
-		return YAMLPersistenceProvider.getLoadedClassesFile(true);
+		return new YAMLConfigExtended(new File(new File(plugin.getDataFolder(),"classes"), name + ".yml"));
 	}
 
 

@@ -102,7 +102,7 @@ public abstract class AbstractDisplay implements Display{
 	 * @param maxHealth
 	 * @return
 	 */
-	protected String calcForHealth(double currentHealth, double maxHealth, int healthBarLength){
+	protected String calcForHealth(double currentHealth, double maxHealth, int healthBarLength, char charToUse){
 		if(maxHealth == 0) maxHealth = 0.1;
 		double healthPresentBarLength = ((currentHealth / maxHealth) * (healthBarLength));
 		
@@ -111,19 +111,19 @@ public abstract class AbstractDisplay implements Display{
 		
 		String healthLeft = colorHigh + "";
 		for(int i = 0; i < healthPresentBarLength; i++){
-			healthLeft += "|";
+			healthLeft += charToUse;
 			healthBarLength --;
 		}
 		
 		String healthRest = colorLow + "";
 		for(; healthBarLength > 0; healthBarLength--){
-			healthRest += "|";
+			healthRest += charToUse;
 		}
 		
 		if(currentHealth == maxHealth){
-			healthRest += colorHigh + "|";
+			healthRest += colorHigh.toString() + charToUse;
 		}else{
-			healthRest += colorLow + "|";
+			healthRest += colorLow.toString() + charToUse;
 		}
 		
 		

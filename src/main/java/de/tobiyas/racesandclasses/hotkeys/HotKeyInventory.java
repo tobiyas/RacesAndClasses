@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,17 +15,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class HotKeyInventory {
-
-	private static final String CONFIG_SEPERATOR = String.valueOf('|');
-	private static final String CONFIG_BINDINGS_PATH = "bindings";
-	
 	
 	/**
 	 * The Key at start to identify the Item.
@@ -69,45 +64,20 @@ public class HotKeyInventory {
 	public void loadFromFile(){
 		traitBindings.clear();
 		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		List<String> bindings = config.getStringList(CONFIG_BINDINGS_PATH);
+		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		Map<Integer,String> bindings = data.getHotKeys();
 		
-		if(!bindings.isEmpty()){
-			for(String binding : bindings){
-				String[] split = binding.split(Pattern.quote(CONFIG_SEPERATOR));
-				if(split.length != 2) continue;
-				
-				try{
-					int key = Integer.parseInt(split[0]);
-					String displayname = split[1];
-					
-					for(Trait trait : player.getTraits()){
-						if(trait.getDisplayName().equals(displayname)){
-							this.traitBindings.put(key, trait);
-						}
-					}
-				}catch(Throwable exp){}
+		//Read the Data.
+		for(Map.Entry<Integer,String> entry : bindings.entrySet()){
+			int key = entry.getKey();
+			String name = entry.getValue();
+			
+			for(Trait trait : player.getTraits()){
+				if(trait.getDisplayName().equals(name)){
+					this.traitBindings.put(key, trait);
+				}
 			}
 		}
-	}
-	
-	/**
-	 * Saves the Bindings.
-	 */
-	public void save(){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		
-		List<String> bindings = new LinkedList<String>();
-		for(Entry<Integer,Trait> entry : traitBindings.entrySet()){
-			String toSave = entry.getKey() + CONFIG_SEPERATOR + entry.getValue().getDisplayName();
-			bindings.add(toSave);
-		}
-		
-		if(!bindings.isEmpty()){
-			config.set(CONFIG_BINDINGS_PATH, bindings);
-		}
-		
-		
 	}
 	
 	
@@ -121,8 +91,8 @@ public class HotKeyInventory {
 		//first check if legit trait.
 		if(trait == null || !trait.isBindable()) return;
 		
-		traitBindings.put(slot, trait);
-		save();
+		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		data.setHotKey(slot, trait.getDisplayName());
 	}
 	
 	/**
@@ -133,8 +103,8 @@ public class HotKeyInventory {
 	public void clearSlot(int slot){
 		if(!traitBindings.containsKey(slot)) return;
 		
-		traitBindings.remove(slot);
-		save();
+		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		data.clearHotKey(slot);
 	}
 	
 	
@@ -143,7 +113,8 @@ public class HotKeyInventory {
 	 */
 	public void clearAllSlots(){
 		traitBindings.clear();
-		save();
+		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		data.clearHotKeys();
 	}
 	
 	

@@ -26,6 +26,7 @@ import de.tobiyas.racesandclasses.listeners.externalchatlistener.VaultChatListen
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Debuff;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_GodModeDamagePrevent;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MaxHP_Setting;
+import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_MythicMobs;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PermanentScoreboard;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_Player;
 import de.tobiyas.racesandclasses.listeners.generallisteners.Listener_PlayerRespawn;
@@ -93,6 +94,7 @@ public class RaCListenerRegister {
 		new Listener_RaceTeams();
 		new Listener_Debuff();
 		new Listener_TraitJoinLeave();
+		new Listener_MythicMobs();
 		
 		new Listener_raceClassRestrictionOnItems();
 	}

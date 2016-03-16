@@ -157,9 +157,7 @@ public class RaceChangeSelectionListener implements Listener {
 		if(selectEvent.getPlayer().getName() == null) return;
 		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
-		
-		plugin.getPlayerManager().checkPlayer(player);
-		plugin.getPlayerManager().displayHealth(player);
+		plugin.getPlayerManager().getContainer(player).rescan();
 	}
 	
 	

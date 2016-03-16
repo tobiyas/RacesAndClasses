@@ -26,6 +26,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.bypasses.StaticTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
@@ -79,6 +81,13 @@ public class RaCPlayer extends PlayerProxy {
 	 */
 	public ClassContainer getclass(){
 		return (ClassContainer) plugin.getClassManager().getHolderOfPlayer(this);
+	}
+	
+	/**
+	 * Returns the Class of the Player
+	 */
+	public PlayerSavingData getPlayerSaveData(){
+		return PlayerSavingManager.get().getPlayerData(playerUUID);
 	}
 	
 	/**
@@ -164,7 +173,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return
 	 */
 	public ManaManager getManaManager(){
-		return plugin.getPlayerManager().getSpellManagerOfPlayer(this).getManaManager();
+		return plugin.getPlayerManager().getContainer(this).getSpellManager().getManaManager();
 	}
 	
 	
@@ -174,7 +183,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return
 	 */
 	public PlayerSpellManager getSpellManager(){
-		return plugin.getPlayerManager().getSpellManagerOfPlayer(this);
+		return plugin.getPlayerManager().getContainer(this).getSpellManager();
 	}
 	
 	/**
@@ -183,7 +192,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return
 	 */
 	public ArmorToolManager getArmorManager(){
-		return plugin.getPlayerManager().getArmorToolManagerOfPlayer(this);
+		return plugin.getPlayerManager().getContainer(this).getArmorToolManager();
 	}
 
 	/**
@@ -192,7 +201,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return the arrow manager
 	 */
 	public ArrowManager getArrowManager(){
-		return plugin.getPlayerManager().getArrowManagerOfPlayer(this);
+		return plugin.getPlayerManager().getContainer(this).getArrowManager();
 	}
 	
 	/**
@@ -201,7 +210,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return the level manager
 	 */
 	public PlayerLevelManager getLevelManager(){
-		return plugin.getPlayerManager().getPlayerLevelManager(this);
+		return plugin.getPlayerManager().getContainer(this).getPlayerLevelManager();
 	}
 	
 	/**
@@ -210,7 +219,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return Health Manager.
 	 */
 	public HealthManager getHealthManager() {
-		return plugin.getPlayerManager().getHealthManager(this);
+		return plugin.getPlayerManager().getContainer(this).getHealthManager();
 	}
 	
 	/**
@@ -219,7 +228,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return config
 	 */
 	public double getHealth(){
-		return plugin.getPlayerManager().getHealthManager(this).getCurrentHealth();
+		return getHealthManager().getCurrentHealth();
 	}
 	
 	
@@ -229,7 +238,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return config
 	 */
 	public double getMaxHealth(){
-		return plugin.getPlayerManager().getHealthManager(this).getMaxHealth();
+		return getHealthManager().getMaxHealth();
 	}
 	
 	
@@ -239,7 +248,8 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return true if worked.
 	 */
 	public boolean displayHealth(){
-		return plugin.getPlayerManager().displayHealth(this);
+		getHealthManager().forceHPOut();
+		return true;
 	}
 	
 	/**
@@ -248,12 +258,12 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return the scoreboard Manager.
 	 */
 	public PlayerRaCScoreboardManager getScoreboardManager(){
-		return plugin.getPlayerManager().getScoreboardManager(this);
+		return plugin.getPlayerManager().getContainer(this).getPlayerScoreboardManager();
 	}
 	
 
 	public PlayerSkillTreeManager getSkillTreeManager() {
-		return plugin.getPlayerManager().getSkillTreeManager(this);
+		return plugin.getPlayerManager().getContainer(this).getSkillTreeManager();
 	}
 	
 	
@@ -289,7 +299,7 @@ public class RaCPlayer extends PlayerProxy {
 	 * @return the PlayerPetManager.
 	 */
 	public PlayerPetManager getPlayerPetManager(){
-		return plugin.getPlayerManager().getPlayerPetManager(this);
+		return plugin.getPlayerManager().getContainer(this).getPlayerPetManager();
 	}
 	
 	

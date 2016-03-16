@@ -204,7 +204,7 @@ public class Listener_HotKey implements Listener {
 	@EventHandler
 	public void shearEvent(PlayerShearEntityEvent event){
 		Player player = event.getPlayer();
-		ItemStack inHand = player.getItemInHand();
+		ItemStack inHand = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
 		if(inHand == null) return;
 		
 		Trait trait = getBoundTrait(inHand, RaCPlayerManager.get().getPlayer(player));
@@ -256,12 +256,15 @@ public class Listener_HotKey implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent event){
 		if(event.isCancelled()) return;
+
+		Player player = event.getPlayer();
+		ItemStack inHand = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
+		if(inHand == null || inHand.getType() == Material.AIR) return;
 		
-		ItemStack inHand = event.getPlayer().getItemInHand();
 		Trait trait = getBoundTrait(inHand, RaCPlayerManager.get().getPlayer(event.getPlayer()));
 		
 		if(trait != null) event.setCancelled(true);
-		if(inHand.isSimilar(HotKeyInventory.getEmptyItem())) event.setCancelled(true);
+		if(HotKeyInventory.getEmptyItem().isSimilar(inHand)) event.setCancelled(true);
 	}
 	
 	@EventHandler

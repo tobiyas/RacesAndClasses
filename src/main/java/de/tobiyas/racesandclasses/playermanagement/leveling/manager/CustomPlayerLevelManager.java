@@ -27,15 +27,13 @@ import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
-import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
 public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem implements Observer{
 
@@ -74,12 +72,13 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 	 * Creates a LevelManager for the Player.
 	 * 
 	 * @param player
+	 * @param savingContainer 
 	 */
-	public CustomPlayerLevelManager(RaCPlayer player) {
-		super(player);
+	public CustomPlayerLevelManager(RaCPlayer player, PlayerSavingData data) {
+		super(player, data);
 		
-		this.currentLevel = 1;
-		this.currentExpOfLevel = 0;
+		this.currentLevel = data.getLevel();
+		this.currentExpOfLevel = data.getLevelExp();
 		
 		rescanDisplay();
 	}
@@ -94,25 +93,6 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		
 		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
 		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
-	}
-	
-	
-	@Override
-	public void reloadFromYaml(){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()){
-			return;
-		}
-		
-		currentLevel = config.getInt(CURRENT_PLAYER_LEVEL_PATH, 1);
-		currentExpOfLevel = config.getInt(CURRENT_PLAYER_LEVEL_EXP_PATH, 1);
-	}
-	
-	
-	@Override
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container){
-		this.currentLevel = container.getPlayerLevel();
-		this.currentExpOfLevel = container.getPlayerLevelExp();
 	}
 	
 	
@@ -145,6 +125,8 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		
 		int oldLevel = currentLevel;
 		this.currentLevel = level;
+		this.data.setLevelAndExp(currentLevel, currentExpOfLevel);
+		
 		checkLevelChanged();
 		
 		if(oldLevel != currentLevel){
@@ -159,6 +141,7 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 	@Override
 	public void setCurrentExpOfLevel(int currentExpOfLevel) {
 		this.currentExpOfLevel = currentExpOfLevel;
+		this.data.setLevelAndExp(currentLevel, this.currentExpOfLevel);
 		checkLevelChanged();
 	}
 
@@ -181,14 +164,10 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		PlayerReceiveEXPEvent expEvent = new PlayerReceiveEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
-		if(expEvent.isCancelled()){
-			return false;
-		}
+		if(expEvent.isCancelled()) return false;
 		
 		exp = expEvent.getExp();
-		if(exp < 1){
-			return false;
-		}
+		if(exp < 1) return false;
 		
 		return addExpIntern(exp);
 	}
@@ -219,10 +198,9 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
 		
-		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
-		// levelDisplay.display(currentLevel, currentLevel);
-		
 		tick();
+		data.setLevelAndExp(currentLevel, currentExpOfLevel);
+		
 		return true;
 	}
 	
@@ -233,14 +211,10 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		PlayerLostEXPEvent expEvent = new PlayerLostEXPEvent(player, exp);
 		
 		Bukkit.getPluginManager().callEvent(expEvent);
-		if(expEvent.isCancelled()){
-			return false;
-		}
+		if(expEvent.isCancelled()) return false;
 		
 		exp = expEvent.getExp();
-		if(exp < 1){
-			return false;
-		}
+		if(exp < 1) return false;
 		
 		return removeExpIntern(exp);
 	}
@@ -270,31 +244,10 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel - 1);
 		}
 		
-		// expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
-		// levelDisplay.display(currentLevel, currentLevel);
-		
 		tick();
+		
+		this.data.setLevelAndExp(currentLevel, currentExpOfLevel);
 		return true;
-	}
-	
-
-
-	@Override
-	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()){
-			return;
-		}
-	
-		config.set(CURRENT_PLAYER_LEVEL_PATH, currentLevel);
-		config.set(CURRENT_PLAYER_LEVEL_EXP_PATH, currentExpOfLevel);
-	}
-
-
-	@Override
-	public void saveTo(PlayerSavingContainer container) {
-		container.setPlayerLevel(currentLevel);
-		container.setPlayerLevelExp(currentExpOfLevel);
 	}
 
 	@Override
@@ -333,18 +286,26 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		
 		LevelEvent event = new LevelUpEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
+		
+		checkLevelChanged();
 	}
 
 	@Override
 	public void removeLevel(int value) {
 		if(value <= 0) return;
 		
-		int oldLevel = currentLevel;
+		int oldLevel = currentLevel;		
 		currentLevel -= value;
 		if(currentLevel < 1) currentLevel = 1;
 		
+		//Check for max exp:
+		int maxEXP = getMaxEXPToNextLevel();
+		if(currentExpOfLevel >= maxEXP) this.currentExpOfLevel = maxEXP - 1;
+		
 		LevelEvent event = new LevelDownEvent(getPlayer(), oldLevel, currentLevel);
 		RacesAndClasses.getPlugin().fireEventToBukkit(event);
+		
+		checkLevelChanged();
 	}
 
 }

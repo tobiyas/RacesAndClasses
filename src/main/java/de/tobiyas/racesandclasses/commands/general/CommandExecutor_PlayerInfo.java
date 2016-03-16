@@ -23,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -40,15 +41,6 @@ private RacesAndClasses plugin;
 	public CommandExecutor_PlayerInfo(){
 		super("playerinfo");
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "playerinfo";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override
@@ -128,8 +120,9 @@ private RacesAndClasses plugin;
 		}
 		
 		if(hasPermForOthers){
+			ItemStack inHand = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
 			sender.sendMessage(ChatColor.YELLOW + "---O--T--H--E--R---");
-			sender.sendMessage(ChatColor.YELLOW + "Item in Hand: " + ChatColor.AQUA + player.getItemInHand().getType().toString());
+			sender.sendMessage(ChatColor.YELLOW + "Item in Hand: " + ChatColor.AQUA + inHand.getType().toString());
 		}
 		
 

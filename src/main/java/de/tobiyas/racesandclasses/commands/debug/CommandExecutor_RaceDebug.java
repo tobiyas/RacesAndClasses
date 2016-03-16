@@ -25,8 +25,6 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
-import de.tobiyas.racesandclasses.persistence.file.YAMLOldDataRemover;
-import de.tobiyas.racesandclasses.persistence.file.YAMLOldDataRemover.RemoveCallback;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
@@ -73,28 +71,6 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 			if(commandString.equalsIgnoreCase("clearcd")){
 				sender.sendMessage(ChatColor.GREEN + "CDs cleared");
 				plugin.getCooldownManager().clearAllCooldowns();
-				return true;
-			}
-			
-			if(commandString.equalsIgnoreCase("clearolddata")){
-				if(YAMLOldDataRemover.isRunning()){
-					sender.sendMessage(ChatColor.RED + "Already Running.");
-					return true;
-				}
-				
-				YAMLOldDataRemover.removeOldFilesAsync(new RemoveCallback() {
-					@Override
-					public void cleared(int cleared) {
-						sender.sendMessage(ChatColor.GREEN + "Cleared " + ChatColor.AQUA + cleared 
-								+ ChatColor.GREEN + " unused Player Filed.");
-					}					
-					@Override
-					public void alreadyRunning() {
-						sender.sendMessage(ChatColor.RED + "Already Running.");
-					}
-				});
-				
-				sender.sendMessage(ChatColor.GREEN + "Starting... You will be noticed when finished! This may take a while.");
 				return true;
 			}
 			

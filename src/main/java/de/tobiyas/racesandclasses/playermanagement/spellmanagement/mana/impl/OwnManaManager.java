@@ -74,9 +74,7 @@ public class OwnManaManager extends AbstractManaManager {
 	public void rescanPlayer(){
 		super.rescanPlayer();
 		
-		double max = getMaxMana();
-		if(currentMana > max) currentMana = max;
-		
+		this.currentMana = Math.min(getMaxMana(), currentMana);
 		outputManaToPlayer();
 	}
 

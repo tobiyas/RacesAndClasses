@@ -21,7 +21,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.pets.PlayerPetManager;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
@@ -34,7 +33,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILeve
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
-import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 
 public class PlayerContainer {
 	
@@ -69,12 +69,6 @@ public class PlayerContainer {
 	protected final HealthManager healthManager;
 	
 	/**
-	 * Shows if the Player has God mode.
-	 */
-	private boolean hasGod;
-	
-	
-	/**
 	 * The Spell Manager managing the Spells of the Player.
 	 */
 	private final PlayerSpellManager spellManager;
@@ -95,6 +89,11 @@ public class PlayerContainer {
 	 */
 	private final PlayerSkillTreeManager playerSkillTreeManager;
 	
+	/**
+	 * The saving Container to use.
+	 */
+	private final PlayerSavingData savingContainer;
+	
 	
 	/**
 	 * This constructor only sets the most important stuff.
@@ -106,32 +105,51 @@ public class PlayerContainer {
 	 */
 	public PlayerContainer(RaCPlayer player){
 		this.player = player;
+		
+		//Loads the Saving Container.
+		this.savingContainer = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
 		this.armorToolManager = new ArmorToolManager(player);
 		this.arrowManager = new ArrowManager(player);
 		this.healthManager = new HealthManager(player);
 		this.playerScoreboardManager = new PlayerRaCScoreboardManager(player);
 		this.petManager = new PlayerPetManager(player);
-		this.playerSkillTreeManager = new PlayerSkillTreeManager(player).reloadFromConfig();
-		
-		this.hasGod = false;
-		
+		this.playerSkillTreeManager = new PlayerSkillTreeManager(player, savingContainer);
 		
 		//choose level manager.
 		switch(plugin.getConfigManager().getGeneralConfig().getConfig_useLevelSystem()){
-			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player); break;
+			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player, savingContainer); break;
 			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player); break;
 			case SkillAPI : this.levelManager = new SkillAPILevelManager(player); break;
 			case mcMMO : this.levelManager = new McMMOLevelManager(player); break;
 			case Heroes : this.levelManager = new HeroesLevelManager(player); break;
 			
 			//if none found (should not happen) the RaC level manager is used.
-			default: this.levelManager = new CustomPlayerLevelManager(player);
+			default: this.levelManager = new CustomPlayerLevelManager(player, savingContainer);
 		}
 		
-		//make sure we reload the file.
-		this.levelManager.reloadFromYaml();
-		
 		this.spellManager = new PlayerSpellManager(player);		
+	}
+	
+	
+	/**
+	 * Inits all managers.
+	 */
+	public void init(){
+		rescan();
+	}
+	
+	public void rescan(){
+		if(player == null || !player.isOnline()) return;
+		
+		arrowManager.rescanPlayer();
+		armorToolManager.rescanPermission();
+		armorToolManager.checkArmorNotValidEquiped();
+		healthManager.rescanPlayer();
+		
+		spellManager.rescan();
+		levelManager.checkLevelChanged();
+		
+		player.getPlayer().setMetadata("LEVEL", new FixedMetadataValue(plugin, levelManager.getCurrentLevel()));
 	}
 	
 	
@@ -152,152 +170,16 @@ public class PlayerContainer {
 	public HealthManager getHealthManager(){
 		return healthManager;
 	}
-
 	
-	/**
-	 * Saves the current state of the Container to the player data yml file
-	 * 
-	 * @param saveToDB if true it is saved to the Database. false to PlayerData yml file.
-	 * @return true if worked, false if not
-	 */
-	public boolean save(boolean saveToDB){
-		if(saveToDB){
-//			PlayerSavingContainer container = PlayerSavingContainer.generateNewContainer(player);
-//			
-//			container.setHasGod(hasGod);
-//			levelManager.saveTo(container);
-//			
-//			try{
-//				plugin.getDatabase().save(container);
-//				return true;
-//			}catch(PersistenceException exp){
-//				return false;
-//			}catch(Exception exp){
-//				plugin.getDebugLogger().logStackTrace(exp);
-//				return false;
-//			}
-			return false;
-		}else{
-			YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			config.set("hasGod", hasGod);
-			levelManager.save();
-			playerSkillTreeManager.save();
-			config.save();
-			return true;			
-		}
-		
-		
-	}
-	
-	
-	/**
-	 * Constructs a {@link PlayerContainer} from the DB.
-	 * If no entry in the DB is found, a new one is created.
-	 * 
-	 * @param player
-	 * @return
-	 */
-//	public static PlayerContainer constructFromDB(RaCPlayer player){
-//		try{
-//			PlayerSavingContainer container = plugin.getDatabase().find(PlayerSavingContainer.class).where().ieq("player", player.toString()).findUnique();
-//			if(container == null) throw new PersistenceException("Not found.");
-//			
-//			PlayerContainer playerContainer = new PlayerContainer(player).checkStats();
-//			
-//			playerContainer.levelManager.setCurrentLevel(container.getPlayerLevel());
-//			playerContainer.levelManager.setCurrentExpOfLevel(container.getPlayerLevelExp());
-//			
-//			if(container.isHasGod()){
-//				playerContainer.hasGod = true;
-//			}
-//			
-//			return playerContainer.checkStats();
-//		}catch(PersistenceException exp){
-//			PlayerContainer playerContainer = new PlayerContainer(player);
-//			playerContainer.checkStats();
-//			return playerContainer;
-//		}
-//	}
-	
-	
-	/**
-	 * Loads the PlayerData from the passed source (db or yml file).
-	 * 
-	 * @param player to load
-	 * @param fromDB true if to load from DB.
-	 * @return the loaded PlayerContainer.
-	 */
-	public static PlayerContainer loadPlayerContainer(RaCPlayer player ,boolean fromDB){
-//		if(fromDB){
-//			return constructFromDB(player);
-//		}else{
-			return constructContainerFromYML(player);
-//		}
-	}
-	
-	
-	/**
-	 * Generates a Health Container from the Player Data YAML file.
-	 * The player passed will be unfold and load.
-	 * 
-	 * @param player to load
-	 * @return the container corresponding to the player.
-	 */
-	public static PlayerContainer constructContainerFromYML(RaCPlayer player){
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		config.load();
-		
-		
-		//set race when not set yet.
-		String savedRace = config.getString("race", null);
-		boolean raceEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
-		if(raceEnabled && savedRace != null && !savedRace.equals("") 
-				&& plugin.getRaceManager().getHolderOfPlayer(player) == plugin.getRaceManager().getDefaultHolder()){
-			plugin.getRaceManager().changePlayerHolder(player, savedRace, false);
-		}
-
-		
-		//set class when not set
-		String savedClass = config.getString("class", null);
-		boolean classEnabled = plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable();
-		if(classEnabled && savedClass != null && !savedClass.equals("") 
-				&& plugin.getClassManager().getHolderOfPlayer(player) == plugin.getClassManager().getDefaultHolder()){
-			plugin.getClassManager().changePlayerHolder(player, savedClass, false);
-		}
-		
-		PlayerContainer container = new PlayerContainer(player).checkStats();
-		boolean hasGod = config.getBoolean("hasGod");
-		if(hasGod) container.switchGod();
-		return container;
-	}
-
-	/**
-	 * Checks the Player if he has any Wrong set values and resets the MaxHealth if needed.
-	 */
-	public PlayerContainer checkStats() {
-		if(player == null || !player.isOnline()) return null;
-		
-		arrowManager.rescanPlayer();
-		armorToolManager.rescanPermission();
-		armorToolManager.checkArmorNotValidEquiped();
-		healthManager.rescanPlayer();
-		
-		spellManager.rescan();
-		levelManager.checkLevelChanged();
-		
-		player.getPlayer().setMetadata("LEVEL", new FixedMetadataValue(plugin, levelManager.getCurrentLevel()));
-		
-		return this;
-	}
 	
 	/**
 	 * Switches the God state of a player.
 	 */
 	public void switchGod(){
-		hasGod = !hasGod;
+		savingContainer.setGodMode(!savingContainer.isGodModeEnabled());
 		
 		if(player != null && player.isOnline()){
-			if(hasGod){
+			if(savingContainer.isGodModeEnabled()){
 				player.sendMessage(ChatColor.GREEN + "God mode toggled.");
 			}else{
 				player.sendMessage(ChatColor.RED + "God mode removed.");
@@ -327,7 +209,15 @@ public class PlayerContainer {
 	 * @return
 	 */
 	public boolean isGod() {
-		return this.hasGod;
+		return this.savingContainer.isGodModeEnabled();
+	}
+	
+	/**
+	 * Gets the Saving Container.
+	 * @return the saving Container.
+	 */
+	public PlayerSavingData getSavingData(){
+		return this.savingContainer;
 	}
 
 

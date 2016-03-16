@@ -23,6 +23,7 @@ import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelec
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassSelectedEvent;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 import de.tobiyas.racesandclasses.util.consts.Consts;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
@@ -84,14 +85,7 @@ public class ClassManager extends AbstractHolderManager{
 
 
 	@Override
-	protected String getDBFieldName() {
-		return "className";
-	}
-
-
-	@Override
-	protected void saveContainerToDBField(PlayerHolderAssociation container,
-			String name) {
+	protected void saveContainerToDBField(PlayerHolderAssociation container, String name) {
 		container.setClassName(name);
 	}
 
@@ -119,5 +113,16 @@ public class ClassManager extends AbstractHolderManager{
 		AbstractTraitHolder holder = getHolderByName(className);
 		
 		return holder != null ? holder : getDefaultHolder();
+	}
+	
+	
+	@Override
+	protected AbstractTraitHolder getHolder(PlayerSavingData data) {
+		return getHolderByName(data.getClassName());
+	}
+
+	@Override
+	protected void saveToContainer(PlayerSavingData data, AbstractTraitHolder holder) {
+		data.setClassName(holder.getDisplayName());
 	}
 }

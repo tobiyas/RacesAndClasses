@@ -25,7 +25,6 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 
 import static de.tobiyas.racesandclasses.translation.languages.Keys.login_no_race_selected;
 
-import java.util.Date;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
@@ -42,6 +41,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -51,16 +51,16 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui.HolderI
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
-import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.player.PlayerUtils;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
@@ -86,7 +86,9 @@ public class Listener_Player implements Listener {
 		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
-		plugin.getPlayerManager().checkPlayer(player);
+		//Loads the Container:
+		plugin.getPlayerManager().getContainer(player);
+		
 		RaceContainer container = player.getRace();
 		if((container == null || container == plugin.getRaceManager().getDefaultHolder()) && racesActive){
 			String defaultName = plugin.getConfigManager().getGeneralConfig().getConfig_takeRaceWhenNoRace();
@@ -131,24 +133,27 @@ public class Listener_Player implements Listener {
 	
 	
 	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerJoinCheck(PlayerLoginEvent event){
+		checkPlayer(event.getPlayer());
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerJoinCheck(PlayerJoinEvent event){
-		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.contains("uuid")){
-			YAMLPersistenceProvider.getLoadedPlayerFile(player).set("uuid", event.getPlayer().getUniqueId().toString());			
-		}
-
+		checkPlayer(event.getPlayer());
+	}
+	
+	
+	private void checkPlayer(Player player){
+		final RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
 		
-		String newName = player.getName();
-		String oldName = config.getString("lastKnownName", "");
-		if(!newName.equals(oldName)){
-			//Name has changed
-			RacesAndClasses.getPlugin().log(oldName + " has changed his name to: " + newName);
-			YAMLPersistenceProvider.getLoadedPlayerFile(player).set("lastKnownName", newName);
-		}
+		plugin.getRaceManager().getHolderOfPlayer(racPlayer);
+		plugin.getClassManager().getHolderOfPlayer(racPlayer);
 		
-		//set the last online time.
-		YAMLPersistenceProvider.getLoadedPlayerFile(player).set("lastOnline", new Date().getTime());
+		//Inits the Player after start!
+		plugin.getPlayerManager().getContainer(racPlayer).init();
+		
+		data.setLastLogin(System.currentTimeMillis());
 	}
 	
 	

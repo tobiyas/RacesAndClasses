@@ -352,18 +352,6 @@ public class GeneralConfigText {
 				+ "#########\n"
 				+ "\n"
 
-				//+ "# This tells the Plugin to use the Build in DB service to save data. \n"
-				//+ "# If turned to false, a flat file (yml) will be used. THIS IS VERY SLOW!!!\n"
-				//+ "# boolean: true or false\n"
-				//+ "# default: true \n"
-				//+ general_saving_savePlayerDataToDB + ": false\n\n"
-				
-				+ "# This tells the plugin to look at conversion at startup.. \n"
-				+ "# If turned to false, no conversion of playerdata will be done on startup!\n"
-				+ "# boolean: true or false\n"
-				+ "# default: false \n"
-				+ general_convert_database_on_startup + ": false\n\n"
-				
 				+ "# This tells the Plugin to NOT check the Armor if turned off. \n"
 				+ "# If turned to true, the armor Checking of Races / Classes is Disabled.\n"
 				+ "# boolean: true or false\n"
@@ -412,6 +400,64 @@ public class GeneralConfigText {
 				+ "# default: true\n"
 				+ general_remove_old_data_check_empty + ": true\n\n"
 				;
+	}
+	
+	private static final String Serialization(){
+		return "" 
+			+ "\n"
+			+ "###############\n"
+			+ "#Serialization#\n"
+			+ "###############\n"
+			+ "\n"
+	
+			+ "# This tells the Plugin which kind of Serializer to use. \n"
+			+ "# Serializers are YML (files) or database.\n"
+			+ "# String: yml or database\n"
+			+ "# default: yml \n"
+			+ serialize_serializer_to_use + ": 'yml'\n\n"
+			
+			+ "# If Player-Data should be pre-loaded on server start. \n"
+			+ "# If not enabled, the data is not loaded on start.\n"
+			+ "# Data is loaded async. This means without blocking the main Thread.\n"
+			+ "# Boolean: true or false\n"
+			+ "# default: true \n"
+			+ serialize_preload_data_async + ": true\n\n"
+			
+			+ "# If async pre-Loading is enabled, this is the amount to bulk load. \n"
+			+ "# If using database, a high number may crash the connection.\n"
+			+ "# Number: some number\n"
+			+ "# default: 100000 \n"
+			+ serialize_preload_bulk_amount + ": 100000\n\n"
+		
+			+ "# This tells the Plugin which DB-Connection Host to use. \n"
+			+ "# Serializers  only works with database.\n"
+			+ "# String: host address\n"
+			+ "# default: localhost \n"
+			+ serialize_database_host + ": 'localhost'\n\n"
+			
+			+ "# This tells the Plugin which DB-Connection port to use. \n"
+			+ "# Serializers  only works with database.\n"
+			+ "# number: port number\n"
+			+ "# default: 3306 \n"
+			+ serialize_database_port + ": 3306\n\n"
+			
+			+ "# This tells the Plugin which DB-Connection Database to use. \n"
+			+ "# Serializers  only works with database.\n"
+			+ "# String: Database Name\n"
+			+ "# default: rac \n"
+			+ serialize_database_db + ": 'rac'\n\n"
+			
+			+ "# This tells the Plugin which DB-Connection username to use. \n"
+			+ "# Serializers  only works with database.\n"
+			+ "# String: username\n"
+			+ "# default: root \n"
+			+ serialize_database_username + ": 'root'\n\n"
+			
+			+ "# This tells the Plugin which DB-Connection password to use. \n"
+			+ "# Serializers  only works with database.\n"
+			+ "# String: Password to use\n"
+			+ "# default: password \n"
+			+ serialize_database_password + ": 'password'\n\n";
 	}
 	
 	
@@ -818,6 +864,7 @@ public class GeneralConfigText {
 			+ RaceSpawns()
 			+ Addins()
 			+ General()
+			+ Serialization()
 			+ Gui()
 			+ Magic()
 			+ Leveling()

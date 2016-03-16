@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 
 public interface PlayerLevelManager {
@@ -26,7 +25,6 @@ public interface PlayerLevelManager {
 	 * @return
 	 */
 	public int getCurrentLevel();
-	
 	
 	/**
 	 * Returns the current EXP of the Level
@@ -91,37 +89,10 @@ public interface PlayerLevelManager {
 	
 	
 	/**
-	 * Saves the Container to the playerData File.
-	 */
-	public void save();
-	
-	
-	/**
-	 * Saves the current values to the passed container.
-	 * 
-	 * @param container
-	 */
-	public void saveTo(PlayerSavingContainer container);
-	
-	
-	/**
-	 * Reloads the Data from the passed container.
-	 * 
-	 * @param container to load from
-	 */
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container);
-	
-	
-	/**
 	 * Checks if the Player has any Levels to go Up or go Down.
 	 * They will be fired as Event.
 	 */
 	public void checkLevelChanged();
-	
-	/**
-	 * Reloads the Data from the Player Data file or DB.
-	 */
-	public void reloadFromYaml();
 
 
 	/**

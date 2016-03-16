@@ -28,8 +28,8 @@ public class ActionBarDisplay extends AbstractDisplay {
 			return;
 		}
 		
-		String toShow = calcForHealth(currentValue, maxValue, 30);
-		toShow = ChatColor.WHITE + "Mana: [" + toShow + ChatColor.WHITE + "]";
+		String toShow = calcForHealth(currentValue, maxValue, 15, '\u2666');
+		toShow = ChatColor.DARK_BLUE.toString() + '\u2739' + " [" + toShow + ChatColor.DARK_BLUE + "]";
 		toShow += " " + (int)currentValue + "/" + (int)maxValue;
 		
 		if(player.isOnline()) messager.setMessage(player.getPlayer(), toShow);

@@ -2,25 +2,15 @@ package de.tobiyas.racesandclasses.playermanagement.skilltree;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
-import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class PlayerSkillTreeManager {
-	
-	/**
-	 * The Path for the Learned Traits.
-	 */
-	private static final String PRESENT_TRAITS_PATH = "learnedTraits";
-	
 	
 	/**
 	 * The set of Traits the player has selected.
@@ -32,10 +22,19 @@ public class PlayerSkillTreeManager {
 	 */
 	private final RaCPlayer player;
 	
+	/**
+	 * The Data container to use.
+	 */
+	private final PlayerSavingData data;
 	
 	
-	public PlayerSkillTreeManager(RaCPlayer player) {
+	
+	public PlayerSkillTreeManager(RaCPlayer player, PlayerSavingData data) {
 		this.player = player;
+		this.data = data;
+		
+		//Reload from data.
+		this.reloadFromData();
 	}
 
 
@@ -55,6 +54,8 @@ public class PlayerSkillTreeManager {
 	 */
 	public void removeTrait(Trait trait){
 		presentTraits.remove(trait);
+		
+		save();
 	}
 	
 	
@@ -64,6 +65,23 @@ public class PlayerSkillTreeManager {
 	 */
 	public void setTraitLevel(Trait trait, int level){
 		presentTraits.put(trait, level);
+		
+		save();
+	}
+	
+	/**
+	 * Saves the Data to the Data.
+	 */
+	private void save(){
+		Map<String,Integer> skillTree = new HashMap<>();
+		for(Map.Entry<Trait,Integer> entry : presentTraits.entrySet()){
+			String name = entry.getKey().getDisplayName();
+			int level = entry.getValue();
+			
+			if(level > 0) skillTree.put(name, level);
+		}
+		
+		data.overrideSkilltree(skillTree);
 	}
 	
 	
@@ -94,37 +112,17 @@ public class PlayerSkillTreeManager {
 		return Math.max(0, free);
 	}
 
-
-	/**
-	 * Saves the Container.
-	 */
-	public void save() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()) return;
-		
-		List<String> learned = new LinkedList<>();
-		for(Map.Entry<Trait,Integer> entry : presentTraits.entrySet()) {
-			learned.add(entry.getKey().getDisplayName() + "@" + entry.getValue());
-		}
-		
-		config.set(PRESENT_TRAITS_PATH, learned);
-	}
-	
 	/**
 	 * Loads the Skills from the Config..
 	 */
-	public PlayerSkillTreeManager reloadFromConfig() {
+	private PlayerSkillTreeManager reloadFromData() {
 		this.presentTraits.clear();
 		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()) return this;
-		
-		List<String> learned = config.getStringList(PRESENT_TRAITS_PATH);
 		Collection<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
-		for(String line : learned){
-			String[] split = line.split(Pattern.quote("@"));
-			String name = split[0];
-			int level = 1; try{level = Integer.parseInt(split[1]);}catch(Throwable exp){}
+		Map<String,Integer> skillTree = data.getSkillTree();
+		for(Map.Entry<String,Integer> entry : skillTree.entrySet()){
+			String name = entry.getKey();
+			int level = entry.getValue();
 			
 			for(Trait trait : traits){
 				if(name.equalsIgnoreCase(trait.getDisplayName())){
@@ -143,6 +141,7 @@ public class PlayerSkillTreeManager {
 	 */
 	public void clearSkills() {
 		this.presentTraits.clear();
+		data.clearSkilltree();
 	}
 	
 }

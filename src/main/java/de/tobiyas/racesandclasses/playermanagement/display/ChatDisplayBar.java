@@ -40,7 +40,7 @@ public class ChatDisplayBar extends AbstractDisplay{
 		
 		String barString = "";
 		if(!displayInfo.useName()){
-			barString = calcForHealth(currentAmount, maxAmount, Consts.displayBarLength);
+			barString = calcForHealth(currentAmount, maxAmount, Consts.displayBarLength, '|');
 		}
 		
 		int pre = (int) Math.floor(currentAmount);

@@ -47,6 +47,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelMa
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManagerType;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.formating.Pair;
+import de.tobiyas.util.sql.SQL.SQLProperties;
 
  
  public class GeneralConfig{
@@ -87,7 +88,6 @@ import de.tobiyas.util.formating.Pair;
 	private boolean config_usePermissionsForClasses;
 	
 	private boolean config_useRaceClassSelectionMatrix;
-	private boolean config_convertDatabaseOnStartup;
 	private boolean config_food_enabled;
 	
 	
@@ -96,6 +96,16 @@ import de.tobiyas.util.formating.Pair;
 
 	//language to use
 	private String config_usedLanguage;
+	
+	//The Serializer to use.
+	private String config_serializer;
+	private String config_database_host;
+	private int config_database_port;
+	private String config_database_db;
+	private String config_database_username;
+	private String config_database_password;
+	private boolean config_preload_data_async;
+	private int config_preload_bulk_amount;
 	
 	//disable on worlds
 	private List<String> config_worldsDisabled;
@@ -279,7 +289,6 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(worlds_disableOn, Arrays.asList(new String[]{"demoWorld", "demoWorld2"}));
 		config.addDefault(keep_max_hp_on_disabled_worlds, true);
 		
-		config.addDefault(general_saving_savePlayerDataToDB, false);
 		config.addDefault(general_convert_database_on_startup, true);
 		config.addDefault(general_disable_commands, new LinkedList<String>());
 		config.addDefault(general_disable_aliases, new LinkedList<String>());
@@ -287,6 +296,15 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(general_cooldown_on_bow_message, 10);
 		config.addDefault(general_remove_old_data_days, 60);
 		config.addDefault(general_remove_old_data_check_empty, true);
+		
+		config.addDefault(serialize_serializer_to_use, "yml");
+		config.addDefault(serialize_preload_data_async, true);
+		config.addDefault(serialize_preload_bulk_amount, 100000);
+		config.addDefault(serialize_database_host, "localhost");
+		config.addDefault(serialize_database_port, 3306);
+		config.addDefault(serialize_database_db, "RaC");
+		config.addDefault(serialize_database_username, "username");
+		config.addDefault(serialize_database_password, "password");
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_scoreboard_name, "&eRaC");
@@ -323,7 +341,7 @@ import de.tobiyas.util.formating.Pair;
 		config.addDefault(food_enabled, true);
 
 		config.addDefault(groups_enabled, true);
-		config.addDefault(groups_system, "RaC");
+		config.addDefault(groups_system, "rac");
 
 		config.addDefault(skills_useSkillSystem, false);
 		config.addDefault(skills_skillpointEveryXLevel, 5);
@@ -355,7 +373,6 @@ import de.tobiyas.util.formating.Pair;
 		config_enableErrorUpload = config.getBoolean(debug_outputs_errorUpload, true);
 		config_alsoUseLeftClickInGuis = config.getBoolean(gui_also_use_leftclick_in_guis, true);
 		config_disableAllScoreboardOutputs = config.getBoolean(gui_scoreboard_disableAllOutputs, false);
-		config_convertDatabaseOnStartup = config.getBoolean(general_convert_database_on_startup, true);
 		
 		config_classes_enable = config.getBoolean(classes_enable, true);
 		config_metrics_enabled = config.getBoolean(metrics_enable, true);
@@ -415,6 +432,15 @@ import de.tobiyas.util.formating.Pair;
 		
 		config_magic_manaShowPlace = config.getString(magic_manaShowPlace, "Chat");
 		
+		config_serializer = config.getString(serialize_serializer_to_use, "yml");
+		config_preload_data_async = config.getBoolean(serialize_preload_data_async, true);
+		config_preload_bulk_amount = config.getInt(serialize_preload_bulk_amount, 100_000);
+		config_database_host = config.getString(serialize_database_host, "localhost");
+		config_database_port = config.getInt(serialize_database_port, 3306);
+		config_database_db = config.getString(serialize_database_db, "rac");
+		config_database_username = config.getString(serialize_database_username, "root");
+		config_database_password = config.getString(serialize_database_password, "password");
+		
 		
 		String config_magic_outOfFightRegeneration_tmp = config.getString(magic_outOfFightRegeneration, "0#100");
 		try{
@@ -448,7 +474,6 @@ import de.tobiyas.util.formating.Pair;
 		config_cancleGUIExitWhenNoRacePresent = config.getBoolean(races_cancleGUIExitWhenNoRacePresent_enable, true);
 		config_debugTimeAfterLoginOpening = config.getInt(races_openRaceSelectionOnJoinWhenNoRace_timeToOpenAfterLoginInSeconds, 2);
 		
-		config_savePlayerDataToDB = config.getBoolean(general_saving_savePlayerDataToDB, false);
 		config_mapExpPerLevelCalculationString = config.getString(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config_useLevelSystem = LevelingSystem.parse(config.getString(level_useLevelSystem, "RaC"));
 		config_keep_max_hp_on_disabled_worlds = config.getBoolean(keep_max_hp_on_disabled_worlds, true);
@@ -768,10 +793,6 @@ import de.tobiyas.util.formating.Pair;
 		return config_disableChatJoinLeaveMessages;
 	}
 
-	public boolean isConfig_convertDatabaseOnStartup() {
-		return config_convertDatabaseOnStartup;
-	}
-
 	public LevelingSystem getConfig_useLevelSystem() {
 		return config_useLevelSystem;
 	}
@@ -935,6 +956,28 @@ import de.tobiyas.util.formating.Pair;
 	public String getConfig_groups_system() {
 		return config_groups_system;
 	}
+
+	public String getConfig_serializer() {
+		return config_serializer;
+	}
 	
+	public SQLProperties getConfig_databaseData(){
+		SQLProperties props = new SQLProperties();
+		props.serverName = config_database_host;
+		props.serverPort = String.valueOf(config_database_port);
+		props.serverDB = config_database_db;
+		props.userName = config_database_username;
+		props.password = config_database_password;
+		
+		return props;
+	}
+
+	public boolean isConfig_preload_data_async() {
+		return config_preload_data_async;
+	}
+	
+	public int getConfig_preload_bulk_amount() {
+		return config_preload_bulk_amount;
+	}
 	
 }

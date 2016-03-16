@@ -20,11 +20,8 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
-import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class MCPlayerLevelManager implements PlayerLevelManager{
 
@@ -38,6 +35,7 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 * Creates a default MC Level Manager with MC Player Levels.
 	 * 
 	 * @param player to create for
+	 * @param savingContainer 
 	 */
 	public MCPlayerLevelManager(RaCPlayer player) {
 		this.player = player;
@@ -115,56 +113,11 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 		return true;
 	}
 
-	@Override
-	public void save() {
-		//we can't save offline players.
-		if(!player.isOnline() || getRealPlayer() == null) return;
-		
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()){
-			return;
-		}
-		
-		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, player.getPlayer().getLevel());
-		config.set(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, (int)(player.getPlayer().getExp() 
-				* player.getPlayer().getExpToLevel()));
-	}
-
-	@Override
-	public void saveTo(PlayerSavingContainer container) {
-		//we can't save offline players.
-		if(!player.isOnline()) return;
-		
-		Player player = getRealPlayer();
-		
-		container.setPlayerLevel(player.getLevel());
-		container.setPlayerLevelExp((int)(player.getExp() * player.getExpToLevel()));
-		
-	}
-
-	@Override
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container){
-		Player player = getRealPlayer();
-		
-		player.setLevel(container.getPlayerLevel());
-		player.setExp(container.getPlayerLevelExp() / player.getExpToLevel());
-	}
 
 	@Override
 	public void checkLevelChanged() {
 	}
 
-	@Override
-	public void reloadFromYaml() {
-		YAMLConfigExtended config = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-		if(!config.getValidLoad()){
-			return;
-		}
-		
-		player.getPlayer().setLevel(config.getInt(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_PATH, 1));
-		player.getPlayer().setExp(config.getInt(CustomPlayerLevelManager.CURRENT_PLAYER_LEVEL_EXP_PATH, 1)
-				/ player.getPlayer().getExpToLevel());
-	}
 
 	
 	/**

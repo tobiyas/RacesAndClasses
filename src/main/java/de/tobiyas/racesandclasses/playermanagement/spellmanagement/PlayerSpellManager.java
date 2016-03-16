@@ -252,7 +252,7 @@ public class PlayerSpellManager {
 			case MANA: return getManaManager().hasEnoughMana(cost);
 			case ITEM: return playerHasItem(trait.getCastMaterialType(), trait.getCastMaterialDamage(), trait.getCastMaterialName(), (int)cost);
 			case HUNGER : return player.getPlayer().getFoodLevel() >= cost;
-			case EXP : return RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).canRemove((int)cost);
+			case EXP : return player.getLevelManager().canRemove((int)cost);
 			default: return false;
 		}
 	}
@@ -357,7 +357,7 @@ public class PlayerSpellManager {
 				player.getPlayer().setFoodLevel(newFoodLevel < 0 ? 0 : newFoodLevel);
 				
 			case EXP:
-				RacesAndClasses.getPlugin().getPlayerManager().getPlayerLevelManager(player).removeExp((int) cost);
+				player.getLevelManager().removeExp((int) cost);
 		}
 	}
 	

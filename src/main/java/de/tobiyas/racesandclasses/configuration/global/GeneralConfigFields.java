@@ -79,7 +79,6 @@ public class GeneralConfigFields {
 	public static final String groups_system = "groups_system";
 	
 	//General
-	public static final String general_saving_savePlayerDataToDB = "general_saving_savePlayerDataToDB";
 	public static final String general_convert_database_on_startup = "general_convert_database_on_startup";
 	public static final String general_armor_disableArmorChecking = "general_armor_disableArmorChecking";
 	public static final String general_disable_commands = "general_disable_commands";
@@ -89,6 +88,18 @@ public class GeneralConfigFields {
 	public static final String general_cooldown_on_bow_message = "general_cooldown_on_bow_message";
 	public static final String general_remove_old_data_days = "general_remove_old_data_days";
 	public static final String general_remove_old_data_check_empty = "general_remove_old_data_check_empty";
+	
+	
+	//Serialize
+	public static final String serialize_serializer_to_use = "serialize_serializer_to_use";
+	public static final String serialize_preload_data_async = "serialize_preload_data_async";
+	public static final String serialize_preload_bulk_amount = "serialize_preload_bulk_amount";
+	public static final String serialize_database_host = "serialize_database_host";
+	public static final String serialize_database_port = "serialize_database_port";
+	public static final String serialize_database_db = "serialize_database_db";
+	public static final String serialize_database_username = "serialize_database_username";
+	public static final String serialize_database_password = "serialize_database_password";
+	
 	
 	//GUI
 	public static final String gui_also_use_leftclick_in_guis = "gui_alsoUseLeftclickInGuis";

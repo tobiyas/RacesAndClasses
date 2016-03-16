@@ -33,7 +33,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -80,7 +80,7 @@ public class SwimmingSpeedTrait extends TickEverySecondsTrait {
 	private Set<UUID> playerWithGeneratedBoots = new HashSet<UUID>();
 	
 	
-	@TraitEventsUsed(registerdClasses = {PlayerLoginEvent.class, HolderSelectedEvent.class})
+	@TraitEventsUsed(registerdClasses = {PlayerJoinEvent.class, HolderSelectedEvent.class})
 	@Override
 	public void generalInit() {
 		super.generalInit();

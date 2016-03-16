@@ -26,7 +26,6 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.playermanagement.PlayerSavingContainer;
 import de.tobiyas.racesandclasses.playermanagement.display.Display;
 import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
 import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
@@ -112,31 +111,12 @@ public class McMMOLevelManager implements PlayerLevelManager {
 		return false;
 	}
 
-	@Override
-	public void save() {
-		//this is done via Skill-API
-	}
-
-	@Override
-	public void saveTo(PlayerSavingContainer container) {
-		container.setPlayerLevel(getCurrentLevel());
-		container.setPlayerLevelExp(getCurrentExpOfLevel());
-	}
-
-	@Override
-	public void reloadFromPlayerSavingContaienr(PlayerSavingContainer container) {
-		//not supported by Skill-API
-	}
 
 	@Override
 	public void checkLevelChanged() {
 		//nothing to do.
 	}
 
-	@Override
-	public void reloadFromYaml() {
-		//nothing to do.
-	}
 
 	@Override
 	public void forceDisplay() {

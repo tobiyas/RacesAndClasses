@@ -17,7 +17,6 @@ import de.tobiyas.racesandclasses.commands.classes.CommandExecutor_Class;
 import de.tobiyas.racesandclasses.commands.config.CommandExecutor_ConfigRegenerate;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_Edit;
 import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_RaceDebug;
-import de.tobiyas.racesandclasses.commands.debug.CommandExecutor_SaveNow;
 import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceClass;
 import de.tobiyas.racesandclasses.commands.force.CommandExecutor_ForceRace;
 import de.tobiyas.racesandclasses.commands.general.CommandExecutor_EmptyCommand;
@@ -88,7 +87,6 @@ public class CommandRegisterer {
 		commands.add(new CommandExecutor_Statistics());
 		commands.add(new CommandExecutor_ShowTraits());
 		commands.add(new CommandExecutor_Edit());
-		commands.add(new CommandExecutor_SaveNow());
 		
 		commands.add(new CommandExecutor_ForceRace());
 		commands.add(new CommandExecutor_ForceClass());

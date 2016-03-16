@@ -107,6 +107,21 @@ public abstract class PlayerProxy implements Player {
 	public void openInventory(InventoryView inventory) {
 		getRealPlayer().openInventory(inventory);
 	}
+	
+	@Override
+	public org.bukkit.inventory.MainHand getMainHand() {
+		return getRealPlayer().getMainHand();
+	}
+	
+	@Override
+	public boolean isGliding() {
+		return getRealPlayer().isGliding();
+	}
+	
+	@Override
+	public void setGliding(boolean gliding) {
+		getRealPlayer().setGliding(gliding);
+	}
 
 	@Override
 	public void closeInventory() {

@@ -36,6 +36,6 @@ public class Listener_MaxHP_Setting implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event){
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(event.getPlayer());
-		plugin.getPlayerManager().checkPlayer(racPlayer);
+		plugin.getPlayerManager().getContainer(racPlayer).rescan();
 	}
 }

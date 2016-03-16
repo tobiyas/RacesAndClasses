@@ -145,6 +145,6 @@ public class HealthPotionManager implements Listener {
 			}
 		}.runTaskLater(RacesAndClasses.getPlugin(), HEALTH_POTION_COOLDOWN);
 		
-		event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.POTION_BREAK, new Potion(PotionType.WATER));
+		event.getPlayer().getWorld().playEffect(event.getPlayer().getLocation(), Effect.POTION_BREAK, new Potion(PotionType.WATER));
 	}
 }

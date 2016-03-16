@@ -40,11 +40,10 @@ public class Consts {
 	
 	//Debugging
 	public static final int timingLength = 10;
-	public static final boolean disableBDSupport = true;
 	
 	//Version
 	public static final String currentDevStage = "R S";
-	public static final String detailedVersionString = "1.1.10";
+	public static final String detailedVersionString = "1.1.11";
 	
 	/**
 	 * V1.0.3 RC 2: 1.3
@@ -59,8 +58,9 @@ public class Consts {
 	 * v1.1.8 : 1.13
 	 * v1.1.9 : 1.14
 	 * v1.1.10 : 1.15
+	 * v1.1.11 : 1.16
 	 */
-	public static final String configVersion = "1.15";
+	public static final String configVersion = "1.16";
 	
 	
 	//Races

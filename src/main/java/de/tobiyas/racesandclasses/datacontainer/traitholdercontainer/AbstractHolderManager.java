@@ -32,10 +32,9 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderTraitParseException;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.permissionsettings.PermissionRegisterer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.HolderSelectedEvent;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistanceSaver;
-import de.tobiyas.racesandclasses.persistence.file.YAMLPersistenceProvider;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
-import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.file.FileUtils;
@@ -92,7 +91,6 @@ public abstract class AbstractHolderManager {
 		readTraitHolderList();
 		
 		initDefaultHolder();
-		readMemberList();
 
 		setupPermissions();
 	}
@@ -186,58 +184,7 @@ public abstract class AbstractHolderManager {
 	 * @param configNodeName
 	 * @return
 	 */
-	protected abstract AbstractTraitHolder generateTraitHolder(
-			YAMLConfigExtended traitHolderConfig, String holderName);
-
-	
-	/**
-	 * Reads the Members from PlayerData or DB.
-	 */
-	protected void readMemberList(){
-		memberList = new HashMap<RaCPlayer, AbstractTraitHolder>();
-
-		if(plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
-			for(AbstractTraitHolder traitHolder : traitHolderList){
-				if(traitHolder == null) continue;
-				
-				List<PlayerHolderAssociation> holderList = plugin.getDatabase().find(PlayerHolderAssociation.class).where()
-						.ieq(getDBFieldName(), traitHolder.getDisplayName()).findList();
-				for(PlayerHolderAssociation holder : holderList){
-					RaCPlayer player = RaCPlayerManager.get().getPlayer(holder.getPlayerUUID());
-					memberList.put(player, traitHolder);				
-				}
-			}
-		}else{
-			String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getDisplayName();
-			Set<RaCPlayer> players = YAMLPersistenceProvider.getAllPlayersKnown();
-			
-			for(RaCPlayer player : players){
-				if(player == null || !player.isOnline()) continue;
-				
-				YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-				String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-				memberList.put(player, getHolderByName(holderName));
-			}
-		}
-	}
-	
-	/**
-	 * Loads the Player passed.
-	 * <br>Only loads if not exist.
-	 * <br>Only loads if not load.
-	 * 
-	 * @param player to load.
-	 */
-	public void loadIfNotExists(RaCPlayer player){
-		if(memberList.containsKey(player)) return;
-		
-		String defaultHolderName = getDefaultHolder() == null ? null : getDefaultHolder().getDisplayName();
-		if(player == null || !player.isOnline()) return;
-		
-		YAMLConfigExtended playerConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player.getUniqueId());
-		String holderName = playerConfig.getString(getConfigPrefix(), defaultHolderName);
-		memberList.put(player, getHolderByName(holderName));
-	}
+	protected abstract AbstractTraitHolder generateTraitHolder(YAMLConfigExtended traitHolderConfig, String holderName);
 	
 	/**
 	 * Returns the name of the correct Holder.
@@ -262,7 +209,6 @@ public abstract class AbstractHolderManager {
 		AbstractTraitHolder container = getHolderByName(potentialHolder);
 		if(container == null) return false;
 		
-		saveNewHolderToDB(player, container, false);
 		memberList.put(player, container);
 		
 		//setting permission group afterwards
@@ -270,15 +216,26 @@ public abstract class AbstractHolderManager {
 		PermissionRegisterer.addPlayer(player, groupName);
 		
 		resetPlayerMovementSpeed(player);
-		plugin.getPlayerManager().checkPlayer(player);
+		saveToContainer(player.getPlayerSaveData(), container);
 		
 		if(callAfterEvent){
 			HolderSelectedEvent event = generateAfterSelectEvent(player, container);
 			plugin.fireEventToBukkit(event);
 		}
 		
+		
+		//Do not forget to do a rescan after Changing Holder!
+		plugin.getPlayerManager().getContainer(player).rescan();
+		
 		return true;
 	}
+	
+	/**
+	 * Saves the Data of the Holder to the Data.
+	 * @param data to use.
+	 * @param holder to use.
+	 */
+	protected abstract void saveToContainer(PlayerSavingData data, AbstractTraitHolder holder);
 	
 	
 	/**
@@ -301,73 +258,7 @@ public abstract class AbstractHolderManager {
 	 * 
 	 * @return the Event
 	 */
-	protected abstract HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);
-	
-	
-	/**
-	 * Saves the new Holder to the DB or YAML
-	 * 
-	 * @param player
-	 * @param newHolder
-	 */
-	private void saveNewHolderToDB(RaCPlayer player, AbstractTraitHolder newHolder, boolean rescanAfter){
-		boolean useDB = plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB();
-		String newHolderName = "";
-		if(newHolder != null){
-			newHolderName = newHolder.getDisplayName();			
-		}
-		
-		if(useDB){
-			PlayerHolderAssociation container = plugin.getDatabase().find(PlayerHolderAssociation.class).where().ieq("player", player.toString()).findUnique();
-			if(container == null){
-				container = new PlayerHolderAssociation();
-				container.setPlayerUUID(player.getUniqueId());
-				container.setClassName(null);
-				container.setRaceName(plugin.getRaceManager().getDefaultHolder().getDisplayName());
-			}
-			
-			saveContainerToDBField(container, newHolderName);
-			
-			try{
-				plugin.getDatabase().save(container);
-			}catch(Exception exp){
-				plugin.getDebugLogger().logStackTrace(exp);
-			}
-		}else{
-			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			memberConfig.set(getConfigPrefix(), newHolderName);
-			YAMLPersistanceSaver.flushPlayerNow(player, true);
-		}
-		
-		if(rescanAfter){
-			plugin.getPlayerManager().checkPlayer(player);			
-		}
-	}
-	
-	
-	/**
-	 * Saves all containers.
-	 */
-	/*public void saveAll(){
-		for(Map.Entry<RaCPlayer, AbstractTraitHolder> entry : memberList.entrySet()){
-			RaCPlayer player = entry.getKey();
-			AbstractTraitHolder holder = entry.getValue();
-			if(holder == null){
-				holder = getDefaultHolder();
-				entry.setValue(getDefaultHolder());
-			}
-			
-			saveNewHolderToDB(player, holder, false);
-		}
-	}*/
-	
-	
-	/**
-	 * Returns the fieldName of the HolderType
-	 * @return
-	 */
-	protected abstract String getDBFieldName();
-	
+	protected abstract HolderSelectedEvent generateAfterChangeEvent(RaCPlayer player, AbstractTraitHolder newHolder, AbstractTraitHolder oldHolder);	
 	
 	/**
 	 * Saves the Holder name to the correct field.
@@ -437,12 +328,7 @@ public abstract class AbstractHolderManager {
 		
 		PermissionRegisterer.removePlayer(player, getContainerTypeAsString());
 		memberList.remove(player);
-		
-		if(!plugin.getConfigManager().getGeneralConfig().isConfig_savePlayerDataToDB()){
-			YAMLConfigExtended memberConfig = YAMLPersistenceProvider.getLoadedPlayerFile(player);
-			memberConfig.set(getConfigPrefix(), null);
-		}
-		
+
 		boolean worked = addPlayerToHolder(player, newHolderName, false);
 		if(callEvent){
 			AbstractTraitHolder newHolder = getHolderOfPlayer(player);
@@ -470,17 +356,23 @@ public abstract class AbstractHolderManager {
 		
 		AbstractTraitHolder holder = memberList.get(player);
 		if(holder == null){
-			loadIfNotExists(player);
-			holder = memberList.get(player);
+			PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+			holder = getHolder(data);
+			if(holder == null) holder = getDefaultHolder();
 			
-			if(holder == null){
-				holder = getStartingHolder();
-				memberList.put(player, holder);
-			}
+			memberList.put(player, holder);
 		}
 		
 		return holder;
 	}
+	
+	
+	/**
+	 * Gets the holder from the Data.
+	 * @param data to use
+	 * @return to get.
+	 */
+	protected abstract AbstractTraitHolder getHolder(PlayerSavingData data);
 	
 	
 	/**
