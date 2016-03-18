@@ -58,7 +58,7 @@ import de.tobiyas.racesandclasses.hotkeys.HotkeyManager;
 import de.tobiyas.racesandclasses.infight.InFightManager;
 import de.tobiyas.racesandclasses.listeners.RaCListenerRegister;
 import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerScoreboardUpdater;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerScoreboardUpdater;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaXPBarRunner;
 import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;

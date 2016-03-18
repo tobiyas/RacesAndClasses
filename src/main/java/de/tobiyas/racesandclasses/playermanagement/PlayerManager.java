@@ -44,7 +44,7 @@ public class PlayerManager{
 			@Override
 			protected void runIntern() {
 				for(PlayerContainer container : playerData.values()){
-					container.tick();
+					try{ container.tick(); }catch(Throwable exp){}
 				}
 			}
 		}.runTaskTimer(plugin, 20, 20);

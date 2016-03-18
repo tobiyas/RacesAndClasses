@@ -21,22 +21,17 @@ import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.player.PlayerClass;
 import com.sucy.skill.api.player.PlayerData;
 
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
-public class SkillAPILevelManager implements PlayerLevelManager {
-	
-	/**
-	 * The Playername to this levelsystem.
-	 */
-	private final RaCPlayer player;
-	
+public class SkillAPILevelManager extends AbstractPlayerLevelingSystem {
+
 	
 	/**
 	 * Sets up the Plugin.
 	 */
-	public SkillAPILevelManager(RaCPlayer player) {
-		this.player = player;
+	public SkillAPILevelManager(RaCPlayer player, PlayerSavingData data) {
+		super(player, data);
 	}
 	
 	
@@ -58,16 +53,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 		//return getSkillAPI().getPlayer(player.getName()).getExp();
 	}
 
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
-	
-
-	@Override
-	public void tick() {
-		//not needed
-	}
 
 	@Override
 	public void setCurrentLevel(int level) {
@@ -99,14 +84,6 @@ public class SkillAPILevelManager implements PlayerLevelManager {
 		//nothing to do.
 	}
 
-	@Override
-	public void forceDisplay() {
-		if(player == null || !player.isOnline()) return;
-		
-		//expDisplay.display(getCurrentExpOfLevel(), getSkillAPI().getPlayer(player.getName()).getExpToNextLevel());
-		//levelDisplay.display(getCurrentLevel(), getCurrentLevel());
-	}
-	
 
 	@Override
 	public boolean canRemove(int toRemove) {

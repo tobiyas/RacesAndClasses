@@ -3,6 +3,8 @@ package de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassContainer;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
@@ -10,6 +12,8 @@ import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.World
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
+import de.tobiyas.util.formating.StringFormatUtils;
+import de.tobiyas.util.math.Math2;
 
 public abstract class AbstractManaManager implements ManaManager {
 
@@ -58,7 +62,6 @@ public abstract class AbstractManaManager implements ManaManager {
 		if(!hasEnoughMana(spellToCast)) return false;
 		
 		drownMana(spellToCast.getCost(racPlayer));
-		outputManaToPlayer();
 		return true;
 	}
 
@@ -96,6 +99,23 @@ public abstract class AbstractManaManager implements ManaManager {
 		
 		applyMaxManaBonus(bonus);
 	}
+	
+	
+	
+	@Override
+	public void tick(){
+		double maxMana = getMaxMana();
+		if(maxMana <= 0) maxMana = 0.1;
+		
+		double percent = Math2.clamp(0, getCurrentMana() / getMaxMana(), 1);
+		String line = StringFormatUtils.formatToPercent(percent, 10, '\u220E', ChatColor.BLUE, ChatColor.WHITE);
+		line = ChatColor.DARK_BLUE.toString() + '\u2739' + " {" + line + ChatColor.DARK_BLUE + "}";
+		
+		racPlayer.getActionbarDisplay().setSegment("manabar", line);
+		racPlayer.getActionbarDisplay().setSegment("mana", ""+getCurrentMana());
+		racPlayer.getActionbarDisplay().setSegment("maxmana", ""+getMaxMana());
+	}	
+	
 	
 	
 	/**

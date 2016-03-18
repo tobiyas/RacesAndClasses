@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.bukkit.Bukkit;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -27,15 +24,12 @@ import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.LevelUpEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.playermanagement.display.Display;
-import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelPackage;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
-public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem implements Observer{
+public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem {
 
 	/**
 	 * The Path to the current Level of the Player
@@ -57,16 +51,6 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 	 */
 	private int currentExpOfLevel;
 	
-	/**
-	 * The Display to show.
-	 */
-	private Display expDisplay;
-
-	/**
-	 * The Display to show.
-	 */
-	private Display levelDisplay;
-	
 	
 	/**
 	 * Creates a LevelManager for the Player.
@@ -79,21 +63,8 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		
 		this.currentLevel = data.getLevel();
 		this.currentExpOfLevel = data.getLevelExp();
-		
-		rescanDisplay();
 	}
 	
-	/**
-	 * This re-registers the display.
-	 * <br>Meaning to throw the old one away and generate a new one.
-	 */
-	private void rescanDisplay(){
-		if(expDisplay != null) expDisplay.unregister();
-		if(levelDisplay != null) levelDisplay.unregister();
-		
-		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
-	}
 	
 	
 	@Override
@@ -248,22 +219,6 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem imple
 		
 		this.data.setLevelAndExp(currentLevel, currentExpOfLevel);
 		return true;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		String changedValue = (String) arg;
-		
-		if(changedValue.equalsIgnoreCase("displayType")){
-			rescanDisplay();
-		}
-	}
-
-	@Override
-	public void forceDisplay() {
-		LevelPackage levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
-		expDisplay.display(currentExpOfLevel, levelPack.getMaxEXP());
-		levelDisplay.display(currentLevel, currentLevel);
 	}
 
 	

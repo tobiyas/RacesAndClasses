@@ -5,18 +5,14 @@ import org.bukkit.Bukkit;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
-public class HeroesLevelManager implements PlayerLevelManager {
-
-	/**
-	 * The Player to use.
-	 */
-	private final RaCPlayer player;
+public class HeroesLevelManager extends AbstractPlayerLevelingSystem {
 	
-	public HeroesLevelManager(RaCPlayer player) {
-		this.player = player;
+	
+	public HeroesLevelManager(RaCPlayer player, PlayerSavingData data) {
+		super(player, data);
 	}
 	
 	
@@ -34,10 +30,6 @@ public class HeroesLevelManager implements PlayerLevelManager {
 		return 0;
 	}
 
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
 
 	@Override
 	public void setCurrentLevel(int level) {
@@ -51,11 +43,6 @@ public class HeroesLevelManager implements PlayerLevelManager {
 		if(!isHerosActive()) return;
 		
 		//Heroes seems to not support this.
-	}
-	
-	@Override
-	public void tick() {
-		//not needed
 	}
 
 	@Override
@@ -80,11 +67,6 @@ public class HeroesLevelManager implements PlayerLevelManager {
 		//nothing to do.
 	}
 
-
-	@Override
-	public void forceDisplay() {
-		//nothing to do.
-	}
 
 	@Override
 	public boolean canRemove(int toRemove) {

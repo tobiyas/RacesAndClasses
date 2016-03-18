@@ -494,15 +494,19 @@ public class GeneralConfigText {
 				+ "# default: false \n"
 				+ gui_enable_permanent_scoreboard + ": false\n\n"
 				
-				+ "# Setting this to true will disable all Outputs of bars to the chat of the players.\n"
-				+ "# boolean: true or false\n"
-				+ "# default: false \n"
-				+ gui_disableAllChatBars + ": false\n\n"
-				
 				+ "# If this is activated, the level MC level bar is overwritten as Level Indicator.\n"
 				+ "# boolean: true or false\n"
 				+ "# default: false \n"
 				+ gui_level_useMCLevelBar + ": false\n\n"
+				
+				+ "# This is the format of the Action bar.\n"
+				+ "# To disable it, set it to '' (empty).\n"
+				+ "# Available values are:\n"
+				+ "# Bars: %manabar%, %expbar%\n"
+				+ "# Values: %mana%, %maxmana%, %level%, %exp%, %maxexp%\n"
+				+ "# format: Format with colors\n"
+				+ "# default: %manabar% &eLvL: %level%  &eExp: %expbar% \n"
+				+ gui_actionbar_format + ": '%manabar%  &eLvL: %level%  &eExp: %expbar%'\n\n"
 				;
 	}
 	
@@ -539,11 +543,6 @@ public class GeneralConfigText {
 				+ "# This can be: RaC or MagicSpells\n"
 				+ "# default: RaC \n"
 				+ magic_manaManagerType + ": 'RaC'\n\n"
-				
-				+ "# Where the 'Mana-Bar' should be shown.\n"
-				+ "# This can be: Chat, ActionBar(needs MC 1.8+), XPBar, None\n"
-				+ "# default: Chat \n"
-				+ magic_manaShowPlace + ": 'ActionBar'\n\n"
 								
 				+ "# If the Mana of a player refills while he sprints.\n"
 				+ "# default: false \n"
@@ -559,6 +558,11 @@ public class GeneralConfigText {
 				+ "# X is the Time here. Y is the mana in: 'magic_sprintingManaCost'."
 				+ "# default: 3 \n"
 				+ magic_sprintingManaDrainInterval + ": 3\n\n"
+				
+				+ "# If the plugin should use the XP-Bar as Mana display.\n"
+				+ "# If on, the Minecraft EXP does not work any more."
+				+ "# default: false \n"
+				+ magic_mana_use_xp_bar + ": false\n\n"
 				;
 	}
 	

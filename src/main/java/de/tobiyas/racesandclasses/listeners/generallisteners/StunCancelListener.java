@@ -38,6 +38,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.entitystatusmanager.stun.StunManager;
+import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 public class StunCancelListener implements Listener {
 
@@ -60,10 +61,10 @@ public class StunCancelListener implements Listener {
 		this.plugin = RacesAndClasses.getPlugin();
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(RacesAndClasses.getPlugin(), new Runnable() {
-			
+		//Start the Stun-Resume Timer.
+		new DebugBukkitRunnable("StunReduceTask") {
 			@Override
-			public void run() {
+			protected void runIntern() {
 				Iterator<Map.Entry<String, Integer>> entryIt = cooldownMap.entrySet().iterator();
 				while(entryIt.hasNext()){
 					Map.Entry<String, Integer> entry = entryIt.next();
@@ -74,7 +75,7 @@ public class StunCancelListener implements Listener {
 					}
 				}
 			}
-		}, 20 * 1, 20 * 1);
+		}.runTaskTimer(plugin, 20*1, 20*1);
 	}
 	
 	

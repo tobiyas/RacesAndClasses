@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -25,6 +24,7 @@ import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
+@SuppressWarnings("deprecation")
 public class ManaPotionManager implements Listener {
 	
 	/**
@@ -42,11 +42,6 @@ public class ManaPotionManager implements Listener {
 	 * the list of names for mana-potions.
 	 */
 	private final List<String> MANA_POTION_NAMES = Arrays.asList("ManaPotion", "ManaTrank");
-	
-	/**
-	 * The material for a mana-potion.
-	 */
-	private final Material potionMat = Material.POTION;
 	
 	/**
 	 * people with cooldown on Mana flasks.
@@ -72,7 +67,6 @@ public class ManaPotionManager implements Listener {
 		ItemStack item = event.getItem();
 		if(item == null) return;
 		if(!item.hasItemMeta()) return;
-		if(item.getType() != potionMat) return;
 		
 		if(!item.getItemMeta().hasDisplayName()) return;
 		if(!item.getItemMeta().hasLore()) return;

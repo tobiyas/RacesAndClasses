@@ -32,7 +32,6 @@ public class CustomPlayerLevelManagerEXPListener implements Listener {
 	}
 	
 	
-	
 	@EventHandler
 	public void monsterDeadEvent(EntityDeathEvent event){
 		if(plugin.getConfigManager().getGeneralConfig().getConfig_useLevelSystem() != LevelingSystem.RacesAndClasses) return;

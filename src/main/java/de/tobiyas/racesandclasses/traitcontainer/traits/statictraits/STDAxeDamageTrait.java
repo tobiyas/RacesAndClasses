@@ -87,7 +87,7 @@ public class STDAxeDamageTrait extends AbstractBasicTrait {
 		
 		if(Eevent.getDamager() instanceof Player){
 			Player player = (Player) Eevent.getDamager();
-			double newDmg = getDamageOfAxe(player.getItemInHand().getType());
+			double newDmg = getDamageOfAxe(player.getInventory().getItem(player.getInventory().getHeldItemSlot()).getType());
 			
 			if(newDmg != -1){
 				CompatibilityModifier.EntityDamage.safeSetDamage(newDmg, Eevent);

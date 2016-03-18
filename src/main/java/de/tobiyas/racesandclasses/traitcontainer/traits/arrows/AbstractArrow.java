@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.LazyMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
@@ -43,9 +44,9 @@ import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -59,6 +60,8 @@ import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.Compatibi
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.racesandclasses.vollotile.ParticleContainer;
+import de.tobiyas.racesandclasses.vollotile.Vollotile;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 
@@ -66,6 +69,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 	
 	protected static final String BOUND_TO_BOW_PATH = "boundToBow";
 	protected static final String INITIAL_DAMAGE_PATH = "initialDamage";
+	protected static final String ARROW_PARTICLE_PATH_PATH = "arrowParticlePath";
 	
 	
 	protected RacesAndClasses plugin = RacesAndClasses.getPlugin();
@@ -122,12 +126,18 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 	 */
 	protected String materialNameForCasting = null;
 	
+	/**
+	 * The Particles to show when following the arrow.
+	 */
+	protected ParticleContainer arrowPathParticles = null;
+	
 	
 	
 	
 	@TraitConfigurationNeeded(fields = {
 			@TraitConfigurationField(fieldName = BOUND_TO_BOW_PATH, classToExpect = Boolean.class, optional = true),
 			@TraitConfigurationField(fieldName = INITIAL_DAMAGE_PATH, classToExpect = double.class, optional = true),
+			@TraitConfigurationField(fieldName = ARROW_PARTICLE_PATH_PATH, classToExpect = ParticleContainer.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_PATH, classToExpect = Double.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.COST_TYPE_PATH, classToExpect = String.class, optional = true),
 			@TraitConfigurationField(fieldName = AbstractMagicSpellTrait.ITEM_TYPE_PATH, classToExpect = Material.class, optional = true),
@@ -143,6 +153,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 		//Bow related stuff:
 		this.boundToBow = configMap.getAsBool(BOUND_TO_BOW_PATH, true);
 		this.initialDamage = configMap.getAsDouble(INITIAL_DAMAGE_PATH, -1);
+		this.arrowPathParticles = configMap.getAsParticleContainer(ARROW_PARTICLE_PATH_PATH, null);
 		
 		
 		//Magic costs:
@@ -329,6 +340,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 			if(triggered){
 				//Do not forget to remove the Cost for spells:
 				eventWrapper.getPlayer().getSpellManager().removeCost(this);
+				addParticleTask(arrow);
 			}
 			
 			return result.setTriggered(triggered).setSetCooldownOnPositiveTrigger(triggered).setRemoveCostsAfterTrigger(triggered);
@@ -355,6 +367,27 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 		return result.setTriggered(false);
 	}
 	
+	/**
+	 * Adds a task to show particles on the Arrow.
+	 * @param arrow to show.
+	 */
+	private void addParticleTask(final Arrow arrow) {
+		if(arrow == null || this.arrowPathParticles == null) return;
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if(arrow.isDead() || !arrow.isValid() || arrow.getVelocity().lengthSquared() < 0.2){
+					this.cancel();
+					return;
+				}
+				
+				Vollotile.get().sendOwnParticleEffectToAll(arrowPathParticles, arrow.getLocation());
+			}
+		}.runTaskTimer(plugin, 2, 2);
+	}
+
+
 	/**
 	 * Changes to the next arrow.
 	 */

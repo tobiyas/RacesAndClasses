@@ -26,29 +26,11 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.playermanagement.display.Display;
-import de.tobiyas.racesandclasses.playermanagement.display.Display.DisplayInfos;
-import de.tobiyas.racesandclasses.playermanagement.display.DisplayGenerator;
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
-public class McMMOLevelManager implements PlayerLevelManager {
+public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 	
-	/**
-	 * The Playername to this levelsystem.
-	 */
-	private final RaCPlayer player;
-	
-	
-	/**
-	 * The Display to show.
-	 */
-	private Display expDisplay;
-
-	/**
-	 * The Display to show.
-	 */
-	private Display levelDisplay;
 	
 	/**
 	 * The String to calc the McMMO Level.
@@ -58,10 +40,9 @@ public class McMMOLevelManager implements PlayerLevelManager {
 	/**
 	 * Sets up the Plugin.
 	 */
-	public McMMOLevelManager(RaCPlayer player) {
-		this.player = player;
+	public McMMOLevelManager(RaCPlayer player, PlayerSavingData data) {
+		super(player, data);
 		
-		rescanDisplay();
 		calcString = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
 	}
 	
@@ -80,16 +61,6 @@ public class McMMOLevelManager implements PlayerLevelManager {
 		return 0;
 	}
 
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
-	
-
-	@Override
-	public void tick() {
-		//not needed
-	}
 
 	@Override
 	public void setCurrentLevel(int level) {
@@ -117,27 +88,6 @@ public class McMMOLevelManager implements PlayerLevelManager {
 		//nothing to do.
 	}
 
-
-	@Override
-	public void forceDisplay() {
-		if(player == null || !player.isOnline()) return;
-		
-		expDisplay.display(0, 1);
-		levelDisplay.display(getCurrentLevel(), getCurrentLevel());
-	}
-	
-	/**
-	 * This re-registers the display.
-	 * <br>Meaning to throw the old one away and generate a new one.
-	 */
-	private void rescanDisplay(){
-		if(expDisplay != null){
-			expDisplay.unregister();
-		}
-		
-		expDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL_EXP);
-		levelDisplay = DisplayGenerator.generateDisplay(player, DisplayInfos.LEVEL);
-	}
 
 	@Override
 	public boolean canRemove(int toRemove) {

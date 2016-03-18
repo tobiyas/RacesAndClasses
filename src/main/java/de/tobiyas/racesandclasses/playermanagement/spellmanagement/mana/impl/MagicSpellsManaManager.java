@@ -29,12 +29,6 @@ public class MagicSpellsManaManager extends AbstractManaManager {
 
 
 	@Override
-	public void outputManaToPlayer() {
-	}
-
-
-
-	@Override
 	public double fillMana(double value) {
 		MagicSpells.getManaHandler().addMana(racPlayer.getPlayer(), (int)value, ManaChangeReason.OTHER);
 		return getCurrentMana();

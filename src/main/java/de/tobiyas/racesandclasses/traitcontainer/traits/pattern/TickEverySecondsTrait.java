@@ -79,7 +79,7 @@ public abstract class TickEverySecondsTrait extends AbstractBasicTrait {
 	 * 
 	 * @param player to check
 	 */
-	protected void restrictionsFailed(RaCPlayer player) {}
+	protected void restrictionsFailed(RaCPlayer player) {};
 
 	/**
 	 * Is called when the Tick for the Player is on it's way.

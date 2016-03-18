@@ -20,13 +20,13 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.PlayerAction;
-import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
@@ -111,8 +111,8 @@ public class StickDamageIncreaseTrait extends AbstractPassiveTrait{
 	public boolean canBeTriggered(EventWrapper wrapper) {
 		if(wrapper.getPlayerAction() != PlayerAction.DO_DAMAGE) return false;
 		
-		RaCPlayer causer = wrapper.getPlayer(); 		
-		if(!checkItemIsStick(causer.getPlayer().getItemInHand())) return false;
+		Player player = wrapper.getPlayer().getPlayer();
+		if(!checkItemIsStick(player.getInventory().getItem(player.getInventory().getHeldItemSlot()))) return false;
 		return true;
 	}
 	

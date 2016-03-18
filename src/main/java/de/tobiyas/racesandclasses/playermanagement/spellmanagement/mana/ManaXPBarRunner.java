@@ -28,7 +28,7 @@ public class ManaXPBarRunner extends DebugBukkitRunnable implements Listener {
 
 	@Override
 	protected void runIntern() {
-		boolean use = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_magic_manaShowPlace().toLowerCase().startsWith("x");
+		boolean use = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_mana_use_xp_bar();
 		if(!use) return;
 		
 		for(Player player : PlayerUtils.getOnlinePlayers()){

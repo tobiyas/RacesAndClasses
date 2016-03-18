@@ -235,6 +235,14 @@ public class PlayerSpellManager {
 		return current;
 	}
 	
+	
+	/**
+	 * Ticks the Container.
+	 */
+	public void tick(){
+		manaManager.tick();
+	}
+	
 
 	
 	/**

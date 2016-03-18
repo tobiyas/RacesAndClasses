@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.playermanagement.display.scoreboard;
+package de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard;
 
 import org.bukkit.scheduler.BukkitTask;
 

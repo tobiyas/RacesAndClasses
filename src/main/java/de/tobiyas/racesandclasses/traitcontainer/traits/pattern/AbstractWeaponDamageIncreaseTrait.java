@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
@@ -101,7 +102,8 @@ public abstract class AbstractWeaponDamageIncreaseTrait extends AbstractPassiveT
 	@Override
 	public boolean canBeTriggered(EventWrapper wrapper) {
 		if(wrapper.getPlayerAction() != PlayerAction.DO_DAMAGE) return false;
-		if(!checkItemIsWeapon(wrapper.getPlayer().getPlayer().getItemInHand())) return false;
+		Player player = wrapper.getPlayer().getPlayer();
+		if(!checkItemIsWeapon(player.getInventory().getItem(player.getInventory().getHeldItemSlot()))) return false;
 		
 		return true;
 	}

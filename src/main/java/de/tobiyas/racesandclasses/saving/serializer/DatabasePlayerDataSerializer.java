@@ -124,10 +124,15 @@ public class DatabasePlayerDataSerializer implements PlayerDataSerializer {
 		
 		selectQueryBuilder.append(")");
 		
+		
 		//Now execute!
+		Connection connection = null;
 		Statement statement = null;
 		ResultSet result = null;
 		try{
+			//Create own connection to not block other connection.
+			connection = SQL.getSQLConnection(getProperties());
+			
 			String query = selectQueryBuilder.toString();
 			checkConnection();
 			
@@ -143,6 +148,7 @@ public class DatabasePlayerDataSerializer implements PlayerDataSerializer {
 		}finally {
 			IOUtils.closeQuietly(statement);
 			IOUtils.closeQuietly(result);
+			IOUtils.closeQuietly(connection);
 		}
 		
 		return datas;

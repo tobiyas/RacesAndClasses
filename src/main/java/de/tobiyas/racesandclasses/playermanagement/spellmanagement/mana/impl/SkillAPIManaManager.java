@@ -21,9 +21,6 @@ public class SkillAPIManaManager extends AbstractManaManager {
 	}
 	
 	
-	@Override
-	public void outputManaToPlayer() { /* handled by skill api */ }
-	
 
 	@Override
 	public double fillMana(double value) {

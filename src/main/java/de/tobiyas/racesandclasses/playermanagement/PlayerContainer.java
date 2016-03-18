@@ -22,7 +22,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.armorandtool.ArmorToolManager;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
 import de.tobiyas.racesandclasses.pets.PlayerPetManager;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.CustomPlayerLevelManager;
@@ -31,6 +30,8 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.manager.MCPlayerLeve
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.SkillAPILevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.PlayerActionBarDisplay;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
@@ -94,6 +95,11 @@ public class PlayerContainer {
 	 */
 	private final PlayerSavingData savingContainer;
 	
+	/**
+	 * The actionbar-Display to use.
+	 */
+	private final PlayerActionBarDisplay actionbarDisplay;
+	
 	
 	/**
 	 * This constructor only sets the most important stuff.
@@ -114,14 +120,15 @@ public class PlayerContainer {
 		this.playerScoreboardManager = new PlayerRaCScoreboardManager(player);
 		this.petManager = new PlayerPetManager(player);
 		this.playerSkillTreeManager = new PlayerSkillTreeManager(player, savingContainer);
+		this.actionbarDisplay = new PlayerActionBarDisplay(player);
 		
 		//choose level manager.
 		switch(plugin.getConfigManager().getGeneralConfig().getConfig_useLevelSystem()){
 			case RacesAndClasses : this.levelManager = new CustomPlayerLevelManager(player, savingContainer); break;
-			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player); break;
-			case SkillAPI : this.levelManager = new SkillAPILevelManager(player); break;
-			case mcMMO : this.levelManager = new McMMOLevelManager(player); break;
-			case Heroes : this.levelManager = new HeroesLevelManager(player); break;
+			case VanillaMC : this.levelManager = new MCPlayerLevelManager(player, savingContainer); break;
+			case SkillAPI : this.levelManager = new SkillAPILevelManager(player, savingContainer); break;
+			case mcMMO : this.levelManager = new McMMOLevelManager(player, savingContainer); break;
+			case Heroes : this.levelManager = new HeroesLevelManager(player, savingContainer); break;
 			
 			//if none found (should not happen) the RaC level manager is used.
 			default: this.levelManager = new CustomPlayerLevelManager(player, savingContainer);
@@ -157,8 +164,13 @@ public class PlayerContainer {
 	 * This ticks the Containe once per second.
 	 */
 	public void tick(){
+		//Tick the Managers:
 		levelManager.tick();
 		petManager.tick();
+		spellManager.tick();
+		
+		//Display the Displays:
+		actionbarDisplay.display();
 	}
 
 	
@@ -249,12 +261,19 @@ public class PlayerContainer {
 		return this.levelManager;
 	}
 
-
 	/**
 	 * Returns the PetManager of this player.
 	 */
 	public PlayerPetManager getPlayerPetManager() {
 		return this.petManager;
+	}
+	
+	/**
+	 * Retruns the ActionBar Display.
+	 * @return the actionbar display.
+	 */
+	public PlayerActionBarDisplay getActionbarDisplay() {
+		return actionbarDisplay;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.playermanagement.display.scoreboard;
+package de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard;
 
 import java.util.EnumMap;
 import java.util.HashMap;

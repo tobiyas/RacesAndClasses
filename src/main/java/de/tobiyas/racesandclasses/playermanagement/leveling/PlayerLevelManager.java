@@ -96,12 +96,6 @@ public interface PlayerLevelManager {
 
 
 	/**
-	 * Forces the Display to output
-	 */
-	public void forceDisplay();
-
-
-	/**
 	 * Tells if the player can be removed X exp.
 	 * 
 	 * @param toRemove to be removed later.

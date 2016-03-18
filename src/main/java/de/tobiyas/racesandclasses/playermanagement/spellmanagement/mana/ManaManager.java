@@ -11,15 +11,7 @@ public interface ManaManager {
 	 * Rescans the Player and resets the Max Mana if needed.
 	 */
 	public abstract void rescanPlayer();
-
-	/**
-	 * Displays the Mana to the Player
-	 * 
-	 * This is only displayed if the Player HAS Mana.
-	 * This means his maxMana > 0.
-	 */
-	public abstract void outputManaToPlayer();
-
+	
 	/**
 	 * A player tries to cast a spell.
 	 * Returns true if the spell may be casted.
@@ -116,5 +108,10 @@ public interface ManaManager {
 	 * @return true if filled, false otherwise.
 	 */
 	public abstract boolean isManaFull();
+	
+	/**
+	 * Ticks the Manager.
+	 */
+	public abstract void tick();
 
 }

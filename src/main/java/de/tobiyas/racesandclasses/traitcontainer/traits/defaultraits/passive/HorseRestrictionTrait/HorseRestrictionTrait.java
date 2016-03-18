@@ -123,6 +123,7 @@ public class HorseRestrictionTrait extends AbstractBasicTrait {
 	}
 
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public TraitResults trigger(EventWrapper eventWrapper) {   
 		Event event = eventWrapper.getEvent();
@@ -142,7 +143,7 @@ public class HorseRestrictionTrait extends AbstractBasicTrait {
 			
 			Player player = pieEvent.getPlayer();
 			if(!chest && pieEvent.getRightClicked().getType() == EntityType.HORSE &&
-					player.getItemInHand().getType() == Material.CHEST){
+					player.getInventory().getItem(player.getInventory().getHeldItemSlot()).getType() == Material.CHEST){
 				
 				pieEvent.setCancelled(true);
 				return TraitResults.True();
@@ -239,7 +240,7 @@ public class HorseRestrictionTrait extends AbstractBasicTrait {
 			
 			Player player = pieEvent.getPlayer();
 			if(!chest && pieEvent.getRightClicked().getType() == EntityType.HORSE &&
-					player.getItemInHand().getType() == Material.CHEST){
+					player.getInventory().getItem(player.getInventory().getHeldItemSlot()).getType() == Material.CHEST){
 				
 				return true;
 			}

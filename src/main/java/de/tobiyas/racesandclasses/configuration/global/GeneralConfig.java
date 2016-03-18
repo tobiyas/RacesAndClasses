@@ -90,6 +90,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	private boolean config_useRaceClassSelectionMatrix;
 	private boolean config_food_enabled;
 	
+	private boolean config_mana_use_xp_bar;
+	
 	
 	private boolean config_useSkillSystem;
 	private int config_skillpointEveryXLevel;
@@ -135,6 +137,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	private String config_defaultRaceName;
 	private String config_defaultRaceTag;
 	
+	private String config_actionbar_format;
+	
 	private double config_magic_sprintingManaCost;
 	private int config_magic_sprintingManaDrainInterval;
 	private boolean config_magic_manaRefillWhileSprinting;
@@ -157,7 +161,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	
 	private boolean config_disableArmorChecking;
 	
-	private boolean config_disableAllChatBars;
 	private boolean config_disableChatJoinLeaveMessages;
 	
 	private boolean config_enableRaceSpawn;
@@ -173,8 +176,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	private String config_groups_system;
 	
 	
-	private String config_magic_manaShowPlace;
-
 	private List<String> config_general_disable_aliases;
 	private boolean config_gui_level_useMCLevelBar;
 	
@@ -309,8 +310,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_scoreboard_name, "&eRaC");
 		config.addDefault(gui_enable_permanent_scoreboard, false);
-		config.addDefault(gui_disableAllChatBars, false);		
 		config.addDefault(gui_also_use_leftclick_in_guis, true);
+		config.addDefault(gui_actionbar_format, "%manabar% &eLvL: %level%  &eExp: %expbar%");
 		
 		config.addDefault(races_gui_enable, true);
 		config.addDefault(classes_gui_enable, true);
@@ -321,7 +322,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config.addDefault(magic_sprintingManaDrainInterval, 3);
 		config.addDefault(magic_sprintingManaCost, 2);
 		config.addDefault(magic_manaRefillWhileSprinting, true);
-		config.addDefault(magic_manaShowPlace, "Chat");
+		config.addDefault(magic_mana_use_xp_bar, false);
 		
 		config.addDefault(level_mapExpPerLevelCalculationString, "{level} * {level} * {level} * 1000");
 		config.addDefault(level_useLevelSystem, "RaC");
@@ -357,8 +358,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	@SuppressWarnings("deprecation")
 	public GeneralConfig reload(){
 		plugin.reloadConfig();
-		//TODO test if this works
-		//plugin.getConfig();
+		
 		YAMLConfigExtended config = new YAMLConfigExtended(new File(plugin.getDataFolder(), "config.yml")).load();
 
 		config_channels_enable = config.getBoolean(chat_channel_enable, true);
@@ -417,8 +417,9 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config_races_create_group_for_race = config.getBoolean(races_create_group_for_race, true);
 
 		config_food_enabled = config.getBoolean(food_enabled, true);
-		config_groups_enable = config.getBoolean(groups_enabled, true);
 		config_groups_system = config.getString(groups_system, "RaC");
+		
+		config_mana_use_xp_bar = config.getBoolean(magic_mana_use_xp_bar, false);
 		
 		config_disabledHotkeySlots.clear();
 		config_disabledHotkeySlots.addAll(config.getIntegerList(disabled_hotkey_slots));
@@ -430,8 +431,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config_magic_sprintingManaDrainInterval = config.getInt(magic_sprintingManaDrainInterval, 3);
 		config_max_level = config.getInt(level_max_level, -1);
 		
-		config_magic_manaShowPlace = config.getString(magic_manaShowPlace, "Chat");
-		
 		config_serializer = config.getString(serialize_serializer_to_use, "yml");
 		config_preload_data_async = config.getBoolean(serialize_preload_data_async, true);
 		config_preload_bulk_amount = config.getInt(serialize_preload_bulk_amount, 100_000);
@@ -440,7 +439,9 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config_database_db = config.getString(serialize_database_db, "rac");
 		config_database_username = config.getString(serialize_database_username, "root");
 		config_database_password = config.getString(serialize_database_password, "password");
+
 		
+		config_actionbar_format = config.getString(gui_actionbar_format, "%manabar% &eLvL: %level%  &eExp: %expbar%");
 		
 		String config_magic_outOfFightRegeneration_tmp = config.getString(magic_outOfFightRegeneration, "0#100");
 		try{
@@ -483,7 +484,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		
 		config_useAutoUpdater = config.getBoolean(updater_enableAutoUpdates, false);
 		
-		config_disableAllChatBars = config.getBoolean(gui_disableAllChatBars, false);
 		config_enableRaceTeams = config.getBoolean(race_teams_enable, false);
 		
 		config_enableRaceSpawn = config.getBoolean(race_spawns_enabled, true);
@@ -781,10 +781,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		return config_disableHealthMods;
 	}
 
-	public boolean isConfig_disableAllChatBars() {
-		return config_disableAllChatBars;
-	}
-
 	public List<String> getConfig_general_disable_commands() {
 		return config_general_disable_commands;
 	}
@@ -917,10 +913,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		return config_hotkeys_material;
 	}
 	
-	public String getConfig_magic_manaShowPlace() {
-		return config_magic_manaShowPlace;
-	}
-
 	public int getConfig_max_level() {
 		return config_max_level;
 	}
@@ -978,6 +970,14 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	
 	public int getConfig_preload_bulk_amount() {
 		return config_preload_bulk_amount;
+	}
+	
+	public String getConfig_actionbar_format() {
+		return config_actionbar_format;
+	}
+	
+	public boolean isConfig_mana_use_xp_bar() {
+		return config_mana_use_xp_bar;
 	}
 	
 }

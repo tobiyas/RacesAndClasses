@@ -1,4 +1,4 @@
-package de.tobiyas.racesandclasses.playermanagement.display.scoreboard;
+package de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.APIs.GroupAPI;
 import de.tobiyas.racesandclasses.datacontainer.arrow.ArrowManager;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerRaCScoreboardManager.SBCategory;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.MagicSpellTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;

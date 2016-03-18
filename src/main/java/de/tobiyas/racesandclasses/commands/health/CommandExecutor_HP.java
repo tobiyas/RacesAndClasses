@@ -49,8 +49,7 @@ public class CommandExecutor_HP extends AbstractCommand {
 			sender.sendMessage(LanguageAPI.translateIgnoreError(no_healthcontainer_found).build());
 		}
 		
-		racPlayer.getManaManager().outputManaToPlayer();
-		racPlayer.getLevelManager().forceDisplay();
+		sender.sendMessage("HP: " + racPlayer.getHealth() + " Mana: " + racPlayer.getManaManager().getCurrentMana());
 		return true;
 	}
 

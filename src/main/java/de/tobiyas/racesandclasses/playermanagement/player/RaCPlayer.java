@@ -20,9 +20,10 @@ import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.Cla
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.hotkeys.HotKeyInventory;
 import de.tobiyas.racesandclasses.pets.PlayerPetManager;
-import de.tobiyas.racesandclasses.playermanagement.display.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.PlayerActionBarDisplay;
+import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerRaCScoreboardManager;
 import de.tobiyas.racesandclasses.playermanagement.skilltree.PlayerSkillTreeManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.PlayerSpellManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
@@ -184,6 +185,14 @@ public class RaCPlayer extends PlayerProxy {
 	 */
 	public PlayerSpellManager getSpellManager(){
 		return plugin.getPlayerManager().getContainer(this).getSpellManager();
+	}
+	
+	/**
+	 * Returns the Spellmanager of the Player
+	 * @return the Actionbar Manager.
+	 */
+	public PlayerActionBarDisplay getActionbarDisplay(){
+		return plugin.getPlayerManager().getContainer(this).getActionbarDisplay();
 	}
 	
 	/**

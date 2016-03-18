@@ -20,15 +20,10 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerLostEXPEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.leveling.PlayerReceiveEXPEvent;
-import de.tobiyas.racesandclasses.playermanagement.leveling.PlayerLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 
-public class MCPlayerLevelManager implements PlayerLevelManager{
-
-	/**
-	 * The Player this level Manager is belonging to.
-	 */
-	private final RaCPlayer player;
+public class MCPlayerLevelManager extends AbstractPlayerLevelingSystem {
 	
 	
 	/**
@@ -37,8 +32,8 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 * @param player to create for
 	 * @param savingContainer 
 	 */
-	public MCPlayerLevelManager(RaCPlayer player) {
-		this.player = player;
+	public MCPlayerLevelManager(RaCPlayer player, PlayerSavingData data) {
+		super(player, data);
 	}
 	
 	
@@ -52,16 +47,6 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 		return (int) (getRealPlayer().getExp() * getRealPlayer().getExpToLevel());
 	}
 
-	@Override
-	public RaCPlayer getPlayer() {
-		return player;
-	}
-	
-
-	@Override
-	public void tick() {
-		//not needed
-	}
 
 	@Override
 	public void setCurrentLevel(int level) {
@@ -118,8 +103,6 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	public void checkLevelChanged() {
 	}
 
-
-	
 	/**
 	 * Returns the Player associated with this container.
 	 * 
@@ -127,12 +110,6 @@ public class MCPlayerLevelManager implements PlayerLevelManager{
 	 */
 	private Player getRealPlayer(){
 		return player.getPlayer();
-	}
-
-
-	@Override
-	public void forceDisplay() {
-		//we have no display to force... The EXP bar is our display.
 	}
 
 

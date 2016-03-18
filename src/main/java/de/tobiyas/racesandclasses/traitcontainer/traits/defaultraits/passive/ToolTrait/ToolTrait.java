@@ -24,6 +24,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
@@ -116,7 +117,8 @@ public class ToolTrait extends AbstractPassiveTrait{
 	public TraitResults trigger(EventWrapper eventWrapper) {   
 		ItemStack interactingWith = null;
 
-		if(eventWrapper.getPlayer() != null) interactingWith = eventWrapper.getPlayer().getPlayer().getItemInHand();
+		PlayerInventory inv = eventWrapper.getPlayer().getInventory();
+		if(eventWrapper.getPlayer() != null) interactingWith = inv.getItem(inv.getHeldItemSlot());
 		if(interactingWith == null) return TraitResults.False();
 		
 		if(isOnForbidList(interactingWith)) {
