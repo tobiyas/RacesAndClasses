@@ -252,7 +252,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 		String costTypeString = getCostType().name();
 		if(getCostType() == CostType.ITEM){
 			costTypeString = MCPrettyName.getPrettyName(
-					getCastMaterialType(),
+					getCastMaterialType(wrapper.getPlayer()),
 					(short) 0,
 					MCPrettyName.EN);
 		}
@@ -349,7 +349,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			
 			String costName = formatter.format(nextSpell.getCost(player));
 			String costTypeString = nextSpell.getCostType() == CostType.ITEM 
-							? nextSpell.getCastMaterialType().name() 
+							? nextSpell.getCastMaterialType(player).name() 
 							: nextSpell.getCostType().name();
 			String newSpellName = ((Trait)nextSpell).getDisplayName();
 							
@@ -420,7 +420,8 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 
 	@Override
 	public double getCost(RaCPlayer player){
-		return modifyToPlayer(player, cost, "cost");
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastCostForLevel(level, modifyToPlayer(player, cost, "cost"));
 	}
 
 	
@@ -431,18 +432,21 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 
 
 	@Override
-	public Material getCastMaterialType() {
-		return materialForCasting;
+	public Material getCastMaterialType(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialForLevel(level, this.materialForCasting);
 	}
 	
 	@Override
-	public byte getCastMaterialDamage() {
-		return materialDamageForCasting;
+	public short getCastMaterialDamage(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialDamageForLevel(level, this.materialDamageForCasting);
 	}
 	
 	@Override
-	public String getCastMaterialName() {
-		return materialNameForCasting;
+	public String getCastMaterialName(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialNameForLevel(level, this.materialNameForCasting);
 	}
 
 	@Override

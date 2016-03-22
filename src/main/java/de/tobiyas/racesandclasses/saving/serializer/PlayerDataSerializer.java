@@ -91,7 +91,8 @@ public interface PlayerDataSerializer {
 	
 	enum DataSerializerType {
 		YAML,
-		DATABASE
+		DATABASE, 
+		DISABLED
 	}
 
 

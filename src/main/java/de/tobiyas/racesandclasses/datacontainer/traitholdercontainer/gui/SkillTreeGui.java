@@ -65,6 +65,11 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	 * the temp free points to remove.
 	 */
 	private int tempFreePointsToRemove = 0;
+	
+	/**
+	 * If something changed.
+	 */
+	private boolean somethingChanged = false;
 
 	
 	
@@ -98,6 +103,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		
 		Collection<Trait> allTraits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
 		Collection<Trait> permanent = getPermanent(allTraits);
+		permanent = filterForExclusions(allTraits);
 		
 		//Now generate items and populate!
 		for(Trait trait : allTraits){
@@ -106,6 +112,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 			
 			//Do not display items that are permanent or below 0.
 			if(slot < 0 || isPermanent) continue;
+			
 			//Filter items that are outside of the Box.
 			if(slot >= getTopInventory().getSize()) continue;
 			
@@ -119,11 +126,11 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		
 		
 		getTopInventory().setItem(8, generateFreeItem(freePoints, level));
-		getTopInventory().setItem((9*5)+8, applyItem);
+		if(somethingChanged) getTopInventory().setItem((9*5)+8, applyItem);
 		getTopInventory().setItem((9*5)+7, discardItem);
 	}
 	
-	
+
 	/**
 	 * Generates an Item for the Trait.
 	 * @param trait to use.
@@ -139,10 +146,14 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		int traitLevelNeeded = trait.getSkillMinLevel(playerSkillLevel+1);
 		boolean playerHasLevel = playerLevel >= traitLevelNeeded;
 		
+		String excluded = getForExcusions(trait, traitsHasWithLevels);
+		boolean isExcluded = !excluded.isEmpty();
+		
 		boolean hasPoints = freePoints >= trait.getSkillPointCost(playerSkillLevel+1);
 		boolean hasPrequisits = hasPrequisits(trait, traitsHasWithLevels);
-		boolean canUse = hasPoints && hasPrequisits && playerHasLevel;
-		String title = (playerHasMaxLevel ? ChatColor.BLUE : (canUse ? ChatColor.GREEN : ChatColor.DARK_RED )) + trait.getDisplayName() + " (" + playerSkillLevel + "/" + maxSkillLevel + ")";
+		boolean canUse = hasPoints && hasPrequisits && playerHasLevel && !isExcluded;
+		ChatColor titleColor = playerHasMaxLevel ? ChatColor.BLUE : (canUse ? ChatColor.GREEN : ChatColor.DARK_RED );
+		String title = titleColor + trait.getDisplayName() + " (" + playerSkillLevel + "/" + maxSkillLevel + ")";
 		String levelString = (playerHasLevel ? ChatColor.GREEN : ChatColor.RED) + "Needs level: " + traitLevelNeeded;
 		String pointsString = (hasPoints ? ChatColor.GREEN : ChatColor.RED) + "Needs: " + trait.getSkillPointCost(playerSkillLevel+1) + " Points";
 		String prequisitString = trait.getSkillTreePrequisits(playerSkillLevel+1).isEmpty() ? "" : (ChatColor.YELLOW + "Prequisits: " + generatePrequisitString(trait, traitsHasWithLevels));
@@ -155,6 +166,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 			lore.add(pointsString);
 			lore.add(levelString);
 			if(!prequisitString.isEmpty()) lore.add(prequisitString);
+			if(isExcluded) lore.add(ChatColor.DARK_RED + "Excluded by: " + ChatColor.RED + excluded);
 		}
 		
 		ItemStack item = trait.getSkillTreeSymbol();
@@ -174,6 +186,28 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		return item;
 	}
 	
+	/**
+	 * Gets the Trait/s for Exclusions.
+	 * @param trait to use
+	 * @param traitsHasWithLevels to use
+	 * @return the trait for exclusions or empty if none..
+	 */
+	private String getForExcusions(Trait trait, Map<Trait, Integer> traitsHasWithLevels) {
+		StringBuilder builder = new StringBuilder();
+		for(Map.Entry<Trait,Integer> entry : traitsHasWithLevels.entrySet()){
+			if(entry.getValue() <= 0) continue;
+			
+			//Found an exclusion!
+			if(entry.getKey().getExcludesOtherTraits().contains(trait)){
+				if(builder.length() != 0) builder.append(", ");
+				builder.append(entry.getKey().getDisplayName());
+			}
+		}
+		
+		return builder.toString();
+	}
+
+
 	private String generatePrequisitString(Trait trait, Map<Trait,Integer> traitsHas){
 		int playerSkillLevel = traitsHas.containsKey(trait) ? traitsHas.get(trait) : 0;
 		StringBuilder builder = new StringBuilder();
@@ -235,6 +269,23 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		return item;
 	}
 
+	
+	/**
+	 * Filters for the Exclusions
+	 * @param allTraits to filter.
+	 * @return the rest of the Traits.
+	 */
+	private Collection<Trait> filterForExclusions(Collection<Trait> allTraits) {
+		Collection<Trait> filtered = new HashSet<>(allTraits);
+		for(Trait contained : allTraits){
+			boolean hasSkilled = racPlayer.getSkillTreeManager().getLevel(contained) > 0;
+			if(hasSkilled) filtered.removeAll(contained.getExcludesOtherTraits());
+		}
+		
+		return filtered;
+	}
+
+	
 
 	/**
 	 * Returns all Permanent Traits:
@@ -311,6 +362,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		//Seems like the player wants to learn the Trait:
 		this.toApply.put(trait, playerTraitLevel+1);
 		this.tempFreePointsToRemove += trait.getSkillPointCost(playerTraitLevel+1);
+		this.somethingChanged = true;
 		
 		redraw();
 	}
@@ -322,6 +374,8 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		this.toApply.clear();
 		this.toApply.putAll(racPlayer.getSkillTreeManager().getTraitsWithLevels());
 		this.tempFreePointsToRemove = 0;
+
+		this.somethingChanged = false;
 		redraw();
 	}
 
@@ -333,14 +387,13 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		this.close();
 		
 		PlayerSkillTreeManager manager = racPlayer.getSkillTreeManager();
-		for(Map.Entry<Trait,Integer> entry : toApply.entrySet()) {
-			manager.setTraitLevel(entry.getKey(), entry.getValue());
-		}
+		manager.replaceWithNew(toApply);
 		
 		//Rescan after:
 		racPlayer.getArrowManager().rescanPlayer();
 		racPlayer.getSpellManager().rescan();
 		
+		this.somethingChanged = false;
 		player.sendMessage(ChatColor.GREEN + "Changes applied.");
 	}
 

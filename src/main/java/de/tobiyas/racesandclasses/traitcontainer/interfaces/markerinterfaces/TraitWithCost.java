@@ -30,23 +30,26 @@ public interface TraitWithCost {
 	/**
 	 * returns the Material Type of CostType.
 	 * <br> Returns null if no Material costType is needed
+	 * @param player to use for getting.
 	 * 
 	 * @return the material for casting.
 	 */
-	Material getCastMaterialType();
+	Material getCastMaterialType(RaCPlayer player);
 	
 	
 	/**
 	 * returns the Material damage for casting.
+	 * @param player to search for.
 	 * @return the material damage value for casting.
 	 */
-	byte getCastMaterialDamage();
+	short getCastMaterialDamage(RaCPlayer player);
 	
 	/**
 	 * returns the name of the casting material.
+	 * @param player to search for.
 	 * @return the material name for casting.
 	 */
-	String getCastMaterialName();
+	String getCastMaterialName(RaCPlayer player);
 	
 	/**
 	 * triggered when the spell should be triggered, but no CostType is present.

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.saving.serializer.DatabasePlayerDataSerializer;
+import de.tobiyas.racesandclasses.saving.serializer.DisabledDataSerializer;
 import de.tobiyas.racesandclasses.saving.serializer.PlayerDataSerializer;
 import de.tobiyas.racesandclasses.saving.serializer.PlayerDataSerializer.DataSerializerType;
 import de.tobiyas.racesandclasses.saving.serializer.YAMLPlayerDataSerializer;
@@ -96,7 +97,8 @@ public class PlayerSavingManager implements PlayerDataSerializer.PlayerDataLoade
 		
 		name = name.toLowerCase();
 		if(name.startsWith("y") || name.startsWith("f")) return DataSerializerType.YAML;
-		if(name.startsWith("d")) return DataSerializerType.DATABASE;
+		if(name.startsWith("o") || name.startsWith("di")) return DataSerializerType.DISABLED;
+		if(name.startsWith("da") || name.startsWith("my") || name.startsWith("sql")) return DataSerializerType.DATABASE;
 		
 		return DataSerializerType.YAML;
 	}
@@ -110,6 +112,7 @@ public class PlayerSavingManager implements PlayerDataSerializer.PlayerDataLoade
 		PlayerDataSerializer serializer = null;
 		switch(type){
 			case DATABASE : serializer = new DatabasePlayerDataSerializer(plugin); break;
+			case DISABLED : serializer = new DisabledDataSerializer(); break;
 			
 			case YAML :
 			default : serializer = new YAMLPlayerDataSerializer(plugin); break;

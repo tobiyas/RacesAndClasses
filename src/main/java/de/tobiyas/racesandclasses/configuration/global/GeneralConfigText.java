@@ -410,9 +410,11 @@ public class GeneralConfigText {
 			+ "###############\n"
 			+ "\n"
 	
-			+ "# This tells the Plugin which kind of Serializer to use. \n"
-			+ "# Serializers are YML (files) or database.\n"
-			+ "# String: yml or database\n"
+			+ "# This tells the Plugin which kind of Serializer to use.\n"
+			+ "# Database uses the database defined below. YML uses yml files.\n"
+			+ "# Disabled uses NO saving system.\n"
+			+ "# Serializers are YML (files) or database or disabled.\n"
+			+ "# String: yml or database or disabled\n"
 			+ "# default: yml \n"
 			+ serialize_serializer_to_use + ": 'yml'\n\n"
 			

@@ -68,12 +68,12 @@ public class NoMagicTrait extends AbstractMagicSpellTrait {
 	}
 
 	@Override
-	public byte getCastMaterialDamage() {
+	public short getCastMaterialDamage(RaCPlayer player) {
 		return 0;
 	}
 
 	@Override
-	public String getCastMaterialName() {
+	public String getCastMaterialName(RaCPlayer player) {
 		return null;
 	}
 

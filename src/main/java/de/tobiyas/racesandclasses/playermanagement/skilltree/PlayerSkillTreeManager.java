@@ -143,5 +143,17 @@ public class PlayerSkillTreeManager {
 		this.presentTraits.clear();
 		data.clearSkilltree();
 	}
+
+
+	/**
+	 * Replaces the current skills with the new ones passed.
+	 * @param toApply the map to apply.
+	 */
+	public void replaceWithNew(Map<Trait, Integer> toApply) {
+		this.presentTraits.clear();
+		
+		if(toApply != null && !toApply.isEmpty()) this.presentTraits.putAll(toApply);
+		save();
+	}
 	
 }

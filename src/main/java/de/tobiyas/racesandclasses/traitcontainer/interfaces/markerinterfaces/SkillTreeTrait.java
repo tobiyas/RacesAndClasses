@@ -10,7 +10,7 @@ public interface SkillTreeTrait {
 	/**
 	 * The cost for SkillPoints
 	 */
-	public static final String SKILL_LEVELS_PRE_PATH = "skillLevelsPre";
+	public static final String SKILL_LEVELS_CONFIG_PATH = "skillLevelsConfig";
 	
 	/**
 	 * The MAX-Level for a Skill.

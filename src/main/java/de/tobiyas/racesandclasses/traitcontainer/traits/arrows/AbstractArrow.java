@@ -536,29 +536,35 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 	}
 	
 	@Override
-	public byte getCastMaterialDamage() {
-		return materialDamageForCasting;
+	public double getCost(RaCPlayer player){
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastCostForLevel(level, modifyToPlayer(player, cost, "cost"));
 	}
 	
 	@Override
-	public String getCastMaterialName() {
-		return materialNameForCasting;
-	}
-	
-	@Override
-	public Material getCastMaterialType() {
-		return materialForCasting;
-	}
-	
-	@Override
-	public CostType getCostType() {
+	public CostType getCostType(){
 		return costType;
 	}
+
+
+	@Override
+	public Material getCastMaterialType(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialForLevel(level, this.materialForCasting);
+	}
 	
 	@Override
-	public double getCost(RaCPlayer player) {
-		return modifyToPlayer(player, this.cost, "cost");
+	public short getCastMaterialDamage(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialDamageForLevel(level, this.materialDamageForCasting);
 	}
+	
+	@Override
+	public String getCastMaterialName(RaCPlayer player) {
+		int level = player.getLevelManager().getCurrentLevel();
+		return this.skillConfig.getCastMaterialNameForLevel(level, this.materialNameForCasting);
+	}
+
 	
 	@Override
 	public void triggerButDoesNotHaveEnoghCostType(EventWrapper wrapper) {}

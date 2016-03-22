@@ -53,7 +53,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configur
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitRestriction;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
-import de.tobiyas.racesandclasses.traitcontainer.interfaces.skills.SkillLevelPrequisits;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.skills.SkillLevelConfig;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.ModifierFactory;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.TraitSituationModifier;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
@@ -63,8 +63,6 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
 import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
 
 public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions, Listener {
-
-	
 	
 	/**
 	 * The Path to modifiers depending on the levels.
@@ -260,9 +258,9 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	protected final Set<TraitSituationModifier> modifiers = new HashSet<>();
 	
 	/**
-	 * The cost for this skill.
+	 * The Skill level config.
 	 */
-	protected final SkillLevelPrequisits skillPrequisits = new SkillLevelPrequisits();
+	protected final SkillLevelConfig skillConfig = new SkillLevelConfig();
 	
 	/**
 	 * The max level for the Skill.
@@ -337,7 +335,8 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		@TraitConfigurationField(fieldName = ON_USE_PARTICLES_PATH, classToExpect = String.class, optional = true),
 		@TraitConfigurationField(fieldName = VISIBLE_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = REPLACES_OTHER_TRAITS_PATH, classToExpect = List.class, optional = true),
-		@TraitConfigurationField(fieldName = SKILL_LEVELS_PRE_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_LEVELS_CONFIG_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = "skillLevelsPre", classToExpect = List.class, optional = true), //Deprication!
 		@TraitConfigurationField(fieldName = SKILL_TREE_PERMANENT_TRAIT_PATH, classToExpect = Boolean.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_SLOT_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MATERIAL_PATH, classToExpect = Material.class, optional = true),
@@ -365,7 +364,10 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		this.belowElevation = configMap.getAsInt(BELOW_ELEVATION_PATH, Integer.MAX_VALUE);
 		this.skillTreeSlot = configMap.getAsInt(SKILL_TREE_SLOT_PATH, -1);
 		this.skillTreeMaxLevel = configMap.getAsInt(SKILL_TREE_MAX_LEVEL_PATH, 1);
-		this.skillPrequisits.parse(configMap.getAsStringList(SKILL_LEVELS_PRE_PATH));
+		
+		//Backwards compability:
+		if(configMap.containsKey("skillLevelsPre")) this.skillConfig.parse(configMap.getAsStringList("skillLevelsPre"));
+		else this.skillConfig.parse(configMap.getAsStringList(SKILL_LEVELS_CONFIG_PATH));
 
 		
 		this.permanentSkill = configMap.getAsBool(SKILL_TREE_PERMANENT_TRAIT_PATH, true);
@@ -1038,12 +1040,12 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	
 	@Override
 	public int getSkillPointCost(int level) {
-		return skillPrequisits.getPointsForLevel(level);
+		return skillConfig.getPointsForLevel(level);
 	}
 	
 	@Override
 	public int getSkillMinLevel(int level) {
-		return skillPrequisits.getMinLevel(level);
+		return skillConfig.getMinLevel(level);
 	}
 	
 	@Override
@@ -1068,7 +1070,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	
 	@Override
 	public List<String> getSkillTreePrequisits(int level) {
-		return skillPrequisits.getTraitPreForLevel(level);
+		return skillConfig.getTraitPreForLevel(level);
 	}
 	
 	@Override

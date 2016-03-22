@@ -258,7 +258,7 @@ public class PlayerSpellManager {
 		switch(trait.getCostType()){
 			case HEALTH: return player.getHealth() > cost;
 			case MANA: return getManaManager().hasEnoughMana(cost);
-			case ITEM: return playerHasItem(trait.getCastMaterialType(), trait.getCastMaterialDamage(), trait.getCastMaterialName(), (int)cost);
+			case ITEM: return playerHasItem(trait.getCastMaterialType(player), trait.getCastMaterialDamage(player), trait.getCastMaterialName(player), (int)cost);
 			case HUNGER : return player.getPlayer().getFoodLevel() >= cost;
 			case EXP : return player.getLevelManager().canRemove((int)cost);
 			default: return false;
@@ -272,7 +272,7 @@ public class PlayerSpellManager {
 	 * @param name to check
 	 * @return true if has.
 	 */
-	private boolean playerHasItem(Material material, byte damage, String name, int amount){
+	private boolean playerHasItem(Material material, short damage, String name, int amount){
 		if(!player.isOnline()) return false;
 		if(name != null) name = ChatColor.stripColor(name);
 		
@@ -312,7 +312,7 @@ public class PlayerSpellManager {
 	 * @param name to check
 	 * @param amount to remove
 	 */
-	private void removeItem(Material material, byte damage, String name, int amount){
+	private void removeItem(Material material, short damage, String name, int amount){
 		if(!player.isOnline()) return;
 		if(name != null) name = ChatColor.stripColor(name);
 		
@@ -358,7 +358,7 @@ public class PlayerSpellManager {
 		switch(trait.getCostType()){
 			case HEALTH: player.getHealthManager().damage(cost);break;
 			case MANA: getManaManager().drownMana(cost); break;
-			case ITEM: removeItem(trait.getCastMaterialType(), trait.getCastMaterialDamage(), trait.getCastMaterialName(), (int)cost); break;
+			case ITEM: removeItem(trait.getCastMaterialType(player), trait.getCastMaterialDamage(player), trait.getCastMaterialName(player), (int)cost); break;
 			case HUNGER: 
 				int oldFoodLevel = player.getPlayer().getFoodLevel();
 				int newFoodLevel = (int) (oldFoodLevel - cost);

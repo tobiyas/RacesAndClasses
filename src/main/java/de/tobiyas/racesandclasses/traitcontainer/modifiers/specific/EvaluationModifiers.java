@@ -16,7 +16,7 @@ import de.tobiyas.util.evaluations.parts.Calculation;
 public class EvaluationModifiers extends AbstractModifier {
 	
 	/**
-	 * the calculation to use.
+	 * The calculation to use.
 	 */
 	private Calculation calculation;
 	

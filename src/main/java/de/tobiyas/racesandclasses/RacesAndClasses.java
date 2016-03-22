@@ -61,6 +61,7 @@ import de.tobiyas.racesandclasses.playermanagement.PlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerScoreboardUpdater;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaXPBarRunner;
 import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
+import de.tobiyas.racesandclasses.saving.dataconverter.PlayerDataConverter;
 import de.tobiyas.racesandclasses.statistics.StartupStatisticCategory;
 import de.tobiyas.racesandclasses.statistics.StatisticGatherer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
@@ -288,6 +289,8 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		long currentTime = System.currentTimeMillis();
 		
 		setupConfiguration();
+		//Start DB converting here:
+		PlayerDataConverter.checkForConvertAndConvert();
 		PlayerSavingManager.reload();
 		
 		ConfigTotal.timeInMiliSeconds = System.currentTimeMillis() - currentTime;
