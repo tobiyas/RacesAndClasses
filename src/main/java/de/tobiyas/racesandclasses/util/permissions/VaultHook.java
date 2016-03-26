@@ -44,7 +44,6 @@ public class VaultHook extends Permission implements Listener {
 		}
 		
 		sm.register(Permission.class, this, plugin, ServicePriority.Highest);
-		//System.out.println("Registering Permission provider.");
 	}
 	
 	@EventHandler
@@ -82,7 +81,6 @@ public class VaultHook extends Permission implements Listener {
 
 	private void getVaultRegsterLater() {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			
 			@Override
 			public void run() {
 				getVaultRegister();
@@ -102,43 +100,43 @@ public class VaultHook extends Permission implements Listener {
 	
 	@Override
 	public String[] getGroups() {
-		if(hooked == null) return new String[]{};
+		if(hooked == null || !hooked.hasGroupSupport()) return new String[]{};
 		return hooked.getGroups();
 	}
 
 	@Override
 	public String getName() {
-		if(hooked == null) return "";
+		if(hooked == null || !hooked.hasGroupSupport()) return "";
 		return hooked.getName();
 	}
 
 	@Override
 	public String[] getPlayerGroups(String world, String playerName) {
-		if(hooked == null) return new String[]{};
+		if(hooked == null || !hooked.hasGroupSupport()) return new String[]{};
 		return hooked.getPlayerGroups(world, playerName);
 	}
 
 	@Override
 	public String getPrimaryGroup(String arg0, String arg1) {
-		if(hooked == null) return "";
+		if(hooked == null || !hooked.hasGroupSupport()) return "";
 		return hooked.getPrimaryGroup(arg0, arg1);
 	}
 
 	@Override
 	public boolean groupAdd(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.groupAdd(arg0, arg1, arg2);
 	}
 
 	@Override
 	public boolean groupHas(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.groupHas(arg0, arg1, arg2);
 	}
 
 	@Override
 	public boolean groupRemove(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.groupRemove(arg0, arg1, arg2);
 	}
 
@@ -162,13 +160,13 @@ public class VaultHook extends Permission implements Listener {
 
 	@Override
 	public boolean playerAdd(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.playerAdd(arg0, arg1, arg2);
 	}
 
 	@Override
 	public boolean playerAddGroup(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.playerAddGroup(arg0, arg1, arg2);
 	}
 
@@ -186,7 +184,7 @@ public class VaultHook extends Permission implements Listener {
 
 	@Override
 	public boolean playerInGroup(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.playerInGroup(arg0, arg1, arg2);
 	}
 
@@ -198,7 +196,7 @@ public class VaultHook extends Permission implements Listener {
 
 	@Override
 	public boolean playerRemoveGroup(String arg0, String arg1, String arg2) {
-		if(hooked == null) return false;
+		if(hooked == null || !hooked.hasGroupSupport()) return false;
 		return hooked.playerRemoveGroup(arg0, arg1, arg2);
 	}
 	

@@ -636,13 +636,6 @@ public class GeneralConfigText {
 				+ "# default: [] \n"
 				+ npc_select_race + ": []\n\n"
 
-				+ "# The NPCs to open the GUI for Race Change Selection. \n"
-				+ "# NPC names have to be the real names of the NPCs.\n"
-				+ "# The Gui will open even if the GUI is disabled in Race Secion.\n"
-				+ "# String List: a list of NPC names.\n"
-				+ "# default: [] \n"
-				+ npc_change_race + ": []\n\n"
-
 				+ "# The NPCs to open the GUI for Class Selection. \n"
 				+ "# NPC names have to be the real names of the NPCs.\n"
 				+ "# The Gui will open even if the GUI is disabled in Class Secion.\n"

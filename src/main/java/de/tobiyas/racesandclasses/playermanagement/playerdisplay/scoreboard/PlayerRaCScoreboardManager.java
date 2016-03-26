@@ -173,10 +173,13 @@ public class PlayerRaCScoreboardManager {
 	 * @return the shortened Key.
 	 */
 	private String shortenKey(String key){
-		if(key.length() > 16 
-				&& !VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
-			
+		MCVersion version = VollotileCodeManager.getVollotileCode().getVersion();
+		if(key.length() > 16 && !version.isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
 			key = key.substring(0,16);
+		}
+		
+		if(key.length() > 40 && version.isVersionGreaterOrEqual(MCVersion.v1_8_R1)){
+			key = key.substring(0, 39);
 		}
 		
 		return key;
