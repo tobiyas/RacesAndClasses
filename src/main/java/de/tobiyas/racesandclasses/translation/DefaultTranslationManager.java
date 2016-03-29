@@ -99,7 +99,7 @@ public class DefaultTranslationManager implements TranslationManager {
 			}
 		}
 		
-		return "";
+		return null;
 	}
 	
 
@@ -154,7 +154,7 @@ public class DefaultTranslationManager implements TranslationManager {
 	private Translator trySTDTranslate(String tag) throws TranslationNotFoundException{
 		String translation = readFromYAMLList(stdLanguageFiles, tag);
 		
-		if("".equals(translation)){
+		if(translation == null){
 			throw new TranslationNotFoundException(stdLanguage, tag);
 		}else{
 			return new Translator(translation);
@@ -172,7 +172,7 @@ public class DefaultTranslationManager implements TranslationManager {
 	private Translator tryPreferedTranslate(String tag) throws TranslationNotFoundException{
 		String translation = readFromYAMLList(languageConfiguration, tag);
 		
-		if("".equals(translation)){
+		if(translation == null){
 			throw new TranslationNotFoundException(getCurrentLanguage(), tag);
 		}else{
 			return new Translator(translation);

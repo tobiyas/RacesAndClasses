@@ -61,6 +61,35 @@ public abstract class PlayerProxy implements Player {
 	 * Returns the Player
 	 */
 	public abstract Player getRealPlayer();
+
+	
+
+	
+	public void setAI(boolean ai) {
+		getRealPlayer().setAI(ai);
+	}
+	
+	public void setCollidable(boolean collidable) {
+		getRealPlayer().setCollidable(collidable);
+	}
+	
+	public void setInvulnerable(boolean flag) {
+		getRealPlayer().setInvulnerable(flag);
+	}
+	
+	public boolean isCollidable() {
+		return getRealPlayer().isCollidable();
+	}
+	
+	public boolean isInvulnerable() {
+		return getRealPlayer().isInvulnerable();
+	}
+	
+	public boolean hasAI() {
+		return getRealPlayer().hasAI();
+	}
+	
+	
 	
 
 	@Override
