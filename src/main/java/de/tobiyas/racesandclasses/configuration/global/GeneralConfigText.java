@@ -459,7 +459,19 @@ public class GeneralConfigText {
 			+ "# Serializers  only works with database.\n"
 			+ "# String: Password to use\n"
 			+ "# default: password \n"
-			+ serialize_database_password + ": 'password'\n\n";
+			+ serialize_database_password + ": 'password'\n\n"
+		
+			+ "# This tells the plugin to convert old data to the new Saving system. \n"
+			+ "# Works only for YML data.\n"
+			+ "# Boolean: true or false\n"
+			+ "# default: true \n"
+			+ serialize_convert + ": true\n\n"
+		
+			+ "# This tells the plugin to convert yml data to db data or other way around, if present. \n"
+			+ "# WARNING: This may take some serious time!.\n"
+			+ "# Boolean: true or false\n"
+			+ "# default: false \n"
+			+ serialize_convert_to_DB_or_file + ": false\n\n";
 	}
 	
 	

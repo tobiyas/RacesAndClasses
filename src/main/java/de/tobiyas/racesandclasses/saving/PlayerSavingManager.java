@@ -118,7 +118,11 @@ public class PlayerSavingManager implements PlayerDataSerializer.PlayerDataLoade
 			default : serializer = new YAMLPlayerDataSerializer(plugin); break;
 		}
 		
-		if(serializer == null || !serializer.isFunctional()) serializer = new YAMLPlayerDataSerializer(plugin);
+		if(serializer == null || !serializer.isFunctional()){
+			if(type == DataSerializerType.DATABASE) RacesAndClasses.getPlugin().logWarning("Could not establish DB-Connection! Switching to YML files!");
+			serializer = new YAMLPlayerDataSerializer(plugin);
+			
+		}
 		return serializer;
 	}
 	

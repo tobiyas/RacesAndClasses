@@ -99,6 +99,8 @@ public class GeneralConfigFields {
 	public static final String serialize_database_db = "serialize_database_db";
 	public static final String serialize_database_username = "serialize_database_username";
 	public static final String serialize_database_password = "serialize_database_password";
+	public static final String serialize_convert = "serialize_convert";
+	public static final String serialize_convert_to_DB_or_file = "serialize_convert_to_DB_or_file";
 	
 	
 	//GUI

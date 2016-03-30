@@ -90,6 +90,10 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	private boolean config_useRaceClassSelectionMatrix;
 	private boolean config_food_enabled;
 	
+	
+	private boolean config_convert;
+	private boolean config_convert_toDB_orFile;
+	
 	private boolean config_mana_use_xp_bar;
 	
 	
@@ -306,6 +310,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config.addDefault(serialize_database_db, "RaC");
 		config.addDefault(serialize_database_username, "username");
 		config.addDefault(serialize_database_password, "password");
+		config.addDefault(serialize_convert, true);
+		config.addDefault(serialize_convert_to_DB_or_file, false);
 		
 		config.addDefault(gui_scoreboard_disableAllOutputs, false);
 		config.addDefault(gui_scoreboard_name, "&eRaC");
@@ -439,6 +445,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config_database_db = config.getString(serialize_database_db, "rac");
 		config_database_username = config.getString(serialize_database_username, "root");
 		config_database_password = config.getString(serialize_database_password, "password");
+		config_convert = config.getBoolean(serialize_convert, true);
+		config_convert_toDB_orFile = config.getBoolean(serialize_convert_to_DB_or_file, false);
 
 		
 		config_actionbar_format = config.getString(gui_actionbar_format, "%manabar% &eLvL: %level%  &eExp: %expbar%");
@@ -978,6 +986,14 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	
 	public boolean isConfig_mana_use_xp_bar() {
 		return config_mana_use_xp_bar;
+	}
+	
+	public boolean isConfig_convert() {
+		return config_convert;
+	}
+	
+	public boolean isConfig_convert_toDB_orFile() {
+		return config_convert_toDB_orFile;
 	}
 	
 }

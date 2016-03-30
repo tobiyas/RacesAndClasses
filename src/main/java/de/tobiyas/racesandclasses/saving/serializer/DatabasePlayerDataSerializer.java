@@ -46,8 +46,14 @@ public class DatabasePlayerDataSerializer implements PlayerDataSerializer {
 		boolean sync = RacesAndClasses.isBukkitInShutdownMode();
 		saveData(data, sync);
 	}
+
 	
-	private void saveData(final PlayerSavingData data, boolean sync){
+	/**
+	 * Saves the Data. Either sync or async.
+	 * @param data to save.
+	 * @param sync if sync or async.
+	 */
+	public void saveData(final PlayerSavingData data, boolean sync){
 		BukkitRunnable runnable = new DebugBukkitRunnable("LoadRaCData") {
 			@Override
 			protected void runIntern() {
@@ -305,11 +311,7 @@ public class DatabasePlayerDataSerializer implements PlayerDataSerializer {
 			if(connection == null) return false;
 			
 			boolean reachable = SQL.checkDBIsReachable(props);
-			if(!reachable){
-				RacesAndClasses.getPlugin().logWarning("Could not establish DB-Connection! Switching to YML files!");
-				System.out.println("Props: " + props.serverName + ":" + props.serverPort + " - " + props.serverDB + " U:" + props.userName + " P:" + props.password);
-				return false;
-			}
+			if(!reachable) return false;
 			
 			//Create the Table if not exist:
 			String sqlCommand = "CREATE TABLE " 
