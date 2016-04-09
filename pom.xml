@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>RacesAndClasses</artifactId>
-	<version>1.1.11-SNAPSHOT</version>
+	<version>1.1.12-SNAPSHOT</version>
 	<name>RacesAndClasses</name>
 	<description>Races and Classes plugin for Craftbukkit</description>
 
@@ -173,13 +173,14 @@
 		<dependency>
 		  <groupId>be.maximvdw</groupId>
 		  <artifactId>MVdWPlaceholderAPI</artifactId>
-		  <version>1.0.1-SNAPSHOT</version>
+		  <version>1.0.2-SNAPSHOT</version>
+		  <optional>true</optional>
 		</dependency>
 		
 		<dependency>
 			<groupId>me.clip.placeholderapi</groupId>
 	   		<artifactId>PlaceholderAPIPlugin</artifactId>
-	   		<version>1.0</version>
+	   		<version>2.3.8</version>
 	        <scope>system</scope>
 	        <systemPath>${project.basedir}/libs/Misc/PlaceholderAPI.jar</systemPath>
 		</dependency>
