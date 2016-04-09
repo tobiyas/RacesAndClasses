@@ -37,6 +37,9 @@ public class TownyChatListener implements Listener {
 		String raceName = RaceAPI.getRaceNameOfPlayer(player);
 		String className = ClassAPI.getClassNameOfPlayer(player);
 		
+		if(raceName == null) raceName = "";
+		if(className == null) className = "";
+		
 		format = format
 				.replace("{race}", raceName)
 				.replace("{class}", className);
