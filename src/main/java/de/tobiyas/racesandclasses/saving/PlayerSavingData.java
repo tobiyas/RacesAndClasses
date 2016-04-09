@@ -110,6 +110,8 @@ public class PlayerSavingData {
 		if(raceName.equals(this.raceName)) return;
 		
 		this.raceName = raceName;
+		
+		save();
 	}
 	
 	public String getLastName() {

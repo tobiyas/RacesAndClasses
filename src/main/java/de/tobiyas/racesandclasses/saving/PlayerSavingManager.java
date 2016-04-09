@@ -59,6 +59,7 @@ public class PlayerSavingManager implements PlayerDataSerializer.PlayerDataLoade
 			@Override
 			protected void runIntern() {
 				Set<UUID> toLoad = serializer.getAllIDsPresent();
+				if(toLoad.isEmpty()) return;
 				
 				int i = 0;
 				int MAX_TO_LOAD_PER_BULK = plugin.getConfigManager().getGeneralConfig().getConfig_preload_bulk_amount();
