@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
@@ -122,6 +123,7 @@ public class WeaponNextHitDamageIncreaseBuffTrait extends AbstractBuffTrait impl
 		if(!(damagerEntity instanceof Player)) return;
 		
 		RaCPlayer damager = RaCPlayerManager.get().getPlayer((Player)event.getDamager());
+		if(!TraitHolderCombinder.checkContainer(damager, this)) return;
 		
 		if(isActive(damager)){
 			ItemStack inHand = damager.getItemInHand();

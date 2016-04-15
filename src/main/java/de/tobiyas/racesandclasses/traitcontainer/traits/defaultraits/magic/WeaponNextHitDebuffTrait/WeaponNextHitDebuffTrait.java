@@ -35,6 +35,7 @@ import org.bukkit.plugin.Plugin;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.DebuffAPI;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.entitystatusmanager.debuff.Debuff;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
@@ -141,6 +142,7 @@ public class WeaponNextHitDebuffTrait extends AbstractBuffTrait implements Liste
 		if(!(damagerEntity instanceof Player)) return;
 		
 		RaCPlayer damager = RaCPlayerManager.get().getPlayer((Player)event.getDamager());
+		if(!TraitHolderCombinder.checkContainer(damager, this)) return;
 		
 		if(isActive(damager)){
 			ItemStack inHand = damager.getItemInHand();

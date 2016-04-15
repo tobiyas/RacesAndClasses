@@ -27,14 +27,14 @@ import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_Whisper extends AbstractCommand {
 	
+
 	public CommandExecutor_Whisper(){
 		super("whisper", new String[]{"w"});
 	}
+	
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
-			String[] args) {
-		
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_whisper_enable()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
 					.replace("value", "Whispers")
@@ -51,8 +51,16 @@ public class CommandExecutor_Whisper extends AbstractCommand {
 			return true;
 		}
 		
-
-		Player target = PlayerUtils.getPlayer(args[0]);
+		Player target = null;
+		String name = args[0];
+		for(Player player : PlayerUtils.getOnlinePlayers()){
+			if(player.getName().equalsIgnoreCase(name) 
+					|| player.getDisplayName().equalsIgnoreCase(name)){
+				target = player;
+				break;
+			}
+		}
+		
 		if(target == null){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("target_not_exist")
 					.build());
@@ -80,5 +88,6 @@ public class CommandExecutor_Whisper extends AbstractCommand {
 		PrivateChat.sendMessageToPlayer(sender, target, message);
 		return true;
 	}
-
+	
+	
 }

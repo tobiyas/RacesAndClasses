@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
@@ -75,6 +76,8 @@ public class DamageIncreaseBuffTrait extends AbstractBuffTrait {
 		if(event instanceof FriendDetectEvent) return;
 		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(damager.getUniqueId());
+		if(!TraitHolderCombinder.checkContainer(player, this)) return;
+		
 		double value = (modifyToPlayer(player, percent, "value") + 1 ) * event.getDamage();
 		event.setDamage(value);
 		
