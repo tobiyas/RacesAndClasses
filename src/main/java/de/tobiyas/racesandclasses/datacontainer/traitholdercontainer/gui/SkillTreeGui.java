@@ -98,28 +98,33 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		buttons.clear();
 		
 		int freePoints = racPlayer.getSkillTreeManager().getFreeSkillpoints() - tempFreePointsToRemove;
-		
 		int level = LevelAPI.getCurrentLevel(racPlayer);
 		
 		Collection<Trait> allTraits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
+
 		Collection<Trait> permanent = getPermanent(allTraits);
-		permanent = filterForExclusions(allTraits);
+		allTraits.removeAll(permanent);
+		
+		//Get the filtered results:
+		Collection<Trait> filtered = filterForExclusions(allTraits);
 		
 		//Now generate items and populate!
-		for(Trait trait : allTraits){
-			boolean isPermanent = permanent.contains(trait);
+		for(Trait trait : filtered){
 			int slot = trait.getSkillTreePlace();
 			
 			//Do not display items that are permanent or below 0.
-			if(slot < 0 || isPermanent) continue;
-			
 			//Filter items that are outside of the Box.
-			if(slot >= getTopInventory().getSize()) continue;
+			if(slot < 0 || slot >= getTopInventory().getSize()) continue;
 			
 			ItemStack item = generateItemForTrait(trait, toApply, level, freePoints);
 			
 			//If already present -> Skip!
-			if(getTopInventory().getItem(slot) != null) continue;
+			ItemStack oldItem = getTopInventory().getItem(slot);
+			if(oldItem != null && oldItem.getType() != Material.AIR) {
+				RacesAndClasses.getPlugin().logWarning("Warning: in the Skilltree we have multiple entries with Index " + slot);
+				continue;
+			}
+			
 			getTopInventory().setItem(slot, item);
 			buttons.put(trait, item);
 		}
@@ -181,6 +186,15 @@ public class SkillTreeGui extends BasicSelectionInterface {
 				meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
 			}
 		}
+		
+		//Add ItemFlags:
+		if(VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R3)){
+			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		}
+		
+		//Try setting unbreakable if possible:
+		try{ meta.spigot().setUnbreakable(true); }catch(Throwable exp){}
 		
 		item.setItemMeta(meta);
 		return item;
@@ -272,12 +286,12 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	
 	/**
 	 * Filters for the Exclusions
-	 * @param allTraits to filter.
+	 * @param toFilter to filter.
 	 * @return the rest of the Traits.
 	 */
-	private Collection<Trait> filterForExclusions(Collection<Trait> allTraits) {
-		Collection<Trait> filtered = new HashSet<>(allTraits);
-		for(Trait contained : allTraits){
+	private Collection<Trait> filterForExclusions(Collection<Trait> toFilter) {
+		Collection<Trait> filtered = new HashSet<>(toFilter);
+		for(Trait contained : toFilter){
 			boolean hasSkilled = racPlayer.getSkillTreeManager().getLevel(contained) > 0;
 			if(hasSkilled) filtered.removeAll(contained.getExcludesOtherTraits());
 		}
@@ -295,6 +309,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	private Collection<Trait> getPermanent(Collection<Trait> traits){
 		Collection<Trait> permanent = new HashSet<>();
 		if(traits == null || traits.isEmpty()) return permanent;
+		
 		for(Trait trait : traits){
 			if(trait.isPermanentSkill()){
 				permanent.add(trait);

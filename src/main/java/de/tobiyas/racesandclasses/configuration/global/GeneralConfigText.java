@@ -595,7 +595,7 @@ public class GeneralConfigText {
 				+ "# {level} will be replaced by the level of calculation.\n"
 				+ "# If mcmmo is used as Level System, the Calculation will use McMMO skills.\n"
 				+ "# The Skill name has to be written in {} eg. {mining}.\n"
-				+ "# A valid calculator would be: '{mining} + {excavation} \\ 20'\n"
+				+ "# A valid calculator for McMMO would be: '{mining} + {excavation} \\ 20'\n"
 				+ "# default: '{level} * {level} * {level} * 1000' \n"
 				+ "# By default, the the next level needs (level^3) * 1000 exp.\n"
 				+ level_mapExpPerLevelCalculationString + ": '{level} * {level} * {level} * 1000'\n\n"

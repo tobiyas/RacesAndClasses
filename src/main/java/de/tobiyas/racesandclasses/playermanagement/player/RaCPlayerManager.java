@@ -94,18 +94,18 @@ public class RaCPlayerManager {
 	public RaCPlayer getPlayerByName(String playerName){
 		if(playerName == null) return null;
 		
+		//First check the players online.
+		Player player = PlayerUtils.getPlayer(playerName);
+		if(player != null) return getPlayer(player);
+		
 		for(RaCPlayer racPlayer : playerSet){
 			if(racPlayer.getName().equals(playerName)){
 				return racPlayer;
 			}
 		}
 		
-		Player player = PlayerUtils.getPlayer(playerName);
-		if(player == null) return null;
-		
-		RaCPlayer neu = createNew(player);
-		playerSet.add(neu);
-		return neu;
+		//Can not find the guy!
+		return null;
 	}
 	
 	

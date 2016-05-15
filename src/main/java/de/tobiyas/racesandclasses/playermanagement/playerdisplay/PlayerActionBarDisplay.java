@@ -56,8 +56,7 @@ public class PlayerActionBarDisplay {
 		
 		if(line.isEmpty()) messages.removeMessage(player);
 		else messages.setMessage(player, line);
-	}
-	
+	}	
 	
 	/**
 	 * Generates the Line to display.

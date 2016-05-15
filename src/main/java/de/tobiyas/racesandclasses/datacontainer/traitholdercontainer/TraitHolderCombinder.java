@@ -82,7 +82,7 @@ public class TraitHolderCombinder {
 	 * Returns a Set of all Traits that a player has.
 	 * This combines Race- + Class-Traits
 	 * 
-	 * @param offlinePlayer to check
+	 * @param player to check
 	 
 	 * @return set of all Traits of player
 	 */

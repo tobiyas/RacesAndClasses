@@ -4,7 +4,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -25,10 +24,6 @@ public class PlayerRaCScoreboardManager {
 	private final Map<SBCategory, Map<String,Integer>> toShow 
 		= new EnumMap<SBCategory, Map<String,Integer>>(SBCategory.class);
 	
-	/**
-	 * The Scoreboard to use.
-	 */
-	private final Scoreboard scoreboard;
 	
 	/**
 	 * The Player to use.
@@ -59,23 +54,11 @@ public class PlayerRaCScoreboardManager {
 	
 	public PlayerRaCScoreboardManager(RaCPlayer player) {
 		this.player = player;
-		this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		this.updater = new ScoreboardUpdater(player, this);
 		this.displayTimer = new DisplayTimer();
 		
-		//Create Scoreboard + other stuff.
-		String sbPre = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_gui_scoreboard_name();
-		sbPre = ChatColor.translateAlternateColorCodes('&', sbPre);
-		
 		for(SBCategory category : SBCategory.values()){
 			toShow.put(category, new HashMap<String,Integer>());
-			
-			//Creates an Object for the Category.
-			Objective objective = scoreboard.getObjective(category.name());
-			if(objective == null) {
-				objective = scoreboard.registerNewObjective(category.name(), "dummy");
-				objective.setDisplayName(sbPre + " " + category.getHeadline());
-			}
 		}
 	}
 	
@@ -141,13 +124,24 @@ public class PlayerRaCScoreboardManager {
 		if(!needsUpdate) return;
 		
 		//First clear the old scoreboard
-		for(String entry : scoreboard.getEntries()){
-			scoreboard.resetScores(entry);
+		Scoreboard board = player.getScoreboard();
+		if(board == null) return;
+		
+		for(String entry : board.getEntries()){
+			board.resetScores(entry);
 		}
+		
+		//Create Scoreboard + other stuff.
+		String sbPre = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_gui_scoreboard_name();
+		sbPre = ChatColor.translateAlternateColorCodes('&', sbPre);
 		
 		//now repopulate it.
 		for(SBCategory category : SBCategory.values()){
-			Objective objective = scoreboard.getObjective(category.name());
+			Objective objective = board.getObjective(category.name());
+			if(objective == null) {
+				objective = board.registerNewObjective(category.name(), "dummy");
+				objective.setDisplayName(sbPre + " " + category.getHeadline());
+			}
 
 			//update Stuff
 			Map<String,Integer> map = toShow.get(category);
@@ -200,12 +194,11 @@ public class PlayerRaCScoreboardManager {
 		
 		//Only show if wanted.
 		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		Scoreboard board = player.getScoreboard();
 		if(!removeScoreboard){
 			//Set the correct Objective to display.
-			Objective obj = scoreboard.getObjective(this.selectedCategory.name());
+			Objective obj = board.getObjective(this.selectedCategory.name());
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-			
-			player.setScoreboard(scoreboard);
 		}
 	}
 	
@@ -217,10 +210,10 @@ public class PlayerRaCScoreboardManager {
 		if(!player.isOnline()) return;
 		
 		//If not our board -> nothing to do.
-		if(player.getScoreboard() != scoreboard) return;
-		
-		Scoreboard mainBoard = Bukkit.getScoreboardManager().getMainScoreboard();
-		player.setScoreboard(mainBoard);
+		Scoreboard board = player.getScoreboard();
+		Objective obj = board.getObjective("empty");
+		if(obj == null) obj = board.registerNewObjective("empty", "dummy");
+		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 	}
 
 	

@@ -436,5 +436,11 @@ public class RaCPlayer extends PlayerProxy {
 			return false;
 		return true;
 	}
+
+
+	@Override
+	public Spigot spigot() {
+		return getRealPlayer().spigot();
+	}
 	
 }

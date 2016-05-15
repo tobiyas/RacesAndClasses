@@ -161,7 +161,7 @@ public class PlayerContainer {
 	
 	
 	/**
-	 * This ticks the Containe once per second.
+	 * This ticks the Container once per second.
 	 */
 	public void tick(){
 		//Tick the Managers:
