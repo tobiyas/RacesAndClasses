@@ -116,8 +116,9 @@ public class HolderInventory extends InventoryView{
 	 * @param manager
 	 */
 	private void fillWithHolders(){
-		Map<ItemStack, Integer> slotsToFill = new HashMap<ItemStack, Integer>();
+		getTopInventory().clear();
 		
+		Map<ItemStack, Integer> slotsToFill = new HashMap<ItemStack, Integer>();
 		for(String holderName : holderManager.listAllVisibleHolders()){
 			if(plugin.testingMode){ 
 				//Testing seems to not realize Bukkit is present. Method not found on ItemStack.
@@ -168,7 +169,7 @@ public class HolderInventory extends InventoryView{
 		ItemMeta meta = item.getItemMeta();
 		
 		boolean isEmptyTag = holder.getTag() == null || holder.getTag().equals("");
-		meta.setDisplayName(isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag());
+		meta.setDisplayName(holder.getDisplayName() + " " + (isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag()));
 		
 		List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
 		

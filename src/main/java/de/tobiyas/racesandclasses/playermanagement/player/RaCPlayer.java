@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -441,6 +442,42 @@ public class RaCPlayer extends PlayerProxy {
 	@Override
 	public Spigot spigot() {
 		return getRealPlayer().spigot();
+	}
+
+
+	@Override
+	public boolean hasGravity() {
+		return getRealPlayer().hasGravity();
+	}
+
+
+	@Override
+	public boolean isSilent() {
+		return getRealPlayer().isSilent();
+	}
+
+
+	@Override
+	public void setGravity(boolean arg0) {
+		getRealPlayer().setGravity(arg0);
+	}
+
+
+	@Override
+	public void setSilent(boolean arg0) {
+		getRealPlayer().setSilent(arg0);
+	}
+
+
+	@Override
+	public void stopSound(Sound arg0) {
+		getRealPlayer().stopSound(arg0);
+	}
+
+
+	@Override
+	public void stopSound(String arg0) {
+		getRealPlayer().stopSound(arg0);
 	}
 	
 }

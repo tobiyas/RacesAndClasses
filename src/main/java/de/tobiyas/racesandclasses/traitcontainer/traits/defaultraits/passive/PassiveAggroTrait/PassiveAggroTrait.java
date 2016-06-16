@@ -110,8 +110,6 @@ public class PassiveAggroTrait extends AbstractBasicTrait {
 
 	@EventHandler
 	public void onAggroChange(EntityTargetEvent event){
-		System.out.println("Got event!");
-		
 		if(event.isCancelled()) return;
 		if(aggroDistanceList.isEmpty()) return;
 		

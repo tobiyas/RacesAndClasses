@@ -26,6 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.exceptions.HolderConfigParseException;
@@ -41,6 +42,8 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedExcepti
 import de.tobiyas.util.collections.ListCreateUtils;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.items.MaterialParser;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public abstract class AbstractTraitHolder {
 	
@@ -290,8 +293,18 @@ public abstract class AbstractTraitHolder {
 		}catch(IllegalArgumentException exp){}
 		
 		short damageValue = (short) config.getInt(configNodeName + ".gui.item.damage", 0);
-		
 		this.holderSelectionItem = new ItemStack(mat, 1, damageValue);
+		ItemMeta meta = this.holderSelectionItem.getItemMeta();
+		
+		//Add ItemFlags:
+		if(VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_8_R3)){
+			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		}
+		
+		//Try setting unbreakable if possible:
+		try{ meta.spigot().setUnbreakable(true); }catch(Throwable exp){}
+		this.holderSelectionItem.setItemMeta(meta);
 	}
 	
 	

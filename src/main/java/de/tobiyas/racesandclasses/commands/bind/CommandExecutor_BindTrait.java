@@ -44,7 +44,6 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 	}
 
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
