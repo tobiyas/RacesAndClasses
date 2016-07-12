@@ -112,8 +112,6 @@ public class HolderInventory extends InventoryView{
 	
 	/**
 	 * Fills the inventory with items representing the holders.
-	 * 
-	 * @param manager
 	 */
 	private void fillWithHolders(){
 		getTopInventory().clear();
@@ -172,7 +170,6 @@ public class HolderInventory extends InventoryView{
 		meta.setDisplayName(holder.getDisplayName() + " " + (isEmptyTag ? "[" + holder.getDisplayName() + "]" : holder.getTag()));
 		
 		List<String> lore = meta.hasLore() ? meta.getLore() : new LinkedList<String>();
-		
 		if(holder.hasHolderDescription()){
 			String description = holder.getHolderDescription();
 			String[] split = description.split("#n");

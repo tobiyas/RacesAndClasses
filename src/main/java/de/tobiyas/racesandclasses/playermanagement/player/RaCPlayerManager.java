@@ -58,6 +58,7 @@ public class RaCPlayerManager {
 	 */
 	public RaCPlayer getPlayer(Player player){
 		if(player == null) return null;
+		if(player instanceof RaCPlayer) return (RaCPlayer) player;
 		
 		if(hasUUIDSupport()){
 			UUID id = player.getUniqueId();

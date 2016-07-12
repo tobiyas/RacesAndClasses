@@ -187,6 +187,16 @@ public class RaceAPI {
 	}
 	
 	/**
+	 * Gets the Location for the Race spawn of a player.
+	 * @param player to get for.
+	 * @return the Location or null if none present.
+	 */
+	public static Location getRaceSpawnOfPlayer(Player player){
+		RaceContainer container = getRaceOfPlayer(player);
+		return container == null ? null : getRaceSpawn(container.getDisplayName());
+	}
+	
+	/**
 	 * Gets the Location for the Race spawn.
 	 * @param name race to get for.
 	 * @return the Location or null if none present.

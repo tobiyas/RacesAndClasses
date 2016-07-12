@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.commands.racespawn;
 import java.util.Collection;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,6 +35,7 @@ import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.util.autocomplete.AutoCompleteUtils;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CommandExecutor_RaceSpawn extends AbstractCommand {
 
@@ -56,6 +58,20 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 					"value", "Race-Spawns");
 			return true;
 		}
+		
+		
+		//Console may send someone to his home.
+		if(sender == Bukkit.getConsoleSender() && args.length >= 1){
+			Player player = PlayerUtils.getPlayer(args[0]);
+			if(player == null) return true;
+			
+			Location spawn = RaceAPI.getRaceSpawnOfPlayer(player);
+			if(spawn == null) return true;
+			
+			player.teleport(spawn);
+			return true;
+		}
+		
 		
 		if(!(sender instanceof Player)) return false;
 		

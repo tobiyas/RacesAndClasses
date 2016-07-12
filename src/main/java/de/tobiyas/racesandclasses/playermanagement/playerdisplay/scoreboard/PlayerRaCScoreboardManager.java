@@ -121,6 +121,9 @@ public class PlayerRaCScoreboardManager {
 	 * Updates the Display.
 	 */
 	public void update(){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
+		
 		if(!needsUpdate) return;
 		
 		//First clear the old scoreboard
@@ -184,6 +187,8 @@ public class PlayerRaCScoreboardManager {
 	 * Shows the Scoreboard.
 	 */
 	public void show(){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
 		if(!player.isOnline()) return;
 		
 		//If nothing is present, hide.
@@ -192,14 +197,10 @@ public class PlayerRaCScoreboardManager {
 			return;
 		}
 		
-		//Only show if wanted.
-		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		//Set the correct Objective to display.
 		Scoreboard board = player.getScoreboard();
-		if(!removeScoreboard){
-			//Set the correct Objective to display.
-			Objective obj = board.getObjective(this.selectedCategory.name());
-			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		}
+		Objective obj = board.getObjective(this.selectedCategory.name());
+		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 	}
 	
 	
@@ -207,6 +208,8 @@ public class PlayerRaCScoreboardManager {
 	 * Hides the Display and shows the Main board again.
 	 */
 	public void hide(){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
 		if(!player.isOnline()) return;
 		
 		//If not our board -> nothing to do.
@@ -249,6 +252,9 @@ public class PlayerRaCScoreboardManager {
 	 * @param showTime to show. Use {@link Long#MAX_VALUE} for inf.
 	 */
 	public void updateSelectAndShow(SBCategory category, long showTime){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
+		
 		if(category == null) return;
 		
 		switch (category) {
@@ -276,6 +282,9 @@ public class PlayerRaCScoreboardManager {
 	 * @param category to udpate / Show.
 	 */
 	public void updateSelectAndShow(SBCategory category){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
+		
 		updateSelectAndShow(category, Long.MAX_VALUE);
 	}
 	
@@ -287,6 +296,9 @@ public class PlayerRaCScoreboardManager {
 	 * @param time to refresh.
 	 */
 	public void refreshDisplayTime(long time){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
+		
 		boolean inf = time >= Long.MAX_VALUE;
 		
 		displayTimer.setAlwaysShow(inf);
@@ -299,6 +311,9 @@ public class PlayerRaCScoreboardManager {
 	 * This is ment for Timeouts for Showing the Display.
 	 */
 	public void tick(){
+		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
+		if(removeScoreboard) return;
+		
 		if(displayTimer.shouldBeHidden()) hide();
 	}
 	
