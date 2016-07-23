@@ -130,12 +130,29 @@ public class LevelValueModifyReader {
 					return new LevelModContainer(start, end, value);
 				}
 				
+				
+				//Smaller Equals.
+				if(toParse.startsWith("<=")){
+					toParse = toParse.substring(2);
+					int end = Integer.parseInt(toParse);
+					
+					return new LevelModContainer(Integer.MIN_VALUE, end, value);
+				}
+				
+				//greater Equals.
+				if(toParse.startsWith(">=")){
+					toParse = toParse.substring(2);
+					int start = Integer.parseInt(toParse);
+					
+					return new LevelModContainer(start, Integer.MAX_VALUE, value);
+				}
+				
 				//Smaller.
 				if(toParse.startsWith("<")){
 					toParse = toParse.substring(1);
 					int end = Integer.parseInt(toParse);
 					
-					return new LevelModContainer(Integer.MIN_VALUE, end, value);
+					return new LevelModContainer(Integer.MIN_VALUE, end-1, value);
 				}
 				
 				//greater.
@@ -143,7 +160,7 @@ public class LevelValueModifyReader {
 					toParse = toParse.substring(1);
 					int start = Integer.parseInt(toParse);
 					
-					return new LevelModContainer(start, Integer.MAX_VALUE, value);
+					return new LevelModContainer(start+1, Integer.MAX_VALUE, value);
 				}
 				
 			}catch(Throwable exp){}
@@ -190,9 +207,7 @@ public class LevelValueModifyReader {
 			double highest = Integer.MIN_VALUE;
 			
 			for(LevelModContainer container : list){
-				if(container.getEndLevel() > level
-						&& container.getStartLevel() < level){
-					
+				if(container.getEndLevel() >= level && container.getStartLevel() <= level){
 					highest = Math.max(highest, container.getValue());
 				}
 			}
