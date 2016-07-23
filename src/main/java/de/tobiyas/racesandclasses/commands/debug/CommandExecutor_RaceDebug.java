@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.commands.debug;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -93,6 +94,20 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 			
 			sender.sendMessage(ChatColor.RED + "No debug command found for: " + ChatColor.LIGHT_PURPLE + commandString);
 			return true;
+		}
+		
+		//More Length:
+		if(args.length > 1){
+			String commandString = args[0];
+			if(commandString.equalsIgnoreCase("placeholder")){
+				Player player = (Player) sender;
+				String[] more = new String[args.length - 1];
+				System.arraycopy(args, 1, more, 0, args.length-1);
+				
+				String result = RacesAndClasses.getPlugin().getAddinManager().getPlaceholderAPISupportManager().replace(player, StringUtils.join(args));
+				sender.sendMessage(ChatColor.GREEN + "Result: " + result);
+				return true;
+			}
 		}
 		
 		postHelp(sender);

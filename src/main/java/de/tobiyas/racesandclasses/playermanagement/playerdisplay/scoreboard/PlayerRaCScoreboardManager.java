@@ -85,6 +85,28 @@ public class PlayerRaCScoreboardManager {
 		needsUpdate = true;
 	}
 	
+	/**
+	 * gets the Key - values.
+	 * 
+	 * @param category to get
+	 * @param value to get
+	 * 
+	 * @return the correct String, EMPTY if none.
+	 */
+	public String getKeyForValue(SBCategory category, int value){
+		if(category == null) return "";
+		
+		Map<String,Integer> map = toShow.get(category);
+		if(map == null) return "";
+		
+		//Gets the value passed:
+		for(Map.Entry<String, Integer> entry : map.entrySet()){
+			if(entry.getValue() == value) return entry.getKey();
+		}
+		
+		return "";
+	}
+	
 	
 	/**
 	 * Clears the Category.
@@ -252,9 +274,6 @@ public class PlayerRaCScoreboardManager {
 	 * @param showTime to show. Use {@link Long#MAX_VALUE} for inf.
 	 */
 	public void updateSelectAndShow(SBCategory category, long showTime){
-		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
-		if(removeScoreboard) return;
-		
 		if(category == null) return;
 		
 		switch (category) {
@@ -282,9 +301,6 @@ public class PlayerRaCScoreboardManager {
 	 * @param category to udpate / Show.
 	 */
 	public void updateSelectAndShow(SBCategory category){
-		boolean removeScoreboard = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_disableAllScoreboardOutputs();
-		if(removeScoreboard) return;
-		
 		updateSelectAndShow(category, Long.MAX_VALUE);
 	}
 	

@@ -189,7 +189,7 @@ public class RaCPlayer extends PlayerProxy {
 	}
 	
 	/**
-	 * Returns the Spellmanager of the Player
+	 * Returns the ActionBar of the Player
 	 * @return the Actionbar Manager.
 	 */
 	public PlayerActionBarDisplay getActionbarDisplay(){

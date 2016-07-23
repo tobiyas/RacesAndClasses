@@ -145,8 +145,11 @@ public class ScoreboardUpdater {
 		String name = trait.getDisplayName();
 		double cooldown = CooldownApi.getCooldownOfPlayer(player.getName(), trait.getCooldownName());
 		if(cooldown <= 0) return pre + name;
-
-		return colorizeToPercent(name, cooldown, pre, after);
+		
+		double percent = cooldown / (double)trait.getMaxUplinkTime();
+		percent = Math2.clamp(0, percent, 1);
+		
+		return colorizeToPercent(name, percent, pre, after);
 	}
 	
 	/**
