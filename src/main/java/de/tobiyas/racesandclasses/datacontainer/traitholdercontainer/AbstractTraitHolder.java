@@ -41,6 +41,7 @@ import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.util.collections.ListCreateUtils;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.items.ItemUtils;
 import de.tobiyas.util.items.MaterialParser;
 import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
@@ -302,9 +303,10 @@ public abstract class AbstractTraitHolder {
 			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		}
 		
-		//Try setting unbreakable if possible:
-		try{ meta.spigot().setUnbreakable(true); }catch(Throwable exp){}
 		this.holderSelectionItem.setItemMeta(meta);
+		
+		//Try setting unbreakable if possible:
+		ItemUtils.setUnbreakable(this.holderSelectionItem, true);
 	}
 	
 	

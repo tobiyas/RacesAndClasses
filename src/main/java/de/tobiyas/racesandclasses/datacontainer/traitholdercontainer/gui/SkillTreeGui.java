@@ -30,6 +30,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 import de.tobiyas.util.formating.StringFormatUtils;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
+import de.tobiyas.util.items.ItemUtils;
 import de.tobiyas.util.math.Math2;
 import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
@@ -193,10 +194,11 @@ public class SkillTreeGui extends BasicSelectionInterface {
 			meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		}
 		
-		//Try setting unbreakable if possible:
-		try{ meta.spigot().setUnbreakable(true); }catch(Throwable exp){}
-		
 		item.setItemMeta(meta);
+		
+		//Try setting unbreakable if possible:
+		ItemUtils.setUnbreakable(item, true);
+		
 		return item;
 	}
 	

@@ -1026,6 +1026,7 @@ public abstract class PlayerProxy implements Player {
 		getRealPlayer().sendMap(map);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updateInventory() {
 		getRealPlayer().updateInventory();

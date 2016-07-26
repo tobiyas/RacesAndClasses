@@ -440,12 +440,6 @@ public class RaCPlayer extends PlayerProxy {
 
 
 	@Override
-	public Spigot spigot() {
-		return getRealPlayer().spigot();
-	}
-
-
-	@Override
 	public boolean hasGravity() {
 		return getRealPlayer().hasGravity();
 	}
