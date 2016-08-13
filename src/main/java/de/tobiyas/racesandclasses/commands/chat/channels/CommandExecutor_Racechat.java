@@ -41,19 +41,10 @@ public class CommandExecutor_Racechat extends AbstractCommand {
 	public CommandExecutor_Racechat(){
 		super("racechat", new String[]{"rc", "rchat"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racechat";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command,String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			LanguageAPI.sendTranslatedMessage(sender,"only_players");
 			return true;

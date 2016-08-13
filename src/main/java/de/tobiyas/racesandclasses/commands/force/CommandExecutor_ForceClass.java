@@ -41,19 +41,10 @@ public class CommandExecutor_ForceClass extends AbstractCommand {
 		super("racforceclass");
 		
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racforceclass";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){

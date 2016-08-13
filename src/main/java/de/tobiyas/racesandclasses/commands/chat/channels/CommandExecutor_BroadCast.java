@@ -30,19 +30,10 @@ public class CommandExecutor_BroadCast extends AbstractCommand {
 	public CommandExecutor_BroadCast(){
 		super("globalbroadcast", new String[]{"gbr"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "globalbroadcast";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.broadcast)) return true;
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){

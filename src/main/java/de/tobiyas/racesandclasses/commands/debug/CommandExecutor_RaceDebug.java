@@ -39,7 +39,7 @@ public class CommandExecutor_RaceDebug extends AbstractCommand {
 	}
 	
 	@Override
-	public boolean onCommand(final CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(final CommandSender sender, Command command, String label,
 			String[] args) {
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.debug)) return true;

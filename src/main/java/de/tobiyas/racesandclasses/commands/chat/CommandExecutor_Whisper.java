@@ -34,7 +34,7 @@ public class CommandExecutor_Whisper extends AbstractCommand {
 	
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_whisper_enable()){
 			sender.sendMessage(LanguageAPI.translateIgnoreError("something_disabled")
 					.replace("value", "Whispers")

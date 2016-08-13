@@ -29,7 +29,7 @@ public class Command_Group extends AbstractCommand {
 	
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command, String label, String[] args) {
 		//TODO implement me!
 		return false;
 	}

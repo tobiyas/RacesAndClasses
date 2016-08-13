@@ -40,7 +40,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_channels_enable()){
 			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",

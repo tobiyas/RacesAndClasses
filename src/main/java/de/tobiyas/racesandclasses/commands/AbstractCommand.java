@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -66,7 +67,6 @@ public abstract class AbstractCommand implements CommandInterface {
 	
 	/**
 	 * if the Command has aliases.
-	 * 
 	 * @return
 	 */
 	@Override
@@ -81,6 +81,23 @@ public abstract class AbstractCommand implements CommandInterface {
 		//stub method to not having to override in every impl.
 		return new LinkedList<String>();
 	}
+	
+	@Override
+	public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		try{
+			return onInternalCommand(sender, command, label, args);
+		}catch(Throwable exp){
+			plugin.getDebugLogger().logStackTrace("Error on command '" + label + "' for '" + sender.getName() + "' args: '" + 
+					StringUtils.join(args, " ") + "'", exp);
+			return true;
+		}
+	}
+	
+
+	/**
+	 * Command to override.
+	 */
+	protected abstract boolean onInternalCommand(CommandSender sender, Command command, String label, String[] args);
 	
 	
 	@Override

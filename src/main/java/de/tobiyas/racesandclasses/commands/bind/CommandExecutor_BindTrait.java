@@ -45,7 +45,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		if(args.length == 1 && sender.isOp() && args[0].equals("reset")){

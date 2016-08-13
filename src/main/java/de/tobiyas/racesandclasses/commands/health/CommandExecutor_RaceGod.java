@@ -44,7 +44,7 @@ public class CommandExecutor_RaceGod extends AbstractCommand {
 	
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.god))
 			return true;
 		

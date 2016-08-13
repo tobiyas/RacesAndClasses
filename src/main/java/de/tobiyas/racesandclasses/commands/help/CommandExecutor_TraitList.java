@@ -30,19 +30,10 @@ public class CommandExecutor_TraitList extends AbstractCommand {
 	public CommandExecutor_TraitList(){
 		super("traitlist", new String[]{"tlist"});
 		RacesAndClasses.getPlugin();
-
-//		String command = "traitlist";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		if(args.length == 0){

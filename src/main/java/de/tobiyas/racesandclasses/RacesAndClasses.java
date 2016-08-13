@@ -441,9 +441,10 @@ public class RacesAndClasses extends UtilsUsingPlugin implements Listener{
 		String events = ", hooked " + TraitEventManager.getInstance().getRegisteredEventsAsName().size() + " Events";
 		
 		log(" loaded: " + traits + races + classes + channels + events);
-		log(" " + description.getName() + " Version: '" + Consts.detailedVersionString + "' fully loaded with Permissions: " 
+		log(" " + description.getName() + " Version: '" + getDescription().getVersion() + "' fully loaded with Permissions: " 
 				+ getPermissionManager().getPermissionsName());
 		
+		//If we use the Auto-Updater:
 		if(configManager.getGeneralConfig().isConfig_useAutoUpdater()){
 			checkForUpdates();
 		}

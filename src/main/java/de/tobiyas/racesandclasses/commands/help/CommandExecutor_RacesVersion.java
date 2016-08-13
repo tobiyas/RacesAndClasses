@@ -31,19 +31,10 @@ public class CommandExecutor_RacesVersion extends AbstractCommand{
 		super("racesversion");
 		
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racesversion";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		
 		sender.sendMessage(ChatColor.YELLOW + "The Current Version of Races: " + ChatColor.RED + plugin.getDescription().getVersion());

@@ -41,19 +41,11 @@ public class CommandExecutor_PermissionCheck extends AbstractCommand {
 	public CommandExecutor_PermissionCheck() {
 		super("racpermcheck", new String[]{"rc", "racp"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racpermcheck";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
+	
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
 		if(args.length == 1 && "race".equalsIgnoreCase(args[0])){

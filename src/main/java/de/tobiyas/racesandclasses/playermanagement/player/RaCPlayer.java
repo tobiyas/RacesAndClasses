@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
@@ -472,6 +474,12 @@ public class RaCPlayer extends PlayerProxy {
 	@Override
 	public void stopSound(String arg0) {
 		getRealPlayer().stopSound(arg0);
+	}
+
+
+	@Override
+	public PotionEffect getPotionEffect(PotionEffectType type) {
+		return getRealPlayer().getPotionEffect(type);
 	}
 	
 }

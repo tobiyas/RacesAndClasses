@@ -50,7 +50,7 @@ public class CommandExecutor_RaceSpawn extends AbstractCommand {
 	
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaceSpawn()){

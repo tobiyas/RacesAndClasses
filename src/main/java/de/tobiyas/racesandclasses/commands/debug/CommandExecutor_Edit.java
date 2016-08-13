@@ -45,7 +45,7 @@ public class CommandExecutor_Edit extends AbstractCommand {
 
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if(!(sender instanceof Player)){
 			LanguageAPI.sendTranslatedMessage(sender, only_players);

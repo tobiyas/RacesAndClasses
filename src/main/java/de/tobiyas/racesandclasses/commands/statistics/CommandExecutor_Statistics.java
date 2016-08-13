@@ -34,20 +34,11 @@ public class CommandExecutor_Statistics extends AbstractCommand {
 	public CommandExecutor_Statistics(){
 		super("racstatistics", new String[]{"racs"});
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racstatistics";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.statistics)){

@@ -39,7 +39,7 @@ public class CommandExecutor_RaceHelp extends AbstractCommand{
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		String senderName = sender.getName();

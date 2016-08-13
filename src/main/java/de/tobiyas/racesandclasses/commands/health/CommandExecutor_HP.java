@@ -35,7 +35,7 @@ public class CommandExecutor_HP extends AbstractCommand {
 	
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		
 		if(!(sender instanceof Player)){

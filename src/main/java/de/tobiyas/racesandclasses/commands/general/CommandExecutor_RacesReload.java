@@ -33,19 +33,10 @@ public class CommandExecutor_RacesReload extends AbstractCommand {
 		super("racesreload");
 		
 		plugin = RacesAndClasses.getPlugin();
-
-//		String command = "racesreload";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.reload)) return true;
 		

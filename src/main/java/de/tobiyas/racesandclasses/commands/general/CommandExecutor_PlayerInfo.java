@@ -44,7 +44,7 @@ private RacesAndClasses plugin;
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.playerInfos)) return true;

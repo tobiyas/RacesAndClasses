@@ -35,19 +35,10 @@ public class CommandExecutor_Mana extends AbstractCommand {
 	public CommandExecutor_Mana(){
 		super("playermana", new String[]{"mana"});
 		RacesAndClasses.getPlugin();
-
-//		String command = "playerhealth";
-//		if(plugin.getConfigManager().getGeneralConfig().getConfig_general_disable_commands().contains(command)) return;
-//		
-//		try{
-//			plugin.getCommand(command).setExecutor(this);
-//		}catch(Exception e){
-//			plugin.log("ERROR: Could not register command /" + command + ".");
-//		}
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
+	public boolean onInternalCommand(CommandSender sender, Command command, String label,
 			String[] args) {
 		
 		if(!(sender instanceof Player)){

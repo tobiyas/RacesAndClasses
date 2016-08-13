@@ -77,7 +77,7 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command,String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces()){
 			LanguageAPI.sendTranslatedMessage(sender, something_disabled,
 					"value", "Race");

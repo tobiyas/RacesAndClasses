@@ -40,7 +40,7 @@ public class CommandExecutor_ShowTraits extends AbstractCommand {
 	
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onInternalCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
 		if(!(sender instanceof Player)){

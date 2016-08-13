@@ -73,7 +73,7 @@ public class CommandExecutor_Class extends AbstractCommand {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onInternalCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!plugin.getConfigManager().getGeneralConfig().isConfig_classes_enable()){
 			LanguageAPI.sendTranslatedMessage(sender, "something_disabled",
 					"value", "Classes");
