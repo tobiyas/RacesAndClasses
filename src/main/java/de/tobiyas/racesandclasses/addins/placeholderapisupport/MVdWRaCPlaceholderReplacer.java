@@ -120,8 +120,12 @@ public class MVdWRaCPlaceholderReplacer implements PlaceholderReplacer {
 	private String battleLine(RaCPlayer player, int line){
 		PlayerRaCScoreboardManager manager = player.getScoreboardManager();
 		SBCategory category = manager.getSelectedCategory();
-		if(category == SBCategory.Arrows) return manager.getKeyForValue(category, line);
-		if(category == SBCategory.Spells) return manager.getKeyForValue(category, line);
+		
+		//Quickfix for concurrent modify!
+		try{
+			if(category == SBCategory.Arrows) return manager.getKeyForValue(category, line);
+			if(category == SBCategory.Spells) return manager.getKeyForValue(category, line);
+		}catch(Throwable exp) {}
 		
 		return "";
 	}

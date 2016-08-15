@@ -17,7 +17,6 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
-import de.tobiyas.racesandclasses.saving.PlayerSavingManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
 
@@ -64,7 +63,7 @@ public class HotKeyInventory {
 	public void loadFromFile(){
 		traitBindings.clear();
 		
-		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		PlayerSavingData data = player.getPlayerSaveData();
 		Map<Integer,String> bindings = data.getHotKeys();
 		
 		//Read the Data.
@@ -91,8 +90,9 @@ public class HotKeyInventory {
 		//first check if legit trait.
 		if(trait == null || !trait.isBindable()) return;
 		
-		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		PlayerSavingData data = player.getPlayerSaveData();
 		data.setHotKey(slot, trait.getDisplayName());
+		this.traitBindings.put(slot, trait);
 	}
 	
 	/**
@@ -103,8 +103,9 @@ public class HotKeyInventory {
 	public void clearSlot(int slot){
 		if(!traitBindings.containsKey(slot)) return;
 		
-		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		PlayerSavingData data = player.getPlayerSaveData();
 		data.clearHotKey(slot);
+		this.traitBindings.remove(slot);
 	}
 	
 	
@@ -113,7 +114,7 @@ public class HotKeyInventory {
 	 */
 	public void clearAllSlots(){
 		traitBindings.clear();
-		PlayerSavingData data = PlayerSavingManager.get().getPlayerData(player.getUniqueId());
+		PlayerSavingData data = player.getPlayerSaveData();
 		data.clearHotKeys();
 	}
 	

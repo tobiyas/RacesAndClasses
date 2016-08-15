@@ -138,7 +138,6 @@ public class HotKeyView extends BasicSelectionInterface {
 			if(disabled.contains(slot)) continue;
 			
 			Trait bound = entry.getValue();
-			
 			getBottomInventory().setItem(slot, CommandExecutor_BindTrait.generate(bound));
 		}
 		
