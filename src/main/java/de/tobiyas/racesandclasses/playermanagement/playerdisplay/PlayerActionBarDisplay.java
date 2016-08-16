@@ -56,7 +56,7 @@ public class PlayerActionBarDisplay {
 		
 		if(line.isEmpty()) messages.removeMessage(player);
 		else messages.setMessage(player, line);
-	}	
+	}
 	
 	/**
 	 * Generates the Line to display.
@@ -64,6 +64,8 @@ public class PlayerActionBarDisplay {
 	 */
 	private String generateLine(){
 		String format = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_actionbar_format();
+		if(format.isEmpty()) return "";
+		
 		for(DisplaySegment segment : segments){
 			format = format.replace("%"+segment.getName()+"%", segment.getDisplayString())
 							.replace("%"+segment.getName().toUpperCase()+"%", segment.getDisplayString());

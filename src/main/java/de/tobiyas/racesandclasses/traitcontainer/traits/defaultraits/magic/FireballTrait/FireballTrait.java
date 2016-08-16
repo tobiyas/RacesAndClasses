@@ -39,6 +39,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.TraitResults;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationField;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitConfigurationNeeded;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.annotations.configuration.TraitInfos;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.CostType;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.magic.AbstractMagicSpellTrait;
 import de.tobiyas.racesandclasses.translation.languages.Keys;
@@ -72,7 +73,12 @@ public class FireballTrait extends AbstractMagicSpellTrait  {
 	
 	@Override
 	protected String getPrettyConfigIntern(){
-		return costType.name() + (materialForCasting == null ? " " : (" " + materialForCasting.name() + " ")) + cost;
+		return costType.name() + 
+			(costType == CostType.ITEM ? 
+					(" " + materialForCasting.name() + " ")
+					: " " 
+			)
+			+ cost;
 	}
 
 	

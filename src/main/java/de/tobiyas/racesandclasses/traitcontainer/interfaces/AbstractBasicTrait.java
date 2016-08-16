@@ -625,10 +625,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	
 	@Override
 	public final String getPrettyConfiguration() {
-		if("".equals(traitDiscription)){
-			return getPrettyConfigIntern();
-		}
-		
+		if("".equals(traitDiscription)) return getPrettyConfigIntern();
 		return ChatColor.translateAlternateColorCodes('&', traitDiscription);
 	}
 	
