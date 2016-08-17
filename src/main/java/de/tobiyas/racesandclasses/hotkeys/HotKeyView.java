@@ -19,10 +19,12 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.bind.CommandExecutor_BindTrait;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.util.inventorymenu.BasicSelectionInterface;
 
 public class HotKeyView extends BasicSelectionInterface {
@@ -58,9 +60,20 @@ public class HotKeyView extends BasicSelectionInterface {
 		this.skillModeBefore = player.getHotkeyInventory().isInSkillMode();
 		player.getHotkeyInventory().changeToBuildInv();
 		
-		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
+		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
+		
+		//Add Permissions based:
+		if(config.isConfig_use_permissions_for_hotkeys()){
+			for(int i = 0; i < 9; i++){
+				if(!disabled.contains(i) && !RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player.getRealPlayer(), PermissionNode.hotkeyPre + i)){
+					disabled.add(i);
+				}
+			}
+		}
+		
+		
 		for(int i = 0; i < 9; i ++){
-
 			ItemStack item = null;
 			if(disabled.contains(i)){
 				item = generateItem(Material.ARROW, ChatColor.RED + "DISABLED", "This slot is disabled!");
@@ -81,7 +94,17 @@ public class HotKeyView extends BasicSelectionInterface {
 	 * Redraws the View.
 	 */
 	private void redraw(){
-		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
+		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
+		
+		//Add Permissions based:
+		if(config.isConfig_use_permissions_for_hotkeys()){
+			for(int i = 0; i < 9; i++){
+				if(!disabled.contains(i) && !RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, PermissionNode.hotkeyPre + i)){
+					disabled.add(i);
+				}
+			}
+		}
 		
 		this.getTopInventory().clear();
 		this.getBottomInventory().clear();
@@ -201,7 +224,18 @@ public class HotKeyView extends BasicSelectionInterface {
 	@Override
 	protected void onControlItemPressed(ItemStack item) {
 		int index = -1;
-		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		
+		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
+		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
+		
+		//Add Permissions based:
+		if(config.isConfig_use_permissions_for_hotkeys()){
+			for(int i = 0; i < 9; i++){
+				if(!disabled.contains(i) && !RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, PermissionNode.hotkeyPre + i)){
+					disabled.add(i);
+				}
+			}
+		}
 		
 		for(int i = 0; i < 9; i++){
 			ItemStack toCheck = getBottomInventory().getItem(i);

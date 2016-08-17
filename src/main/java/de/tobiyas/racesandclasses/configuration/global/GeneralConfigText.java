@@ -17,6 +17,7 @@ package de.tobiyas.racesandclasses.configuration.global;
 
 import static de.tobiyas.racesandclasses.configuration.global.GeneralConfigFields.*;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 
 public class GeneralConfigText {
@@ -235,6 +236,11 @@ public class GeneralConfigText {
 				+ "# Example: [0,3,8].\n"
 				+ "# default: [] \n"
 				+ disabled_hotkey_slots + ": []\n\n"
+				
+				+ "# If set to true, hotkeys will check for Permissions when checking for Empty slots.\n"
+				+ "# The Slots are associated to permission: " + PermissionNode.hotkeyPre + "0 to 9.\n"
+				+ "# default: false\n"
+				+ use_permissions_for_hotkeys + ": false\n\n"
 				;
 	}
 	

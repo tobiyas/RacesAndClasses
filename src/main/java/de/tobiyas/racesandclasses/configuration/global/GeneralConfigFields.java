@@ -60,6 +60,7 @@ public class GeneralConfigFields {
 	public static final String use_new_traitbind_system = "use_new_traitbind_system";
 	public static final String hotkeys_material = "hotkeys_material";
 	public static final String disabled_hotkey_slots = "disabled_hotkey_slots";
+	public static final String use_permissions_for_hotkeys = "use_permissions_for_hotkeys";
 	
 	//Skill System
 	public static final String skills_useSkillSystem = "skills_useSkillSystem";

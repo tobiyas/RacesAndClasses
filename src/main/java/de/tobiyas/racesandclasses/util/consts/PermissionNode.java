@@ -198,5 +198,10 @@ public class PermissionNode {
 	 * The Permission to edit your level.
 	 */
 	public static final String skillTreeClear = prePlugin + "skilltree.clear";
+	
+	/**
+	 * The Permission for the Hotkey Pres.
+	 */
+	public static final String hotkeyPre = prePlugin + "hotkeyslot.";
 
 }

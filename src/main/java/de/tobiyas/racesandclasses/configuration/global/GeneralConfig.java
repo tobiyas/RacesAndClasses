@@ -178,6 +178,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	
 	private boolean config_groups_enable;
 	private String config_groups_system;
+	private boolean config_use_permissions_for_hotkeys;
 	
 	
 	private List<String> config_general_disable_aliases;
@@ -263,6 +264,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config.addDefault(hotkeys_enabled, true);
 		config.addDefault(hotkeys_material, Material.SHEARS.name());
 		config.addDefault(use_new_traitbind_system, true);
+		config.addDefault(use_permissions_for_hotkeys, false);
 		
 		config.addDefault(races_remindDefaultRace_enable, true);
 		config.addDefault(races_remindDefaultRace_interval, 10);
@@ -431,6 +433,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		config_disabledHotkeySlots.addAll(config.getIntegerList(disabled_hotkey_slots));
 		config_hotkeysEnabled = config.getBoolean(hotkeys_enabled);
 		config_useNewTraitBindSystem = config.getBoolean(use_new_traitbind_system, true);
+		config_use_permissions_for_hotkeys = config.getBoolean(use_permissions_for_hotkeys, false);
 		
 		config_magic_manaRefillWhileSprinting = config.getBoolean(magic_manaRefillWhileSprinting, false);
 		config_magic_sprintingManaCost = config.getDouble(magic_sprintingManaCost, 1.5d);
@@ -994,6 +997,10 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	
 	public boolean isConfig_convert_toDB_orFile() {
 		return config_convert_toDB_orFile;
+	}
+	
+	public boolean isConfig_use_permissions_for_hotkeys() {
+		return config_use_permissions_for_hotkeys;
 	}
 	
 }

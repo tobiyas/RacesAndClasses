@@ -15,10 +15,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.CooldownApi;
+import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 
 public class HotKeyInventory {
 	
@@ -202,7 +204,17 @@ public class HotKeyInventory {
 		Player player = this.player.getPlayer();
 		if(player == null) return;
 		
-		Set<Integer> disabled = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().getConfig_disabledHotkeySlots();
+		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
+		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
+		
+		//Add Permissions based:
+		if(config.isConfig_use_permissions_for_hotkeys()){
+			for(int i = 0; i < 9; i++){
+				if(!RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, PermissionNode.hotkeyPre + i)){
+					disabled.add(i);
+				}
+			}
+		}
 		
 		//remove in case...
 		oldHotkeyBar.clear();
