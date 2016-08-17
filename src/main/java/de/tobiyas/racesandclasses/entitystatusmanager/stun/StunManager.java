@@ -31,6 +31,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
+import de.tobiyas.racesandclasses.configuration.statusimun.StatusEffect;
 import de.tobiyas.racesandclasses.eventprocessing.events.stun.PlayerStunnedEvent;
 import de.tobiyas.racesandclasses.util.friend.EnemyChecker;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
@@ -187,9 +188,10 @@ public class StunManager {
 	 * @return if it worked.
 	 */
 	public boolean stunEntity(Entity stunner, Entity entity, int time){
-		if(entity == null || time <= 0){
-			return false;
-		}
+		if(entity == null || time <= 0) return false;
+		
+		//Check if imun:
+		if(isImun(entity)) return false;
 		
 		StunReduceContainer container = stunReduces.get(entity);
 		if(container == null) {
@@ -236,6 +238,20 @@ public class StunManager {
 			return true;
 		}
 	}
+	
+	
+	/**
+	 * If the entity is imun against stun.
+	 * @param entity to check.
+	 * @return true if imun.
+	 */
+	private boolean isImun(Entity entity){
+		if(entity == null) return false;
+		
+		String name = entity.getCustomName();
+		return plugin.getConfigManager().getStatusImunManager().isImun(name, StatusEffect.STUN);
+	}
+	
 	
 	/**
 	 * Removes all Stun effects from the entity.

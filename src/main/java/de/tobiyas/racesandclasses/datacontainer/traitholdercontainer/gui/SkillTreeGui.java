@@ -1,5 +1,6 @@
 package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -134,6 +136,18 @@ public class SkillTreeGui extends BasicSelectionInterface {
 		getTopInventory().setItem(8, generateFreeItem(freePoints, level));
 		if(somethingChanged) getTopInventory().setItem((9*5)+8, applyItem);
 		getTopInventory().setItem((9*5)+7, discardItem);
+	}
+	
+	/**
+	 * Gets all present skill-trees.
+	 * @return all skill tree names.
+	 */
+	private List<String> skillTrees(){
+		Set<String> trees = new HashSet<>();
+		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);
+		for(Trait trait : traits) trees.add(trait.getSkillTreeName());
+		
+		return new ArrayList<>(trees);
 	}
 	
 

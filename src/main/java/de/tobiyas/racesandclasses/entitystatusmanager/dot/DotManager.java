@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +34,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.configuration.statusimun.StatusEffect;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier;
 import de.tobiyas.racesandclasses.vollotile.ParticleContainer;
@@ -166,6 +168,11 @@ public class DotManager implements Listener {
 	public boolean dotEntity(LivingEntity entity, DotBuilder builder){
 		if(entity == null || !builder.valid()) return false;
 		
+		//Check imun:
+		DamageType damageType = builder.getDamageType();
+		if(isImun(entity, damageType)) return false;
+		
+		
 		//Build the container and check if we already have something with that name:
 		DotContainer newContainer = builder.build();
 		Collection<DotContainer> dotsOfEntity = dotDamageMap.get(entity);
@@ -182,6 +189,31 @@ public class DotManager implements Listener {
 		//Finally add!
 		dotsOfEntity.add(newContainer);
 		return true;
+	}
+	
+	
+	/**
+	 * If the entity is imun against stun.
+	 * @param entity to check.
+	 * @param type to check
+	 * @return true if imun.
+	 */
+	private boolean isImun(Entity entity, DamageType type){
+		if(entity == null || type == null) return false;
+		
+		StatusEffect effect = null;
+		switch(type){
+			case FIRE : 
+			case FIRE_TICK : 
+			case LAVA : effect = StatusEffect.FIRE; break;
+			
+			case POISON : effect = StatusEffect.POISON; break;
+			
+			default: effect = null;
+		}
+		
+		String name = entity.getCustomName();
+		return plugin.getConfigManager().getStatusImunManager().isImun(name, effect);
 	}
 
 	/**

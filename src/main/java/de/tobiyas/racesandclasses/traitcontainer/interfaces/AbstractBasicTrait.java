@@ -74,11 +74,15 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	 */
 	public static final String ON_USE_PARTICLES_PATH = "onUseParticles";	
 
-	
 	/**
 	 * The path to 
 	 */
 	public static final String REPLACES_OTHER_TRAITS_PATH = "replacesOtherTraits";
+	
+	/**
+	 * The Global Skill tree name.
+	 */
+	public static final String GLOBAL_SKILL_TREE_NAME = "GLOBAL";
 	
 	
 	
@@ -288,6 +292,11 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	protected List<String> replacesOtherTraits = new ArrayList<>();
 	
 	/**
+	 * The Name of the SkillTree.
+	 */
+	protected String skillTreeName = GLOBAL_SKILL_TREE_NAME;
+	
+	/**
 	 * The symbol for the SkillTree.
 	 */
 	protected ItemStack skillTreeSymbol = new ItemStack(Material.BOOK);
@@ -343,8 +352,8 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		@TraitConfigurationField(fieldName = SKILL_TREE_DAMAGE_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_EXCLUDE_OTHERS_PATH, classToExpect = List.class, optional = true),
+		@TraitConfigurationField(fieldName = SKILL_TREE_NAME, classToExpect = String.class, optional = true),
 	})
-	
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		this.currentConfig = configMap;
@@ -388,6 +397,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		//Read the Slot Item:
 		Material skillTreeMat = configMap.getAsMaterial(SKILL_TREE_MATERIAL_PATH, Material.BOOK);
 		short skillTreeDamage = (short)configMap.getAsInt(SKILL_TREE_DAMAGE_PATH, 0);
+		this.skillTreeName = configMap.getAsString(SKILL_TREE_NAME, GLOBAL_SKILL_TREE_NAME);
 		this.skillTreeSymbol = new ItemStack(skillTreeMat, 1, skillTreeDamage);
 		
 		
@@ -1043,6 +1053,11 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	@Override
 	public int getSkillMinLevel(int level) {
 		return skillConfig.getMinLevel(level);
+	}
+	
+	@Override
+	public String getSkillTreeName() {
+		return skillTreeName;
 	}
 	
 	@Override

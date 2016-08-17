@@ -42,7 +42,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import de.tobiyas.racesandclasses.addins.AddinManager;
 import de.tobiyas.racesandclasses.chat.channels.ChannelManager;
 import de.tobiyas.racesandclasses.commands.CommandRegisterer;
-import de.tobiyas.racesandclasses.configuration.managing.ConfigManager;
+import de.tobiyas.racesandclasses.configuration.ConfigManager;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.classes.ClassManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.loadingerrors.TraitHolderLoadingErrorHandler;

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.tobiyas.racesandclasses.configuration.managing;
+package de.tobiyas.racesandclasses.configuration;
 
 import de.tobiyas.racesandclasses.configuration.armory.ArmorConfig;
 import de.tobiyas.racesandclasses.configuration.global.ChannelConfig;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.configuration.raceteams.RaceTeamManager;
 import de.tobiyas.racesandclasses.configuration.racetoclass.RaceToClassConfiguration;
+import de.tobiyas.racesandclasses.configuration.statusimun.StatusImunManager;
 import de.tobiyas.racesandclasses.configuration.traits.TraitConfigManager;
 
 public class ConfigManager {
@@ -28,6 +29,7 @@ public class ConfigManager {
 	private final ChannelConfig channelConfig;
 	private final RaceToClassConfiguration raceToClassConfig;
 	private final ArmorConfig armorConfig;
+	private final StatusImunManager statusImunManager;
 	
 	private final TraitConfigManager traitConfigManager;
 	private final RaceTeamManager raceTeamManager;
@@ -41,6 +43,7 @@ public class ConfigManager {
 		channelConfig = new ChannelConfig();
 		raceToClassConfig = new RaceToClassConfiguration();
 		armorConfig = new ArmorConfig();
+		statusImunManager = new StatusImunManager();
 		
 		traitConfigManager = new TraitConfigManager();
 		raceTeamManager = new RaceTeamManager();
@@ -54,6 +57,7 @@ public class ConfigManager {
 		channelConfig.reload();
 		raceToClassConfig.reload();
 		armorConfig.reload();
+		statusImunManager.reload();
 		
 		traitConfigManager.reload();
 		raceTeamManager.reaload();
@@ -112,6 +116,14 @@ public class ConfigManager {
 	 */
 	public ArmorConfig getArmorConfig() {
 		return armorConfig;
+	}
+	
+	/**
+	 * Gets the Status-Imun manager.
+	 * @return the imun Manager.
+	 */
+	public StatusImunManager getStatusImunManager() {
+		return statusImunManager;
 	}
 
 }

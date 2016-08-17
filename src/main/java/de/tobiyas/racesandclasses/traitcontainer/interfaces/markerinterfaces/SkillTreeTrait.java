@@ -38,9 +38,14 @@ public interface SkillTreeTrait {
 	public static final String SKILL_TREE_DAMAGE_PATH = "skillTreeDamage";
 	
 	/**
-	 * The damage value for the SkillTree.
+	 * The which other skills to exclude with this one.
 	 */
 	public static final String SKILL_TREE_EXCLUDE_OTHERS_PATH = "skillTreeExcludeOthers";
+
+	/**
+	 * The Name for the skill tree.
+	 */
+	public static final String SKILL_TREE_NAME = "skillTreeName";
 	
 	
 	
@@ -81,6 +86,11 @@ public interface SkillTreeTrait {
 	 * @return the level to learn.
 	 */
 	public int getSkillMinLevel(int level);
+	
+	/**
+	 * @return the name of the skill tree.
+	 */
+	public String getSkillTreeName();
 	
 	/**
 	 * Gets the Traits this Trait excludes
