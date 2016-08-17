@@ -1,6 +1,6 @@
 name: RacesAndClasses
 main: de.tobiyas.racesandclasses.RacesAndClasses
-version: 1.2.1
+version: 1.2.2
 website: http://dev.bukkit.org/bukkit-mods/racesandclasses/
 author: tobiyas
 loadbefore: [Vault]
