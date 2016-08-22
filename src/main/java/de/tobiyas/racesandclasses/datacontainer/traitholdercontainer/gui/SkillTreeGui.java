@@ -142,6 +142,7 @@ public class SkillTreeGui extends BasicSelectionInterface {
 	 * Gets all present skill-trees.
 	 * @return all skill tree names.
 	 */
+	@SuppressWarnings("unused")
 	private List<String> skillTrees(){
 		Set<String> trees = new HashSet<>();
 		Set<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(racPlayer);

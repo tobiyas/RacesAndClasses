@@ -227,7 +227,7 @@ public class GeneralConfigText {
 				
 				+ "# The Material to use for Hotkeys. \n"
 				+ "# This is the Material to use for Hotkey Bar.\n"
-				+ "# Materials are found here: https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java.\n"
+				+ "# Materials are found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html \n"
 				+ "# default: SHEARS \n"
 				+ hotkeys_material + ": SHEARS\n\n"
 				
@@ -542,7 +542,7 @@ public class GeneralConfigText {
 				
 				+ "# Tells the plugin which Item to use as wand (magic spell cast item). \n"
 				+ "# int: itemID of the Item OR\n"
-				+ "# String: The canonical Name of the Item. See: 'https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java' \n"
+				+ "# String: The canonical Name of the Item. See: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html \n"
 				+ "# default: STICK \n"
 				+ magic_wandId + ": STICK\n\n"
 				

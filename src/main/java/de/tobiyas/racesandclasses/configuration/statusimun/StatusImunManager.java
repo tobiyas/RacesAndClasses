@@ -1,12 +1,12 @@
 package de.tobiyas.racesandclasses.configuration.statusimun;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import de.schlichtherle.io.File;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.util.config.YAMLConfigExtended;
 

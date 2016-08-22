@@ -43,6 +43,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Mag
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithCost;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.TraitWithRestrictions;
+import de.tobiyas.racesandclasses.util.items.WandItem;
 
 public class PlayerSpellManager {
 	
@@ -426,7 +427,7 @@ public class PlayerSpellManager {
 		@SuppressWarnings("deprecation")
 		List<Block> blocks = player.getPlayer().getLineOfSight((HashSet<Byte>)null, 100);
 		Block lookingAt = blocks.iterator().next();
-		ItemStack wandItem = new ItemStack(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
+		ItemStack wandItem = new ItemStack(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic().generateItem());
 		
 		plugin.fireEventIntern(new PlayerInteractEvent(player.getPlayer(), Action.LEFT_CLICK_AIR, wandItem, 
 				lookingAt, BlockFace.UP));
@@ -436,19 +437,16 @@ public class PlayerSpellManager {
 	
 	/**
 	 * Checks if the item passed is a Wand.
-	 * 
-	 * 
-	 * @param itemInHands to check against
-	 * 
+	 * @param item to check against
 	 * @return true if the item passed is a wand for the player
 	 */
-	public boolean isWandItem(ItemStack itemInHands){
+	public boolean isWandItem(ItemStack item){
 		if(player == null) return false;
-		if(itemInHands == null) return false;
+		if(item == null) return false;
 		
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
 		
-		Set<Material> wands = new HashSet<Material>();
+		Set<WandItem> wands = new HashSet<>();
 		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
 		
 		AbstractTraitHolder classHolder = player.getclass();
@@ -461,7 +459,8 @@ public class PlayerSpellManager {
 			wands.addAll(raceHolder.getAdditionalWandMaterials());
 		}
 		
-		return wands.contains(itemInHands.getType());
+		for(WandItem wand : wands) if(wand.isItem(item)) return true;
+		return false;
 	}
 
 }

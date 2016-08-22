@@ -18,9 +18,6 @@ package de.tobiyas.racesandclasses.listeners.generallisteners;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.bow_selected_message;
 import static de.tobiyas.racesandclasses.translation.languages.Keys.wand_select_message;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -30,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
 import de.tobiyas.racesandclasses.playermanagement.playerdisplay.scoreboard.PlayerRaCScoreboardManager.SBCategory;
@@ -59,9 +55,7 @@ public class Listener_WandAndBowEquip implements Listener {
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		ItemStack item = player.getPlayer().getInventory().getItem(event.getNewSlot());
 		if(item != null){
-			Material mat = item.getType();
-			boolean newMatIsWand = isWand(player, mat);
-
+			boolean newMatIsWand = player.getSpellManager().isWandItem(item);
 			if(newMatIsWand){
 				if(player.getSpellManager().getSpellAmount() > 0){
 					MagicSpellTrait currentActiveSpell = player.getSpellManager().getCurrentSpell();
@@ -82,6 +76,7 @@ public class Listener_WandAndBowEquip implements Listener {
 			}
 			
 			
+			Material mat = item.getType();
 			if(mat == Material.BOW){
 				if(player.getArrowManager().hasAnyArrow()){
 					player.getScoreboardManager().updateSelectAndShow(SBCategory.Arrows);
@@ -104,27 +99,5 @@ public class Listener_WandAndBowEquip implements Listener {
 		//If item == null, should still be changed!
 		player.getScoreboardManager().updateSelectAndShow(SBCategory.Cooldown, -1);
 	}
-
-	/**
-	 * Checks if the Material passed is a wand for the player.
-	 * 
-	 * @param player to check
-	 * @return true if he has, false otherwise.
-	 */
-	private boolean isWand(RaCPlayer player, Material mat) {
-		Set<Material> wands = new HashSet<Material>();
-		wands.add(plugin.getConfigManager().getGeneralConfig().getConfig_itemForMagic());
-		
-		AbstractTraitHolder classHolder = player.getclass();
-		if(classHolder != null){
-			wands.addAll(classHolder.getAdditionalWandMaterials());
-		}
-		
-		AbstractTraitHolder raceHolder = player.getRace();
-		if(raceHolder != null){
-			wands.addAll(raceHolder.getAdditionalWandMaterials());
-		}
-		
-		return wands.contains(mat);
-	}
+	
 }

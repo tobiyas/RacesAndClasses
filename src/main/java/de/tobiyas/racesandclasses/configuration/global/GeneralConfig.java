@@ -45,6 +45,7 @@ import de.tobiyas.racesandclasses.playermanagement.leveling.LevelCalculator;
 import de.tobiyas.racesandclasses.playermanagement.leveling.LevelingSystem;
 import de.tobiyas.racesandclasses.playermanagement.leveling.manager.McMMOLevelManager;
 import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManagerType;
+import de.tobiyas.racesandclasses.util.items.WandItem;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.formating.Pair;
 import de.tobiyas.util.sql.SQL.SQLProperties;
@@ -147,7 +148,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	private int config_magic_sprintingManaDrainInterval;
 	private boolean config_magic_manaRefillWhileSprinting;
 	
-	private Material config_itemForMagic;
+	private WandItem config_itemForMagic;
 	
 	private String config_mapExpPerLevelCalculationString;
 	private LevelingSystem config_useLevelSystem;
@@ -363,7 +364,6 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	/**
 	 * reloads the Configuration of the plugin
 	 */
-	@SuppressWarnings("deprecation")
 	public GeneralConfig reload(){
 		plugin.reloadConfig();
 		
@@ -468,17 +468,8 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		List<String> list = config.getStringList(disabled_regions);
 		config_disabled_regions.clear(); config_disabled_regions.addAll(list);
 		
-		if(config.isString(magic_wandId)){
-			String itemName = config.getString(magic_wandId, "STICK");
-			config_itemForMagic = Material.getMaterial(itemName.toUpperCase());
-			if(config_itemForMagic == null){
-				config_itemForMagic = Material.STICK;
-			}
-		}else{
-			int itemId = config.getInt(magic_wandId, 280);
-			config_itemForMagic = Material.getMaterial(itemId);
-		}
-		
+		config_itemForMagic = WandItem.generateFrom(config.getString(magic_wandId, "STICK"));
+		if(config_itemForMagic == null) config_itemForMagic = WandItem.generateFrom("STICK");
 		
 		config_openClassSelectionAfterRaceSelectionWhenNoClass = config.getBoolean(classes_openClassSelectionAfterRaceSelectionWhenNoClass_enable, true);
 		config_cancleGUIExitWhenNoClassPresent = config.getBoolean(classes_cancleGUIExitWhenNoClassPresent_enable, true);
@@ -702,7 +693,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 	/**
 	 * @return the config_itemForMagic
 	 */
-	public Material getConfig_itemForMagic() {
+	public WandItem getConfig_itemForMagic() {
 		return config_itemForMagic;
 	}
 

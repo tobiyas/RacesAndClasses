@@ -38,11 +38,11 @@ import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.TraitStore;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
+import de.tobiyas.racesandclasses.util.items.WandItem;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.util.collections.ListCreateUtils;
 import de.tobiyas.util.config.YAMLConfigExtended;
 import de.tobiyas.util.items.ItemUtils;
-import de.tobiyas.util.items.MaterialParser;
 import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
 import de.tobiyas.util.vollotile.VollotileCodeManager;
 
@@ -106,7 +106,7 @@ public abstract class AbstractTraitHolder {
 	/**
 	 * Material additionally used for wands.
 	 */
-	protected final Set<Material> additionalWandMaterials;
+	protected final Set<WandItem> additionalWandItems;
 	
 	/**
 	 * The Description of the Holder.
@@ -157,7 +157,7 @@ public abstract class AbstractTraitHolder {
 		this.armorUsage = new HashSet<ItemQuality>();
 		this.traits = new HashSet<Trait>();
 		this.holderTag = "[" + name + "]";
-		this.additionalWandMaterials = new HashSet<Material>();
+		this.additionalWandItems = new HashSet<>();
 		this.holderSelectionItem = new ItemStack(Material.BOOK_AND_QUILL);
 		this.preconditions = HolderSelectionPreconditions.getEmpty(getHolderManager());
 		
@@ -315,11 +315,14 @@ public abstract class AbstractTraitHolder {
 	 * Reads the WandMaterial Section.
 	 */
 	protected void readAdditionalWandMaterial() {
-		additionalWandMaterials.clear();
+		additionalWandItems.clear();
 		if(!config.contains(configNodeName + ".config.wandMaterial")) return;
 		
 		List<String> wandMatList = config.getStringList(configNodeName + ".config.wandMaterial");
-		additionalWandMaterials.addAll(MaterialParser.parseToMaterial(wandMatList));
+		for(String line : wandMatList) {
+			WandItem item = WandItem.generateFrom(line);
+			if(item != null) additionalWandItems.add(item);
+		}
 	}
 	
 
@@ -609,8 +612,8 @@ public abstract class AbstractTraitHolder {
 	 * 
 	 * @return set of all Wand Materials.
 	 */
-	public Set<Material> getAdditionalWandMaterials() {
-		return new HashSet<Material>(additionalWandMaterials);
+	public Set<WandItem> getAdditionalWandMaterials() {
+		return new HashSet<WandItem>(additionalWandItems);
 	}
 
 	
