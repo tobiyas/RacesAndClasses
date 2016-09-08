@@ -481,5 +481,11 @@ public class RaCPlayer extends PlayerProxy {
 	public PotionEffect getPotionEffect(PotionEffectType type) {
 		return getRealPlayer().getPotionEffect(type);
 	}
+
+
+	@Override
+	public boolean isHandRaised() {
+		return getRealPlayer().isHandRaised();
+	}
 	
 }
