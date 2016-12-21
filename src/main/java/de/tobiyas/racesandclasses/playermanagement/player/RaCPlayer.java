@@ -7,9 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -486,6 +490,66 @@ public class RaCPlayer extends PlayerProxy {
 	@Override
 	public boolean isHandRaised() {
 		return getRealPlayer().isHandRaised();
+	}
+
+
+	@Override
+	public int getPortalCooldown() {
+		return getRealPlayer().getPortalCooldown();
+	}
+
+
+	@Override
+	public void setPortalCooldown(int cooldown) {
+		getRealPlayer().setPortalCooldown(cooldown);
+	}
+
+
+	@Override
+	public Set<String> getScoreboardTags() {
+		return getRealPlayer().getScoreboardTags();
+	}
+
+
+	@Override
+	public boolean addScoreboardTag(String tag) {
+		return getRealPlayer().addScoreboardTag(tag);
+	}
+
+
+	@Override
+	public boolean removeScoreboardTag(String tag) {
+		return getRealPlayer().removeScoreboardTag(tag);
+	}
+
+
+	@Override
+	public void playSound(Location location, Sound sound, SoundCategory category, float volume, float pitch) {
+		getRealPlayer().playSound(location, sound, volume, pitch);
+	}
+
+
+	@Override
+	public void playSound(Location location, String sound, SoundCategory category, float volume, float pitch) {
+		getRealPlayer().playSound(location, sound, category, volume, pitch);
+	}
+
+
+	@Override
+	public void stopSound(Sound sound, SoundCategory category) {
+		getRealPlayer().stopSound(sound, category);
+	}
+
+
+	@Override
+	public void stopSound(String sound, SoundCategory category) {
+		getRealPlayer().stopSound(sound, category);
+	}
+
+
+	@Override
+	public InventoryView openMerchant(Merchant merchant, boolean force) {
+		return getRealPlayer().openMerchant(merchant, force);
 	}
 	
 }

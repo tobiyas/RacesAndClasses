@@ -40,7 +40,7 @@
 		<!-- Vault Repo -->
 		<repository>
 			<id>vault-repo</id>
-			<url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		
 		<!-- temp repo. Not always online. -->
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.10.2-R0.1-SNAPSHOT</version>
+			<version>1.11-R0.1-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 		
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>VaultAPI</artifactId>
-			<version>LATEST</version>
+			<version>1.6</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -117,7 +117,7 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
-			<version>LATEST</version>
+			<version>6.1.1-SNAPSHOT</version>
 			<scope>compile</scope>
 			<type>jar</type>
 			<optional>true</optional>

@@ -199,20 +199,40 @@ public class ClassChangeSelectionListener implements Listener {
 		for(String command : commands){
 			if(command == null || command.isEmpty()) continue;
 			boolean asConsole = command.contains("%CONSOLE%");
+			boolean asOp = command.contains("%OP%");
 			
 			//Remove First char if is a dash.
 			command = command.startsWith("/") ? command.substring(1) : command;
 			
 			//Replace stuff in the Command:
 			command = command.replace("%CONSOLE%", "");
-			command = command.replace("%CLASS%", ClassAPI.getClassNameOfPlayer(player));
-			command = command.replace("%RACE%", RaceAPI.getRaceNameOfPlayer(player));
+			command = command.replace("%OP%", "");
+			
+			command = command.replace("%CLASS%", OrEmpty(ClassAPI.getClassNameOfPlayer(player)));
+			command = command.replace("%RACE%", OrEmpty(RaceAPI.getRaceNameOfPlayer(player)));
 			command = command.replace("%PLAYER%", player.getName());
 			command = command.replace("%DISPLAY%", player.getDisplayName());
 			
-			//Run the Command:
-			if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-			else player.chat("/"+command);
+			//Set op, if wanted:
+			boolean opBefore = player.isOp();
+			if(asOp && !asConsole) player.setOp(true);
+			
+			try{
+				//Run the Command:
+				if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+				else player.chat("/"+command);				
+			}catch (Exception e) {
+				e.printStackTrace();
+			}finally {
+				if(asOp && !asConsole && !opBefore) player.setOp(false);
+			}
+			
 		}
 	}
+	
+	
+	private String OrEmpty(String value){
+		return value == null ? "" : value;
+	}
+	
 }
