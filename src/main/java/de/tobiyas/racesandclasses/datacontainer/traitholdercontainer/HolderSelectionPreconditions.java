@@ -82,7 +82,7 @@ public class HolderSelectionPreconditions {
 		
 		//check permission
 		if(prePerm != null){
-			if(!RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, prePerm)){
+			if(!RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player.getPlayer(), prePerm)){
 				return HolderPreconditionResult.PERMISSION_NOT_PRESENT;
 			}
 		}

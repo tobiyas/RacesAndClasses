@@ -7,15 +7,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.InFightAPI;
@@ -42,7 +39,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
 import de.tobiyas.util.player.PlayerUtils;
 
-public class RaCPlayer extends PlayerProxy {
+public class RaCPlayer {
 
 	/**
 	 * The UUID of the player
@@ -70,6 +67,15 @@ public class RaCPlayer extends PlayerProxy {
 	 */
 	public String getName() {
 		return playerName;
+	}
+	
+	
+	/**
+	 * Gets the display name of the player.
+	 * @return the display name.
+	 */
+	public String getDisplayName(){
+		return getPlayer().getDisplayName();
 	}
 	
 
@@ -119,7 +125,6 @@ public class RaCPlayer extends PlayerProxy {
 	}
 	
 	
-	@Override
 	public Player getRealPlayer() {
 		if(!hasUUIDSupport()) return PlayerUtils.getPlayer(playerName);
 		return Bukkit.getPlayer(playerUUID);
@@ -144,7 +149,6 @@ public class RaCPlayer extends PlayerProxy {
 	 * 
 	 * @return true if online.
 	 */
-	@Override
 	public boolean isOnline(){
 		Player player = getPlayer();
 		return player != null && player.isOnline();
@@ -170,7 +174,6 @@ public class RaCPlayer extends PlayerProxy {
 	}
 	
 	
-	@Override
 	public Player getPlayer() {
 		return PlayerUtils.getPlayer(playerUUID);
 	}
@@ -255,6 +258,30 @@ public class RaCPlayer extends PlayerProxy {
 	 */
 	public double getMaxHealth(){
 		return getHealthManager().getMaxHealth();
+	}
+	
+	/**
+	 * Gets the current Mana.
+	 * @return the current mana.
+	 */
+	public double getCurrentMana() {
+		return getManaManager().getCurrentMana();
+	}
+	
+	/**
+	 * Returns the max mana of the player.
+	 * @return the max mana.
+	 */
+	public double getMaxMana() {
+		return getManaManager().getMaxMana();
+	}
+	
+	/**
+	 * Gets the current level of the player.
+	 * @return the current level.
+	 */
+	public int getCurrentLevel(){
+		return getLevelManager().getCurrentLevel();
 	}
 	
 	
@@ -408,6 +435,54 @@ public class RaCPlayer extends PlayerProxy {
 	}
 	
 	
+	/**
+	 * Gets the Scoreboard or null if not online.
+	 * @return the Scoreboard.
+	 */
+	public Scoreboard getScoreboard() {
+		Player pl = getRealPlayer();
+		return pl == null ? null : pl.getScoreboard();
+	}
+	
+	
+	/**
+	 * Sends a message to the player if online.
+	 * @param message to send
+	 */
+	public void sendMessage(String message) {
+		Player pl = getRealPlayer();
+		if(pl != null) pl.sendMessage(message);
+	}
+	
+	/**
+	 * Gets the location of the player or null if not online.
+	 * @return the location or null.
+	 */
+	public Location getLocation() {
+		Player pl = getRealPlayer();
+		return pl == null ? null : pl.getLocation();
+	}
+	
+
+	/**
+	 * Gets the Gamemode of the player or SURVIVAL if not online.
+	 * @return the gamemode.
+	 */
+	public GameMode getGameMode() {
+		Player pl = getRealPlayer();
+		return pl == null ? GameMode.SURVIVAL : pl.getGameMode();
+	}
+	
+	/**
+	 * Gets the world of the Player.
+	 * @return the world of the player.
+	 */
+	public World getWorld() {
+		Player pl = getRealPlayer();
+		return pl == null ? null : pl.getWorld();
+	}
+	
+	
 	//BELOW ONLY HASHCODE / EQUALS//
 	
 	@Override
@@ -444,112 +519,5 @@ public class RaCPlayer extends PlayerProxy {
 		return true;
 	}
 
-
-	@Override
-	public boolean hasGravity() {
-		return getRealPlayer().hasGravity();
-	}
-
-
-	@Override
-	public boolean isSilent() {
-		return getRealPlayer().isSilent();
-	}
-
-
-	@Override
-	public void setGravity(boolean arg0) {
-		getRealPlayer().setGravity(arg0);
-	}
-
-
-	@Override
-	public void setSilent(boolean arg0) {
-		getRealPlayer().setSilent(arg0);
-	}
-
-
-	@Override
-	public void stopSound(Sound arg0) {
-		getRealPlayer().stopSound(arg0);
-	}
-
-
-	@Override
-	public void stopSound(String arg0) {
-		getRealPlayer().stopSound(arg0);
-	}
-
-
-	@Override
-	public PotionEffect getPotionEffect(PotionEffectType type) {
-		return getRealPlayer().getPotionEffect(type);
-	}
-
-
-	@Override
-	public boolean isHandRaised() {
-		return getRealPlayer().isHandRaised();
-	}
-
-
-	@Override
-	public int getPortalCooldown() {
-		return getRealPlayer().getPortalCooldown();
-	}
-
-
-	@Override
-	public void setPortalCooldown(int cooldown) {
-		getRealPlayer().setPortalCooldown(cooldown);
-	}
-
-
-	@Override
-	public Set<String> getScoreboardTags() {
-		return getRealPlayer().getScoreboardTags();
-	}
-
-
-	@Override
-	public boolean addScoreboardTag(String tag) {
-		return getRealPlayer().addScoreboardTag(tag);
-	}
-
-
-	@Override
-	public boolean removeScoreboardTag(String tag) {
-		return getRealPlayer().removeScoreboardTag(tag);
-	}
-
-
-	@Override
-	public void playSound(Location location, Sound sound, SoundCategory category, float volume, float pitch) {
-		getRealPlayer().playSound(location, sound, volume, pitch);
-	}
-
-
-	@Override
-	public void playSound(Location location, String sound, SoundCategory category, float volume, float pitch) {
-		getRealPlayer().playSound(location, sound, category, volume, pitch);
-	}
-
-
-	@Override
-	public void stopSound(Sound sound, SoundCategory category) {
-		getRealPlayer().stopSound(sound, category);
-	}
-
-
-	@Override
-	public void stopSound(String sound, SoundCategory category) {
-		getRealPlayer().stopSound(sound, category);
-	}
-
-
-	@Override
-	public InventoryView openMerchant(Merchant merchant, boolean force) {
-		return getRealPlayer().openMerchant(merchant, force);
-	}
 	
 }

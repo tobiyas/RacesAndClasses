@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
-import de.tobiyas.racesandclasses.APIs.HealthAPI;
-import de.tobiyas.racesandclasses.APIs.LevelAPI;
-import de.tobiyas.racesandclasses.APIs.ManaAPI;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
@@ -46,12 +43,12 @@ public class EvaluationModifiers extends AbstractModifier {
 	
 	private Map<String,Double> generateVariables(RaCPlayer player, Trait trait){
 		Map<String,Double> variables = new HashMap<String,Double>();
-		variables.put("mana", ManaAPI.getCurrentMana(player));
-		variables.put("maxmana", ManaAPI.getMaxMana(player));
-		variables.put("level", (double) LevelAPI.getCurrentLevel(player));
-		variables.put("maxhealth", (double) HealthAPI.getMaxHealth(player));
-		variables.put("health", (double) HealthAPI.getCurrentHealth(player));
-		variables.put("skilllevel", (double)player.getSkillTreeManager().getLevel(trait));
+		variables.put("mana", player.getCurrentMana());
+		variables.put("maxmana", player.getMaxMana());
+		variables.put("level", (double) player.getCurrentLevel());
+		variables.put("maxhealth", player.getMaxHealth());
+		variables.put("health", player.getHealth());
+		variables.put("skilllevel", (double) player.getSkillTreeManager().getLevel(trait));
 		
 		return variables;
 	}

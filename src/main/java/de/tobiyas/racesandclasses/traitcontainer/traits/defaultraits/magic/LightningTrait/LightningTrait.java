@@ -112,7 +112,7 @@ public class LightningTrait extends AbstractMagicSpellTrait  {
 		}
 		
 		//Check if ally:
-		if(EnemyChecker.areAllies(player, target)){
+		if(EnemyChecker.areAllies(player.getPlayer(), target)){
 			LanguageAPI.sendTranslatedMessage(player, Keys.restrictions_not_met_TargetFriendly);
 			result.copyFrom(TraitResults.False());
 			return;

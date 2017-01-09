@@ -135,7 +135,7 @@ public class NoHungerTrait extends AbstractBasicTrait {
 			
 			if(racPlayer != null && TraitHolderCombinder.checkContainer(racPlayer, this)){
 				event.setCancelled(true);
-				racPlayer.setFoodLevel(20);
+				racPlayer.getPlayer().setFoodLevel(20);
 			}
 		}
 	}
@@ -153,8 +153,8 @@ public class NoHungerTrait extends AbstractBasicTrait {
 			for(AbstractTraitHolder holder : getTraitHolders()){
 				for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
 					try{
-						player.setFoodLevel(20);
-						player.setSaturation(20f);						
+						player.getPlayer().setFoodLevel(20);
+						player.getPlayer().setSaturation(20f);						
 					}catch(Throwable exp){}
 				}
 				

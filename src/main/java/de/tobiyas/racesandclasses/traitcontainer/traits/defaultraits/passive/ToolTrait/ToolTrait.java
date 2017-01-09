@@ -117,7 +117,7 @@ public class ToolTrait extends AbstractPassiveTrait{
 	public TraitResults trigger(EventWrapper eventWrapper) {   
 		ItemStack interactingWith = null;
 
-		PlayerInventory inv = eventWrapper.getPlayer().getInventory();
+		PlayerInventory inv = eventWrapper.getPlayer().getPlayer().getInventory();
 		if(eventWrapper.getPlayer() != null) interactingWith = inv.getItem(inv.getHeldItemSlot());
 		if(interactingWith == null) return TraitResults.False();
 		

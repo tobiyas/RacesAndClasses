@@ -155,7 +155,7 @@ public class DisguiseData {
 		//Send block restore to all:
 		for(Player pl : PlayerUtils.getOnlinePlayers()) {
 			pl.sendBlockChange(location, oldMaterial, oldDamage);
-			pl.showPlayer(player);
+			pl.showPlayer(player.getPlayer());
 		}
 		
 		setVisibleToAll();

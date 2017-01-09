@@ -243,7 +243,7 @@ public abstract class AbstractContinousCostMagicSpellTrait extends
 		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 		if(deactivate(racPlayer)){
 			if(racPlayer.isOnline()){
-				ParticleHelper.sendXParticleEffectToAllWithRandWidth(ParticleEffects.CRIT, racPlayer.getEyeLocation(), 0, 10);
+				ParticleHelper.sendXParticleEffectToAllWithRandWidth(ParticleEffects.CRIT, racPlayer.getPlayer().getEyeLocation(), 0, 10);
 				racPlayer.sendTranslatedMessage(Keys.trait_kicked, "name", getName());
 			}
 		}

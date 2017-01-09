@@ -495,11 +495,11 @@ public class CommandExecutor_Race extends AbstractCommand implements CommandInte
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("HealthBonus").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getMaxHealthMod(player.getLevel()))))
+				.addPopupHover(ChatColor.RED + f.format(race.getMaxHealthMod(player.getCurrentLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus(player.getLevel()))))
+				.addPopupHover(ChatColor.RED + f.format(race.getManaBonus(player.getCurrentLevel()))))
 		.addNewLine()
 		.addNewLine()
 		

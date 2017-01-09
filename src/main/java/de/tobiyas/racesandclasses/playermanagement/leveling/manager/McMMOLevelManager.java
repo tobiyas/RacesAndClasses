@@ -182,7 +182,7 @@ public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 			
 		    
 			Player pl = getPlayer().getPlayer();
-			int powerLevel = ExperienceAPI.getPowerLevel(player);
+			int powerLevel = ExperienceAPI.getPowerLevel(pl);
 			generatorString = generatorString.replace("{powerlevel}", String.valueOf(powerLevel));
 			
 			

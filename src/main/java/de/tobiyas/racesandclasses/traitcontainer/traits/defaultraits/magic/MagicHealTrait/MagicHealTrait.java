@@ -110,7 +110,7 @@ public class MagicHealTrait extends AbstractMagicSpellTrait {
 	@Override
 	protected void magicSpellTriggered(RaCPlayer player, TraitResults result) {
 		Player target = null;
-		if(player.isSneaking()){
+		if(player.getPlayer().isSneaking()){
 			target = player.getPlayer();
 		}else{
 			target = (Player) SearchEntity.inLineOfSight(blocks, player.getPlayer(), EntityType.PLAYER);

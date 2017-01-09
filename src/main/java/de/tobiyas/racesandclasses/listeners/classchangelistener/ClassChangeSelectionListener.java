@@ -208,23 +208,23 @@ public class ClassChangeSelectionListener implements Listener {
 			command = command.replace("%CONSOLE%", "");
 			command = command.replace("%OP%", "");
 			
-			command = command.replace("%CLASS%", OrEmpty(ClassAPI.getClassNameOfPlayer(player)));
-			command = command.replace("%RACE%", OrEmpty(RaceAPI.getRaceNameOfPlayer(player)));
+			command = command.replace("%CLASS%", OrEmpty(ClassAPI.getClassNameOfPlayer(player.getPlayer())));
+			command = command.replace("%RACE%", OrEmpty(RaceAPI.getRaceNameOfPlayer(player.getPlayer())));
 			command = command.replace("%PLAYER%", player.getName());
 			command = command.replace("%DISPLAY%", player.getDisplayName());
 			
 			//Set op, if wanted:
-			boolean opBefore = player.isOp();
-			if(asOp && !asConsole) player.setOp(true);
+			boolean opBefore = player.getPlayer().isOp();
+			if(asOp && !asConsole) player.getPlayer().setOp(true);
 			
 			try{
 				//Run the Command:
 				if(asConsole) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-				else player.chat("/"+command);				
+				else player.getPlayer().chat("/"+command);				
 			}catch (Exception e) {
 				e.printStackTrace();
 			}finally {
-				if(asOp && !asConsole && !opBefore) player.setOp(false);
+				if(asOp && !asConsole && !opBefore) player.getPlayer().setOp(false);
 			}
 			
 		}

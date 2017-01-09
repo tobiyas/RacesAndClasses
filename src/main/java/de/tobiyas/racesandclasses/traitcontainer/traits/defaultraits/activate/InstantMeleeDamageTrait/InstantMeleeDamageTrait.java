@@ -101,7 +101,7 @@ public class InstantMeleeDamageTrait extends AbstractBasicTrait {
 		int range = modifyToPlayer(wrapper.getPlayer(), this.range, "range");
 		LivingEntity target = SearchEntity.inLineOfSight(range, wrapper.getPlayer().getPlayer());
 		if(target == null) return TraitRestriction.NoTarget;
-		if(EnemyChecker.areAllies(wrapper.getPlayer(), target)) return TraitRestriction.TargetFriendly;
+		if(EnemyChecker.areAllies(wrapper.getPlayer().getPlayer(), target)) return TraitRestriction.TargetFriendly;
 		
 		return null;
 	}

@@ -267,7 +267,7 @@ public class HealOthersTrait extends AbstractBasicTrait {
 			|| action == PlayerAction.INTERACT_BLOCK
 			|| action == PlayerAction.INTERACT_AIR){
 
-			boolean isSneaking = player.isSneaking();
+			boolean isSneaking = player.getPlayer().isSneaking();
 			if(!isSneaking){
 				return false;
 			}

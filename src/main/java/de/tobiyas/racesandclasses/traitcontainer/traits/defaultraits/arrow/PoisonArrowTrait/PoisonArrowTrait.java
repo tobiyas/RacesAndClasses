@@ -96,7 +96,7 @@ public class PoisonArrowTrait extends AbstractArrow {
 		RaCPlayer shooter = RaCPlayerManager.get().getPlayer((Player) damager);
 		
 		double totalDamage = modifyToPlayer(shooter, this.totalDamage, "totalDamage") / duration;
-		DotBuilder builder = new DotBuilder(getName(), RaCPlayerManager.get().getPlayer(shooter))
+		DotBuilder builder = new DotBuilder(getName(), shooter)
 				.setDamageEverySecond()
 				.setDamageType(DamageType.POISON)
 				.setTotalDamage(totalDamage)

@@ -140,7 +140,7 @@ public class CommandExecutor_BindTrait extends AbstractCommand implements Listen
 		}
 		
 		int slotNumber = player.getPlayer().getInventory().getHeldItemSlot();
-		ItemStack heldItem = player.getItemInHand();
+		ItemStack heldItem = player.getPlayer().getItemInHand();
 		
 		if(heldItem != null && heldItem.getType() != Material.AIR){
 			player.sendTranslatedMessage(held_item_not_air);

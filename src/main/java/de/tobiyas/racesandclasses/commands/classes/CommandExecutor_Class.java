@@ -514,11 +514,11 @@ public class CommandExecutor_Class extends AbstractCommand {
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("HealthBonus").addChatColor(ChatColor.BLUE).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(clazz.getMaxHealthMod(player.getLevel()))))
+				.addPopupHover(ChatColor.RED + f.format(clazz.getMaxHealthMod(player.getCurrentLevel()))))
 		.addSimpleText("/", false, false, false, false, false, ChatColor.GRAY)
 		
 		.append(new ChatMessageObject("Mana").addChatColor(ChatColor.AQUA).addBold().removeUnderlined()
-				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus(player.getLevel()))))
+				.addPopupHover(ChatColor.RED + f.format(clazz.getManaBonus(player.getCurrentLevel()))))
 		.addNewLine()
 		.addNewLine()
 		

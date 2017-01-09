@@ -202,7 +202,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 
 			if(!isThisArrow(player)) return false;
 			if(!TraitHolderCombinder.checkContainer(player, this)) return false;
-			if(player.getItemInHand().getType() != Material.BOW) return false;
+			if(player.getPlayer().getItemInHand().getType() != Material.BOW) return false;
 	
 			return true;
 		}
@@ -396,7 +396,7 @@ public abstract class AbstractArrow extends AbstractActivatableTrait implements 
 		AbstractArrow arrow = arrowManager.getCurrentArrow();
 		if(arrow == null || arrow != this) return;
 		
-		boolean forward = !player.isSneaking();
+		boolean forward = !player.getPlayer().isSneaking();
 		AbstractArrow newArrow = forward ? arrowManager.nextArrow() : arrowManager.previousArrow();
 		if(newArrow != null && newArrow != arrow){
 			if(!plugin.getConfigManager().getGeneralConfig().isConfig_enable_permanent_scoreboard()){

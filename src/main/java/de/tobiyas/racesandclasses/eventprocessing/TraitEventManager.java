@@ -59,6 +59,7 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitBypassCheck;
 
 
 public class TraitEventManager{
+	
 	private RacesAndClasses plugin;
 	private static long timings = 0;
 	private static long calls = 0;
@@ -190,7 +191,7 @@ public class TraitEventManager{
 						&& !hasBypassForEvent){
 					
 					//not we have a sure Arrow switch.
-					boolean foreward = !player.isSneaking();
+					boolean foreward = !player.getPlayer().isSneaking();
 					AbstractArrow newArrow = foreward ? player.getArrowManager().nextArrow() : player.getArrowManager().previousArrow();
 					
 					if(newArrow != null && newArrow != trait){

@@ -69,7 +69,7 @@ public class ExecuteTrait extends InstantMeleeDamageTrait {
 		double targetPercent = target.getMaxHealth() / target.getHealth();
 		if(targetPercent > percent) return TraitRestriction.NoTarget;
 
-		if(EnemyChecker.areAllies(wrapper.getPlayer(), target)) return TraitRestriction.TargetFriendly;
+		if(EnemyChecker.areAllies(wrapper.getPlayer().getPlayer(), target)) return TraitRestriction.TargetFriendly;
 		return null;
 	}
 	

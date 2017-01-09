@@ -236,7 +236,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 	 * @return true if he has, false otherwise.
 	 */
 	public boolean checkWandInHand(RaCPlayer player) {
-		ItemStack holding = player.getPlayer().getInventory().getItem(player.getInventory().getHeldItemSlot());
+		ItemStack holding = player.getPlayer().getInventory().getItem(player.getPlayer().getInventory().getHeldItemSlot());
 		return player.getSpellManager().isWandItem(holding);
 	}
 
@@ -551,7 +551,7 @@ public abstract class AbstractMagicSpellTrait extends AbstractActivatableTrait i
 			RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
 			if(racPlayer.isOnline()){
 				ParticleHelper.sendXParticleEffectToAllWithRandWidth(
-						ParticleEffects.CRIT, racPlayer.getEyeLocation(), 0, 10);
+						ParticleEffects.CRIT, racPlayer.getPlayer().getEyeLocation(), 0, 10);
 				racPlayer.sendTranslatedMessage(Keys.trait_kicked, "name", getName());
 			}
 		}

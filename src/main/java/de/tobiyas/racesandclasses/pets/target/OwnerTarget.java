@@ -49,7 +49,7 @@ public class OwnerTarget implements Target {
 	
 	@Override
 	public void showToOwner(RaCPlayer owner) {
-		if(!owner.isValid()) return;
+		if(!owner.getPlayer().isValid()) return;
 		Location target = owner.getLocation();
 		VollotileCodeManager.getVollotileCode().sendParticleEffect(ParticleEffects.CRIT, target, new Vector(0,0.3,0), 1, 3, owner.getPlayer());
 	}

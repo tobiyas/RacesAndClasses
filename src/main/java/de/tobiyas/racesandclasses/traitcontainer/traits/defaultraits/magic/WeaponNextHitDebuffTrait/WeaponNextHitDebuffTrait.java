@@ -145,7 +145,7 @@ public class WeaponNextHitDebuffTrait extends AbstractBuffTrait implements Liste
 		if(!TraitHolderCombinder.checkContainer(damager, this)) return;
 		
 		if(isActive(damager)){
-			ItemStack inHand = damager.getItemInHand();
+			ItemStack inHand = damager.getPlayer().getItemInHand();
 			if(inHand == null) return;
 			if(!weaponMats.contains(inHand.getType())) return;
 			
