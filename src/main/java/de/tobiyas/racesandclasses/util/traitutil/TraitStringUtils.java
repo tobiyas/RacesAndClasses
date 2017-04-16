@@ -29,8 +29,11 @@ public class TraitStringUtils {
 				break;
 			case "*":
 				newDmg = oldDmg * value;
+				break;
 			default:
-				newDmg = oldDmg * value
+				newDmg = oldDmg * value;
+				break;
+		}
 		
 		
 		if(newDmg < 0) newDmg = 0;
