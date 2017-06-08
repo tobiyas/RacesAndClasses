@@ -121,8 +121,7 @@ public class WallTrait extends AbstractContinousCostMagicSpellTrait implements L
 
 	@Override
 	protected boolean activateIntern(RaCPlayer player) {
-		@SuppressWarnings("deprecation")
-		List<Block> blocks = player.getPlayer().getLineOfSight(new HashSet<Byte>(), 3);
+		List<Block> blocks = player.getPlayer().getLineOfSight(new HashSet<Material>(), 3);
 		Location location = blocks.get(blocks.size() - 1).getLocation();
 		
 		Location from = location.clone();

@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -97,10 +98,9 @@ public class PickupItemTrait extends AbstractMagicSpellTrait  {
 	}
 
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void magicSpellTriggered(RaCPlayer player, TraitResults result) {
-		List<Block> blocks = player.getPlayer().getLineOfSight(new HashSet<Byte>(), 30);
+		List<Block> blocks = player.getPlayer().getLineOfSight(new HashSet<Material>(), 30);
 		List<Entity> nearEntities = player.getPlayer().getNearbyEntities(30, 30, 30);
 		
 		Item pickupItem = null;
