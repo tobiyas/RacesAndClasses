@@ -169,7 +169,7 @@ public class PoisonWeaponListener implements Listener{
 				
 				//Not found:
 				if(!isRecipe) continue;
-				recipeIt.remove();
+				try{ recipeIt.remove(); }catch(UnsupportedOperationException exp){  }
 			}
 		}
 		
