@@ -164,7 +164,7 @@ public class CustomPlayerLevelManager extends AbstractPlayerLevelingSystem {
 			currentLevel++;
 			currentExpOfLevel -= levelPack.getMaxEXP();
 			
-			Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, currentLevel, currentLevel + 1));
+			Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, currentLevel - 1, currentLevel));
 			
 			levelPack = LevelCalculator.calculateLevelPackage(currentLevel);
 		}
