@@ -529,7 +529,7 @@ import de.tobiyas.util.sql.SQL.SQLProperties;
 		if(config_useLevelSystem == LevelingSystem.mcMMO
 				&& !McMMOLevelManager.verifyGeneratorStringWorks(config_mapExpPerLevelCalculationString)){
 			plugin.log(" WARNING: The value for the Level Generation String could not be parsed! change: level.mapExpPerLevelCalculationString");
-			config_mapExpPerLevelCalculationString = "{axes} + {unarmed} + {archery} / 50";
+			config_mapExpPerLevelCalculationString = "({axes} + {unarmed} + {archery}) / 50";
 		}
 		
 		List<String> temp_config_worldsDisabled = config.getStringList("worlds_disableOn");		

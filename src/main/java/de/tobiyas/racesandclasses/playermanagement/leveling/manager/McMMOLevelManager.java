@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling.manager;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -28,6 +28,10 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.util.evaluations.EvalEvaluator;
+import de.tobiyas.util.evaluations.parts.Calculation;
+import de.tobiyas.util.exception.TryUtils;
+import de.tobiyas.util.exception.TryUtils.Function;
 
 public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 	
@@ -130,80 +134,44 @@ public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 	public static boolean verifyGeneratorStringWorks(String generatorString){
 		try{
 			generatorString = generatorString.toLowerCase();
-			ScriptEngineManager mgr = null;
-			ScriptEngine engine = null;
-			try{
-				mgr = new ScriptEngineManager();
-				engine = mgr.getEngineByName("JavaScript");
-			}catch(Throwable exp){
-				RacesAndClasses.getPlugin().logStackTrace("Could no load JavaScript Engine! You can't use mcmmo skills.", exp);
-				return false;
+			
+			Calculation calc = EvalEvaluator.parse(generatorString);
+			if(calc == null) throw new IllegalArgumentException("Evaluation String not parseable");
+			
+			Map<String,Double> vars = new HashMap<>();
+			vars.put("powerlevel", 1d);
+			
+			for(SkillType type : SkillType.values()){
+				vars.put(type.name(), 1d);
+				vars.put(type.getName(), 1d);
 			}
 			
-			generatorString = generatorString.replace("{powerlevel}", String.valueOf(42));
-		    for(SkillType type : SkillType.values()){
-		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(42));
-		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(42));
-
-		    	generatorString = generatorString.replace(type.name().toLowerCase(), String.valueOf(42));
-		    	generatorString = generatorString.replace(type.getName().toLowerCase(), String.valueOf(42));
-		    }
-		
-	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	
-	    	double doubleValue = Double.parseDouble(parsedValue);
-	    	Integer intValue = (int) doubleValue;
-	    	
-	    	return intValue != null;
+			return calc.calculate(vars) != Double.NaN;
 	    }catch(Throwable exp){
 	    	RacesAndClasses.getPlugin().logStackTrace("Could not compile your MCMMO Level String. Please fix it!", exp);
 	    	return false;
 	    }
 	}
-	
-	
-	/**
-	 * This calcs the current level of the Player passed.
-	 * 
-	 * @param playerName to parse
-	 * 
-	 * @return the level of the Player or 1 if something gone wrong.
-	 */
-	private int calcCurrentLevel(){
-		String generatorString = this.calcString.toLowerCase();
-		try{
-			ScriptEngineManager mgr = null;
-			ScriptEngine engine = null;
-			try{
-				mgr = new ScriptEngineManager();
-				engine = mgr.getEngineByName("JavaScript");
-			}catch(Throwable exp){
-				return 1;
-			}
-			
-		    
-			Player pl = getPlayer().getPlayer();
-			int powerLevel = ExperienceAPI.getPowerLevel(pl);
-			generatorString = generatorString.replace("{powerlevel}", String.valueOf(powerLevel));
-			
-			
-		    for(SkillType type : SkillType.values()){
-		    	int skillLevel = ExperienceAPI.getLevel(pl, type.name());
-		    	
-		    	generatorString = generatorString.replace("{" + type.getName().toLowerCase() + "}", String.valueOf(skillLevel));
-		    	generatorString = generatorString.replace("{" + type.name().toLowerCase() + "}", String.valueOf(skillLevel));
 
-		    	generatorString = generatorString.replace(type.getName().toLowerCase(), String.valueOf(skillLevel));
-		    	generatorString = generatorString.replace(type.name().toLowerCase(), String.valueOf(skillLevel));
-		    }
+	
+	private int calcCurrentLevel(){
+		Calculation calc = EvalEvaluator.parse(calcString);
+		if(calc == null) return 0;
 		
-	    	String parsedValue = (String) engine.eval(generatorString).toString();	    	
-	    	double doubleValue = Double.parseDouble(parsedValue);
-	    	Integer intValue = (int) doubleValue;
-	    	
-	    	return intValue;
-	    }catch(Throwable exp){
-	    	return 1;
-	    }
+		
+		final Player pl = getPlayer().getPlayer();
+		int powerLevel = ExperienceAPI.getPowerLevel(pl);
+		
+		Map<String,Double> vars = new HashMap<>();
+		vars.put("powerlevel".toLowerCase(), (double) powerLevel);
+		
+		for(final SkillType type : SkillType.values()){
+			double skillLevel = TryUtils.Try(new Function<Double>() { public Double doStuff(){ return Double.valueOf(ExperienceAPI.getLevel(pl, type.name())); }}, Double.valueOf(0d));
+			vars.put(type.name().toLowerCase(), skillLevel);
+			vars.put(type.getName().toLowerCase(), skillLevel);
+		}
+		
+		return (int) calc.calculate(vars);
 	}
 
 

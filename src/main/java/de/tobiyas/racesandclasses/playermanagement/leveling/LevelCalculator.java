@@ -15,17 +15,20 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.playermanagement.leveling;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.util.evaluations.EvalEvaluator;
+import de.tobiyas.util.evaluations.parts.Calculation;
 
 public class LevelCalculator {
 	
 	/**
-	 * The Cache Script Engine.
+	 * The Calculator to use.
 	 */
-	protected static ScriptEngine scriptEngine;
+	private static Calculation calc;
+	
 	
 	
 	/**
@@ -53,22 +56,18 @@ public class LevelCalculator {
 	 * @return
 	 */
 	protected static int calcMaxExpForLevel(int level){
-		try{
-			if(scriptEngine == null){
-				ScriptEngineManager mgr = new ScriptEngineManager();
-				scriptEngine = mgr.getEngineByName("JavaScript");
+		try{			
+			if(calc == null){
+				String maxExpGeneratorString = RacesAndClasses.getPlugin()
+						.getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
+				
+				calc = EvalEvaluator.parse(maxExpGeneratorString);
 			}
-			
-		    String maxExpGeneratorString = RacesAndClasses.getPlugin()
-		    		.getConfigManager().getGeneralConfig().getConfig_mapExpPerLevelCalculationString();
 		    
-		    maxExpGeneratorString = maxExpGeneratorString.replace("{level}", String.valueOf(level));
-		
-	    	String parsedValue = (String) scriptEngine.eval(maxExpGeneratorString).toString();	
-	    	double doubleValue = Double.parseDouble(parsedValue);
-	    	int intValue = (int) doubleValue;
-	    	
-	    	return intValue;
+		    Map<String,Double> vars = new HashMap<>();
+		    vars.put("level", (double)level);
+		    
+	    	return (int) calc.calculate(vars);
 	    }catch(Throwable exp){
 	    	return level * level * 1000;
 	    }
@@ -103,18 +102,10 @@ public class LevelCalculator {
 	 */
 	public static boolean verifyGeneratorStringWorks(String generatorString){
 		try{
-			if(scriptEngine == null){
-				ScriptEngineManager mgr = new ScriptEngineManager();
-				scriptEngine = mgr.getEngineByName("JavaScript");
-			}
+			Calculation calc = EvalEvaluator.parse(generatorString);
+			if(calc == null) return false;
 			
-		    generatorString = generatorString.replace("{level}", String.valueOf(42));
-		
-	    	String parsedValue = (String) scriptEngine.eval(generatorString).toString();	    	
-	    	double doubleValue = Double.parseDouble(parsedValue);
-	    	Integer intValue = (int) doubleValue;
-	    	
-	    	return intValue != null;
+			return calc.calculate(new HashMap<String,Double>()) != Double.NaN;
 	    }catch(Throwable exp){
 	    	return false;
 	    }
