@@ -55,7 +55,8 @@ public class ChatFormatter{
 	
 	public String format(RaCPlayer player, String msg, String forceFormat, boolean replaceMessage){
 		RacesAndClasses plugin = RacesAndClasses.getPlugin();
-		AbstractTraitHolder container = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder raceContainer = plugin.getRaceManager().getHolderOfPlayer(player);
+		AbstractTraitHolder classContainer = plugin.getClassManager().getHolderOfPlayer(player);
 		
 		String displayName, realName, world, level;
 		
@@ -78,10 +79,8 @@ public class ChatFormatter{
 			messageFormat = new String(forceFormat);
 		}
 			
-		String raceTag = "NONE";
-		if(container != null){
-			raceTag = container.getTag();
-		}
+		String raceTag = raceContainer == null ? "NONE" : raceContainer.getTag();
+		String classTag = classContainer == null ? "" : classContainer.getTag();
 		
 		//default: {color}[{nick}] &f{prefix}{sender}{suffix}{color}: {msg}
 		messageFormat = messageFormat.replace("{color}", color);
@@ -91,10 +90,12 @@ public class ChatFormatter{
 		messageFormat = messageFormat.replace("{sender}", displayName);
 		messageFormat = messageFormat.replace("{realname}", realName);
 		messageFormat = messageFormat.replace("{race}", raceTag);
+		messageFormat = messageFormat.replace("{class}", classTag);
 		messageFormat = messageFormat.replace("{world}", world);
 		messageFormat = messageFormat.replace("{level}", level);
 		messageFormat = messageFormat.replace("{channeltype}", this.level.name());
 		messageFormat = ChatColor.translateAlternateColorCodes('&', messageFormat);
+		
 		if(replaceMessage) messageFormat = messageFormat.replace("{msg}", msg);
 		
 		return messageFormat;
