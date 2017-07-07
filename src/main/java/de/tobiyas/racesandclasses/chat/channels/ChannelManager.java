@@ -683,8 +683,7 @@ public class ChannelManager {
 	public void editChannel(RaCPlayer player, String channel, String property,
 			String newValue) {
 		ChannelContainer container = getContainer(channel);
-		if(container == null)
-			return;
+		if(container == null) return;
 		
 		container.editChannel(player, property, newValue);
 	}

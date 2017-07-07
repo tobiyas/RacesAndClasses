@@ -96,7 +96,11 @@ public class ChatFormatter{
 		messageFormat = messageFormat.replace("{channeltype}", this.level.name());
 		messageFormat = ChatColor.translateAlternateColorCodes('&', messageFormat);
 		
-		if(replaceMessage) messageFormat = messageFormat.replace("{msg}", msg);
+		if(replaceMessage) {
+			msg = msg.replace("{msg}", "").replaceAll("%2$s", "");
+			messageFormat = messageFormat.replace("{msg}", msg);
+			messageFormat = messageFormat.replace("%2$s", msg);
+		}
 		
 		return messageFormat;
 	}

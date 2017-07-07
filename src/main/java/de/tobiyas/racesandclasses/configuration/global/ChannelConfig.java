@@ -94,7 +94,7 @@ public class ChannelConfig {
 		config.addDefault("chat.channel.format.leave", "{color}[{nick}] Player: &f[{sender}] {color} has left the Channel.");
 
 		config.options().copyDefaults(true);
-		config.save();
+		config.forceSave();
 	}
 	
 	

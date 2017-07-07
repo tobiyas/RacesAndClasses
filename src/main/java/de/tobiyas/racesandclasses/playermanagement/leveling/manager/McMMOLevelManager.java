@@ -148,7 +148,6 @@ public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 			
 			return calc.calculate(vars) != Double.NaN;
 	    }catch(Throwable exp){
-	    	RacesAndClasses.getPlugin().logStackTrace("Could not compile your MCMMO Level String. Please fix it!", exp);
 	    	return false;
 	    }
 	}

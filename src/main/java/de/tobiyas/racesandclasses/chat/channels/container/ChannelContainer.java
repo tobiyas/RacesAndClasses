@@ -332,10 +332,10 @@ public class ChannelContainer {
 	}
 	
 	public void sendMessageInChannel(CommandSender sender, String message, String forceFormat){
-		if(forceFormat.isEmpty()) return;
+		if(forceFormat == null || forceFormat.isEmpty()) forceFormat = channelFormat.getFormat();
 		
 		Player player = (sender instanceof Player) ? (Player)sender : null;
-		RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+		RaCPlayer racPlayer = player == null ? null : RaCPlayerManager.get().getPlayer(player);
 		
 		if(channelLevel == ChannelLevel.LocalChannel && sender instanceof Player) rescanPartitions((Player) sender);
 
@@ -357,8 +357,8 @@ public class ChannelContainer {
 		
 		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(!Bukkit.isPrimaryThread(), player, message, players);
 		event.setFormat(forceFormat);
-		Bukkit.getPluginManager().callEvent(event);
 		
+		Bukkit.getPluginManager().callEvent(event);
 		if(event.isCancelled()) return;
 		
 		String modifiedMessage = "";
@@ -565,10 +565,16 @@ public class ChannelContainer {
 	 * @param newValue
 	 */
 	public void editChannel(RaCPlayer player, String property, String newValue) {
-		if(channelLevel == ChannelLevel.PasswordChannel || channelLevel == ChannelLevel.PrivateChannel || channelLevel == ChannelLevel.PublicChannel || channelLevel == ChannelLevel.LocalChannel){
-			if(!player.equals(channelAdmin)){
-				player.sendMessage(ChatColor.RED + "You must be the channel-admin to edit the channel");
-				return;
+		if(!hasChannelAdminPower(player)){
+			if(channelLevel == ChannelLevel.PasswordChannel 
+					|| channelLevel == ChannelLevel.PrivateChannel 
+					|| channelLevel == ChannelLevel.PublicChannel 
+					|| channelLevel == ChannelLevel.LocalChannel){
+				
+				if(!player.equals(channelAdmin)){
+					player.sendMessage(ChatColor.RED + "You must be the channel-admin to edit the channel");
+					return;
+				}
 			}
 		}
 		
@@ -604,6 +610,15 @@ public class ChannelContainer {
 			player.sendMessage(ChatColor.LIGHT_PURPLE + property + ChatColor.RED + " could not be found or your new Argument is invalid.");
 			player.sendMessage(ChatColor.RED + "Valid properties are: " + ChatColor.LIGHT_PURPLE + "format, color, prefix, suffix, admin, password");
 		}
+	}
+	
+	/**
+	 * Checks if the player has Admin permissions to overwrite everything!
+	 * @param player to check.
+	 * @return true if has perms.
+	 */
+	private boolean hasChannelAdminPower(RaCPlayer player){
+		return player == null ? false : player.hasPermission(PermissionNode.channelAdminOverwritePower);
 	}
 	
 	/**

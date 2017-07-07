@@ -42,13 +42,16 @@ public class CommandExecutor_LocalChat extends AbstractCommand{
 			return true;
 		}
 		
-		String message = "";
-		for(String arg : args){
-			message += arg + " ";
-		}
-		
+		String message = join(" ", args);
 		plugin.getChannelManager().broadcastMessageToChannel("Local", player, message);
 		return true;
+	}
+	
+	
+	private static String join(String delimiter, String[] args){
+		StringBuilder builder = new StringBuilder();
+		for(String arg : args) builder.append(delimiter).append(arg);
+		return builder.length() == 0 ? "" : builder.substring(delimiter.length());
 	}
 
 }

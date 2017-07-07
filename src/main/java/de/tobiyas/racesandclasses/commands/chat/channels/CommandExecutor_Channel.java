@@ -452,7 +452,7 @@ public class CommandExecutor_Channel extends AbstractCommand {
 			return;
 		}
 		
-		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.WorldChannel || level == ChannelLevel.RaceChannel){
+		if(level == ChannelLevel.GlobalChannel || level == ChannelLevel.LocalChannel || level == ChannelLevel.WorldChannel || level == ChannelLevel.RaceChannel){
 			if(!plugin.getPermissionManager().checkPermissions(player.getPlayer(), PermissionNode.channelEdit)){
 				return;
 			}

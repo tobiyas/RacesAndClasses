@@ -83,6 +83,11 @@ public class PermissionNode {
 	public static final String channelGlobalUnmutePower = prePlugin + "chanel.global.unmutepower";
 	
 	/**
+	 * The Power to unmute people in the Global channel
+	 */
+	public static final String channelAdminOverwritePower = prePlugin + "chanel.adminpower";
+	
+	/**
 	 * The Permission to edit a channel without beeing Admin of this channel.
 	 */
 	public static final String channelEdit = prePlugin + "channel.edit";
