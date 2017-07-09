@@ -46,8 +46,8 @@
 		<!-- temp repo. Not always online. -->
 		<repository>
 			<id>tobiyas-repo</id>
-			<name>Tobiyas Public Repo</name>
-			<url>http://tobiyas.de/maven</url>
+			<name>Tobiyas Public Repo (by mymavenrepo.com)</name>
+			<url>https://mymavenrepo.com/repo/0MUWpMJRPRou7zFXAsU7/</url>
 		</repository>
 		
 		<!-- SK Repo -->
@@ -367,11 +367,16 @@
 		</resources>
 	</build>
 	
-	<distributionManagement>
-		<repository>
-			<id>home-pi-maven</id>
-			<url>sftp://192.168.192.48/var/www/maven/</url>
-		</repository>
-	</distributionManagement>
+	<!--  Use the MyMavenRepo Service -->
+    <distributionManagement>
+        <repository>
+            <id>MyMaven.write</id>
+            <url>${myMavenRepo.write.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>MyMaven.write</id>
+            <url>${myMavenRepo.write.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 	
 </project>
