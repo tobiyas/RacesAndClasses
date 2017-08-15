@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.listeners.racechangelistener;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -27,11 +28,11 @@ import org.bukkit.event.Listener;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.ClassAPI;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
-import de.tobiyas.racesandclasses.APIs.RaceAPI;
 import de.tobiyas.racesandclasses.configuration.global.GeneralConfig;
 import de.tobiyas.racesandclasses.cooldown.CooldownManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.HolderSelectionPreconditions.HolderPreconditionResult;
+import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceChangedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.AfterRaceSelectedEvent;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.raceevent.PreRaceSelectEvent;
@@ -163,6 +164,10 @@ public class RaceChangeSelectionListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void sendCommandAfterChange(AfterRaceChangedEvent event){
+		//First send command for leaving the old class:
+		RaceContainer old = event.getOldRace();
+		if(old != null) executeCommands(RaCPlayerManager.get().getPlayer(event.getPlayer()), old.getCommandExecuteOnExit(), old);
+		
 		sendCommandAfterSelect((AfterRaceSelectedEvent) event);
 	}
 	
@@ -173,12 +178,25 @@ public class RaceChangeSelectionListener implements Listener {
 		
 		
 		List<String> commands = plugin.getConfigManager().getGeneralConfig().getConfig_race_commands_after_change();
+		if(selectEvent.getHolderToSelect() != null) commands.addAll(selectEvent.getHolderToSelect().getCommandExecuteOnJoin());
 		if(commands.isEmpty()) return;
 		
 		RaCPlayer player = RaCPlayerManager.get().getPlayer(selectEvent.getPlayer());
+		executeCommands(player, commands, selectEvent.getRaceToSelect());
+	}
+	
+	
+	/**
+	 * Executes the Commands passed for the player passed.
+	 * @param player to use
+	 * @param commands to use.
+	 */
+	private void executeCommands(RaCPlayer player, Collection<String> commands, RaceContainer toUse){
+		if(player == null) return;
 		
 		for(String command : commands){
 			if(command == null || command.isEmpty()) continue;
+			
 			boolean asConsole = command.contains("%CONSOLE%");
 			boolean asOp = command.contains("%OP%");
 			
@@ -190,7 +208,7 @@ public class RaceChangeSelectionListener implements Listener {
 			command = command.replace("%OP%", "");
 			
 			command = command.replace("%CLASS%", OrEmpty(ClassAPI.getClassNameOfPlayer(player.getPlayer())));
-			command = command.replace("%RACE%", OrEmpty(RaceAPI.getRaceNameOfPlayer(player.getPlayer())));
+			command = command.replace("%RACE%", OrEmpty(toUse.getDisplayName()));
 			command = command.replace("%PLAYER%", player.getName());
 			command = command.replace("%DISPLAY%", player.getDisplayName());
 			
@@ -207,8 +225,10 @@ public class RaceChangeSelectionListener implements Listener {
 			}finally {
 				if(asOp && !asConsole && !opBefore) player.getPlayer().setOp(false);
 			}
+			
 		}
 	}
+	
 	
 	private String OrEmpty(String value){
 		return value == null ? "" : value;

@@ -17,6 +17,8 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer;
 
 import static de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser.configureTraitFromYAML;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -141,6 +143,15 @@ public abstract class AbstractTraitHolder {
 	 * The parents of this holders.
 	 */
 	protected final Set<AbstractTraitHolder> parents = new HashSet<AbstractTraitHolder>();
+
+	/**
+	 * The List of commands to execute on Join.
+	 */
+	protected final Collection<String> commandExecuteOnJoin = new ArrayList<String>();
+	/**
+	 * The List of commands to execute on Exit.
+	 */
+	protected final Collection<String> commandExecuteOnExit = new ArrayList<String>();
 	
 	
 	/**
@@ -341,6 +352,12 @@ public abstract class AbstractTraitHolder {
 			this.guiSlot = config.getInt(configNodeName + ".config.guislot", -1);
 			this.hideConfigInGui= config.getBoolean(configNodeName + ".config.hideConfigInGui", false);
 			this.hideTraitsInGui = config.getBoolean(configNodeName + ".config.hideTraitsInGui", false);
+			
+			//Read commands to execute on Join / Leave:
+			this.commandExecuteOnJoin.clear();
+			this.commandExecuteOnExit.clear();
+			this.commandExecuteOnJoin.addAll(config.getStringList(configNodeName + ".config.joinCommands"));
+			this.commandExecuteOnJoin.addAll(config.getStringList(configNodeName + ".config.exitCommands"));
 		}catch(Exception exp){
 			throw new HolderConfigParseException();
 		}
@@ -649,6 +666,23 @@ public abstract class AbstractTraitHolder {
 	 */
 	public Set<AbstractTraitHolder> getParents(){
 		return new HashSet<AbstractTraitHolder>(parents);
+	}
+	
+	/**
+	 * Gets the commands to execute on Join
+	 * @return the commands to execute.
+	 */
+	public Collection<String> getCommandExecuteOnJoin() {
+		return commandExecuteOnJoin;
+	}
+	
+
+	/**
+	 * Gets the commands to execute on Leave.
+	 * @return the commands to execute.
+	 */
+	public Collection<String> getCommandExecuteOnExit() {
+		return commandExecuteOnExit;
 	}
 
 	
