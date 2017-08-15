@@ -184,6 +184,8 @@ public class Keys {
 	public static final String restrictions_not_met_OnlyOnBlock = "restrictions_not_met_OnlyOnBlock";
 	public static final String restrictions_not_met_OnlyWhileSneaking = "restrictions_not_met_OnlyWhileSneaking";
 	public static final String restrictions_not_met_OnlyWhileNotSneaking = "restrictions_not_met_OnlyWhileNotSneaking";
+	public static final String restrictions_not_met_Offhand = "restrictions_not_met_Offhand";
+	public static final String restrictions_not_met_Mainhand = "restrictions_not_met_Mainhand";
 	public static final String restrictions_not_met_NotOnBlock = "restrictions_not_met_NotOnBlock";
 	public static final String restrictions_not_met_Skilled = "restrictions_not_met_Skilled";
 	public static final String restrictions_not_met_Silence = "restrictions_not_met_Silence";

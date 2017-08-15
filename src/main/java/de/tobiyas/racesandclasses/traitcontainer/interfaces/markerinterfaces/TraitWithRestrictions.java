@@ -35,9 +35,19 @@ public interface TraitWithRestrictions extends Trait {
 	public static final String BIOME_PATH = "biomes";
 
 	/**
-	 * The items needed to be weared
+	 * The items needed to be worn as armor
 	 */
 	public static final String WEARING_PATH = "wearing";
+	
+	/**
+	 * The items needed to be worn in Mainhand
+	 */
+	public static final String ITEM_IN_MAINHAND_PATH = "mainhand";
+	
+	/**
+	 * The items needed to be worn in offhand
+	 */
+	public static final String ITEM_IN_OFFHAND_PATH = "offhand";
 
 	/**
 	 * Trait works only in water

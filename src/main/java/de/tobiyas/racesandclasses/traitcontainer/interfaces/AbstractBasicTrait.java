@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.traitcontainer.interfaces;
 
-import static de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -61,6 +60,10 @@ import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
 import de.tobiyas.racesandclasses.util.traitutil.TraitVisible;
 import de.tobiyas.racesandclasses.vollotile.ParticleEffects;
+import de.tobiyas.util.items.ItemCheckTemplate;
+import de.tobiyas.util.vollotile.VollotileCode.MCVersion;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
+
 
 public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions, Listener {
 	
@@ -277,6 +280,16 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	protected boolean permanentSkill = true;
 	
 	/**
+	 * The Template to check against for item in main hand.
+	 */
+	protected ItemCheckTemplate mainHandTemplate = ItemCheckTemplate.TRUE();
+	
+	/**
+	 * The Template to check against for item in off hand.
+	 */
+	protected ItemCheckTemplate offHandTemplate = ItemCheckTemplate.TRUE();
+	
+	/**
 	 * The slot for the SkillTree.
 	 */
 	protected int skillTreeSlot = -1;
@@ -353,6 +366,8 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		@TraitConfigurationField(fieldName = SKILL_TREE_MAX_LEVEL_PATH, classToExpect = Integer.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_EXCLUDE_OTHERS_PATH, classToExpect = List.class, optional = true),
 		@TraitConfigurationField(fieldName = SKILL_TREE_NAME, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = ITEM_IN_MAINHAND_PATH, classToExpect = String.class, optional = true),
+		@TraitConfigurationField(fieldName = ITEM_IN_OFFHAND_PATH, classToExpect = String.class, optional = true),
 	})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
@@ -535,6 +550,16 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 				if(world != null) onlyInWorlds.add(world);
 			}
 		}
+		
+		//Read the item in MainHand:
+		if(configMap.containsKey(ITEM_IN_MAINHAND_PATH)){
+			this.mainHandTemplate = ItemCheckTemplate.generate(configMap.getAsString(ITEM_IN_MAINHAND_PATH, ""));
+		}
+		
+		//Read the item in OffHand:
+		if(configMap.containsKey(ITEM_IN_OFFHAND_PATH)){
+			this.offHandTemplate = ItemCheckTemplate.generate(configMap.getAsString(ITEM_IN_OFFHAND_PATH, ""));
+		}
 	}
 	
 	
@@ -653,6 +678,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 		//players not online will most likely fail everything.
 		if(!player.isOnline()) return TraitRestriction.Unknown;
 		
+		Player bPlayer = player.getPlayer();
 		String playerName = player.getName();
 		
 		//check for Level-Range
@@ -778,6 +804,22 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 			}
 		}
 		
+		//Check for MainHand:
+		ItemStack mainHand = bPlayer.getInventory().getItem(bPlayer.getInventory().getHeldItemSlot());
+		if(!mainHandTemplate.appliable(mainHand)){
+			triggerButHasRestriction(TraitRestriction.MainHandItem, wrapper);
+			return TraitRestriction.MainHandItem;
+		}
+		
+		//Check for OffHand:
+		if(VollotileCodeManager.getVollotileCode().getVersion().isVersionGreaterOrEqual(MCVersion.v1_9_R1)){
+			ItemStack offhand = player.getPlayer().getInventory().getItemInOffHand();
+			if(!offHandTemplate.appliable(offhand)){
+				triggerButHasRestriction(TraitRestriction.OffHandItem, wrapper);
+				return TraitRestriction.OffHandItem;
+			}
+		}
+		
 		//check above elevation
 		if(!isOutOfWorld && aboveElevation != Integer.MIN_VALUE){
 			if(feetBlock.getY() <= aboveElevation) {
@@ -849,7 +891,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 						long maxTime = minUplinkShowTime * 1000;		
 								
 						if(new Date().after(new Date(lastNotified + maxTime))){
-							LanguageAPI.sendTranslatedMessage(player.getPlayer(), trait_cooldown, 
+							LanguageAPI.sendTranslatedMessage(player.getPlayer(), de.tobiyas.racesandclasses.translation.languages.Keys.trait_cooldown, 
 									"seconds", String.valueOf(playerUplinkTime),
 									"name", getDisplayName());
 							uplinkNotifyList.put(playerName, new Date().getTime());

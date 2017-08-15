@@ -82,8 +82,6 @@ public class Listener_Player implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event){
-		System.out.println("Call Player Join!!");
-		
 		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		

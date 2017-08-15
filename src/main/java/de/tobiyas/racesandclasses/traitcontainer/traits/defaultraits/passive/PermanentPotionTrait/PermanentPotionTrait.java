@@ -65,8 +65,8 @@ public class PermanentPotionTrait extends TickEverySecondsTrait implements Trait
 
 	@SuppressWarnings("deprecation")
 	@TraitConfigurationNeeded( fields = {
-			@TraitConfigurationField(fieldName = "amplifier", classToExpect = Integer.class, optional = false),
 			@TraitConfigurationField(fieldName = "type", classToExpect = Integer.class, optional = false),
+			@TraitConfigurationField(fieldName = "amplifier", classToExpect = Integer.class, optional = true),
 			@TraitConfigurationField(fieldName = "removeParticles", classToExpect = Boolean.class, optional = true)
 		}, removedFields = {
 			@RemoveSuperConfigField(name = "seconds")
@@ -74,7 +74,7 @@ public class PermanentPotionTrait extends TickEverySecondsTrait implements Trait
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
 		//Put the overriding stuff in it.
-		configMap.put("seconds", 5);
+		if(!configMap.containsKey("seconds")) configMap.put("seconds", 5);
 		super.setConfiguration(configMap);
 		
 		

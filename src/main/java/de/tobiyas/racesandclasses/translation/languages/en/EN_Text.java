@@ -159,6 +159,8 @@ public class EN_Text {
 			+ restrictions_not_met_OnlyAfterDamage + ": '&cCan only be used after beeing damaged.'\r\n"
 			+ restrictions_not_met_OnlyAfterNotDamage + ": '&cCan only be used after not beeing damaged.'\r\n"
 			+ restrictions_not_met_OnlyOnBlock + ": '&cCan only be used on specific blocks.'\r\n"
+			+ restrictions_not_met_Offhand + ": '&cCan only be used on with another item in offhand.'\r\n"
+			+ restrictions_not_met_Mainhand + ": '&cCan only be used on with another item in mainhand.'\r\n"
 			+ restrictions_not_met_Skilled + ": '&cYou did not skill this trait.'\r\n"
 			+ restrictions_not_met_Silence + ": '&cYou are currently silenced.'\r\n"
 			+ restrictions_not_met_OnlyWhileSneaking + ": '&cCan only be used while sneaking.'\r\n"
