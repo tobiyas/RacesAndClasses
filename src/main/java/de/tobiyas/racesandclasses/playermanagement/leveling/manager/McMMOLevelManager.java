@@ -157,20 +157,25 @@ public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 		Calculation calc = EvalEvaluator.parse(calcString);
 		if(calc == null) return 0;
 		
-		
-		final Player pl = getPlayer().getPlayer();
-		int powerLevel = ExperienceAPI.getPowerLevel(pl);
-		
-		Map<String,Double> vars = new HashMap<>();
-		vars.put("powerlevel".toLowerCase(), (double) powerLevel);
-		
-		for(final SkillType type : SkillType.values()){
-			double skillLevel = TryUtils.Try(new Function<Double>() { public Double doStuff(){ return Double.valueOf(ExperienceAPI.getLevel(pl, type.name())); }}, Double.valueOf(0d));
-			vars.put(type.name().toLowerCase(), skillLevel);
-			vars.put(type.getName().toLowerCase(), skillLevel);
+		try{
+			final Player pl = getPlayer().getPlayer();
+			int powerLevel = ExperienceAPI.getPowerLevel(pl);
+			
+			Map<String,Double> vars = new HashMap<>();
+			vars.put("powerlevel".toLowerCase(), (double) powerLevel);
+			
+			for(final SkillType type : SkillType.values()){
+				double skillLevel = TryUtils.Try(new Function<Double>() { public Double doStuff(){ return Double.valueOf(ExperienceAPI.getLevel(pl, type.name())); }}, Double.valueOf(0d));
+				vars.put(type.name().toLowerCase(), skillLevel);
+				vars.put(type.getName().toLowerCase(), skillLevel);
+			}
+			
+			return (int) calc.calculate(vars);
+		}catch(Throwable exp){
+			plugin.logStackTrace("Error while reading McMMO Level. See Error Log!", exp);
 		}
 		
-		return (int) calc.calculate(vars);
+		return 1;
 	}
 
 
