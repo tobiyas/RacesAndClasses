@@ -61,7 +61,6 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.translation.languages.Keys;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.CertainVersionChecker;
 import de.tobiyas.racesandclasses.util.consts.Consts;
-import de.tobiyas.util.player.PlayerUtils;
 import de.tobiyas.util.schedule.DebugBukkitRunnable;
 
 
@@ -83,6 +82,8 @@ public class Listener_Player implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent event){
+		System.out.println("Call Player Join!!");
+		
 		final RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
 		boolean racesActive = plugin.getConfigManager().getGeneralConfig().isConfig_enableRaces();
 		
@@ -106,12 +107,8 @@ public class Listener_Player implements Listener {
 		}
 		
 		if(racesActive && plugin.getConfigManager().getGeneralConfig().isConfig_adaptListName()){
-			for(Player online : PlayerUtils.getOnlinePlayers()){
-				 RaCPlayer racOnline = RaCPlayerManager.get().getPlayer(online);
-				 RaceContainer racContainer = racOnline.getRace();
-				 if(racContainer != null) racContainer.editTABListEntry(player);
-			}
-			
+			RaceContainer racContainer = player.getRace();
+			if(racContainer != null) racContainer.editTABListEntry(player);
 		}
 		
 		boolean forceSelectOfRace = plugin.getConfigManager().getGeneralConfig().isConfig_openRaceSelectionOnJoinWhenNoRace();
