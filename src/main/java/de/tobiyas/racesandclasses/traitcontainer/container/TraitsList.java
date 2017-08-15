@@ -45,6 +45,7 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.activate.Tr
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.CobWebArrowTrait.CobWebArrowTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.ExplosiveArrowTrait.ExplosiveArrowTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.FireArrowTrait.FireArrowTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.LongArrowTrait.LongArrowTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.MightyArrowTrait.MightyArrowTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.MultishotArrowTrait.MultishotArrowTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.arrow.PoisonArrowTrait.PoisonArrowTrait;
@@ -176,6 +177,7 @@ public class TraitsList{
 		
 		//Arrows:
 		registerClass(CobWebArrowTrait.class);
+		registerClass(LongArrowTrait.class);
 		registerClass(ExplosiveArrowTrait.class);
 		registerClass(FireArrowTrait.class);
 		registerClass(MightyArrowTrait.class);

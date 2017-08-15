@@ -18,6 +18,7 @@ package de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race;
 import java.util.Collection;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractHolderManager;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
@@ -112,7 +113,15 @@ public class RaceManager extends AbstractHolderManager {
 			plugin.getChannelManager().playerLeaveRace(oldRace, player);
 		}
 		
-		return addPlayerToHolder(player, newHolderName, callEvent);
+		if(addPlayerToHolder(player, newHolderName, false)){
+			if(callEvent){
+				Event event = generateAfterChangeEvent(player, getHolderByName(newHolderName), getHolderByName(oldRace));
+				if(event != null) plugin.fireEventToBukkit(event);
+			}
+			return true;
+		}
+		
+		return false;
 	}
 	
 	

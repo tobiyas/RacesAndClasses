@@ -145,12 +145,7 @@ public class PermanentPotionTrait extends TickEverySecondsTrait implements Trait
 		
 		//Remove when restriction is not met!
 		Player player = racPlayer.getPlayer();
-		for(PotionEffect effect : player.getActivePotionEffects()){
-			if(effect.getType() == type && effect.getAmplifier() == amplifier){
-				if(type != null) player.getPlayer().removePotionEffect(effect.getType());
-				break;
-			}
-		}
+		player.removePotionEffect(type);
 	}
 
 	@Override
