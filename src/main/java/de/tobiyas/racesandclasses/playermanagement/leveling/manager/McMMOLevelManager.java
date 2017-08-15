@@ -171,6 +171,9 @@ public class McMMOLevelManager extends AbstractPlayerLevelingSystem {
 			}
 			
 			return (int) calc.calculate(vars);
+		}catch(com.gmail.nossr50.api.exceptions.McMMOPlayerNotFoundException exp){
+			//THis is when McMMO is not loaded Properly yet!
+			return 1;
 		}catch(Throwable exp){
 			plugin.logStackTrace("Error while reading McMMO Level. See Error Log!", exp);
 		}
