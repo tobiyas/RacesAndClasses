@@ -16,6 +16,9 @@
 package de.tobiyas.racesandclasses.translation;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +30,7 @@ import de.tobiyas.racesandclasses.translation.exception.TranslationException;
 import de.tobiyas.racesandclasses.translation.exception.TranslationNotFoundException;
 import de.tobiyas.racesandclasses.translation.languages.en.EN_Text;
 import de.tobiyas.util.config.YAMLConfigExtended;
+import de.tobiyas.util.file.IOUtils;
 
 public class DefaultTranslationManager implements TranslationManager {
 
@@ -183,9 +187,9 @@ public class DefaultTranslationManager implements TranslationManager {
 	@Override
 	public TranslationManager init(){
 		check_EN_isPresent();
+		copy_all_known();
 		
-		String languagePath = plugin.getDataFolder() + File.separator + "language" + File.separator
-				+ language;
+		String languagePath = plugin.getDataFolder() + File.separator + "language" + File.separator + language;
 		
 		File languageDir = new File(languagePath);
 		if(!languageDir.exists()){
@@ -199,6 +203,34 @@ public class DefaultTranslationManager implements TranslationManager {
 		return this;
 	}
 	
+	
+	/**
+	 * Copies all known files from the Plugin itself.
+	 */
+	private void copy_all_known() {
+		List<String> known = Arrays.asList("fr"); //TODO add known files here!
+		String baseDir = plugin.getDataFolder() + File.separator + "language" + File.separator;
+		
+		for(String lang : known){
+			//Already present!
+			if(new File(baseDir, lang).exists()) continue;
+			
+			try{
+				InputStream in = plugin.getResource("trans/" + lang + ".yml");
+				if(in == null) throw new IllegalArgumentException("Could not find Language file in JAR: 'trans/" + lang + ".yml'");
+				
+				File base = new File(baseDir, lang);
+				if(!base.exists()) base.mkdir();
+				
+				Path out = new File(base, lang + ".yml").toPath();
+				Files.copy(in, out);
+				
+				IOUtils.closeQuietly(in);
+			}catch(Throwable exp){ plugin.logStackTrace("Could not copy Language file: " + lang, exp); }
+		}
+	}
+
+
 	/**
 	 * Checks if the EN Language is present.
 	 */

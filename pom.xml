@@ -352,6 +352,7 @@
 				<includes>
 					<include>plugin.yml</include>
 					<include>LICENSE-2.0.html</include>
+					<include>trans/*.yml</include>
 				</includes>
 				<excludes>
 					<exclude>*.project</exclude>
