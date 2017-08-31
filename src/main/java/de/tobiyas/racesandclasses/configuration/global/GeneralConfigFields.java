@@ -111,6 +111,7 @@ public class GeneralConfigFields {
 	public static final String gui_scoreboard_disableAllOutputs = "gui_scoreboard_disableAllOutputs";
 	public static final String gui_level_useMCLevelBar = "gui_level_useMCLevelBar";
 	public static final String gui_actionbar_format = "gui_actionbar_format";
+	public static final String gui_use_dragon_bar_for_cooldown = "gui_use_dragon_bar_for_cooldown";
 
 	
 	//Magic/Mana

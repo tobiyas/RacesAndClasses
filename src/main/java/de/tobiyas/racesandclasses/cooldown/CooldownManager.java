@@ -21,8 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class CooldownManager {
 
@@ -38,6 +42,11 @@ public class CooldownManager {
 	 * The task id of the scheduler task reducing the cooldown
 	 */
 	private int taskId;
+	
+	/**
+	 * The maps for Cooldown displays.
+	 */
+	private final Map<RaCPlayer,PlayerCooldownDragonBarManager> bars = new HashMap<>();
 	
 	
 	/**
@@ -162,6 +171,16 @@ public class CooldownManager {
 		
 		synchronized (cooldownList) {
 			cooldownList.tickAll();
+		}
+		
+		//Tick the PlayerCooldownBars:
+		if(RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig().isConfig_useDragonBarForCooldown()){
+			for(Player player : PlayerUtils.getOnlinePlayers()){
+				RaCPlayer racPlayer = RaCPlayerManager.get().getPlayer(player);
+				PlayerCooldownDragonBarManager bar = bars.get(racPlayer);
+				if(bar == null) bars.put(racPlayer, bar = new PlayerCooldownDragonBarManager(racPlayer));
+				bar.tick();
+			}
 		}
 	}
 	

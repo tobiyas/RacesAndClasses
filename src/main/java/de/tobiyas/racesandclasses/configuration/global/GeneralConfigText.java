@@ -527,7 +527,13 @@ public class GeneralConfigText {
 				+ "# format: Format with colors\n"
 				+ "# default: %manabar% &eLvL: %level%  &eExp: %expbar% \n"
 				+ gui_actionbar_format + ": '%manabar%  &eLvL: %level%  &eExp: %expbar%'\n\n"
-				;
+								
+				+ "# If enabled, cooldowns will be displayed as Dragon Bars.\n"
+				+ "# To disable it, set it to false.\n"
+				+ "# boolean: Format with colors\n"
+				+ "# default: false \n"
+				+ gui_use_dragon_bar_for_cooldown + ": false\n\n"
+		;
 	}
 	
 	
