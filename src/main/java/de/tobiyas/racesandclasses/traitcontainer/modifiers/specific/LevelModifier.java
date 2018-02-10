@@ -33,7 +33,7 @@ public class LevelModifier extends AbstractModifier {
 	 * 
 	 * @return
 	 */
-	public static LevelModifier generate(String desriptor, Double modifier, String toModify){
+	public static LevelModifier generate(String desriptor, double modifier, String toModify){
 		String[] split = desriptor.split("-");
 		if(split.length != 2) return null;
 		

@@ -1,9 +1,15 @@
 package de.tobiyas.racesandclasses.traitcontainer.modifiers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.GeneratorNotFoundException;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierConfigurationException;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierGenericException;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.NotANumberAtArg3Exception;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.NotEnoughArgumentsForModifierException;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.BiomeModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.EvaluationModifiers;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.LevelModifier;
@@ -34,9 +40,10 @@ public class ModifierFactory {
 	 * 
 	 * @return the modifier or null if not parseable.
 	 */
-	public static TraitSituationModifier generate(String toParse){
+	public static TraitSituationModifier generate(String toParse) throws ModifierConfigurationException {
 		String[] split = toParse.split(":");
-		if(split.length < 3) return null;
+		
+		if(split.length < 3) throw new NotEnoughArgumentsForModifierException( toParse );
 		
 		String type = split[0].toLowerCase();
 		String descriptor = split[1];
@@ -44,17 +51,31 @@ public class ModifierFactory {
 		String toUseOn = split.length <=3 ? "*" : split[3];
 		
 		double parsedMod = 0;
-		try{ parsedMod = Double.parseDouble(mod); }catch(IllegalArgumentException exp){ return null; }
+		try{ parsedMod = Double.parseDouble(mod); }catch( IllegalArgumentException exp ){ throw new NotANumberAtArg3Exception(toParse, type, descriptor, mod, toUseOn); }
 		
 		Class<? extends AbstractModifier> generator = modifierMap.get(type);
-		if(generator == null) return null;
+		if(generator == null) {
+			throw new GeneratorNotFoundException( toParse, type, descriptor, parsedMod, toUseOn );
+		}
 		
 		try{
-			Method method = generator.getMethod("generate", String.class, Double.class, String.class);
+			Method method = generator.getMethod("generate", String.class, double.class, String.class);
 			return (TraitSituationModifier) method.invoke(null, descriptor, parsedMod, toUseOn);
 		}catch(Throwable exp){
-			//not parseable.
-			return null;
+			//Proxy if we have a problem with Reflections:
+			if( exp instanceof InvocationTargetException ) {
+				Throwable inner = ((InvocationTargetException) exp).getCause();
+				if( inner != null ) exp = inner;
+			}
+			
+			//Do Exception Stuff we know went wrong:
+			if( exp instanceof ModifierConfigurationException ) throw (ModifierConfigurationException) exp;
+			
+			//TODO: Remove line below. Only for Testing
+			exp.printStackTrace();
+			
+			//Something went completely wrong -> Pack it in an own exception!
+			throw new ModifierGenericException( toParse, type, descriptor, parsedMod, toUseOn, exp );
 		}
 	}
 	

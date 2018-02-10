@@ -55,6 +55,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.skills.SkillLevelConfig;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.ModifierFactory;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.TraitSituationModifier;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierConfigurationException;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigParser;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
@@ -525,19 +526,29 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 			List<String> mods = configMap.getAsStringList(MODIFIERS_PATH);
 			if(!mods.isEmpty()){
 				for(String toParse : mods){
-					TraitSituationModifier mod = ModifierFactory.generate(toParse);
-					
-					//Give a debug message for wrongly entered mod.
-					if(mod == null){
+					try{
+						TraitSituationModifier mod = ModifierFactory.generate(toParse);
+						if( mod == null ) throw new Exception();
+						
+						modifiers.add(mod);
+					}catch ( Exception e ) {
+						if( e instanceof ModifierConfigurationException ){
+							ModifierConfigurationException exp = (ModifierConfigurationException) e;
+							String holders = "";
+							for( AbstractTraitHolder holder : getTraitHolders() ) holders += " " + holder.getDisplayName();
+							
+							plugin.logWarning( exp.formatToText( holders, getDisplayName() ) );
+							continue;
+						}
+						
 						String holders = "";
-						for(AbstractTraitHolder holder : getTraitHolders()) holders += " " + holder.getDisplayName();
+						for( AbstractTraitHolder holder : getTraitHolders() ) holders += " " + holder.getDisplayName();
 						String message = "Modifier: '" + toParse + "' of Trait: '" + getDisplayName() 
 								+ "' from Holders: '" + holders + "' could not be parsed!";
 						
 						plugin.logWarning(message);
 					}
 					
-					if(mod != null) modifiers.add(mod);
 				}
 			}
 		}

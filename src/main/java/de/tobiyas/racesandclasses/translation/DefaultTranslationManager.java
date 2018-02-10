@@ -208,7 +208,7 @@ public class DefaultTranslationManager implements TranslationManager {
 	 * Copies all known files from the Plugin itself.
 	 */
 	private void copy_all_known() {
-		List<String> known = Arrays.asList("fr"); //TODO add known files here!
+		List<String> known = Arrays.asList("fr","de"); //TODO add known files here!
 		String baseDir = plugin.getDataFolder() + File.separator + "language" + File.separator;
 		
 		for(String lang : known){

@@ -179,6 +179,9 @@ public class FireballTrait extends AbstractMagicSpellTrait  {
 		Fireball fireball = player.getPlayer().launchProjectile(Fireball.class);
 		fireball.setVelocity(viewDirection);
 		fireball.setMetadata(META_KEY, new FixedMetadataValue((Plugin) plugin, player));
+		fireball.setIsIncendiary( false );
+		
+		
 		startFireballRangeShortener(fireball);
 		
 		LanguageAPI.sendTranslatedMessage(player, Keys.launched_something, "name", "Fireball");

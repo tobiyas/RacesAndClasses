@@ -95,6 +95,7 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.Dwa
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.FasterSprintingTrait.FasterSprintingTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.HoeDamageIncreaseTrait.HoeDamageIncreaseTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.HorseRestrictionTrait.HorseRestrictionTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.HungerDecreaseTrait.HungerDecreaseTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.HungerReplenishTrait.HungerReplenishTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.JumpHeightIncreaseTrait.JumpHeightIncreaseTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.LastStandTrait.LastStandTrait;
@@ -234,6 +235,7 @@ public class TraitsList{
 		registerClass(HoeDamageIncreaseTrait.class);
 		registerClass(HorseRestrictionTrait.class);
 		registerClass(HungerReplenishTrait.class);
+		registerClass(HungerDecreaseTrait.class);
 		registerClass(JumpHeightIncreaseTrait.class);
 		registerClass(LastStandTrait.class);
 		registerClass(ManaRegenerationTrait.class);

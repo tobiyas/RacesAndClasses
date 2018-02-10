@@ -3,10 +3,10 @@ package de.tobiyas.racesandclasses.traitcontainer.modifiers.specific;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierConfigurationException;
 import de.tobiyas.util.evaluations.EvalEvaluator;
 import de.tobiyas.util.evaluations.parts.Calculation;
 
@@ -18,14 +18,13 @@ public class EvaluationModifiers extends AbstractModifier {
 	private Calculation calculation;
 	
 	
-	private EvaluationModifiers(String evalString, String toModify) {
+	private EvaluationModifiers(String evalString, String toModify) throws ModifierConfigurationException {
 		super(0, toModify);
 		
 		try{
 			this.calculation = EvalEvaluator.parse(evalString);
 		}catch(Throwable exp){
-			RacesAndClasses.getPlugin().logError("Could not parse Expression: " 
-					+ evalString + " because: " + exp.getLocalizedMessage());
+			throw new EvaluationNotParseableException("eval:"+evalString+":0:"+toModify, "eval", evalString, 0, toModify, exp.getMessage());
 		}
 	}
 	
@@ -63,8 +62,28 @@ public class EvaluationModifiers extends AbstractModifier {
 	 * 
 	 * @return the Generated Modifier or Null if not possible.
 	 */
-	public static EvaluationModifiers generate(String descriptor, Double modifier, String toModify){
+	public static EvaluationModifiers generate(String descriptor, double modifier, String toModify) throws ModifierConfigurationException {
 		return new EvaluationModifiers(descriptor, toModify);
+	}
+	
+	
+	
+	public static class EvaluationNotParseableException extends ModifierConfigurationException {
+		private static final long serialVersionUID = 5502663814233447085L;
+		
+		private final String text;
+
+		public EvaluationNotParseableException(String total, String type, String descriptor, double value, String appliedOn, String text) {
+			super(total, type, descriptor, value, appliedOn);
+			
+			this.text = text;
+		}
+
+		@Override
+		protected String formatErrorMSG() {
+			return "Could not parse Evaluation: " + descriptor + " Error: " + text;
+		}
+		
 	}
 
 }
