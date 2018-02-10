@@ -18,11 +18,11 @@ package de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.Mo
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.EventWrapper;
 import de.tobiyas.racesandclasses.eventprocessing.events.holderevent.classevent.AfterClassChangedEvent;
@@ -38,6 +38,7 @@ import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Tra
 import de.tobiyas.racesandclasses.traitcontainer.traits.pattern.TickEverySecondsTrait;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfiguration;
 import de.tobiyas.racesandclasses.util.traitutil.TraitConfigurationFailedException;
+import de.tobiyas.util.math.Math2;
 
 public class MovementSpeedTrait extends TickEverySecondsTrait {
 
@@ -109,7 +110,7 @@ public class MovementSpeedTrait extends TickEverySecondsTrait {
 		}, removedFields = {@RemoveSuperConfigField(name = "seconds")})
 	@Override
 	public void setConfiguration(TraitConfiguration configMap) throws TraitConfigurationFailedException {
-		configMap.put("seconds", 5);
+		if( !configMap.containsKey("seconds") ) configMap.put("seconds", 5);
 		super.setConfiguration(configMap);
 		
 		this.value = (Double) configMap.get("value");
@@ -137,17 +138,23 @@ public class MovementSpeedTrait extends TickEverySecondsTrait {
 		setNewSpeed(player, DEFAULT_SPEED);
 	}
 	
-	private void setNewSpeed(final RaCPlayer player, final float convertedValue){
-		if(convertedValue < 0 || convertedValue > 1) return;
+	private void setNewSpeed(final RaCPlayer player, float convertedValue){
+		final float clampedValue = Math2.clamp(-1, convertedValue, 1);
 		
-		//Schedule this to the next tics since it will be overwritten...
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask((JavaPlugin)plugin, new Runnable() {
+		//Schedule this to the next tick since it will be overwritten...
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				if(!player.isOnline()) return;
-				player.getPlayer().setWalkSpeed(convertedValue);
+				
+				//Check if we need to set it:
+				Player pl = player.getPlayer();
+				float currentSpeed = pl.getWalkSpeed();
+				if( Math.abs( currentSpeed - clampedValue ) > 0.02 ){
+					player.getPlayer().setWalkSpeed(clampedValue);					
+				}
 			}
-		}, 2);
+		}.runTaskLater( plugin, 2 );
 	}
 	
 	/**

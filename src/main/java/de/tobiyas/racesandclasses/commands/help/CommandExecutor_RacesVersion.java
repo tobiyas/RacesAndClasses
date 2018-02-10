@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.help;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,13 +23,14 @@ import org.bukkit.command.CommandSender;
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.util.consts.Consts;
+import de.tobiyas.util.vollotile.VollotileCodeManager;
 
 public class CommandExecutor_RacesVersion extends AbstractCommand{
 	
 	private RacesAndClasses plugin;
 	
 	public CommandExecutor_RacesVersion(){
-		super("racesversion");
+		super("racesversion", "racversion");
 		
 		plugin = RacesAndClasses.getPlugin();
 	}
@@ -38,6 +40,17 @@ public class CommandExecutor_RacesVersion extends AbstractCommand{
 			String[] args) {
 		
 		sender.sendMessage(ChatColor.YELLOW + "The Current Version of Races: " + ChatColor.RED + plugin.getDescription().getVersion());
+		
+		//This is for debug upload:
+		if( args.length == 1 && args[0].equals( "debug" ) ){
+			String bukkitVersion = VollotileCodeManager.getVollotileCode().getVersion().name();
+			String impl = Bukkit.getVersion();
+
+			sender.sendMessage(ChatColor.YELLOW + "Bukkit Version: " + ChatColor.RED + bukkitVersion );
+			sender.sendMessage(ChatColor.YELLOW + "Distribution: " + ChatColor.RED + impl );
+			
+			return true;
+		}
 		
 		if(Consts.currentDevStage.contains("A")){
 			sender.sendMessage(ChatColor.YELLOW + "This Version is in " + ChatColor.RED + "ALPHA" + ChatColor.YELLOW + 

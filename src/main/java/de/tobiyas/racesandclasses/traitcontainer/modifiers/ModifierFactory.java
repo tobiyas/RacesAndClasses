@@ -71,9 +71,6 @@ public class ModifierFactory {
 			//Do Exception Stuff we know went wrong:
 			if( exp instanceof ModifierConfigurationException ) throw (ModifierConfigurationException) exp;
 			
-			//TODO: Remove line below. Only for Testing
-			exp.printStackTrace();
-			
 			//Something went completely wrong -> Pack it in an own exception!
 			throw new ModifierGenericException( toParse, type, descriptor, parsedMod, toUseOn, exp );
 		}
