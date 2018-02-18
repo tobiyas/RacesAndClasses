@@ -47,31 +47,55 @@ public abstract class TickEverySecondsTrait extends AbstractBasicTrait {
 	@Override
 	public void generalInit() {
 		schedulerTask = new DebugBukkitRunnable(getName()) {
-			@Override
-			public void runIntern() {
-				for(AbstractTraitHolder holder : holders){
-					for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
-						if(player == null || !player.isOnline()) continue;
-						
-						//If use the skill system, check if player has this skill!
-						if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
-							if(player.getSkillTreeManager().getLevel(TickEverySecondsTrait.this) <= 0) continue;
-						}
-						
-						EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
-						if(checkRestrictions(fakeEventWrapper) != TraitRestriction.None || !canBeTriggered(fakeEventWrapper)) {
-							restrictionsFailed(player);
-							continue;
-						}
-						
-						if(tickDoneForPlayer(player)){
-							plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
-						}
-					}
-				}
-			}
+			@Override public void runIntern() { tickEverySecondsMethod(); }
 		}.runTaskTimer(plugin, seconds * 20, seconds * 20);
 	}
+	
+	
+	/**
+	 * The actual Tick method.
+	 */
+	private final void tickEverySecondsMethod() {
+		tickEverySecondsAditionalBefore();
+		
+		for(AbstractTraitHolder holder : holders){
+			for(RaCPlayer player : holder.getHolderManager().getAllPlayersOfHolder(holder)){
+				if(player == null || !player.isOnline()) continue;
+				
+				//If use the skill system, check if player has this skill!
+				if(!permanentSkill && plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem()){
+					if(player.getSkillTreeManager().getLevel( this ) <= 0) continue;
+				}
+				
+				EventWrapper fakeEventWrapper = EventWrapperFactory.buildOnlyWithplayer(player.getPlayer());
+				if(checkRestrictions(fakeEventWrapper) != TraitRestriction.None || !canBeTriggered(fakeEventWrapper)) {
+					restrictionsFailed(player);
+					continue;
+				}
+				
+				if(tickDoneForPlayer(player)){
+					plugin.getStatistics().traitTriggered(TickEverySecondsTrait.this);
+				}
+			}
+		}
+		
+		tickEverySecondsAditionalAfter();
+	}
+	
+	
+	/**
+	 * Method to be overwritten.
+	 * This is called before ticking the Entries.
+	 */
+	protected void tickEverySecondsAditionalBefore() {}
+	
+	/**
+	 * Method to be overwritten.
+	 * This is called after ticking the Entries.
+	 */
+	protected void tickEverySecondsAditionalAfter() {}
+	
+	
 	
 	/**
 	 * Notifies that the restrictions failed.

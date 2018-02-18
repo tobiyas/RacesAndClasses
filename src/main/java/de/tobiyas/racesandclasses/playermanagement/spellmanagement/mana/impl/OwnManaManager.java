@@ -97,4 +97,12 @@ public class OwnManaManager extends AbstractManaManager {
 	@Override
 	protected void applyMaxManaBonus(double bonus) {}
 
+
+
+	@Override
+	public double getManaBoostByName(String boostID) {
+		Double amount = maxManaBonusses.get( boostID );
+		return amount == null ? 0 : amount;
+	}
+
 }

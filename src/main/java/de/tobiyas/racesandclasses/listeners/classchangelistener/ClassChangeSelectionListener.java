@@ -204,6 +204,22 @@ public class ClassChangeSelectionListener implements Listener {
 		executeCommands(player, commands, selectEvent.getClassToSelect());
 	}
 	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void resetSkillTreeAfterClassChange(AfterClassChangedEvent event){
+		if( plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem() ) {			
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+			player.getSkillTreeManager().clearSkills();
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void resetSkillTreeAfterClassChange(AfterClassSelectedEvent event){
+		if( plugin.getConfigManager().getGeneralConfig().isConfig_useSkillSystem() ) {			
+			RaCPlayer player = RaCPlayerManager.get().getPlayer(event.getPlayer());
+			player.getSkillTreeManager().clearSkills();
+		}
+	}
+	
 	
 	/**
 	 * Executes the Commands passed for the player passed.

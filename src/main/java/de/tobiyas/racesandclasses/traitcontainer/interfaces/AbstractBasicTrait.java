@@ -624,10 +624,24 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	 * @return the modified value
 	 */
 	protected double getModValue(RaCPlayer player, String toModify){
-		if(player == null) return 1;
-		if(modifiers.isEmpty()) return 1;
+		return getModValue( player, toModify, 1 );
+	}
+	
+	
+	/**
+	 * Modifies the Value passed to the Level Mod.
+	 * 
+	 * @param player to check
+	 * @param value to modify
+	 * @param defaultValue to use if no Modifiers.
+	 * 
+	 * @return the modified value
+	 */
+	protected double getModValue(RaCPlayer player, String toModify, double defaultValue){
+		if(player == null) return defaultValue;
+		if(modifiers.isEmpty()) return defaultValue;
 		
-		double value = 1;
+		double value = defaultValue;
 		for(TraitSituationModifier mod : modifiers){
 			if(mod.canBeApplied(toModify, player)) value = mod.apply(player, value, this);
 		}
@@ -1147,6 +1161,11 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 	@Override
 	public List<String> getReplacesOtherTraits() {
 		return replacesOtherTraits;
+	}
+	
+	@Override
+	public void skillLevelChanged( RaCPlayer player ){
+		//Dummy implementation to be overwritten.
 	}
 	
 }

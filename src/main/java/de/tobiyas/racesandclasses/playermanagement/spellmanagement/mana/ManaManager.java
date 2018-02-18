@@ -114,4 +114,11 @@ public interface ManaManager {
 	 */
 	public abstract void tick();
 
+	/**
+	 * Gets the max Mana boost by the registered name.
+	 * @param boostID to get.
+	 * @return the boost or 0 if not present.
+	 */
+	public abstract double getManaBoostByName(String boostID);
+
 }

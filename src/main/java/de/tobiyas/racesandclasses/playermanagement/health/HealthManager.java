@@ -69,6 +69,18 @@ public class HealthManager {
 		return health;
 	}
 	
+	/**
+	 * Gets the Healthboost by name.
+	 * Retursn 0 if not registered.
+	 * 
+	 * @param name to search
+	 * @return the health boost number.
+	 */
+	public double getHealthBoostByName( String name ){
+		Double entry = healthMap.get( name );
+		return entry == null ? 0 : entry;
+	}
+	
 	
 	/**
 	 * Rescans Race + class + maxhealth.
@@ -141,6 +153,14 @@ public class HealthManager {
 	 */
 	public void heal(double health) {
 		BukkitPlayer.safeHeal(health, player.getPlayer());
+	}
+	
+	/**
+	 * Gets the health-boosts.
+	 * @return the boosts.
+	 */
+	public Map<String,Double> getHealthBoosts(){
+		return new HashMap<>( this.healthMap );
 	}
 
 }

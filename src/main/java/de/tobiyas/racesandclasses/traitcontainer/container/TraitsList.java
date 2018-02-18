@@ -101,6 +101,8 @@ import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.Jum
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.LastStandTrait.LastStandTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.ManaOnHitTrait.ManaOnHitTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.ManaRegenerationTrait.ManaRegenerationTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.MaxHealthBoostTrait.MaxHealthBoostTrait;
+import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.MaxManaBoostTrait.MaxManaBoostTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.MiningSpeedTrait.MiningSpeedTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.MonsterDropItemTrait.MonsterDropItemTrait;
 import de.tobiyas.racesandclasses.traitcontainer.traits.defaultraits.passive.MovementSpeedTrait.MovementSpeedTrait;
@@ -240,6 +242,8 @@ public class TraitsList{
 		registerClass(LastStandTrait.class);
 		registerClass(ManaRegenerationTrait.class);
 		registerClass(ManaOnHitTrait.class);
+		registerClass(MaxHealthBoostTrait.class);
+		registerClass(MaxManaBoostTrait.class);
 		registerClass(MiningSpeedTrait.class);
 		registerClass(MonsterDropItemTrait.class);
 		registerClass(MovementSpeedTrait.class);

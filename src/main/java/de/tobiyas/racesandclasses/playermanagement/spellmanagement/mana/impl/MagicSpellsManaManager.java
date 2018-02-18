@@ -70,5 +70,11 @@ public class MagicSpellsManaManager extends AbstractManaManager {
 
 	@Override
 	protected void applyMaxManaBonus(double bonus) {}
+
+
+	@Override
+	public double getManaBoostByName(String boostID) {
+		return 0;
+	}
 	
 }

@@ -139,7 +139,7 @@ public class YAMLPlayerDataSerializer implements PlayerDataSerializer {
 		Map<String,Integer> skillTree = new HashMap<>();
 		for(String trait : config.getChildren(SKILL_TREE_PATH)){
 			try{
-				int traitLevel = config.getInt(HOTKEY_PATH+"."+trait, 0);
+				int traitLevel = config.getInt(SKILL_TREE_PATH+"."+trait, 0);
 				if(traitLevel > 0) skillTree.put(trait, traitLevel);
 			}catch(Throwable e){}
 		}

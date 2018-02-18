@@ -3,6 +3,8 @@ package de.tobiyas.racesandclasses.traitcontainer.modifiers.specific;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Location;
+
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.AbstractModifier;
@@ -42,12 +44,15 @@ public class EvaluationModifiers extends AbstractModifier {
 	
 	private Map<String,Double> generateVariables(RaCPlayer player, Trait trait){
 		Map<String,Double> variables = new HashMap<String,Double>();
+		Location loc = player.getLocation();
+		
 		variables.put("mana", player.getCurrentMana());
 		variables.put("maxmana", player.getMaxMana());
 		variables.put("level", (double) player.getCurrentLevel());
-		variables.put("maxhealth", player.getMaxHealth());
 		variables.put("health", player.getHealth());
+		variables.put("maxhealth", player.getMaxHealth());
 		variables.put("skilllevel", (double) player.getSkillTreeManager().getLevel(trait));
+		variables.put("playery", loc.getY() );
 		
 		return variables;
 	}

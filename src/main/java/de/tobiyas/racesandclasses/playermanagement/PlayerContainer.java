@@ -155,6 +155,7 @@ public class PlayerContainer {
 		
 		spellManager.rescan();
 		levelManager.checkLevelChanged();
+		playerSkillTreeManager.reloadFromData();
 		
 		player.getPlayer().setMetadata("LEVEL", new FixedMetadataValue(plugin, levelManager.getCurrentLevel()));
 	}

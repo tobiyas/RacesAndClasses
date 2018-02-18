@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
 
+import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
+
 public interface SkillTreeTrait {
 
 	
@@ -97,5 +99,11 @@ public interface SkillTreeTrait {
 	 * @return the traits this trait excludes. 
 	 */
 	public List<String> getExcludesOtherTraits();
+
+	/**
+	 * This is called when a skill level changes.
+	 * @param player the player whos skill level changed.
+	 */
+	public void skillLevelChanged( RaCPlayer player );
 	
 }

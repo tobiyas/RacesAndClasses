@@ -15,11 +15,14 @@
  ******************************************************************************/
 package de.tobiyas.racesandclasses.commands.general;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,8 +32,10 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.APIs.LanguageAPI;
 import de.tobiyas.racesandclasses.commands.AbstractCommand;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
+import de.tobiyas.racesandclasses.playermanagement.health.HealthManager;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayerManager;
+import de.tobiyas.racesandclasses.playermanagement.spellmanagement.mana.ManaManager;
 import de.tobiyas.racesandclasses.util.consts.PermissionNode;
 import de.tobiyas.racesandclasses.util.items.ItemUtils.ItemQuality;
 
@@ -121,13 +126,49 @@ private RacesAndClasses plugin;
 		
 		if(hasPermForOthers){
 			ItemStack inHand = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
+			if( inHand == null ) inHand = new ItemStack( Material.AIR );
+			
 			sender.sendMessage(ChatColor.YELLOW + "---O--T--H--E--R---");
 			sender.sendMessage(ChatColor.YELLOW + "Item in Hand: " + ChatColor.AQUA + inHand.getType().toString());
+
+			//Check for Health Boost:
+			DecimalFormat format = new DecimalFormat("0.0");
+			if( containsKey(args, "-health") ) {
+				HealthManager hm = racPlayer.getHealthManager();
+				Map<String,Double> boosts = hm.getHealthBoosts();
+				sender.sendMessage(ChatColor.YELLOW + "---Health-Boosts: " + boosts.size() + " ---");
+				sender.sendMessage(ChatColor.YELLOW + "Current-Health: " + format.format( hm.getCurrentHealth() ) );
+				sender.sendMessage(ChatColor.YELLOW + "Max-Health: " + format.format( hm.getMaxHealth() ) );
+				for( Map.Entry<String,Double> entry : boosts.entrySet() ) {
+					sender.sendMessage(ChatColor.YELLOW + " -" + entry.getKey() + ": " + format.format( entry.getValue() ) );
+				}
+			}
+			
+			//Check for Mana Boost:
+			if( containsKey(args, "-mana") ) {
+				ManaManager mm = racPlayer.getManaManager();
+				Map<String,Double> boosts = mm.getAllBonuses();
+				sender.sendMessage(ChatColor.YELLOW + "---Mana-Boosts: " + boosts.size() + " ---");
+				sender.sendMessage(ChatColor.YELLOW + "Current-Mana: " + format.format( mm.getCurrentMana() ) );
+				sender.sendMessage(ChatColor.YELLOW + "Max-Mana: " + format.format( mm.getMaxMana() ) );
+				for( Map.Entry<String,Double> entry : boosts.entrySet() ) {
+					sender.sendMessage(ChatColor.YELLOW + " -" + entry.getKey() + ": " + format.format( entry.getValue() ) );
+				}
+			}
 		}
-		
 
 		
 		return true;
+	}
+	
+	
+	
+	private boolean containsKey( String[] args, String key ) {
+		for( String part : args ) {
+			if( part.equalsIgnoreCase( key ) ) return true;
+		}
+		
+		return false;
 	}
 
 }

@@ -8,6 +8,7 @@ import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.TraitHolderCombinder;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.saving.PlayerSavingData;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.SkillTreeTrait;
 import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 
 public class PlayerSkillTreeManager {
@@ -32,9 +33,6 @@ public class PlayerSkillTreeManager {
 	public PlayerSkillTreeManager(RaCPlayer player, PlayerSavingData data) {
 		this.player = player;
 		this.data = data;
-		
-		//Reload from data.
-		this.reloadFromData();
 	}
 
 
@@ -55,6 +53,11 @@ public class PlayerSkillTreeManager {
 	public void removeTrait(Trait trait){
 		presentTraits.remove(trait);
 		
+		//Tell the trait it updated:
+		if( trait instanceof SkillTreeTrait ){
+			((SkillTreeTrait) trait).skillLevelChanged( player );
+		}
+		
 		save();
 	}
 	
@@ -65,6 +68,11 @@ public class PlayerSkillTreeManager {
 	 */
 	public void setTraitLevel(Trait trait, int level){
 		presentTraits.put(trait, level);
+		
+		//Tell the trait it updated:
+		if( trait instanceof SkillTreeTrait ){
+			((SkillTreeTrait) trait).skillLevelChanged( player );
+		}
 		
 		save();
 	}
@@ -115,7 +123,7 @@ public class PlayerSkillTreeManager {
 	/**
 	 * Loads the Skills from the Config..
 	 */
-	private PlayerSkillTreeManager reloadFromData() {
+	public PlayerSkillTreeManager reloadFromData() {
 		this.presentTraits.clear();
 		
 		Collection<Trait> traits = TraitHolderCombinder.getAllTraitsOfPlayer(player);
