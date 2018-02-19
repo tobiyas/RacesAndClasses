@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.ChatColor;
+
 import de.tobiyas.racesandclasses.RacesAndClasses;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.AbstractTraitHolder;
 import de.tobiyas.racesandclasses.datacontainer.traitholdercontainer.race.RaceContainer;
 import de.tobiyas.racesandclasses.eventprocessing.eventresolvage.resolvers.WorldResolver;
 import de.tobiyas.racesandclasses.playermanagement.player.RaCPlayer;
 import de.tobiyas.racesandclasses.util.bukkit.versioning.compatibility.CompatibilityModifier.BukkitPlayer;
+import de.tobiyas.util.formating.StringFormatUtils;
+import de.tobiyas.util.math.Math2;
 
 public class HealthManager {
 
@@ -116,6 +120,32 @@ public class HealthManager {
 			 BukkitPlayer.safeSetMaxHealth(realMaxHealth, player.getPlayer());
 		}
 	}
+	
+	
+	/**
+	 * Does a tick for the Manager.
+	 */
+	public void tick() {
+		updateHPBar();
+	}
+	
+	
+	/**
+	 * Update the HP bar if needed.
+	 */
+	private void updateHPBar() {
+		double currentHP = getCurrentHealth();
+		double maxHP = getMaxHealth();
+		
+		double percent = Math2.clamp(0d, (double)currentHP / (double)maxHP, 1d);
+		String healthBarString = StringFormatUtils.formatToPercent(percent, 10, '\u220E', ChatColor.RED, ChatColor.BLACK);
+		healthBarString = ChatColor.RED + "{" + healthBarString + ChatColor.RED + "}";
+		
+		player.getActionbarDisplay().setSegment( "health", ""+(int)currentHP );
+		player.getActionbarDisplay().setSegment( "maxhealth", ""+(int)maxHP );
+		player.getActionbarDisplay().setSegment( "healthbar", healthBarString );
+	}
+	
 	
 	
 	/**

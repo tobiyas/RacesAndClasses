@@ -169,6 +169,7 @@ public class PlayerContainer {
 		levelManager.tick();
 		petManager.tick();
 		spellManager.tick();
+		healthManager.tick();
 		
 		//Display the Displays:
 		actionbarDisplay.display();
