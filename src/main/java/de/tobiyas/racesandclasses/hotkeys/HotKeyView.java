@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.racesandclasses.RacesAndClasses;
@@ -106,8 +108,8 @@ public class HotKeyView extends BasicSelectionInterface {
 			}
 		}
 		
+		//Clear from old data:
 		this.getTopInventory().clear();
-		this.getBottomInventory().clear();
 		
 		//first get the traits we may use.
 		List<Trait> traits = racPlayer.getTraits();
@@ -139,7 +141,7 @@ public class HotKeyView extends BasicSelectionInterface {
 		});
 		
 		//pin on Window.
-		for(int i = 0; i < 27; i++){
+		for(int i = 0; i < 9 * 5; i++){
 			if( i >= traits.size() ) break;
 			
 			Trait trait = traits.get(i);
@@ -148,11 +150,12 @@ public class HotKeyView extends BasicSelectionInterface {
 		}
 		
 		//post empty Items first so they can be overdrawn.
+		int startSelectionRow = 9 * 5;
 		for(Entry<Integer,ItemStack> entry : emptyItems.entrySet()){			
 			int index = entry.getKey();
 			
 			ItemStack item = entry.getValue().clone();
-			getBottomInventory().setItem(index, item);
+			getTopInventory().setItem( startSelectionRow + index, item);
 		}
 		
 		//post current Traits.
@@ -161,7 +164,7 @@ public class HotKeyView extends BasicSelectionInterface {
 			if(disabled.contains(slot)) continue;
 			
 			Trait bound = entry.getValue();
-			getBottomInventory().setItem(slot, CommandExecutor_BindTrait.generate(bound));
+			getTopInventory().setItem( startSelectionRow + slot, CommandExecutor_BindTrait.generate(bound));
 		}
 		
 		this.setCursor(selectedTrait == null ? null : CommandExecutor_BindTrait.generate(selectedTrait));
@@ -185,6 +188,40 @@ public class HotKeyView extends BasicSelectionInterface {
 			setCursor(item.clone());
 			selectedTrait = trait;
 		}
+		
+		//Other one:
+		int index = -1;
+		
+		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
+		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
+		
+		//Add Permissions based:
+		if(config.isConfig_use_permissions_for_hotkeys()){
+			for(int i = 0; i < 9; i++){
+				if(!disabled.contains(i) && !RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, PermissionNode.hotkeyPre + i)){
+					disabled.add(i);
+				}
+			}
+		}
+		
+		for(int i = 0; i < 9; i++){
+			ItemStack toCheck = getTopInventory().getItem(9*5 + i);
+			if(toCheck.isSimilar(item) && !disabled.contains(i)){
+				index = i;
+			}
+		}
+		
+		//We can have index 0-8.
+		if( index >= 0 ){
+			racPlayer.getHotkeyInventory().clearSlot(index);
+			if(selectedTrait != null) racPlayer.getHotkeyInventory().bindTrait(index, selectedTrait);
+			
+			selectedTrait = null;
+			setCursor(null);
+		}
+		
+		
+		redraw();
 		
 		redraw();
 	}
@@ -221,42 +258,6 @@ public class HotKeyView extends BasicSelectionInterface {
 	}
 	
 	
-	@Override
-	protected void onControlItemPressed(ItemStack item) {
-		int index = -1;
-		
-		GeneralConfig config = RacesAndClasses.getPlugin().getConfigManager().getGeneralConfig();
-		Set<Integer> disabled = config.getConfig_disabledHotkeySlots();
-		
-		//Add Permissions based:
-		if(config.isConfig_use_permissions_for_hotkeys()){
-			for(int i = 0; i < 9; i++){
-				if(!disabled.contains(i) && !RacesAndClasses.getPlugin().getPermissionManager().checkPermissionsSilent(player, PermissionNode.hotkeyPre + i)){
-					disabled.add(i);
-				}
-			}
-		}
-		
-		for(int i = 0; i < 9; i++){
-			ItemStack toCheck = getBottomInventory().getItem(i);
-			if(toCheck.isSimilar(item) && !disabled.contains(i)){
-				index = i;
-			}
-		}
-		
-		//We can have index 0-8.
-		if( index >= 0 ){
-			racPlayer.getHotkeyInventory().clearSlot(index);
-			if(selectedTrait != null) racPlayer.getHotkeyInventory().bindTrait(index, selectedTrait);
-			
-			selectedTrait = null;
-			setCursor(null);
-		}
-		
-		
-		redraw();
-	}
-	
 	
 	@Override
 	protected void scheduleOpeningOfParent() {
@@ -265,6 +266,20 @@ public class HotKeyView extends BasicSelectionInterface {
 		super.scheduleOpeningOfParent();
 	}
 	
+	
+	private Inventory inv;
+	
+	@Override
+	public Inventory getTopInventory() {
+		if( inv == null ) inv = Bukkit.createInventory( player, 6 * 9 );
+		return inv;
+	}
+	
+	
+	@Override
+	public Inventory getBottomInventory() {
+		return player.getInventory();
+	}
 	
 
 	
