@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.AbstractBasicTrait;
+import de.tobiyas.racesandclasses.traitcontainer.interfaces.markerinterfaces.Trait;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.GeneratorNotFoundException;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierConfigurationException;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.ModifierGenericException;
@@ -13,6 +15,7 @@ import de.tobiyas.racesandclasses.traitcontainer.modifiers.exceptions.NotEnoughA
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.BiomeModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.EvaluationModifiers;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.LevelModifier;
+import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.SkillModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.TimeModifier;
 import de.tobiyas.racesandclasses.traitcontainer.modifiers.specific.WorldModifier;
 
@@ -28,6 +31,7 @@ public class ModifierFactory {
 		modifierMap.put("biome", BiomeModifier.class);
 		modifierMap.put("eval", EvaluationModifiers.class);
 		modifierMap.put("level", LevelModifier.class);
+		modifierMap.put("skill", SkillModifier.class);
 		modifierMap.put("time", TimeModifier.class);
 		modifierMap.put("world", WorldModifier.class);
 	}
@@ -40,7 +44,7 @@ public class ModifierFactory {
 	 * 
 	 * @return the modifier or null if not parseable.
 	 */
-	public static TraitSituationModifier generate(String toParse) throws ModifierConfigurationException {
+	public static TraitSituationModifier generate( String toParse, AbstractBasicTrait trait ) throws ModifierConfigurationException {
 		String[] split = toParse.split(":");
 		
 		if(split.length < 3) throw new NotEnoughArgumentsForModifierException( toParse );
@@ -59,7 +63,16 @@ public class ModifierFactory {
 		}
 		
 		try{
-			Method method = generator.getMethod("generate", String.class, double.class, String.class);
+			Method method = generator.getMethod( "generate", String.class, double.class, String.class );
+			
+			//Try the generator with Trait:
+			if( method == null ) {
+				Method methodWithTrait = generator.getMethod( "generate", String.class, double.class, String.class, Trait.class );
+				if( methodWithTrait != null ) {
+					return (TraitSituationModifier) methodWithTrait.invoke( null, descriptor, parsedMod, toUseOn, trait );
+				}
+			}
+			
 			return (TraitSituationModifier) method.invoke(null, descriptor, parsedMod, toUseOn);
 		}catch(Throwable exp){
 			//Proxy if we have a problem with Reflections:

@@ -527,7 +527,7 @@ public abstract class AbstractBasicTrait implements Trait, TraitWithRestrictions
 			if(!mods.isEmpty()){
 				for(String toParse : mods){
 					try{
-						TraitSituationModifier mod = ModifierFactory.generate(toParse);
+						TraitSituationModifier mod = ModifierFactory.generate( toParse, this );
 						if( mod == null ) throw new Exception();
 						
 						modifiers.add(mod);
