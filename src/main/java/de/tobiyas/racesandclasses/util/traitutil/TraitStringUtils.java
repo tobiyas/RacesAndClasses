@@ -20,18 +20,19 @@ public class TraitStringUtils {
 	public static double getNewValue(double oldDmg, String operation, double value){
 		double newDmg = 0;
 		
-		if(operation.equals("+")){
-			newDmg = oldDmg + value;
-		}else
-		
-		if(operation.equals("-")){
-			newDmg = oldDmg - value;
-		}else
-		
-		if(operation.equals("*")){
-			newDmg = oldDmg * value;
-		}else{
-			newDmg = oldDmg * value;
+		switch (operation) {
+			case "+":
+				newDmg = oldDmg + value;
+				break;
+			case "-":
+				newDmg = oldDmg - value;
+				break;
+			case "*":
+				newDmg = oldDmg * value;
+				break;
+			default:
+				newDmg = oldDmg * value;
+				break;
 		}
 		
 		
